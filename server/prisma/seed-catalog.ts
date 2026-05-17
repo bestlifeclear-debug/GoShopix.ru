@@ -49,7 +49,9 @@ type ProductSeed = {
   variants: VariantSeed[];
 };
 
-export async function seedCatalogProducts(prisma: PrismaClient, ctx: SeedCtx) {
+type PrismaRun = <T>(fn: (client: PrismaClient) => Promise<T>) => Promise<T>;
+
+export async function seedCatalogProducts(run: PrismaRun, ctx: SeedCtx) {
   const products: ProductSeed[] = [
     {
       sellerId: ctx.seller1Id,
@@ -390,46 +392,77 @@ export async function seedCatalogProducts(prisma: PrismaClient, ctx: SeedCtx) {
       ...(p.extraAttrs ?? []),
     ];
 
-    const product = await prisma.product.create({
-      data: {
-        sellerId: p.sellerId,
-        storeId: p.storeId,
-        categoryId: p.categoryId,
-        name: p.name,
-        slug: p.slug,
-        description: p.description,
-        price: p.price,
-        compareAtPrice: p.compareAtPrice,
-        brand: p.brand,
-        rating: p.rating,
-        reviewCount: p.reviewCount,
-        promoBadge: p.promoBadge,
-        deliveryDaysMin: p.deliveryDaysMin,
-        deliveryDaysMax: p.deliveryDaysMax,
-        isPublished: true,
-        attributes: attributesCreate.length ? { create: attributesCreate } : undefined,
-        images: {
-          create: Array.from({ length: imageCount }, (_, i) => ({
+    const product = await run((prisma) =>
+      prisma.product.create({
+        data: {
+          sellerId: p.sellerId,
+          storeId: p.storeId,
+          categoryId: p.categoryId,
+          name: p.name,
+          slug: p.slug,
+          description: p.description,
+          price: p.price,
+          compareAtPrice: p.compareAtPrice,
+          brand: p.brand,
+          rating: p.rating,
+          reviewCount: p.reviewCount,
+          promoBadge: p.promoBadge,
+          deliveryDaysMin: p.deliveryDaysMin,
+          deliveryDaysMax: p.deliveryDaysMax,
+          isPublished: true,
+        },
+      }),
+    );
+
+    for (const attr of attributesCreate) {
+      await run((prisma) =>
+        prisma.productAttributeValue.create({
+          data: { productId: product.id, attributeId: attr.attributeId, value: attr.value },
+        }),
+      );
+    }
+
+    for (let i = 0; i < imageCount; i++) {
+      await run((prisma) =>
+        prisma.productImage.create({
+          data: {
+            productId: product.id,
             url: img(p.slug, i + 1),
             alt: `${p.name} — фото ${i + 1}`,
             sortOrder: i,
             isPrimary: i === 0,
-          })),
-        },
-        variants: {
-          create: p.variants.map((v) => ({
+          },
+        }),
+      );
+    }
+
+    const variants = [];
+    for (const v of p.variants) {
+      const variant = await run((prisma) =>
+        prisma.productVariant.create({
+          data: {
+            productId: product.id,
             sku: v.sku,
             name: v.name,
             price: v.price,
             stock: v.stock,
             isDefault: v.isDefault ?? false,
-            options: v.options?.length ? { create: v.options } : undefined,
-          })),
-        },
-      },
-      include: { variants: true },
-    });
-    created.push(product);
+          },
+        }),
+      );
+      if (v.options?.length) {
+        for (const opt of v.options) {
+          await run((prisma) =>
+            prisma.variantAttribute.create({
+              data: { variantId: variant.id, name: opt.name, value: opt.value },
+            }),
+          );
+        }
+      }
+      variants.push(variant);
+    }
+
+    created.push({ ...product, variants });
   }
 
   return created;
