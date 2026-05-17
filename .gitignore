@@ -1,0 +1,14 @@
+node_modules/
+dist/
+build/
+storybook-static/
+.env
+.env.local
+*.log
+.DS_Store
+coverage/
+.vscode/*
+!.vscode/extensions.json
+*.tsbuildinfo
+server/prisma/*.db
+server/prisma/*.db-journal

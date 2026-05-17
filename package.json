@@ -1,0 +1,64 @@
+{
+  "name": "goshopix",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "GoShopix — маркетплейс (монорепо)",
+  "workspaces": [
+    "client",
+    "server",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "npm run build -w shared && concurrently -n client,server -c blue,green \"npm run dev -w client\" \"npm run dev -w server\"",
+    "dev:client": "npm run dev -w client",
+    "dev:server": "npm run dev -w server",
+    "build": "npm run build -w shared && npm run build -w server && npm run build -w client",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "storybook": "npm run storybook -w client",
+    "build-storybook": "npm run build-storybook -w client",
+    "db:seed": "npm run db:seed -w server",
+    "db:setup": "npm run db:migrate:deploy -w server && npm run db:seed -w server",
+    "db:migrate:deploy": "npm run db:migrate:deploy -w server",
+    "db:reset": "npm run db:reset -w server",
+    "test": "npm run test -w server",
+    "test:unit": "npm run test:unit -w server",
+    "test:integration": "npm run test:integration -w server",
+    "db:up": "docker compose up db -d",
+    "test:integration:setup": "node scripts/prepare-test-db.mjs",
+    "test:integration:full": "npm run test:integration:setup && cross-env RUN_INTEGRATION_TESTS=true DATABASE_URL=postgresql://goshopix:goshopix@127.0.0.1:5432/goshopix_test?schema=public npm run test:integration -w server",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open",
+    "typecheck": "npm run build -w shared && npm run build -w server && npm run build -w client",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "cross-env": "^7.0.3",
+    "cypress": "^14.3.2",
+    "concurrently": "^9.1.2",
+    "wait-on": "^8.0.3",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.0",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.32.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json,md,css}": [
+      "prettier --write"
+    ],
+    "*.{ts,tsx}": [
+      "eslint --fix"
+    ]
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

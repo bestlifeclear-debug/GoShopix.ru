@@ -1,0 +1,6 @@
+# Heroku Container Registry deploy
+# heroku container:push web -a goshopix-api
+# heroku container:release web -a goshopix-api
+build:
+  docker:
+    web: server/Dockerfile

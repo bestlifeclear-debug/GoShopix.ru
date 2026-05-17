@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000" role="img" aria-label="TabAir 11">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e7490"/>
+      <stop offset="61%" stop-color="#0891b2"/>
+      <stop offset="100%" stop-color="#67e8f9"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#g)"/>
+  <circle cx="680" cy="120" r="140" fill="white" fill-opacity="0.08"/>
+  <circle cx="120" cy="880" r="200" fill="white" fill-opacity="0.06"/>
+  <text x="400" y="470" text-anchor="middle" fill="white" font-family="system-ui,-apple-system,Segoe UI,sans-serif" font-size="42" font-weight="700">TabAir 11</text>
+  <text x="400" y="530" text-anchor="middle" fill="white" fill-opacity="0.85" font-family="system-ui,sans-serif" font-size="22">GoShopix</text>
+</svg>

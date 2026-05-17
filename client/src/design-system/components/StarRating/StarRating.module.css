@@ -1,0 +1,51 @@
+.wrap {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.stars {
+  display: inline-flex;
+  letter-spacing: -0.05em;
+}
+
+.starFull {
+  color: #ffb800;
+}
+
+.starHalf {
+  background: linear-gradient(90deg, #ffb800 50%, #d2d2d7 50%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.starEmpty {
+  color: #d2d2d7;
+}
+
+.value {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.reviews {
+  color: var(--color-text-muted);
+}
+
+.sm {
+  font-size: var(--font-size-xs);
+}
+
+.sm .stars {
+  font-size: 0.85rem;
+}
+
+.md {
+  font-size: var(--font-size-sm);
+}
+
+.md .stars {
+  font-size: 1rem;
+}

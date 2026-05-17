@@ -1,0 +1,13 @@
+# Staging overlay: docker compose -f docker-compose.yml -f docker-compose.staging.yml up -d
+services:
+  api:
+    environment:
+      NODE_ENV: staging
+      JOBS_ENABLED: 'true'
+      LOG_LEVEL: info
+    # Дополнительные переменные: cp config/env/staging.env.example config/env/staging.env
+    # и подключите через env_file в override на сервере
+
+  web:
+    ports:
+      - '80:80'

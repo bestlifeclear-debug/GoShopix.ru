@@ -1,0 +1,35 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Docker tag (staging or sha-...)'
+        required: true
+        default: staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://goshopix.ru
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to production VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            cd /opt/goshopix
+            export API_IMAGE=ghcr.io/${{ github.repository }}/api:${{ inputs.image_tag }}
+            export WEB_IMAGE=ghcr.io/${{ github.repository }}/web:${{ inputs.image_tag }}
+            docker compose -f docker-compose.yml -f docker-compose.production.yml pull
+            docker compose -f docker-compose.yml -f docker-compose.production.yml up -d
+            curl -fsS https://goshopix.ru/api/health/ready || exit 1
+
+      - name: Summary
+        run: echo "Production deploy completed for tag ${{ inputs.image_tag }}"

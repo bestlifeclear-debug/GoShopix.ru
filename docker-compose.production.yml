@@ -1,0 +1,11 @@
+services:
+  api:
+    image: ${API_IMAGE}
+    environment:
+      NODE_ENV: production
+      LOG_LEVEL: warn
+    env_file:
+      - config/env/production.env
+
+  web:
+    image: ${WEB_IMAGE}
