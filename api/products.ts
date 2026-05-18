@@ -4,7 +4,7 @@ import { getCatalogApp } from './_shared/get-catalog-app.js';
 import { runExpress } from './_shared/run-express.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
-  if (!ensureEnvOrRespond(res)) return;
+  if (!ensureEnvOrRespond(res, { requireJwt: false })) return;
   const app = await getCatalogApp();
   await runExpress(app, req, res);
 }

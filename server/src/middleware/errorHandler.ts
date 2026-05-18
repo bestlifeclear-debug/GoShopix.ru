@@ -1,5 +1,7 @@
 import type { ErrorRequestHandler } from 'express';
+import { Prisma } from '@prisma/client';
 import { ZodError } from 'zod';
+import { checkEnv, formatEnvSetupHint } from '../config/env.js';
 import { AppError, isAppError } from '../lib/errors.js';
 import { logger } from '../lib/logger.js';
 import { captureException } from '../lib/sentry.js';
@@ -13,6 +15,16 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
   if (err instanceof ZodError) {
     fail(res, 400, 'Validation failed', err.flatten());
+    return;
+  }
+
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    logger.error('Database error', { code: err.code, meta: err.meta, path: req.originalUrl });
+    const hint =
+      err.code === 'P2022' || String(err.message).includes('does not exist')
+        ? 'Схема БД устарела: выполните npm run db:migrate:deploy -w server'
+        : 'Database error';
+    fail(res, 500, hint, err.code);
     return;
   }
 
@@ -33,12 +45,11 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
   if (message.startsWith('Invalid environment configuration')) {
     logger.error('Invalid environment configuration', { message, path: req.originalUrl });
+    const check = checkEnv();
     fail(
       res,
       503,
-      process.env.VERCEL === '1'
-        ? 'Сервер не настроен: проверьте DATABASE_URL и JWT_SECRET (≥16 символов) в Vercel'
-        : 'Server configuration error',
+      check.missing.length > 0 ? formatEnvSetupHint(check.missing) : 'Server configuration error',
     );
     return;
   }

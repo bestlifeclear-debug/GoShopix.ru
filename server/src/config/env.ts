@@ -29,15 +29,59 @@ export type AppConfig = z.infer<typeof envSchema> & {
 
 let cached: AppConfig | null = null;
 
+const catalogEnvSchema = z.object({
+  DATABASE_URL: z.string().min(1),
+});
+
+export type EnvCheckResult = {
+  ok: boolean;
+  missing: string[];
+  message: string;
+};
+
+export function checkEnv(options?: { requireJwt?: boolean }): EnvCheckResult {
+  const requireJwt = options?.requireJwt ?? true;
+  const missing: string[] = [];
+
+  if (!process.env.DATABASE_URL?.trim()) {
+    missing.push('DATABASE_URL');
+  }
+
+  if (requireJwt) {
+    const secret = process.env.JWT_SECRET?.trim() ?? '';
+    if (!secret) {
+      missing.push('JWT_SECRET');
+    } else if (secret.length < 16) {
+      missing.push('JWT_SECRET (минимум 16 символов)');
+    }
+  }
+
+  if (missing.length > 0) {
+    const message = `Invalid environment configuration: ${missing.join(', ')}`;
+    return { ok: false, missing, message };
+  }
+
+  return { ok: true, missing: [], message: '' };
+}
+
+export function formatEnvSetupHint(missing: string[]): string {
+  const list = missing.join(', ');
+  if (process.env.VERCEL === '1') {
+    return `Сервер не настроен: добавьте ${list} в Vercel → Project → Settings → Environment Variables (Production), затем Redeploy`;
+  }
+  return `Сервер не настроен: задайте ${list} в .env в корне проекта`;
+}
+
 export function loadConfig(): AppConfig {
   if (cached) return cached;
 
   const parsed = envSchema.safeParse(process.env);
   if (!parsed.success) {
-    const message = parsed.error.issues
-      .map((i) => `${i.path.join('.')}: ${i.message}`)
-      .join('; ');
-    throw new Error(`Invalid environment configuration: ${message}`);
+    const check = checkEnv();
+    const message =
+      check.message ||
+      parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ');
+    throw new Error(message.startsWith('Invalid') ? message : `Invalid environment configuration: ${message}`);
   }
 
   const env = parsed.data;
@@ -50,6 +94,15 @@ export function loadConfig(): AppConfig {
     isProduction: env.NODE_ENV === 'production',
   };
   return cached;
+}
+
+export function loadCatalogConfig(): { DATABASE_URL: string } {
+  const parsed = catalogEnvSchema.safeParse(process.env);
+  if (!parsed.success) {
+    const check = checkEnv({ requireJwt: false });
+    throw new Error(check.message || 'Invalid environment configuration: DATABASE_URL');
+  }
+  return parsed.data;
 }
 
 export function resetConfigCache(): void {

@@ -24,6 +24,8 @@
     "db:seed": "node scripts/pg-terminate-idle-tx.mjs && npm run db:seed -w server",
     "db:setup": "npm run db:migrate:deploy -w server && npm run db:seed -w server",
     "db:migrate:deploy": "npm run db:migrate:deploy -w server",
+    "db:check-schema": "node scripts/check-db-schema.mjs",
+    "db:apply-auth-migrations": "node scripts/apply-pending-auth-migrations.mjs",
     "db:reset": "npm run db:reset -w server",
     "test": "npm run test -w server",
     "test:unit": "npm run test:unit -w server",
