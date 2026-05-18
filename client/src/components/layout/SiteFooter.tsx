@@ -1,32 +1,11 @@
 import { Link } from 'react-router-dom';
 import styles from './SiteFooter.module.css';
 
-const TRUST = [
-  { icon: '🚚', title: 'Доставка', text: 'Курьер и ПВЗ, от 1 дня' },
-  { icon: '📦', title: 'Самовывоз', text: 'Пункты выдачи по России' },
-  { icon: '💳', title: 'Оплата', text: 'Карта, СБП, при получении' },
-  { icon: '🛡', title: 'Гарантии', text: 'Защита покупателя и возврат' },
-] as const;
-
 export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
     <footer className={styles.footer}>
-      <div className={styles.trustRow} aria-label="Преимущества">
-        {TRUST.map((item) => (
-          <div key={item.title} className={styles.trustCard}>
-            <span className={styles.trustIcon} aria-hidden>
-              {item.icon}
-            </span>
-            <div className={styles.trustText}>
-              <strong>{item.title}</strong>
-              <span>{item.text}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
       <div className={styles.inner}>
         <div className={styles.columns}>
           <div className={styles.col}>

@@ -7,8 +7,6 @@ import { HeroCarousel } from '../components/HeroCarousel/HeroCarousel';
 import { HomeProductSection } from '../components/HomeProductSection/HomeProductSection';
 import { HomeQuickFilters } from '../components/HomeQuickFilters/HomeQuickFilters';
 import { ProductRail } from '../components/ProductRail/ProductRail';
-import { PromoStrip } from '../components/PromoStrip/PromoStrip';
-import { TrustBar } from '../components/TrustBar/TrustBar';
 import { useCartStore } from '../stores/cartStore';
 import { ApiClientError } from '../api/client';
 import styles from './HomePage.module.css';
@@ -73,8 +71,6 @@ export function HomePage() {
   return (
     <div className={styles.page}>
       <HeroCarousel />
-      <PromoStrip />
-
       <div className={styles.mobileOnly}>
         <section className={styles.block}>
           <h2 className={styles.blockTitle}>Категории</h2>
@@ -116,7 +112,6 @@ export function HomePage() {
       </div>
 
       <div className={styles.desktopOnly}>
-        <TrustBar />
         <CategoryTabs
           categories={categories}
           hits={hits}
