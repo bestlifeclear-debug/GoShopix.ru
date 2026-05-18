@@ -34,7 +34,7 @@
     "test:e2e": "cypress run",
     "test:e2e:open": "cypress open",
     "typecheck": "npm run build -w shared && npm run build -w server && npm run build -w client",
-    "prepare": "husky"
+    "prepare": "node scripts/prepare.mjs"
   },
   "dependencies": {
     "serverless-http": "^3.2.0"
