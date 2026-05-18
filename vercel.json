@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "HUSKY=0 npm install",
+  "installCommand": "HUSKY=0 npm install --include=dev",
   "buildCommand": "npm run build:vercel",
   "outputDirectory": "client/dist",
   "framework": null,
