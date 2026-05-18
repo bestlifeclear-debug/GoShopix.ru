@@ -64,6 +64,8 @@ export interface ProductListItem {
   rating: number;
   reviewCount: number;
   promoBadge: string | null;
+  deliveryDaysMin: number | null;
+  deliveryDaysMax: number | null;
   imageUrl: string | null;
   images: ProductImageThumb[];
   category: { id: string; name: string; slug: string } | null;
@@ -98,6 +100,11 @@ export interface ProductDetail extends Omit<ProductListItem, 'images'> {
   images: ProductGalleryImage[];
   attributes: { slug: string; name: string; value: string }[];
   variants: ProductVariant[];
+}
+
+export interface ProductFacets {
+  brands: string[];
+  attributes: { slug: string; name: string; values: string[] }[];
 }
 
 export interface ProductsListResponse {

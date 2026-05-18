@@ -1,7 +1,17 @@
 import { useCallback, useEffect, useRef, useState, type TouchEvent } from 'react';
 import { Link } from 'react-router-dom';
+import { CountdownTimer } from '../CountdownTimer/CountdownTimer';
 import { IconChevronLeft, IconChevronRight } from '../../design-system/icons/Icons';
 import styles from './HeroCarousel.module.css';
+
+function endOfCurrentWeek(): Date {
+  const d = new Date();
+  const day = d.getDay();
+  const add = day === 0 ? 0 : 7 - day;
+  d.setDate(d.getDate() + add);
+  d.setHours(23, 59, 59, 999);
+  return d;
+}
 
 const AUTOPLAY_MS = 4000;
 const SWIPE_THRESHOLD_PX = 48;
@@ -17,6 +27,7 @@ const SLIDES = [
     image: '/product-images/gophone-x-1.svg',
     imageAlt: 'Смартфон',
     tone: 'rose',
+    countdownEndsAt: endOfCurrentWeek(),
     cta: { to: '/catalog?categorySlug=electronics', label: 'Купить со скидкой' },
   },
   {
@@ -70,20 +81,21 @@ const SLIDES = [
 ] as const;
 
 export function HeroCarousel() {
+  const slides = SLIDES;
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchStartX = useRef<number | null>(null);
 
   const goTo = useCallback((next: number) => {
-    setIndex((next + SLIDES.length) % SLIDES.length);
-  }, []);
+    setIndex((next + slides.length) % slides.length);
+  }, [slides.length]);
 
   const next = useCallback(() => goTo(index + 1), [goTo, index]);
   const prev = useCallback(() => goTo(index - 1), [goTo, index]);
 
   useEffect(() => {
     if (paused) return;
-    const timer = window.setInterval(() => setIndex((i) => (i + 1) % SLIDES.length), AUTOPLAY_MS);
+    const timer = window.setInterval(() => setIndex((i) => (i + 1) % slides.length), AUTOPLAY_MS);
     return () => window.clearInterval(timer);
   }, [paused]);
 
@@ -115,11 +127,11 @@ export function HeroCarousel() {
     >
       <div className={styles.viewport}>
         <div className={styles.track} style={{ transform: `translateX(-${index * 100}%)` }}>
-          {SLIDES.map((slide) => (
+          {slides.map((slide) => (
             <article
               key={slide.id}
               className={`${styles.slide} ${styles[slide.tone]}`}
-              aria-hidden={SLIDES[index].id !== slide.id}
+              aria-hidden={slides[index].id !== slide.id}
             >
               <div className={styles.slideInner}>
                 <div className={styles.copy}>
@@ -127,6 +139,9 @@ export function HeroCarousel() {
                   <p className={styles.eyebrow}>{slide.eyebrow}</p>
                   <h1 className={styles.title}>{slide.title}</h1>
                   <p className={styles.text}>{slide.text}</p>
+                  {'countdownEndsAt' in slide && slide.countdownEndsAt && (
+                    <CountdownTimer endsAt={slide.countdownEndsAt} className={styles.countdown} />
+                  )}
                   <Link to={slide.cta.to} className={styles.btnCta}>
                     {slide.cta.label}
                   </Link>
@@ -151,7 +166,7 @@ export function HeroCarousel() {
       </button>
 
       <div className={styles.dots} role="tablist">
-        {SLIDES.map((slide, i) => (
+        {slides.map((slide, i) => (
           <button
             key={slide.id}
             type="button"

@@ -19,6 +19,8 @@ import { parseAttributesFromQuery } from '../utils/query.js';
 
 export const productsRouter = Router();
 
+const ELECTRONICS_FILTER_ATTRS = ['storage', 'screen-size'] as const;
+
 async function resolveCategoryIds(
   categoryId?: string,
   categorySlug?: string,
@@ -81,6 +83,63 @@ async function productIdsMatchingAttributes(
   return candidateIds ?? undefined;
 }
 
+productsRouter.get('/facets', async (req, res, next) => {
+  try {
+    const categorySlug =
+      typeof req.query.categorySlug === 'string' ? req.query.categorySlug : undefined;
+    const categoryIds = await resolveCategoryIds(undefined, categorySlug);
+    const where: Prisma.ProductWhereInput = { isPublished: true };
+    if (categoryIds !== undefined) {
+      if (categoryIds.length === 0) {
+        ok(res, { brands: [], attributes: [] });
+        return;
+      }
+      where.categoryId = { in: categoryIds };
+    }
+
+    const [brandRows, attrValueRows] = await Promise.all([
+      prisma.product.findMany({
+        where: { ...where, brand: { not: null } },
+        select: { brand: true },
+        distinct: ['brand'],
+        orderBy: { brand: 'asc' },
+      }),
+      prisma.productAttributeValue.findMany({
+        where: {
+          product: where,
+          attribute: { slug: { in: [...ELECTRONICS_FILTER_ATTRS] } },
+        },
+        select: {
+          value: true,
+          attribute: { select: { slug: true, name: true } },
+        },
+      }),
+    ]);
+
+    const attrMap = new Map<string, { slug: string; name: string; values: Set<string> }>();
+    for (const row of attrValueRows) {
+      const slug = row.attribute.slug;
+      let entry = attrMap.get(slug);
+      if (!entry) {
+        entry = { slug, name: row.attribute.name, values: new Set() };
+        attrMap.set(slug, entry);
+      }
+      entry.values.add(row.value);
+    }
+
+    ok(res, {
+      brands: brandRows.map((r) => r.brand!).filter(Boolean),
+      attributes: [...attrMap.values()].map((a) => ({
+        slug: a.slug,
+        name: a.name,
+        values: [...a.values].sort((x, y) => x.localeCompare(y, 'ru')),
+      })),
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 productsRouter.get('/', validate({ query: productsQuerySchema }), async (req, res, next) => {
   try {
     const {
@@ -92,6 +151,9 @@ productsRouter.get('/', validate({ query: productsQuerySchema }), async (req, re
       maxPrice,
       q,
       sort,
+      brand,
+      brands,
+      inStock,
     } = req.query as unknown as {
       page: number;
       limit: number;
@@ -100,7 +162,16 @@ productsRouter.get('/', validate({ query: productsQuerySchema }), async (req, re
       minPrice?: number;
       maxPrice?: number;
       q?: string;
-      sort: 'newest' | 'popular' | 'price_asc' | 'price_desc' | 'name_asc';
+      sort:
+        | 'newest'
+        | 'popular'
+        | 'price_asc'
+        | 'price_desc'
+        | 'name_asc'
+        | 'rating_desc';
+      brand?: string;
+      brands?: string;
+      inStock?: boolean;
     };
 
     const attributes = parseAttributesFromQuery(req.query as Record<string, unknown>);
@@ -130,6 +201,18 @@ productsRouter.get('/', validate({ query: productsQuerySchema }), async (req, re
       ];
     }
 
+    const brandList = [
+      ...(brand ? [brand] : []),
+      ...(brands ? brands.split(',').map((b) => b.trim()).filter(Boolean) : []),
+    ];
+    if (brandList.length > 0) {
+      where.brand = brandList.length === 1 ? brandList[0] : { in: brandList };
+    }
+
+    if (inStock === true) {
+      where.variants = { some: { stock: { gt: 0 } } };
+    }
+
     if (attributes) {
       const attrProductIds = await productIdsMatchingAttributes(attributes);
       if (attrProductIds !== undefined) {
@@ -148,9 +231,11 @@ productsRouter.get('/', validate({ query: productsQuerySchema }), async (req, re
           ? { price: 'desc' }
           : sort === 'name_asc'
             ? { name: 'asc' }
-            : sort === 'popular'
-              ? [{ reviewCount: 'desc' }, { rating: 'desc' }]
-              : { createdAt: 'desc' };
+            : sort === 'rating_desc'
+              ? [{ rating: 'desc' }, { reviewCount: 'desc' }]
+              : sort === 'popular'
+                ? [{ reviewCount: 'desc' }, { rating: 'desc' }]
+                : { createdAt: 'desc' };
 
     const [total, rows] = await Promise.all([
       prisma.product.count({ where }),

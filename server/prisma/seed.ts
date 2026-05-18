@@ -150,6 +150,8 @@ async function main() {
   let attrBrand: { id: string };
   let attrColor: { id: string };
   let attrMaterial: { id: string };
+  let attrStorage: { id: string };
+  let attrScreen: { id: string };
 
   if (resumeCatalog) {
     console.log('Resuming seed: catalog only…');
@@ -170,6 +172,8 @@ async function main() {
     attrBrand = await db((p) => p.productAttribute.findUniqueOrThrow({ where: { slug: 'brand' } }));
     attrColor = await db((p) => p.productAttribute.findUniqueOrThrow({ where: { slug: 'color' } }));
     attrMaterial = await db((p) => p.productAttribute.findUniqueOrThrow({ where: { slug: 'material' } }));
+    attrStorage = await db((p) => p.productAttribute.findUniqueOrThrow({ where: { slug: 'storage' } }));
+    attrScreen = await db((p) => p.productAttribute.findUniqueOrThrow({ where: { slug: 'screen-size' } }));
   } else {
   admin = await createUser({
     email: 'admin@goshopix.ru',
@@ -299,6 +303,16 @@ async function main() {
   attrMaterial = await db((p) =>
     p.productAttribute.create({ data: { name: 'Материал', slug: 'material', type: 'TEXT' } }),
   );
+
+  attrStorage = await db((p) =>
+    p.productAttribute.create({ data: { name: 'Объём памяти', slug: 'storage', type: 'SELECT' } }),
+  );
+
+  attrScreen = await db((p) =>
+    p.productAttribute.create({
+      data: { name: 'Диагональ экрана', slug: 'screen-size', type: 'SELECT' },
+    }),
+  );
   }
 
   await terminateStuckPrismaSessions();
@@ -314,6 +328,8 @@ async function main() {
     attrBrandId: attrBrand.id,
     attrColorId: attrColor.id,
     attrMaterialId: attrMaterial.id,
+    attrStorageId: attrStorage.id,
+    attrScreenId: attrScreen.id,
   });
 
   const phone = catalog.find((p) => p.slug === 'gophone-x')!;

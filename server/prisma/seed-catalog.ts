@@ -12,6 +12,8 @@ type SeedCtx = {
   attrBrandId: string;
   attrColorId: string;
   attrMaterialId: string;
+  attrStorageId: string;
+  attrScreenId: string;
 };
 
 /** Локальные файлы из client/public — picsum.photos часто недоступен (403). */
@@ -70,6 +72,10 @@ export async function seedCatalogProducts(run: PrismaRun, ctx: SeedCtx) {
       deliveryDaysMin: 1,
       deliveryDaysMax: 3,
       brandAttr: 'GoPhone',
+      extraAttrs: [
+        { attributeId: ctx.attrStorageId, value: '128 ГБ' },
+        { attributeId: ctx.attrScreenId, value: '6.5"' },
+      ],
       imageCount: 4,
       variants: [
         {
@@ -111,6 +117,10 @@ export async function seedCatalogProducts(run: PrismaRun, ctx: SeedCtx) {
       deliveryDaysMin: 2,
       deliveryDaysMax: 4,
       brandAttr: 'ProBook',
+      extraAttrs: [
+        { attributeId: ctx.attrStorageId, value: '512 ГБ' },
+        { attributeId: ctx.attrScreenId, value: '15.6"' },
+      ],
       imageCount: 4,
       variants: [
         { sku: 'PROBOOK-15-512', name: '512 ГБ SSD', price: 89990, stock: 8, isDefault: true },

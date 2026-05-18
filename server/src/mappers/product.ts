@@ -57,6 +57,8 @@ export function mapProductListItem(row: ListRow) {
     rating: decimal(row.rating),
     reviewCount: row.reviewCount,
     promoBadge: row.promoBadge,
+    deliveryDaysMin: row.deliveryDaysMin,
+    deliveryDaysMax: row.deliveryDaysMax,
     imageUrl: images[0]?.url ?? null,
     images,
     category: row.category,

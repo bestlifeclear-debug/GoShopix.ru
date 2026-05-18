@@ -45,6 +45,8 @@ export function ProductGrid({
           rating={product.rating}
           reviewCount={product.reviewCount}
           promoBadge={product.promoBadge}
+          deliveryDaysMin={product.deliveryDaysMin}
+          deliveryDaysMax={product.deliveryDaysMax}
           images={product.images}
           highlightPrice={highlightPrice}
           isHit={product.reviewCount >= 30}

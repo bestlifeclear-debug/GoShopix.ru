@@ -21,6 +21,7 @@ export interface HeaderProps {
   navLinks?: HeaderNavLink[];
   menuOpen?: boolean;
   onMenuToggle?: () => void;
+  extraActions?: ReactNode;
 }
 
 export function Header({
@@ -36,6 +37,7 @@ export function Header({
   navLinks = [],
   menuOpen = false,
   onMenuToggle,
+  extraActions,
 }: HeaderProps) {
   return (
     <header className={styles.header}>
@@ -75,6 +77,7 @@ export function Header({
           <div className={styles.searchGroup}>{searchSlot}</div>
 
           <div className={styles.actions}>
+            {extraActions}
             <Link to={favoritesTo} className={styles.iconBtn} aria-label="Избранное">
               <IconHeart />
             </Link>

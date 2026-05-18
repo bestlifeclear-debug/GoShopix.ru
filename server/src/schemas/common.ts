@@ -13,4 +13,11 @@ export const paginationQuerySchema = z.object({
   limit: z.coerce.number().int().positive().max(100).default(20),
 });
 
-export const sortEnum = z.enum(['newest', 'popular', 'price_asc', 'price_desc', 'name_asc']);
+export const sortEnum = z.enum([
+  'newest',
+  'popular',
+  'price_asc',
+  'price_desc',
+  'name_asc',
+  'rating_desc',
+]);

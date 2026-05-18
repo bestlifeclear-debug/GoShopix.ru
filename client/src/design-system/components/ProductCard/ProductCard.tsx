@@ -1,4 +1,4 @@
-import { formatPrice } from '@goshopix/shared';
+import { formatDeliveryLabel, formatPrice } from '@goshopix/shared';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IconChevronLeft, IconChevronRight, IconHeart } from '../../icons/Icons';
@@ -21,12 +21,16 @@ export interface ProductCardProps {
   rating: number;
   reviewCount: number;
   promoBadge?: string | null;
+  deliveryDaysMin?: number | null;
+  deliveryDaysMax?: number | null;
   images: ProductCardImage[];
   highlightPrice?: boolean;
   isHit?: boolean;
-  onAddToCart?: (e: React.MouseEvent) => void;
+  onAddToCart?: (e: React.MouseEvent) => void | Promise<void>;
   onFavorite?: (e: React.MouseEvent) => void;
 }
+
+type CartUiState = 'idle' | 'loading' | 'success';
 
 export function ProductCard({
   productId,
@@ -38,6 +42,8 @@ export function ProductCard({
   rating,
   reviewCount,
   promoBadge,
+  deliveryDaysMin,
+  deliveryDaysMax,
   images,
   highlightPrice = false,
   isHit,
@@ -48,6 +54,9 @@ export function ProductCard({
   const [index, setIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
   const [fav, setFav] = useState(false);
+  const [cartState, setCartState] = useState<CartUiState>('idle');
+
+  const deliveryLabel = formatDeliveryLabel(deliveryDaysMin, deliveryDaysMax);
 
   const go = useCallback(
     (dir: -1 | 1) => (e: React.MouseEvent) => {
@@ -58,8 +67,25 @@ export function ProductCard({
     [slides.length],
   );
 
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!onAddToCart || cartState === 'loading') return;
+    setCartState('loading');
+    try {
+      await onAddToCart(e);
+      setCartState('success');
+      window.setTimeout(() => setCartState('idle'), 1800);
+    } catch {
+      setCartState('idle');
+    }
+  };
+
   const current = slides[index] ?? slides[0];
   const showHit = isHit ?? reviewCount >= 50;
+
+  const cartLabel =
+    cartState === 'loading' ? 'Добавляем…' : cartState === 'success' ? 'В корзине ✓' : 'В корзину';
 
   return (
     <article
@@ -73,7 +99,13 @@ export function ProductCard({
       <div className={styles.media}>
         <Link to={`/product/${productId}`} className={styles.mediaLink} aria-label={title}>
           {current.url ? (
-            <img src={current.url} alt={current.alt ?? title} className={styles.image} loading="lazy" />
+            <img
+              src={current.url}
+              alt={current.alt ?? title}
+              className={styles.image}
+              loading="lazy"
+              decoding="async"
+            />
           ) : (
             <div className={styles.placeholder} aria-hidden>
               <span>GoShopix</span>
@@ -130,8 +162,17 @@ export function ProductCard({
           )}
         </div>
 
-        <Button size="sm" className={styles.cartBtn} onClick={onAddToCart}>
-          В корзину
+        {deliveryLabel && <p className={styles.delivery}>{deliveryLabel}</p>}
+
+        <Button
+          variant="outline"
+          size="sm"
+          loading={cartState === 'loading'}
+          className={`${styles.cartBtn} ${cartState === 'success' ? styles.cartBtnSuccess : ''}`}
+          onClick={handleAddToCart}
+          aria-live="polite"
+        >
+          {cartLabel}
         </Button>
       </div>
     </article>

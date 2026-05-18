@@ -8,6 +8,7 @@ import type {
   NotificationItem,
   NotificationSettings,
   ProductDetail,
+  ProductFacets,
   ProductsListResponse,
   User,
 } from './types.js';
@@ -31,8 +32,11 @@ export const authApi = {
 };
 
 export const productsApi = {
-  list: (params: Record<string, string | number | undefined>) =>
+  list: (params: Record<string, string | number | boolean | undefined>) =>
     apiFetch<ProductsListResponse>(`/api/products${buildQuery(params)}`),
+
+  facets: (params?: { categorySlug?: string }) =>
+    apiFetch<ProductFacets>(`/api/products/facets${buildQuery(params ?? {})}`),
 
   get: (id: string) => apiFetch<ProductDetail>(`/api/products/${id}`),
 };

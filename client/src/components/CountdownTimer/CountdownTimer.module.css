@@ -1,0 +1,37 @@
+.timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: rgb(255 255 255 / 0.2);
+  backdrop-filter: blur(6px);
+  font-size: var(--font-size-sm);
+  color: inherit;
+}
+
+.unit {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 2.25rem;
+  line-height: 1.1;
+}
+
+.unit strong {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.unit small {
+  font-size: var(--font-size-xs);
+  opacity: 0.85;
+}
+
+.sep {
+  font-weight: var(--font-weight-bold);
+  opacity: 0.7;
+  margin-top: -0.5em;
+}

@@ -234,6 +234,18 @@
   color: var(--color-text-muted);
 }
 
+.clearAttr {
+  margin: 4px 8px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .content {
   min-width: 0;
 }

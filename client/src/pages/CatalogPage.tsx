@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { categoriesApi, productsApi } from '../api/index';
-import type { CategoryNode, ProductListItem } from '../api/types';
+import type { CategoryNode, ProductFacets, ProductListItem } from '../api/types';
 import { ProductGrid } from '../components/ProductGrid';
 import { Button, StatusBadge } from '../design-system';
 import { IconClose, IconFilter } from '../design-system/icons/Icons';
@@ -10,16 +10,30 @@ import { ApiClientError } from '../api/client';
 import styles from './CatalogPage.module.css';
 
 const SORT_OPTIONS = [
-  { value: 'popular', label: 'Популярность' },
-  { value: 'newest', label: 'Новинки' },
-  { value: 'price_asc', label: 'Цена ↑' },
-  { value: 'price_desc', label: 'Цена ↓' },
-  { value: 'name_asc', label: 'По названию' },
+  { value: 'popular', label: 'По популярности' },
+  { value: 'price_asc', label: 'Сначала дешевле' },
+  { value: 'rating_desc', label: 'По рейтингу' },
+  { value: 'newest', label: 'По новизне' },
 ] as const;
+
+const ATTR_PREFIX = 'attr_';
+
+function getAttrFilters(params: URLSearchParams): Record<string, string> {
+  const attrs: Record<string, string> = {};
+  params.forEach((value, key) => {
+    if (key.startsWith(ATTR_PREFIX) && value) {
+      attrs[key.slice(ATTR_PREFIX.length)] = value;
+    }
+  });
+  return attrs;
+}
+
+const ELECTRONICS_SLUGS = new Set(['electronics', 'smartphones', 'laptops']);
 
 export function CatalogPage() {
   const [params, setParams] = useSearchParams();
   const [categories, setCategories] = useState<CategoryNode[]>([]);
+  const [facets, setFacets] = useState<ProductFacets>({ brands: [], attributes: [] });
   const [products, setProducts] = useState<ProductListItem[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -32,11 +46,31 @@ export function CatalogPage() {
   const categorySlug = params.get('categorySlug') ?? '';
   const minPrice = params.get('minPrice') ?? '';
   const maxPrice = params.get('maxPrice') ?? '';
+  const brandsParam = params.get('brands') ?? '';
+  const inStock = params.get('inStock') === 'true';
+  const selectedBrands = useMemo(
+    () => brandsParam.split(',').map((b) => b.trim()).filter(Boolean),
+    [brandsParam],
+  );
+  const attrFilters = useMemo(() => getAttrFilters(params), [params]);
+
+  const flatCategories = useMemo(
+    () => categories.flatMap((c) => [c, ...c.children, ...c.children.flatMap((ch) => ch.children)]),
+    [categories],
+  );
+
+  const activeCategory = flatCategories.find((c) => c.slug === categorySlug);
+  const showAttributeFilters =
+    ELECTRONICS_SLUGS.has(categorySlug) ||
+    (activeCategory?.parentId &&
+      flatCategories.some(
+        (c) => c.id === activeCategory.parentId && ELECTRONICS_SLUGS.has(c.slug),
+      ));
 
   const loadProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await productsApi.list({
+      const query: Record<string, string | number | boolean | undefined> = {
         page,
         limit: 16,
         sort,
@@ -44,17 +78,27 @@ export function CatalogPage() {
         categorySlug: categorySlug || undefined,
         minPrice: minPrice ? Number(minPrice) : undefined,
         maxPrice: maxPrice ? Number(maxPrice) : undefined,
-      });
+        brands: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
+        inStock: inStock ? 'true' : undefined,
+      };
+      for (const [slug, value] of Object.entries(attrFilters)) {
+        query[`attr_${slug}`] = value;
+      }
+      const res = await productsApi.list(query);
       setProducts(res.items);
       setTotalPages(res.meta.totalPages);
     } finally {
       setLoading(false);
     }
-  }, [page, sort, q, categorySlug, minPrice, maxPrice]);
+  }, [page, sort, q, categorySlug, minPrice, maxPrice, selectedBrands, inStock, attrFilters]);
 
   useEffect(() => {
     void categoriesApi.tree().then(setCategories);
   }, []);
+
+  useEffect(() => {
+    void productsApi.facets(categorySlug ? { categorySlug } : undefined).then(setFacets);
+  }, [categorySlug]);
 
   useEffect(() => {
     void loadProducts();
@@ -75,20 +119,48 @@ export function CatalogPage() {
     setParams(next);
   };
 
+  const toggleBrand = (brand: string) => {
+    const next = new URLSearchParams(params);
+    const list = selectedBrands.includes(brand)
+      ? selectedBrands.filter((b) => b !== brand)
+      : [...selectedBrands, brand];
+    if (list.length > 0) next.set('brands', list.join(','));
+    else next.delete('brands');
+    next.set('page', '1');
+    setParams(next);
+  };
+
+  const setAttrFilter = (slug: string, value: string) => {
+    const next = new URLSearchParams(params);
+    const key = `${ATTR_PREFIX}${slug}`;
+    if (value) next.set(key, value);
+    else next.delete(key);
+    next.set('page', '1');
+    setParams(next);
+  };
+
   const handleAdd = async (product: ProductListItem) => {
+    const detail = await productsApi.get(product.id);
+    const variant = detail.variants.find((v) => v.isDefault) ?? detail.variants[0];
+    if (!variant) throw new Error('Нет варианта');
+    await addToCart(variant.id);
+  };
+
+  const handleAddSafe = async (product: ProductListItem) => {
     try {
-      const detail = await productsApi.get(product.id);
-      const variant = detail.variants.find((v) => v.isDefault) ?? detail.variants[0];
-      if (variant) await addToCart(variant.id);
+      await handleAdd(product);
     } catch (e) {
       if (e instanceof ApiClientError && e.status === 401) {
         window.location.href = '/account?tab=login';
+        return;
       }
+      throw e;
     }
   };
 
-  const flatCategories = categories.flatMap((c) => [c, ...c.children]);
-  const hasActiveFilters = Boolean(categorySlug || minPrice || maxPrice || q);
+  const hasActiveFilters = Boolean(
+    categorySlug || minPrice || maxPrice || q || inStock || selectedBrands.length > 0 || Object.keys(attrFilters).length > 0,
+  );
 
   const resetFilters = () => {
     const next = new URLSearchParams();
@@ -96,13 +168,142 @@ export function CatalogPage() {
     setParams(next);
   };
 
+  const pageTitle = activeCategory?.name ?? (q ? `Поиск: ${q}` : 'Каталог');
+
+  const sidebarContent = (
+    <>
+      <fieldset className={styles.filterGroup}>
+        <legend className={styles.filterLabel}>Категория</legend>
+        <ul className={styles.checkList}>
+          <li>
+            <label className={styles.checkItem}>
+              <input
+                type="radio"
+                name="category"
+                checked={!categorySlug}
+                onChange={() => setFilter('categorySlug', '')}
+              />
+              <span>Все категории</span>
+            </label>
+          </li>
+          {flatCategories.map((c) => (
+            <li key={c.id}>
+              <label className={`${styles.checkItem} ${c.parentId ? styles.checkItemChild : ''}`}>
+                <input
+                  type="radio"
+                  name="category"
+                  checked={categorySlug === c.slug}
+                  onChange={() => setFilter('categorySlug', c.slug)}
+                />
+                <span>{c.name}</span>
+              </label>
+            </li>
+          ))}
+        </ul>
+      </fieldset>
+
+      <fieldset className={styles.filterGroup}>
+        <legend className={styles.filterLabel}>Цена, ₽</legend>
+        <div className={styles.priceRow}>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={0}
+            placeholder="от"
+            value={minPrice}
+            onChange={(e) => setFilter('minPrice', e.target.value)}
+            className={styles.filterControl}
+            aria-label="Цена от"
+          />
+          <span className={styles.priceDash} aria-hidden>
+            —
+          </span>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={0}
+            placeholder="до"
+            value={maxPrice}
+            onChange={(e) => setFilter('maxPrice', e.target.value)}
+            className={styles.filterControl}
+            aria-label="Цена до"
+          />
+        </div>
+      </fieldset>
+
+      {facets.brands.length > 0 && (
+        <fieldset className={styles.filterGroup}>
+          <legend className={styles.filterLabel}>Бренд</legend>
+          <ul className={styles.checkList}>
+            {facets.brands.map((brand) => (
+              <li key={brand}>
+                <label className={styles.checkItem}>
+                  <input
+                    type="checkbox"
+                    checked={selectedBrands.includes(brand)}
+                    onChange={() => toggleBrand(brand)}
+                  />
+                  <span>{brand}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+        </fieldset>
+      )}
+
+      <fieldset className={styles.filterGroup}>
+        <legend className={styles.filterLabel}>Наличие</legend>
+        <label className={styles.checkItem}>
+          <input
+            type="checkbox"
+            checked={inStock}
+            onChange={(e) => setFilter('inStock', e.target.checked ? 'true' : '')}
+          />
+          <span>В наличии</span>
+        </label>
+      </fieldset>
+
+      {showAttributeFilters &&
+        facets.attributes.map((attr) => (
+          <fieldset key={attr.slug} className={styles.filterGroup}>
+            <legend className={styles.filterLabel}>{attr.name}</legend>
+            <ul className={styles.checkList}>
+              {attr.values.map((value) => (
+                <li key={value}>
+                  <label className={styles.checkItem}>
+                    <input
+                      type="radio"
+                      name={`attr-${attr.slug}`}
+                      checked={attrFilters[attr.slug] === value}
+                      onChange={() => setAttrFilter(attr.slug, value)}
+                    />
+                    <span>{value}</span>
+                  </label>
+                </li>
+              ))}
+              {attrFilters[attr.slug] && (
+                <li>
+                  <button
+                    type="button"
+                    className={styles.clearAttr}
+                    onClick={() => setAttrFilter(attr.slug, '')}
+                  >
+                    Сбросить
+                  </button>
+                </li>
+              )}
+            </ul>
+          </fieldset>
+        ))}
+
+      {q && <StatusBadge variant="neutral" label={`Поиск: ${q}`} />}
+    </>
+  );
+
   return (
     <div className={styles.page}>
       <div className={styles.toolbar}>
-        <h1 className={styles.title}>Каталог</h1>
-        <Button variant="outline" size="sm" className={styles.filterToggle} onClick={() => setFiltersOpen((o) => !o)}>
-          {filtersOpen ? 'Скрыть' : 'Все фильтры'}
-        </Button>
+        <h1 className={styles.title}>{pageTitle}</h1>
       </div>
 
       <div className={styles.mobileBar}>
@@ -128,7 +329,7 @@ export function CatalogPage() {
         </label>
       </div>
 
-      <div className={styles.sortBar}>
+      <div className={styles.sortBar} role="group" aria-label="Сортировка товаров">
         {SORT_OPTIONS.map((o) => (
           <button
             key={o.value}
@@ -141,21 +342,17 @@ export function CatalogPage() {
         ))}
         {hasActiveFilters && (
           <button type="button" className={styles.resetBtn} onClick={resetFilters}>
-            Сбросить
+            Сбросить фильтры
           </button>
         )}
       </div>
 
       {filtersOpen && (
-        <div
-          className={styles.filterOverlay}
-          role="presentation"
-          onClick={() => setFiltersOpen(false)}
-        />
+        <div className={styles.filterOverlay} role="presentation" onClick={() => setFiltersOpen(false)} />
       )}
 
       <div className={styles.layout}>
-        <aside className={`${styles.sidebar} ${filtersOpen ? styles.sidebarOpen : ''}`}>
+        <aside className={`${styles.sidebar} ${filtersOpen ? styles.sidebarOpen : ''}`} aria-label="Фильтры">
           <div className={styles.sheetHead}>
             <h2 className={styles.sidebarTitle}>Фильтры</h2>
             <button
@@ -167,90 +364,14 @@ export function CatalogPage() {
               <IconClose />
             </button>
           </div>
-
-          <fieldset className={styles.filterGroup}>
-            <legend className={styles.filterLabel}>Категория</legend>
-            <ul className={styles.checkList}>
-              <li>
-                <label className={styles.checkItem}>
-                  <input
-                    type="radio"
-                    name="category"
-                    checked={!categorySlug}
-                    onChange={() => setFilter('categorySlug', '')}
-                  />
-                  <span>Все категории</span>
-                </label>
-              </li>
-              {flatCategories.map((c) => (
-                <li key={c.id}>
-                  <label className={`${styles.checkItem} ${c.parentId ? styles.checkItemChild : ''}`}>
-                    <input
-                      type="radio"
-                      name="category"
-                      checked={categorySlug === c.slug}
-                      onChange={() => setFilter('categorySlug', c.slug)}
-                    />
-                    <span>{c.name}</span>
-                  </label>
-                </li>
-              ))}
-            </ul>
-          </fieldset>
-
-          <fieldset className={styles.filterGroup}>
-            <legend className={styles.filterLabel}>Цена, ₽</legend>
-            <div className={styles.priceRow}>
-              <input
-                type="number"
-                inputMode="numeric"
-                min={0}
-                placeholder="от"
-                value={minPrice}
-                onChange={(e) => setFilter('minPrice', e.target.value)}
-                className={styles.filterControl}
-                aria-label="Цена от"
-              />
-              <span className={styles.priceDash} aria-hidden>
-                —
-              </span>
-              <input
-                type="number"
-                inputMode="numeric"
-                min={0}
-                placeholder="до"
-                value={maxPrice}
-                onChange={(e) => setFilter('maxPrice', e.target.value)}
-                className={styles.filterControl}
-                aria-label="Цена до"
-              />
-            </div>
-          </fieldset>
-
-          <label className={styles.filterGroup}>
-            <span className={styles.filterLabel}>Сортировка</span>
-            <select
-              value={sort}
-              onChange={(e) => setFilter('sort', e.target.value)}
-              className={styles.filterControl}
-            >
-              {SORT_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          {q && <StatusBadge variant="neutral" label={`Поиск: ${q}`} />}
-
+          {sidebarContent}
           <Button className={styles.sheetApply} onClick={() => setFiltersOpen(false)}>
             Показать товары
           </Button>
         </aside>
 
         <div className={styles.content}>
-          <ProductGrid products={products} onAddToCart={handleAdd} loading={loading} />
+          <ProductGrid products={products} onAddToCart={handleAddSafe} loading={loading} />
 
           {totalPages > 1 && (
             <div className={styles.pagination}>

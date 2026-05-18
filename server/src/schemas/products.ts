@@ -8,6 +8,12 @@ export const productsQuerySchema = paginationQuerySchema.extend({
   maxPrice: z.coerce.number().nonnegative().optional(),
   q: z.string().min(1).max(200).optional(),
   sort: sortEnum.default('newest'),
+  brand: z.string().min(1).max(100).optional(),
+  brands: z.string().min(1).max(500).optional(),
+  inStock: z
+    .string()
+    .optional()
+    .transform((v) => (v === 'true' ? true : undefined)),
   attributes: z
     .record(z.string(), z.string())
     .optional()
