@@ -31,25 +31,38 @@ async function parseJsonSafe(res: Response): Promise<ApiSuccess<unknown> | ApiEr
   }
 }
 
+const REQUEST_TIMEOUT_MS = 25_000;
+
 export async function apiFetch<T>(
   path: string,
   options: RequestInit & { auth?: boolean } = {},
 ): Promise<T> {
   const { auth = false, headers, ...rest } = options;
   const token = getToken();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   let res: Response;
   try {
     res = await fetch(`${apiBase}${path}`, {
       ...rest,
+      signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',
         ...(auth && token ? { Authorization: `Bearer ${token}` } : {}),
         ...headers,
       },
     });
-  } catch {
+  } catch (e) {
+    if (e instanceof Error && e.name === 'AbortError') {
+      throw new ApiClientError(
+        'Сервер не ответил вовремя. Попробуйте ещё раз через несколько секунд',
+        0,
+      );
+    }
     throw new ApiClientError('Нет связи с сервером. Проверьте подключение к интернету', 0);
+  } finally {
+    clearTimeout(timeoutId);
   }
 
   const json = await parseJsonSafe(res);

@@ -13,6 +13,18 @@
       "memory": 1024,
       "maxDuration": 60
     },
+    "api/auth/login.ts": {
+      "memory": 512,
+      "maxDuration": 30
+    },
+    "api/auth/register.ts": {
+      "memory": 512,
+      "maxDuration": 30
+    },
+    "api/auth/me.ts": {
+      "memory": 512,
+      "maxDuration": 30
+    },
     "api/health/live.ts": {
       "memory": 256,
       "maxDuration": 10

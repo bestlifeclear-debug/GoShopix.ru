@@ -44,15 +44,21 @@ let redisReady = false;
 
 async function initRedis(): Promise<void> {
   const url = process.env.REDIS_URL;
-  if (!url || redisReady) return;
+  // На Vercel Redis обычно недоступен — ioredis может зависать на connect и блокировать API.
+  if (!url || redisReady || process.env.VERCEL === '1') return;
 
   try {
     // Динамический импорт: ioredis опционален (npm install ioredis в server)
     const loadRedis = new Function('return import("ioredis")') as () => Promise<{
-      default: new (url: string) => RedisLike;
+      default: new (url: string, opts?: object) => RedisLike;
     }>;
     const mod = await loadRedis();
-    const client = new mod.default(url);
+    const client = new mod.default(url, {
+      connectTimeout: 3000,
+      maxRetriesPerRequest: 1,
+      enableOfflineQueue: false,
+      lazyConnect: true,
+    });
     client.on('error', (err: Error) => logger.warn('Redis error', { error: err.message }));
 
     backend = {
