@@ -36,10 +36,21 @@ export function SiteHeader() {
   const user = useAuthStore((s) => s.user);
   const cartCount = useCartStore((s) => s.itemCount());
   const fetchCart = useCartStore((s) => s.fetchCart);
+  const openDrawer = useCartStore((s) => s.openDrawer);
+  const initGuestCart = useCartStore((s) => s.initGuestCart);
 
   useEffect(() => {
-    if (token) void fetchCart();
-  }, [token, fetchCart]);
+    initGuestCart();
+    void fetchCart();
+  }, [token, fetchCart, initGuestCart]);
+
+  const handleCartClick = () => {
+    if (token) {
+      navigate('/cart');
+    } else {
+      openDrawer();
+    }
+  };
 
   useEffect(() => {
     void categoriesApi.tree().then(setCategories);
@@ -122,7 +133,8 @@ export function SiteHeader() {
         }
         extraActions={<ThemeToggle />}
         cartCount={cartCount}
-        onCartClick={() => navigate('/cart')}
+        onCartClick={handleCartClick}
+        accountTo={token ? '/account' : '/auth'}
         accountLabel={token ? 'Личный кабинет' : 'Войти'}
         navLinks={navLinks}
         menuOpen={menuOpen}
@@ -183,9 +195,16 @@ export function SiteHeader() {
                   {link.label}
                 </Link>
               ))}
-              <Link to="/cart" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
+              <button
+                type="button"
+                className={styles.mobileLink}
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleCartClick();
+                }}
+              >
                 Корзина{cartCount > 0 ? ` (${cartCount})` : ''}
-              </Link>
+              </button>
               {sellerLink}
             </div>
           </nav>

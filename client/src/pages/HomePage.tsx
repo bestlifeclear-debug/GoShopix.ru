@@ -7,8 +7,9 @@ import { HeroCarousel } from '../components/HeroCarousel/HeroCarousel';
 import { HomeProductSection } from '../components/HomeProductSection/HomeProductSection';
 import { HomeQuickFilters } from '../components/HomeQuickFilters/HomeQuickFilters';
 import { ProductRail } from '../components/ProductRail/ProductRail';
+import { snapshotFromDetail } from '../lib/cartSnapshot';
+import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
-import { ApiClientError } from '../api/client';
 import styles from './HomePage.module.css';
 
 function pickTopRated(items: ProductListItem[], limit: number) {
@@ -31,7 +32,9 @@ export function HomePage() {
   const [newItems, setNewItems] = useState<ProductListItem[]>([]);
   const [catalogPreview, setCatalogPreview] = useState<ProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const token = useAuthStore((s) => s.token);
   const addToCart = useCartStore((s) => s.addToCart);
+  const openDrawer = useCartStore((s) => s.openDrawer);
 
   useEffect(() => {
     async function load() {
@@ -60,11 +63,10 @@ export function HomePage() {
       const detail = await productsApi.get(product.id);
       const variant = detail.variants.find((v) => v.isDefault) ?? detail.variants[0];
       if (!variant) return;
-      await addToCart(variant.id);
-    } catch (e) {
-      if (e instanceof ApiClientError && e.status === 401) {
-        window.location.href = '/account?tab=login';
-      }
+      await addToCart(variant.id, 1, snapshotFromDetail(detail, variant));
+      if (!token) openDrawer();
+    } catch {
+      /* ignore */
     }
   };
 

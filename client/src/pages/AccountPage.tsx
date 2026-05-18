@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { formatPrice, getStatusDefinition } from '@goshopix/shared';
 import { favoritesApi, notificationsApi, ordersApi } from '../api/index';
 import type { FavoriteItem, NotificationItem, NotificationSettings, Order } from '../api/types';
 import { ProgressTracker } from '../components/ProgressTracker';
 import { ProductGrid } from '../components/ProductGrid';
-import { Button, Input, StatusBadge } from '../design-system';
+import { Button, StatusBadge } from '../design-system';
 import { useAuthStore } from '../stores/authStore';
 import styles from './AccountPage.module.css';
 
@@ -26,11 +26,7 @@ export function AccountPage() {
 
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
-  const login = useAuthStore((s) => s.login);
-  const register = useAuthStore((s) => s.register);
   const logout = useAuthStore((s) => s.logout);
-  const authError = useAuthStore((s) => s.error);
-  const isLoading = useAuthStore((s) => s.isLoading);
   const fetchMe = useAuthStore((s) => s.fetchMe);
 
   const [orders, setOrders] = useState<Order[]>([]);
@@ -39,11 +35,6 @@ export function AccountPage() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifSettings, setNotifSettings] = useState<NotificationSettings | null>(null);
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [isRegister, setIsRegister] = useState(false);
 
   useEffect(() => {
     if (token) void fetchMe();
@@ -89,66 +80,16 @@ export function AccountPage() {
     setParams(next);
   };
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      if (isRegister) {
-        await register({ email, password, firstName: firstName || undefined });
-      } else {
-        await login(email, password);
-      }
-      setTab('orders');
-    } catch {
-      /* error in store */
-    }
-  };
-
   const updateOrderInState = (updated: Order) => {
     setSelectedOrder(updated);
     setOrders((list) => list.map((o) => (o.id === updated.id ? updated : o)));
   };
 
   if (!token) {
-    return (
-      <div className={styles.page}>
-        <h1 className={styles.title}>Личный кабинет</h1>
-        <div className={styles.authCard}>
-          <h2>{isRegister ? 'Регистрация' : 'Вход'}</h2>
-          <form onSubmit={handleAuth} className={styles.authForm}>
-            <Input
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              data-testid="auth-email"
-            />
-            <Input
-              label="Пароль"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              data-testid="auth-password"
-            />
-            {isRegister && (
-              <Input label="Имя" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-            )}
-            {authError && <StatusBadge variant="error" label={authError} dot={false} />}
-            <Button type="submit" fullWidth loading={isLoading} data-testid="auth-submit">
-              {isRegister ? 'Зарегистрироваться' : 'Войти'}
-            </Button>
-          </form>
-          <button type="button" className={styles.switchAuth} onClick={() => setIsRegister((r) => !r)}>
-            {isRegister ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
-          </button>
-          <p className={styles.demoHint}>
-            Демо: <code>customer@goshopix.ru</code> / <code>password123</code>
-          </p>
-        </div>
-      </div>
-    );
+    const returnUrl = `/account${params.toString() ? `?${params.toString()}` : ''}`;
+    return <Navigate to={`/auth?returnUrl=${encodeURIComponent(returnUrl)}`} replace />;
   }
+
 
   return (
     <div className={styles.page}>
@@ -304,6 +245,9 @@ export function AccountPage() {
 
       {tab === 'settings' && (
         <div className={styles.settings}>
+          <p>
+            <strong>Логин:</strong> {user?.profile?.username ?? '—'}
+          </p>
           <p>
             <strong>Имя:</strong>{' '}
             {[user?.profile?.firstName, user?.profile?.lastName].filter(Boolean).join(' ') || '—'}

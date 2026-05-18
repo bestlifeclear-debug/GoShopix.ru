@@ -13,7 +13,7 @@ export function SellerGuard() {
   }, [token, fetchMe]);
 
   if (!token) {
-    return <Navigate to="/account?tab=login" state={{ from: location }} replace />;
+    return <Navigate to="/auth?returnUrl=/seller/dashboard" state={{ from: location }} replace />;
   }
 
   if (user && user.role !== 'SELLER') {

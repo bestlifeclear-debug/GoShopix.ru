@@ -5,8 +5,9 @@ import type { CategoryNode, ProductFacets, ProductListItem } from '../api/types'
 import { ProductGrid } from '../components/ProductGrid';
 import { Button, StatusBadge } from '../design-system';
 import { IconCheck, IconClose, IconFilter } from '../design-system/icons/Icons';
+import { snapshotFromDetail } from '../lib/cartSnapshot';
+import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
-import { ApiClientError } from '../api/client';
 import styles from './CatalogPage.module.css';
 
 const SORT_OPTIONS = [
@@ -72,7 +73,9 @@ export function CatalogPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const token = useAuthStore((s) => s.token);
   const addToCart = useCartStore((s) => s.addToCart);
+  const openDrawer = useCartStore((s) => s.openDrawer);
 
   const page = Number(params.get('page') ?? 1);
   const sort = params.get('sort') ?? 'popular';
@@ -175,22 +178,15 @@ export function CatalogPage() {
     setParams(next);
   };
 
-  const handleAdd = async (product: ProductListItem) => {
-    const detail = await productsApi.get(product.id);
-    const variant = detail.variants.find((v) => v.isDefault) ?? detail.variants[0];
-    if (!variant) throw new Error('Нет варианта');
-    await addToCart(variant.id);
-  };
-
   const handleAddSafe = async (product: ProductListItem) => {
     try {
-      await handleAdd(product);
-    } catch (e) {
-      if (e instanceof ApiClientError && e.status === 401) {
-        window.location.href = '/account?tab=login';
-        return;
-      }
-      throw e;
+      const detail = await productsApi.get(product.id);
+      const variant = detail.variants.find((v) => v.isDefault) ?? detail.variants[0];
+      if (!variant) return;
+      await addToCart(variant.id, 1, snapshotFromDetail(detail, variant));
+      if (!token) openDrawer();
+    } catch {
+      /* ignore add errors in grid */
     }
   };
 

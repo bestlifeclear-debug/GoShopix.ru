@@ -13,19 +13,54 @@ import type {
   User,
 } from './types.js';
 
+export interface CheckPhoneResponse {
+  exists: boolean;
+  maskedEmail?: string;
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+  devToken?: string;
+}
+
 export const authApi = {
+  checkPhone: (phone: string) =>
+    apiFetch<CheckPhoneResponse>('/api/auth/check-phone', {
+      method: 'POST',
+      body: JSON.stringify({ phone }),
+    }),
+
   register: (body: {
     email: string;
     password: string;
+    username: string;
     firstName?: string;
     lastName?: string;
-    phone?: string;
+    phone: string;
   }) => apiFetch<AuthResponse>('/api/auth/register', { method: 'POST', body: JSON.stringify(body) }),
 
-  login: (email: string, password: string) =>
+  login: (login: string, password: string) =>
     apiFetch<AuthResponse>('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ login, password }),
+    }),
+
+  loginByPhone: (phone: string, password: string) =>
+    apiFetch<AuthResponse>('/api/auth/login-phone', {
+      method: 'POST',
+      body: JSON.stringify({ phone, password }),
+    }),
+
+  forgotPassword: (email: string) =>
+    apiFetch<ForgotPasswordResponse>('/api/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+
+  resetPassword: (token: string, password: string) =>
+    apiFetch<AuthResponse>('/api/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, password }),
     }),
 
   me: () => apiFetch<User>('/api/auth/me', { auth: true }),

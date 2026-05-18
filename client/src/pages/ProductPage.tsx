@@ -7,6 +7,7 @@ import { ImageGallery } from '../components/ImageGallery';
 import { ProductGrid } from '../components/ProductGrid';
 import { Tabs } from '../components/Tabs';
 import { Button, StarRating } from '../design-system';
+import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import { ApiClientError } from '../api/client';
@@ -27,6 +28,7 @@ export function ProductPage() {
 
   const token = useAuthStore((s) => s.token);
   const addToCart = useCartStore((s) => s.addToCart);
+  const openDrawer = useCartStore((s) => s.openDrawer);
 
   useEffect(() => {
     if (!id) return;
@@ -91,22 +93,20 @@ export function ProductPage() {
   const compareAt = product?.compareAtPrice ?? null;
 
   const handleAddToCart = async () => {
-    if (!selectedVariant) return;
+    if (!selectedVariant || !product) return;
     try {
-      await addToCart(selectedVariant.id);
+      const snapshot = snapshotFromDetail(product, selectedVariant);
+      await addToCart(selectedVariant.id, 1, snapshot);
       setMsg('Добавлено в корзину');
+      if (!token) openDrawer();
     } catch (e) {
-      if (e instanceof ApiClientError && e.status === 401) {
-        navigate('/account?tab=login');
-      } else {
-        setMsg(e instanceof ApiClientError ? e.message : 'Ошибка');
-      }
+      setMsg(e instanceof ApiClientError ? e.message : 'Ошибка');
     }
   };
 
   const toggleFavorite = async () => {
     if (!token || !id) {
-      navigate('/account?tab=login');
+      navigate('/auth?returnUrl=' + encodeURIComponent(window.location.pathname));
       return;
     }
     try {
@@ -126,9 +126,11 @@ export function ProductPage() {
     try {
       const detail = await productsApi.get(p.id);
       const variant = detail.variants.find((v) => v.isDefault) ?? detail.variants[0];
-      if (variant) await addToCart(variant.id);
+      if (!variant) return;
+      await addToCart(variant.id, 1, snapshotFromDetail(detail, variant));
+      if (!token) openDrawer();
     } catch (e) {
-      if (e instanceof ApiClientError && e.status === 401) navigate('/account?tab=login');
+      setMsg(e instanceof ApiClientError ? e.message : 'Ошибка');
     }
   };
 

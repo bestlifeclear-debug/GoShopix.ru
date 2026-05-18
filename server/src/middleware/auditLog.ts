@@ -2,7 +2,7 @@ import type { RequestHandler } from 'express';
 import { logger } from '../lib/logger.js';
 
 const AUDIT_PATHS = [
-  /^\/api\/auth\/(login|register)/,
+  /^\/api\/auth\/(login|login-phone|register|check-phone|forgot-password|reset-password)/,
   /^\/api\/orders/,
   /^\/api\/seller\/orders/,
 ];

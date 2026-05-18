@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma.js';
 
 type UserWithProfile = User & {
   profile: {
+    username: string | null;
     firstName: string | null;
     lastName: string | null;
     phone: string | null;
@@ -18,6 +19,7 @@ export function mapUser(user: UserWithProfile) {
     role: user.role,
     profile: user.profile
       ? {
+          username: user.profile.username,
           firstName: user.profile.firstName,
           lastName: user.profile.lastName,
           phone: user.profile.phone,

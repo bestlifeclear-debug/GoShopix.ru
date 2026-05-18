@@ -113,6 +113,32 @@ export function IconFilter(props: IconProps) {
   );
 }
 
+export function IconEye(props: IconProps) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <path
+        d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+export function IconEyeOff(props: IconProps) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <path
+        d="M3 3l18 18M10.5 10.7A3 3 0 0012 15a3 3 0 002.3-4.3M9.9 5.1A10.7 10.7 0 0112 5c6 0 10 7 10 7a17.5 17.5 0 01-4.1 4.6M6.1 6.1C3.6 7.8 2 12 2 12s4 7 10 7c1.5 0 2.9-.4 4.1-1"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export function IconCatalog(props: IconProps) {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>

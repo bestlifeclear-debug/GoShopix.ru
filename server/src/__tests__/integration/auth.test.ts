@@ -38,7 +38,7 @@ describeIfDb('Auth API', () => {
 
     const login = await api()
       .post('/api/auth/login')
-      .send({ email: body.email, password: TEST_PASSWORD })
+      .send({ login: body.email, password: TEST_PASSWORD })
       .expect(200);
 
     expect(login.body.data.token).toBeDefined();
@@ -52,7 +52,7 @@ describeIfDb('Auth API', () => {
 
     await api()
       .post('/api/auth/login')
-      .send({ email: body.email, password: 'wrong-password' })
+      .send({ login: body.email, password: 'wrong-password' })
       .expect(401);
 
     await prisma.user.delete({ where: { email: body.email } }).catch(() => {});

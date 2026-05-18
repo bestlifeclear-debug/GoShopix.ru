@@ -7,6 +7,7 @@ describe('Аутентификация', () => {
   it('выходит из аккаунта', () => {
     cy.loginDemo();
     cy.contains('button', 'Выйти').click();
-    cy.get('[data-testid="auth-email"]').should('be.visible');
+    cy.url().should('include', '/auth');
+    cy.get('[data-testid="auth-phone"]').should('be.visible');
   });
 });

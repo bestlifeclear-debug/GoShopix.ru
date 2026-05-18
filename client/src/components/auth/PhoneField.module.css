@@ -1,0 +1,216 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.compact {
+  gap: 4px;
+}
+
+.compact .label {
+  font-size: var(--font-size-sm);
+  margin-bottom: 0;
+}
+
+.compact .row {
+  min-height: 40px;
+}
+
+.compact .countryBtn {
+  padding: 0 8px;
+  gap: 4px;
+  font-size: var(--font-size-sm);
+}
+
+.compact .input {
+  padding: 0 10px;
+  font-size: var(--font-size-sm);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--auth-color-primary-text, var(--color-text));
+}
+
+.row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  min-height: var(--touch-min, 48px);
+  background: var(--auth-color-surface, var(--color-bg));
+  border: 1px solid var(--auth-color-border, var(--color-border));
+  border-radius: var(--radius-md);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.row:focus-within {
+  border-color: var(--auth-color-accent, var(--color-primary));
+  box-shadow: var(--auth-focus-shadow, var(--shadow-focus));
+}
+
+.hasError {
+  border-color: var(--color-error);
+}
+
+.hasError:focus-within {
+  box-shadow: 0 0 0 3px rgb(255 82 82 / 0.2);
+}
+
+.countryWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.countryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  padding: 0 12px;
+  border: none;
+  border-right: 1px solid var(--auth-color-border, var(--color-border));
+  background: transparent;
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  color: var(--auth-color-primary-text, var(--color-text));
+  cursor: pointer;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.countryBtn:hover {
+  background: var(--color-primary-soft);
+}
+
+.countryBtn[aria-expanded='true'] {
+  background: var(--color-primary-soft);
+}
+
+.flag {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+.dial {
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.chevron {
+  font-size: 0.625rem;
+  color: var(--auth-color-hint, var(--color-text-muted));
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  color: var(--auth-color-primary-text, var(--color-text));
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--auth-color-hint, var(--color-text-muted));
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  width: min(280px, 90vw);
+  max-height: 280px;
+  display: flex;
+  flex-direction: column;
+  background: var(--auth-color-surface, var(--color-bg-elevated));
+  border: 1px solid var(--auth-color-border, var(--color-border));
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  animation: authDropdownIn 0.2s ease;
+}
+
+@keyframes authDropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search {
+  padding: 10px 12px;
+  border: none;
+  border-bottom: 1px solid var(--auth-color-border, var(--color-border));
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  color: var(--auth-color-primary-text, var(--color-text));
+  background: transparent;
+  outline: none;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  color: var(--auth-color-primary-text, var(--color-text));
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.option:hover,
+.optionActive {
+  background: var(--color-primary-soft);
+}
+
+.optionDial {
+  margin-left: auto;
+  color: var(--auth-color-hint, var(--color-text-muted));
+}
+
+.message {
+  font-size: var(--font-size-sm);
+  color: var(--auth-color-hint, var(--color-text-muted));
+  animation: authFadeIn 0.25s ease;
+}
+
+.errorMessage {
+  color: var(--color-error);
+}
+
+@keyframes authFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

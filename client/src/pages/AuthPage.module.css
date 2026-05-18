@@ -1,0 +1,116 @@
+.page {
+  --auth-color-primary-bg: #ffffff;
+  --auth-color-primary-text: #121212;
+  --auth-color-accent: #ff4081;
+  --auth-color-border: #e0e0e0;
+  --auth-color-surface: #f5f5f5;
+  --auth-color-hint: #666666;
+  --auth-focus-shadow: 0 0 0 3px rgb(255 64 129 / 0.22);
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-family);
+  background: var(--auth-color-primary-bg);
+  color: var(--auth-color-primary-text);
+}
+
+[data-theme='dark'] .page {
+  --auth-color-primary-bg: #121212;
+  --auth-color-primary-text: #ffffff;
+  --auth-color-border: #333333;
+  --auth-color-surface: #1e1e1e;
+  --auth-color-hint: #aaaaaa;
+  --auth-focus-shadow: 0 0 0 3px rgb(255 64 129 / 0.35);
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 10px var(--space-3);
+  background: color-mix(in srgb, var(--auth-color-primary-bg) 92%, transparent);
+  border-bottom: 1px solid var(--auth-color-border);
+  backdrop-filter: blur(12px);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--auth-color-accent);
+  text-decoration: none;
+}
+
+.logoMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--auth-color-accent);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-bold);
+}
+
+.backLink {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--auth-color-hint);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.backLink:hover {
+  color: var(--auth-color-accent);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-2);
+}
+
+.card {
+  width: 100%;
+  max-width: 360px;
+  padding: var(--space-3);
+  background: var(--auth-color-surface);
+  border: 1px solid var(--auth-color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.title {
+  margin: 0 0 6px;
+  font-size: 1.375rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  text-align: center;
+  color: var(--auth-color-accent);
+}
+
+.subtitle {
+  margin: 0 0 12px;
+  font-size: var(--font-size-sm);
+  text-align: center;
+  color: var(--auth-color-hint);
+  line-height: 1.45;
+}

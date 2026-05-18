@@ -5,6 +5,39 @@
   width: 100%;
 }
 
+.compact {
+  gap: 4px;
+}
+
+.compact .label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 0;
+}
+
+.compact .control {
+  min-height: 40px;
+  padding: 0 10px;
+  gap: 6px;
+}
+
+.compact .control.lg,
+.compact .control.md {
+  min-height: 40px;
+  padding: 0 10px;
+}
+
+.compact .input {
+  font-size: var(--font-size-sm);
+  padding: 0;
+}
+
+.compact .message {
+  margin-top: 2px;
+  font-size: var(--font-size-sm);
+  line-height: 1.35;
+}
+
 .label {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);

@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 import styles from './SiteFooter.module.css';
 
 const PAYMENT_ICONS = [
-  { id: 'mir', label: 'Мир', src: '/payment-icons/mir.png' },
-  { id: 'mastercard', label: 'Mastercard', src: '/payment-icons/mastercard.png' },
   { id: 'yookassa', label: 'ЮKassa', src: '/payment-icons/yookassa.png' },
+  { id: 'mir', label: 'Мир', src: '/payment-icons/mir.png' },
+  { id: 'sbp', label: 'СБП', src: '/payment-icons/sbp.png' },
 ] as const;
 
 export function SiteFooter() {
@@ -18,11 +18,6 @@ export function SiteFooter() {
             <p className={styles.brand}>GoShopix</p>
             <p className={styles.tagline}>
               Маркетплейс с тысячами товаров, быстрой доставкой и защитой покупателя.
-            </p>
-            <p className={styles.contact}>
-              <a href="tel:+78001234567">8 800 123-45-67</a>
-              <br />
-              <a href="mailto:support@goshopix.ru">support@goshopix.ru</a>
             </p>
           </div>
 
@@ -39,7 +34,9 @@ export function SiteFooter() {
                 <Link to="/catalog?sort=newest">Новинки</Link>
               </li>
               <li>
-                <Link to="/cart">Корзина</Link>
+                <a href="https://vk.com/goshopixowner" target="_blank" rel="noreferrer noopener">
+                  Сотрудничество
+                </a>
               </li>
             </ul>
           </div>
@@ -48,28 +45,31 @@ export function SiteFooter() {
             <h3 className={styles.colTitle}>О компании</h3>
             <ul className={styles.links}>
               <li>
-                <span>О GoShopix</span>
+                <Link to="/privacy">Политика конфиденциальности</Link>
               </li>
               <li>
-                <span>Вакансии</span>
+                <Link to="/about">О нас</Link>
               </li>
               <li>
-                <Link to="/seller/dashboard">Продавцам</Link>
-              </li>
-            </ul>
-          </div>
-
-          <div className={styles.col}>
-            <h3 className={styles.colTitle}>Контакты</h3>
-            <ul className={styles.links}>
-              <li>
-                <a href="tel:+78001234567">8 800 123-45-67</a>
-              </li>
-              <li>
-                <a href="mailto:support@goshopix.ru">support@goshopix.ru</a>
+                <a
+                  href="https://vk.com/goshopix"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className={styles.linkWithIcon}
+                >
+                  <span>Мы в VK</span>
+                  <span className={styles.iconWrap}>
+                    <img src="/footer-icons/vk.jpg" alt="" className={styles.menuIcon} width={24} height={24} />
+                  </span>
+                </a>
               </li>
               <li>
-                <span>Пн–Вс, 9:00–21:00</span>
+                <span className={styles.linkWithIcon}>
+                  <span>Мы в MAX</span>
+                  <span className={styles.iconWrap}>
+                    <img src="/footer-icons/max.jpg" alt="" className={styles.menuIcon} width={24} height={24} />
+                  </span>
+                </span>
               </li>
             </ul>
           </div>
@@ -80,30 +80,21 @@ export function SiteFooter() {
           <ul className={styles.payments} aria-label="Способы оплаты">
             {PAYMENT_ICONS.map((method) => (
               <li key={method.id}>
-                <span className={styles.paymentBadge}>
-                  <img
-                    src={method.src}
-                    alt={method.label}
-                    className={styles.paymentIcon}
-                    width={72}
-                    height={32}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </span>
+                <img
+                  src={method.src}
+                  alt={method.label}
+                  className={styles.paymentIcon}
+                  width={80}
+                  height={32}
+                  loading="lazy"
+                  decoding="async"
+                />
               </li>
             ))}
           </ul>
-          <div className={styles.social} aria-label="Соцсети">
-            <a href="https://t.me" target="_blank" rel="noreferrer noopener">
-              Telegram
-            </a>
-            <a href="https://vk.com" target="_blank" rel="noreferrer noopener">
-              VK
-            </a>
-          </div>
         </div>
       </div>
     </footer>
   );
 }
+

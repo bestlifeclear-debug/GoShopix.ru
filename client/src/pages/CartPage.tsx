@@ -26,7 +26,7 @@ export function CartPage() {
 
   useEffect(() => {
     if (!token) {
-      navigate('/account?tab=login');
+      navigate('/auth?returnUrl=/cart');
       return;
     }
     void fetchCart();

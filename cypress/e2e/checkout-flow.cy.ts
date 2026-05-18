@@ -14,7 +14,7 @@ describe('Покупатель: регистрация → каталог → к
     cy.contains('Каталог').should('be.visible');
     cy.get('article, [class*="card"]', { timeout: 15_000 }).should('have.length.at.least', 1);
 
-    cy.contains('a', 'Корзина').click();
+    cy.visit('/cart');
     cy.url().should('include', '/cart');
   });
 });

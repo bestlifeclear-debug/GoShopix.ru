@@ -1,0 +1,242 @@
+.page {
+  --legal-bg: #121212;
+  --legal-bg-elevated: #1e1e1e;
+  --legal-text: #ffffff;
+  --legal-text-muted: #b3b3b3;
+  --legal-accent: #ff4081;
+  --legal-accent-hover: #ff5c9a;
+  --legal-divider: #333333;
+  --legal-font: 'Inter', system-ui, -apple-system, 'Segoe UI', helvetica, arial, sans-serif;
+  --legal-text-size: 1.0625rem;
+  --legal-line-height: 1.6;
+  --legal-h1-size: 2rem;
+  --legal-h2-size: 1.5rem;
+  --legal-section-gap: 2.5rem;
+  --legal-padding-x: 1.25rem;
+  --legal-padding-block: 1rem;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--legal-font);
+  font-size: var(--legal-text-size);
+  line-height: var(--legal-line-height);
+  color: var(--legal-text);
+  background: var(--legal-bg);
+}
+
+@media (prefers-color-scheme: light) {
+  .page {
+    --legal-bg: #121212;
+    --legal-text: #ffffff;
+  }
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--legal-padding-block);
+  padding: var(--legal-padding-block) var(--legal-padding-x);
+  background: rgb(18 18 18 / 0.92);
+  border-bottom: 1px solid var(--legal-divider);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--legal-accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.logo:hover {
+  color: var(--legal-accent-hover);
+}
+
+.logoMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background: var(--legal-accent);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.backLink {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--legal-text-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.backLink:hover {
+  color: var(--legal-accent);
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 2rem var(--legal-padding-x) 3rem;
+}
+
+.title {
+  margin: 0 0 1.25rem;
+  font-size: var(--legal-h1-size);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--legal-accent);
+}
+
+.intro {
+  margin: 0 0 2rem;
+  color: var(--legal-text-muted);
+}
+
+.toc {
+  margin: 0 0 2.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--legal-divider);
+  border-radius: 0.75rem;
+  background: var(--legal-bg-elevated);
+}
+
+.tocTitle {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--legal-text);
+}
+
+.tocList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tocLink {
+  font-size: 0.9375rem;
+  color: var(--legal-accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.tocLink:hover {
+  color: var(--legal-accent-hover);
+  text-decoration: underline;
+}
+
+.section {
+  padding-top: var(--legal-section-gap);
+  border-top: 1px solid var(--legal-divider);
+  scroll-margin-top: 5rem;
+}
+
+.section:first-of-type {
+  padding-top: 0;
+  border-top: none;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.sectionIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--legal-accent);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--legal-h2-size);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--legal-text);
+}
+
+.paragraph {
+  margin: 0 0 1rem;
+  color: var(--legal-text-muted);
+}
+
+.paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.list {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+  color: var(--legal-text-muted);
+}
+
+.list li {
+  margin-bottom: 0.5rem;
+}
+
+.list li:last-child {
+  margin-bottom: 0;
+}
+
+.updated {
+  margin: 2.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--legal-text-muted);
+}
+
+@media (max-width: 767px) {
+  .page {
+    --legal-text-size: 0.9375rem;
+    --legal-line-height: 1.65;
+    --legal-h1-size: 1.75rem;
+    --legal-h2-size: 1.25rem;
+    --legal-section-gap: 2rem;
+    --legal-padding-x: 1rem;
+  }
+
+  .header {
+    padding: 0.75rem var(--legal-padding-x);
+  }
+
+  .main {
+    padding: 1.5rem var(--legal-padding-x) 2rem;
+  }
+
+  .backLink {
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .page {
+    --legal-padding-x: 1.5rem;
+    --legal-section-gap: 3rem;
+  }
+
+  .main {
+    padding: 2.5rem var(--legal-padding-x) 3.5rem;
+  }
+}

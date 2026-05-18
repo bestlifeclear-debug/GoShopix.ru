@@ -5,6 +5,9 @@ import { CatalogPage } from './pages/CatalogPage';
 import { ProductPage } from './pages/ProductPage';
 import { CartPage } from './pages/CartPage';
 import { AccountPage } from './pages/AccountPage';
+import { AuthPage } from './pages/AuthPage';
+import { AboutPage } from './pages/AboutPage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { SellerGuard } from './seller/components/SellerGuard';
 import { SellerLayout } from './seller/layout/SellerLayout';
 import { DashboardPage } from './seller/pages/DashboardPage';
@@ -16,6 +19,9 @@ import { AnalyticsPage } from './seller/pages/AnalyticsPage';
 import { SettingsPage } from './seller/pages/SettingsPage';
 
 export const router = createBrowserRouter([
+  { path: '/privacy', element: <PrivacyPolicyPage /> },
+  { path: '/about', element: <AboutPage /> },
+  { path: '/auth', element: <AuthPage /> },
   {
     path: '/',
     element: <MainLayout />,

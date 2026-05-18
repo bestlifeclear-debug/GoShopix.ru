@@ -9,6 +9,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   leftSlot?: ReactNode;
   rightSlot?: ReactNode;
   inputSize?: 'sm' | 'md' | 'lg';
+  compact?: boolean;
 }
 
 export function Input({
@@ -18,6 +19,7 @@ export function Input({
   leftSlot,
   rightSlot,
   inputSize = 'md',
+  compact = false,
   className,
   id,
   ...props
@@ -26,7 +28,7 @@ export function Input({
   const hasError = Boolean(error);
 
   return (
-    <div className={cn(styles.field, className)}>
+    <div className={cn(styles.field, compact && styles.compact, className)}>
       {label && (
         <label className={styles.label} htmlFor={inputId}>
           {label}
