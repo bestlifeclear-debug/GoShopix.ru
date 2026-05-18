@@ -20,15 +20,22 @@ import { sellerRouter } from './routes/seller/index.js';
 import { orderStatusesRouter } from './routes/order-statuses.js';
 import { notificationsRouter } from './routes/notifications.js';
 import { webhooksRouter } from './routes/webhooks.js';
+import { isAllowedRequestOrigin } from './lib/allowed-origins.js';
 
 export function createApp() {
   const app = express();
   const config = loadConfig();
 
-  const corsOrigin = config.CORS_ORIGIN ?? 'http://127.0.0.1:5173';
   app.use(
     cors({
-      origin: [corsOrigin, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+      origin(origin, callback) {
+        if (!origin || isAllowedRequestOrigin(origin)) {
+          callback(null, true);
+          return;
+        }
+        callback(new Error('Not allowed by CORS'));
+      },
+      credentials: true,
     }),
   );
   app.use(express.json());
@@ -37,11 +44,15 @@ export function createApp() {
   app.use(auditLog);
   app.use(metricsMiddleware);
 
+  const apiBase =
+    config.API_PUBLIC_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://127.0.0.1:${config.PORT}`);
+
   const apiSpec = {
     ...openApiSpec,
     servers: [
       {
-        url: config.API_PUBLIC_URL ?? `http://127.0.0.1:${config.PORT}`,
+        url: apiBase,
         description: config.NODE_ENV,
       },
     ],

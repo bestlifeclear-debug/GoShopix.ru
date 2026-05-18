@@ -16,7 +16,7 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
   JOBS_ENABLED: z
     .enum(['true', 'false'])
-    .default('true')
+    .default(process.env.VERCEL === '1' ? 'false' : 'true')
     .transform((v) => v === 'true'),
 });
 
