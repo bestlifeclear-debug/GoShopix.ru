@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
 import { Button } from '../../design-system';
 import { IconClose } from '../../design-system/icons/Icons';
+import { buildGuestCart } from '../../lib/guestCart.js';
 import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
 import styles from './CartDrawer.module.css';
@@ -13,10 +14,17 @@ export function CartDrawer() {
   const token = useAuthStore((s) => s.token);
   const drawerOpen = useCartStore((s) => s.drawerOpen);
   const closeDrawer = useCartStore((s) => s.closeDrawer);
-  const cart = useCartStore((s) => s.getCart());
+  const serverCart = useCartStore((s) => s.cart);
+  const guestItems = useCartStore((s) => s.guestItems);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
   const isLoading = useCartStore((s) => s.isLoading);
+
+  const cart = useMemo(() => {
+    if (token) return serverCart;
+    if (guestItems.length === 0) return null;
+    return buildGuestCart(guestItems);
+  }, [token, serverCart, guestItems]);
 
   const isGuestDrawer = drawerOpen && !token;
 
