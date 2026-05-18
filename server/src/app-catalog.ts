@@ -1,11 +1,12 @@
 import cors from 'cors';
 import express from 'express';
 import { errorHandler } from './middleware/errorHandler.js';
-import { authRouter } from './routes/auth.js';
+import { categoriesRouter } from './routes/categories.js';
+import { productsRouter } from './routes/products.js';
 import { isAllowedRequestOrigin } from './lib/allowed-origins.js';
 
-/** Minimal Express app for /api/auth/* on Vercel (faster cold start than full createApp). */
-export function createAuthApp() {
+/** Catalog API only — smaller cold start on Vercel than full createApp(). */
+export function createCatalogApp() {
   const app = express();
 
   app.use(
@@ -21,7 +22,8 @@ export function createAuthApp() {
     }),
   );
   app.use(express.json());
-  app.use('/api/auth', authRouter);
+  app.use('/api/categories', categoriesRouter);
+  app.use('/api/products', productsRouter);
   app.use(errorHandler);
 
   return app;

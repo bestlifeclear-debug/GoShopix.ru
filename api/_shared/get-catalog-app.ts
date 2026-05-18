@@ -2,14 +2,14 @@ import type { Express } from 'express';
 
 let appPromise: Promise<Express> | null = null;
 
-export function getAuthApp(): Promise<Express> {
+export function getCatalogApp(): Promise<Express> {
   if (!appPromise) {
     appPromise = (async () => {
       await import('../../server/dist/load-env.js');
       const { loadConfig } = await import('../../server/dist/config/env.js');
       loadConfig();
-      const { createAuthApp } = await import('../../server/dist/app-auth.js');
-      return createAuthApp();
+      const { createCatalogApp } = await import('../../server/dist/app-catalog.js');
+      return createCatalogApp();
     })();
   }
   return appPromise;

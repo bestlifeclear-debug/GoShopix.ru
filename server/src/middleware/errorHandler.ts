@@ -29,10 +29,24 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     return;
   }
 
+  const message = err instanceof Error ? err.message : String(err);
+
+  if (message.startsWith('Invalid environment configuration')) {
+    logger.error('Invalid environment configuration', { message, path: req.originalUrl });
+    fail(
+      res,
+      503,
+      process.env.VERCEL === '1'
+        ? 'Сервер не настроен: проверьте DATABASE_URL и JWT_SECRET (≥16 символов) в Vercel'
+        : 'Server configuration error',
+    );
+    return;
+  }
+
   logger.error('Unhandled error', {
     path: req.originalUrl,
     method: req.method,
-    error: err instanceof Error ? err.message : String(err),
+    error: message,
   });
   captureException(err, { path: req.originalUrl, method: req.method });
   fail(res, 500, 'Internal server error');

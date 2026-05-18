@@ -1,12 +1,9 @@
-import { loadConfig } from '../config/env.js';
-
-/** Origins для CORS / CSRF (Vercel preview + production). */
+/** Origins для CORS / CSRF (Vercel preview + production). Без loadConfig — не ломаем CORS при ошибке env. */
 export function collectAllowedOrigins(): string[] {
-  const config = loadConfig();
   const origins = new Set<string>();
 
-  if (config.CORS_ORIGIN) origins.add(config.CORS_ORIGIN);
-  if (config.API_PUBLIC_URL) origins.add(config.API_PUBLIC_URL);
+  if (process.env.CORS_ORIGIN) origins.add(process.env.CORS_ORIGIN);
+  if (process.env.API_PUBLIC_URL) origins.add(process.env.API_PUBLIC_URL);
 
   if (process.env.VERCEL_URL) origins.add(`https://${process.env.VERCEL_URL}`);
   if (process.env.VERCEL_BRANCH_URL) origins.add(process.env.VERCEL_BRANCH_URL);
@@ -20,15 +17,11 @@ export function collectAllowedOrigins(): string[] {
 export function isAllowedRequestOrigin(origin: string | undefined): boolean {
   if (!origin) return false;
 
-  const allowed = collectAllowedOrigins();
-  if (allowed.some((base) => origin === base || origin.startsWith(`${base}/`))) {
-    return true;
-  }
-
-  // Любой preview/production деплой на Vercel
+  // Сначала Vercel — не зависит от JWT_SECRET / loadConfig
   if (/^https:\/\/[\w.-]+\.vercel\.app$/i.test(origin)) {
     return true;
   }
 
-  return false;
+  const allowed = collectAllowedOrigins();
+  return allowed.some((base) => origin === base || origin.startsWith(`${base}/`));
 }

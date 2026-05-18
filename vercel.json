@@ -13,6 +13,18 @@
       "memory": 1024,
       "maxDuration": 60
     },
+    "api/categories.ts": {
+      "memory": 512,
+      "maxDuration": 30
+    },
+    "api/products.ts": {
+      "memory": 512,
+      "maxDuration": 30
+    },
+    "api/products/[id].ts": {
+      "memory": 512,
+      "maxDuration": 30
+    },
     "api/auth/login.ts": {
       "memory": 512,
       "maxDuration": 30

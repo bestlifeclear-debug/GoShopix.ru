@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { Express } from 'express';
+import { ensureEnvOrRespond } from './_shared/ensure-env.js';
 import { runExpress } from './_shared/run-express.js';
 
 /**
@@ -43,6 +44,7 @@ export default async function vercelHandler(
   req: VercelRequest,
   res: VercelResponse,
 ): Promise<void> {
+  if (!ensureEnvOrRespond(res)) return;
   normalizeRequestUrl(req);
   const app = await getApp();
   await runExpress(app, req, res);
