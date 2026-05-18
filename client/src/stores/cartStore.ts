@@ -51,7 +51,10 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ guestItems });
   },
 
-  openDrawer: () => set({ drawerOpen: true }),
+  openDrawer: () => {
+    if (isAuthenticated()) return;
+    set({ drawerOpen: true });
+  },
   closeDrawer: () => set({ drawerOpen: false }),
 
   getCart: () => {

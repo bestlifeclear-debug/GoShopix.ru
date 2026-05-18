@@ -41,6 +41,7 @@ export const useAuthStore = create<AuthState>()(
           const { user, token } = await authApi.login(login, password);
           localStorage.setItem('goshopix_token', token);
           set({ user, token, isLoading: false });
+          useCartStore.getState().closeDrawer();
           await useCartStore.getState().mergeGuestCart();
         } catch (e) {
           const msg = mapApiError(e, 'Ошибка входа');
@@ -55,6 +56,7 @@ export const useAuthStore = create<AuthState>()(
           const { user, token } = await authApi.loginByPhone(phone, password);
           localStorage.setItem('goshopix_token', token);
           set({ user, token, isLoading: false });
+          useCartStore.getState().closeDrawer();
           await useCartStore.getState().mergeGuestCart();
         } catch (e) {
           const msg = mapApiError(e, 'Ошибка входа');
@@ -69,6 +71,7 @@ export const useAuthStore = create<AuthState>()(
           const { user, token } = await authApi.register(data);
           localStorage.setItem('goshopix_token', token);
           set({ user, token, isLoading: false });
+          useCartStore.getState().closeDrawer();
           await useCartStore.getState().mergeGuestCart();
         } catch (e) {
           const msg = mapApiError(e, 'Ошибка регистрации');
@@ -96,6 +99,7 @@ export const useAuthStore = create<AuthState>()(
           const { user, token: jwt } = await authApi.resetPassword(token, password);
           localStorage.setItem('goshopix_token', jwt);
           set({ user, token: jwt, isLoading: false });
+          useCartStore.getState().closeDrawer();
           await useCartStore.getState().mergeGuestCart();
         } catch (e) {
           const msg = mapApiError(e, 'Не удалось сменить пароль');
@@ -106,6 +110,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: () => {
         localStorage.removeItem('goshopix_token');
+        useCartStore.getState().closeDrawer();
         set({ user: null, token: null, error: null });
       },
 

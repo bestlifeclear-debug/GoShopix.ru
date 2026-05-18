@@ -18,8 +18,14 @@ export function CartDrawer() {
   const removeItem = useCartStore((s) => s.removeItem);
   const isLoading = useCartStore((s) => s.isLoading);
 
+  const isGuestDrawer = drawerOpen && !token;
+
   useEffect(() => {
-    if (!drawerOpen) return;
+    if (token && drawerOpen) closeDrawer();
+  }, [token, drawerOpen, closeDrawer]);
+
+  useEffect(() => {
+    if (!isGuestDrawer) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const onKey = (e: KeyboardEvent) => {
@@ -30,9 +36,9 @@ export function CartDrawer() {
       document.body.style.overflow = prev;
       document.removeEventListener('keydown', onKey);
     };
-  }, [drawerOpen, closeDrawer]);
+  }, [isGuestDrawer, closeDrawer]);
 
-  if (!drawerOpen || token) return null;
+  if (!isGuestDrawer) return null;
 
   const handleCheckout = () => {
     closeDrawer();
