@@ -11,6 +11,14 @@
   "functions": {
     "api/index.ts": {
       "memory": 1024,
+      "maxDuration": 60
+    },
+    "api/health/live.ts": {
+      "memory": 256,
+      "maxDuration": 10
+    },
+    "api/health/ready.ts": {
+      "memory": 512,
       "maxDuration": 30
     }
   }

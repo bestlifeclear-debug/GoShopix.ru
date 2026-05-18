@@ -1,10 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import serverless from 'serverless-http';
-import '../server/dist/load-env.js';
-import { createApp } from '../server/dist/app.js';
-
-const app = createApp();
-const handler = serverless(app);
+import type { Handler } from 'serverless-http';
 
 /**
  * Vercel (non-Next) does not support api/[...path].ts catch-all routes.
@@ -30,11 +25,28 @@ function normalizeRequestUrl(req: VercelRequest): void {
   delete req.query.path;
 }
 
+let handlerPromise: Promise<Handler> | null = null;
+
+async function getHandler(): Promise<Handler> {
+  if (!handlerPromise) {
+    handlerPromise = (async () => {
+      const [{ default: serverless }, , { createApp }] = await Promise.all([
+        import('serverless-http'),
+        import('../server/dist/load-env.js'),
+        import('../server/dist/app.js'),
+      ]);
+      return serverless(createApp());
+    })();
+  }
+  return handlerPromise;
+}
+
 export default async function vercelHandler(
   req: VercelRequest,
   res: VercelResponse,
 ): Promise<unknown> {
   normalizeRequestUrl(req);
+  const handler = await getHandler();
   return handler(req, res);
 }
 
