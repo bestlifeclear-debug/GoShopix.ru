@@ -1,6 +1,12 @@
 import { Link } from 'react-router-dom';
 import styles from './SiteFooter.module.css';
 
+const PAYMENT_ICONS = [
+  { id: 'mir', label: 'Мир', src: '/payment-icons/mir.png' },
+  { id: 'mastercard', label: 'Mastercard', src: '/payment-icons/mastercard.png' },
+  { id: 'yookassa', label: 'ЮKassa', src: '/payment-icons/yookassa.png' },
+] as const;
+
 export function SiteFooter() {
   const year = new Date().getFullYear();
 
@@ -71,12 +77,23 @@ export function SiteFooter() {
 
         <div className={styles.bottom}>
           <small>© {year} GoShopix</small>
-          <div className={styles.payments} aria-label="Способы оплаты">
-            <span>Visa</span>
-            <span>Mastercard</span>
-            <span>Мир</span>
-            <span>СБП</span>
-          </div>
+          <ul className={styles.payments} aria-label="Способы оплаты">
+            {PAYMENT_ICONS.map((method) => (
+              <li key={method.id}>
+                <span className={styles.paymentBadge}>
+                  <img
+                    src={method.src}
+                    alt={method.label}
+                    className={styles.paymentIcon}
+                    width={72}
+                    height={32}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+              </li>
+            ))}
+          </ul>
           <div className={styles.social} aria-label="Соцсети">
             <a href="https://t.me" target="_blank" rel="noreferrer noopener">
               Telegram

@@ -109,16 +109,57 @@
 .payments {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.payments span {
-  padding: var(--space-1) var(--space-2);
+.paymentBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  height: 40px;
+  padding: 6px var(--space-2);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  background: var(--color-bg-subtle);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-muted);
+  background: #ffffff;
+  transition:
+    border-color var(--transition-ui),
+    box-shadow var(--transition-ui);
+}
+
+[data-theme='dark'] .paymentBadge {
+  background: #f5f5f5;
+  border-color: var(--color-border);
+}
+
+.paymentBadge:hover {
+  border-color: var(--color-border-focus);
+  box-shadow: var(--shadow-sm);
+}
+
+.paymentIcon {
+  display: block;
+  width: auto;
+  max-width: 72px;
+  height: 28px;
+  object-fit: contain;
+  object-position: center;
+}
+
+@media (max-width: 767px) {
+  .paymentBadge {
+    min-width: 76px;
+    height: 36px;
+    padding: 4px 10px;
+  }
+
+  .paymentIcon {
+    max-width: 64px;
+    height: 24px;
+  }
 }
 
