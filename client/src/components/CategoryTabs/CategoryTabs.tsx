@@ -74,7 +74,6 @@ export function CategoryTabs({
               products={discounted}
               onAddToCart={onAddToCart}
               loading={loading}
-              highlightPrice
             />
           )}
           {active === 'new' && (

@@ -1,8 +1,7 @@
-import { formatDeliveryLabel, formatPrice } from '@goshopix/shared';
+import { formatPrice } from '@goshopix/shared';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IconChevronLeft, IconChevronRight, IconHeart } from '../../icons/Icons';
-import { Button } from '../Button/Button';
 import { StarRating } from '../StarRating/StarRating';
 import styles from './ProductCard.module.css';
 
@@ -20,12 +19,9 @@ export interface ProductCardProps {
   discountPercent?: number | null;
   rating: number;
   reviewCount: number;
-  promoBadge?: string | null;
-  deliveryDaysMin?: number | null;
-  deliveryDaysMax?: number | null;
+  /** До 2 строк характеристик на превью (без запроса к API) */
+  specLines?: string[];
   images: ProductCardImage[];
-  highlightPrice?: boolean;
-  isHit?: boolean;
   onAddToCart?: (e: React.MouseEvent) => void | Promise<void>;
   onFavorite?: (e: React.MouseEvent) => void;
 }
@@ -41,12 +37,8 @@ export function ProductCard({
   discountPercent,
   rating,
   reviewCount,
-  promoBadge,
-  deliveryDaysMin,
-  deliveryDaysMax,
+  specLines = [],
   images,
-  highlightPrice = false,
-  isHit,
   onAddToCart,
   onFavorite,
 }: ProductCardProps) {
@@ -55,8 +47,6 @@ export function ProductCard({
   const [hovered, setHovered] = useState(false);
   const [fav, setFav] = useState(false);
   const [cartState, setCartState] = useState<CartUiState>('idle');
-
-  const deliveryLabel = formatDeliveryLabel(deliveryDaysMin, deliveryDaysMax);
 
   const go = useCallback(
     (dir: -1 | 1) => (e: React.MouseEvent) => {
@@ -82,7 +72,7 @@ export function ProductCard({
   };
 
   const current = slides[index] ?? slides[0];
-  const showHit = isHit ?? reviewCount >= 50;
+  const specs = specLines.filter(Boolean).slice(0, 2);
 
   const cartLabel =
     cartState === 'loading' ? 'Добавляем…' : cartState === 'success' ? 'В корзине ✓' : 'В корзину';
@@ -131,10 +121,6 @@ export function ProductCard({
           <span className={styles.discountBadge}>−{discountPercent}%</span>
         )}
 
-        {showHit && <span className={styles.hitBadge}>Хит</span>}
-
-        {promoBadge && <span className={styles.promoBadge}>{promoBadge}</span>}
-
         {slides.length > 1 && hovered && (
           <>
             <button type="button" className={`${styles.navBtn} ${styles.navPrev}`} onClick={go(-1)} aria-label="Назад">
@@ -148,32 +134,41 @@ export function ProductCard({
       </div>
 
       <div className={styles.body}>
-        {brand && <p className={styles.brand}>{brand}</p>}
-        <Link to={`/product/${productId}`} className={styles.title}>
-          {title}
-        </Link>
+        <div className={styles.rowTitle}>
+          {brand && <span className={styles.brand}>{brand}</span>}
+          <Link to={`/product/${productId}`} className={styles.title}>
+            {title}
+          </Link>
+        </div>
 
-        <StarRating value={rating} reviewCount={reviewCount} size="sm" />
-
-        <div className={`${styles.prices} ${highlightPrice ? styles.pricesHighlight : ''}`}>
+        <div className={styles.rowPrice}>
           <span className={styles.price}>{formatPrice(price)}</span>
           {compareAtPrice != null && compareAtPrice > price && (
             <span className={styles.oldPrice}>{formatPrice(compareAtPrice)}</span>
           )}
         </div>
 
-        {deliveryLabel && <p className={styles.delivery}>{deliveryLabel}</p>}
+        <div className={styles.rowRating}>
+          <StarRating value={rating} reviewCount={reviewCount} size="sm" />
+        </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          loading={cartState === 'loading'}
-          className={`${styles.cartBtn} ${cartState === 'success' ? styles.cartBtnSuccess : ''}`}
+        {specs.length > 0 && (
+          <ul className={styles.specs} aria-label="Краткие характеристики">
+            {specs.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+        )}
+
+        <button
+          type="button"
+          className={`${styles.cartBtn} ${cartState === 'loading' ? styles.cartBtnLoading : ''} ${cartState === 'success' ? styles.cartBtnSuccess : ''}`}
           onClick={handleAddToCart}
+          disabled={cartState === 'loading'}
           aria-live="polite"
         >
           {cartLabel}
-        </Button>
+        </button>
       </div>
     </article>
   );

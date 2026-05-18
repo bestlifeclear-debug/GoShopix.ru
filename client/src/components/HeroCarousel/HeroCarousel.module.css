@@ -308,3 +308,57 @@
     min-height: 440px;
   }
 }
+
+/* Тёмная тема: тёмные фоны слайдов вместо белых градиентов */
+[data-theme='dark'] .rose {
+  background: linear-gradient(120deg, #2a1a24 0%, #1c1c1c 45%, #321828 100%);
+  color: var(--color-text);
+}
+
+[data-theme='dark'] .plum {
+  background: linear-gradient(120deg, #2a1a24 0%, #1c1c1c 50%, #261f32 100%);
+  color: var(--color-text);
+}
+
+[data-theme='dark'] .light {
+  background: linear-gradient(120deg, #1a1a1a 0%, #222222 60%, #2a1a24 100%);
+  color: var(--color-text);
+}
+
+[data-theme='dark'] .dark {
+  background: linear-gradient(120deg, #141414 0%, #2a2a2a 50%, #2a1a24 100%);
+}
+
+[data-theme='dark'] .rose .title,
+[data-theme='dark'] .plum .title,
+[data-theme='dark'] .light .title {
+  color: var(--color-text);
+}
+
+[data-theme='dark'] .rose .text,
+[data-theme='dark'] .plum .text,
+[data-theme='dark'] .light .text {
+  color: var(--color-text-muted);
+}
+
+[data-theme='dark'] .rose .eyebrow,
+[data-theme='dark'] .plum .eyebrow,
+[data-theme='dark'] .light .eyebrow {
+  color: #f48fb1;
+}
+
+[data-theme='dark'] .imageFrame {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+}
+
+[data-theme='dark'] .arrowPrev,
+[data-theme='dark'] .arrowNext {
+  background: var(--color-bg-elevated);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+[data-theme='dark'] .dot {
+  background: rgb(255 255 255 / 0.3);
+}

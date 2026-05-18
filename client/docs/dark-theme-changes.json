@@ -1,0 +1,121 @@
+{
+  "version": "1.0.0",
+  "date": "2026-05-18",
+  "scope": "Dark theme WCAG 2.1 AA polish — filters, navigation, product cards, CTA, search",
+  "constraints": {
+    "apiUnchanged": true,
+    "databaseUnchanged": true,
+    "noExternalUiLibraries": true
+  },
+  "cssVariables": {
+    "file": "client/src/design-system/tokens/tokens.css",
+    "added": [
+      "--color-cta: #ff6b6b",
+      "--color-cta-hover: #ff8585",
+      "--color-cta-active: #e65a5a",
+      "--color-surface-card",
+      "--color-button-primary",
+      "--font-size-caption",
+      "--transition-ui: 200ms",
+      "--icon-size: 24px",
+      "--shadow-focus"
+    ],
+    "darkThemeOverrides": {
+      "--color-text": "#ececec",
+      "--color-text-muted": "#b3b3b3",
+      "--color-primary": "#e85a7a",
+      "--color-bg": "#121212",
+      "--color-bg-elevated": "#242424",
+      "--color-surface-card": "#1e1e1e"
+    },
+    "removedGradients": [
+      "--gradient-brand-button (buttons use solid fills)"
+    ]
+  },
+  "components": [
+    {
+      "id": "tokens",
+      "path": "client/src/design-system/tokens/tokens.css",
+      "lines": "1-130",
+      "problem": "Low contrast, saturated accents, gradient noise",
+      "solution": "5-color palette, AA text contrast, solid surfaces, 200ms transitions"
+    },
+    {
+      "id": "product-card",
+      "path": "client/src/design-system/components/ProductCard/ProductCard.tsx",
+      "lines": "1-175",
+      "problem": "Information overload, gradients, weak CTA",
+      "solution": "3 rows + specs block; CTA #FF6B6B 48px; scale(0.9) on press"
+    },
+    {
+      "id": "product-card-styles",
+      "path": "client/src/design-system/components/ProductCard/ProductCard.module.css",
+      "lines": "1-280",
+      "problem": "White media bg, small captions, outline cart button",
+      "solution": "var(--color-surface-card); 16px title; unified cartBtn with focus/hover"
+    },
+    {
+      "id": "product-grid",
+      "path": "client/src/components/ProductGrid.tsx",
+      "lines": "1-65",
+      "problem": "No preview characteristics",
+      "solution": "buildSpecLines from category + delivery (no API change)"
+    },
+    {
+      "id": "catalog-filters",
+      "path": "client/src/pages/CatalogPage.tsx",
+      "lines": "33-70, 200-320",
+      "problem": "Flat categories, no active indicators",
+      "solution": "FilterCheck + tree; checkmark for active filters"
+    },
+    {
+      "id": "catalog-filters-styles",
+      "path": "client/src/pages/CatalogPage.module.css",
+      "lines": "207-290",
+      "problem": "Small filter text, weak active state",
+      "solution": "checkMark/checkItemActive; treeChildren; 16px filter labels"
+    },
+    {
+      "id": "header-nav",
+      "path": "client/src/design-system/components/Header/Header.tsx",
+      "lines": "42-58, 118-128",
+      "problem": "No active section highlight",
+      "solution": "useLocation + navLinkActive + aria-current"
+    },
+    {
+      "id": "site-header-nav",
+      "path": "client/src/components/layout/SiteHeader.tsx",
+      "lines": "84-89",
+      "problem": "Navigation overload",
+      "solution": "Max 6 nav items (3 categories + 3 sections)"
+    },
+    {
+      "id": "search",
+      "path": "client/src/components/SearchBox/SearchBox.module.css",
+      "lines": "1-240",
+      "problem": "Low prominence, 20px icon",
+      "solution": "48px height; 24px icon; focus scale + shadow 200ms"
+    },
+    {
+      "id": "button-primary",
+      "path": "client/src/design-system/components/Button/Button.module.css",
+      "lines": "62-76",
+      "problem": "Gradient buttons",
+      "solution": "Solid --color-button-primary + focus ring"
+    },
+    {
+      "id": "icons",
+      "path": "client/src/design-system/icons/Icons.tsx",
+      "lines": "5-18",
+      "problem": "Missing check icon for filters",
+      "solution": "IconCheck 24x24; IconSearch 24x24"
+    }
+  ],
+  "acceptanceCriteria": {
+    "wcag21AA": "Text #ececec on #121212 ≈ 11:1; muted #b3b3b3 on #1a1a1a ≈ 7:1",
+    "contrastMin": "4.5:1",
+    "hoverFocus": "All interactive targets use transition-ui + shadow-focus",
+    "responsiveMinWidth": "320px",
+    "lighthouse": "Run Lighthouse Accessibility audit in Chrome DevTools"
+  }
+}

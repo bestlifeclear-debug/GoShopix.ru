@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { IconCart, IconCatalog, IconClose, IconHeart, IconMenu, IconUser } from '../../icons/Icons';
 import styles from './Header.module.css';
 
@@ -39,6 +39,24 @@ export function Header({
   onMenuToggle,
   extraActions,
 }: HeaderProps) {
+  const location = useLocation();
+  const currentPath = `${location.pathname}${location.search}`;
+
+  const isNavActive = (to: string) => {
+    if (to === currentPath) return true;
+    try {
+      const target = new URL(to, window.location.origin);
+      const current = new URL(currentPath, window.location.origin);
+      if (target.pathname !== current.pathname) return false;
+      for (const [key, val] of target.searchParams) {
+        if (current.searchParams.get(key) !== val) return false;
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.topBar}>
@@ -103,7 +121,12 @@ export function Header({
         <nav className={styles.navBar} aria-label="Разделы каталога">
           <div className={styles.navInner}>
             {navLinks.map((link) => (
-              <Link key={link.to} to={link.to} className={styles.navLink}>
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`${styles.navLink} ${isNavActive(link.to) ? styles.navLinkActive : ''}`}
+                aria-current={isNavActive(link.to) ? 'page' : undefined}
+              >
                 {link.label}
               </Link>
             ))}

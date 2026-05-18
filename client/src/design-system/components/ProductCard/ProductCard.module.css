@@ -1,26 +1,33 @@
+/* Карточка: сплошные фоны, 3 ряда контента, CTA 48px (#FF6B6B), WCAG-контраст */
 .card {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--color-bg);
+  background: var(--color-bg-elevated);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-card);
   transition:
-    box-shadow var(--transition-base),
-    transform var(--transition-base);
+    box-shadow var(--transition-ui),
+    transform var(--transition-ui),
+    border-color var(--transition-ui);
 }
 
 .card:hover {
   box-shadow: var(--shadow-card-hover);
   transform: translateY(-2px);
+  border-color: var(--color-border-focus);
+}
+
+.card:focus-within {
+  box-shadow: var(--shadow-focus);
 }
 
 .media {
   position: relative;
   aspect-ratio: 1;
-  background: #fff;
+  background: var(--color-surface-card);
 }
 
 .mediaLink {
@@ -33,12 +40,12 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 12px;
-  transition: transform var(--transition-base);
+  padding: var(--space-2);
+  transition: transform var(--transition-ui);
 }
 
 .card:hover .image {
-  transform: scale(1.04);
+  transform: scale(1.03);
 }
 
 .placeholder {
@@ -54,26 +61,27 @@
 
 .favBtn {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: var(--space-1);
+  right: var(--space-1);
   z-index: 4;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border: none;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
-  background: #fff;
+  background: var(--color-bg-elevated);
   color: var(--color-text-muted);
   box-shadow: var(--shadow-sm);
   cursor: pointer;
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.92);
   transition:
-    opacity var(--transition-fast),
-    transform var(--transition-fast),
-    color var(--transition-fast);
+    opacity var(--transition-ui),
+    transform var(--transition-ui),
+    color var(--transition-ui),
+    box-shadow var(--transition-ui);
 }
 
 .favBtnVisible,
@@ -83,6 +91,16 @@
   transform: scale(1);
 }
 
+.favBtn:hover,
+.favBtn:focus-visible {
+  color: var(--color-primary);
+  box-shadow: var(--shadow-focus);
+}
+
+.favBtnActive {
+  color: var(--color-primary);
+}
+
 @media (max-width: 767px) {
   .favBtn {
     opacity: 1;
@@ -90,48 +108,17 @@
   }
 }
 
-.favBtn:hover,
-.favBtnActive {
-  color: var(--color-primary);
-}
-
 .discountBadge {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: var(--space-1);
+  left: var(--space-1);
   z-index: 2;
-  padding: 4px 8px;
+  padding: 4px var(--space-1);
   border-radius: var(--radius-sm);
-  background: var(--color-primary);
-  color: #fff;
-  font-size: var(--font-size-xs);
+  background: var(--color-cta);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-caption);
   font-weight: var(--font-weight-bold);
-}
-
-.hitBadge {
-  position: absolute;
-  bottom: 10px;
-  left: 10px;
-  z-index: 2;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  background: var(--color-hit);
-  color: #fff;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-}
-
-.promoBadge {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  z-index: 2;
-  max-width: calc(100% - 20px);
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  background: rgb(34 34 34 / 0.75);
-  color: #fff;
-  font-size: var(--font-size-xs);
 }
 
 .navBtn {
@@ -144,32 +131,47 @@
   width: 32px;
   height: 32px;
   margin-top: -16px;
-  border: none;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
-  background: #fff;
+  background: var(--color-bg-elevated);
   box-shadow: var(--shadow-sm);
   cursor: pointer;
+  transition:
+    box-shadow var(--transition-ui),
+    transform var(--transition-ui);
+}
+
+.navBtn:hover,
+.navBtn:focus-visible {
+  box-shadow: var(--shadow-focus);
+  transform: scale(1.05);
 }
 
 .navPrev {
-  left: 8px;
+  left: var(--space-1);
 }
 
 .navNext {
-  right: 8px;
+  right: var(--space-1);
 }
 
 .body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 10px 12px 12px;
+  gap: var(--space-1);
+  padding: var(--space-2);
   flex: 1;
 }
 
+.rowTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
 .brand {
-  margin: 0;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-caption);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-muted);
   text-transform: uppercase;
@@ -186,24 +188,23 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 2.5em;
 }
 
-.title:hover {
+.title:hover,
+.title:focus-visible {
   color: var(--color-primary);
   text-decoration: none;
 }
 
-.prices {
+.rowPrice {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: auto;
+  gap: var(--space-1);
 }
 
 .price {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
 }
@@ -214,56 +215,72 @@
   text-decoration: line-through;
 }
 
-.pricesHighlight {
-  padding: 8px 12px;
-  margin: 0 -4px;
-  border-radius: var(--radius-md);
-  background: var(--color-sale-bg);
+.rowRating {
+  min-height: 20px;
 }
 
-.pricesHighlight .price {
-  color: var(--color-sale);
-}
-
-.delivery {
+.specs {
   margin: 0;
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.specs li {
+  font-size: var(--font-size-caption);
   line-height: var(--line-height-tight);
+  color: var(--color-text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .cartBtn {
   width: 100%;
-  min-height: 40px;
-  margin-top: 4px;
-  font-size: var(--font-size-sm);
+  min-height: var(--cta-height);
+  margin-top: auto;
+  padding: 0 var(--space-2);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-cta);
+  color: var(--color-text-inverse);
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
-  border-color: var(--color-border);
+  cursor: pointer;
   transition:
-    background-color var(--transition-fast),
-    border-color var(--transition-fast),
-    color var(--transition-fast),
-    transform var(--transition-fast);
+    background-color var(--transition-ui),
+    box-shadow var(--transition-ui),
+    transform var(--transition-ui);
 }
 
 .cartBtn:hover:not(:disabled) {
-  border-color: var(--color-primary);
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
+  background: var(--color-cta-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.cartBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 .cartBtn:active:not(:disabled) {
-  transform: scale(0.97);
+  transform: scale(0.9);
+  background: var(--color-cta-active);
+}
+
+.cartBtnLoading {
+  opacity: 0.85;
+  cursor: wait;
 }
 
 .cartBtnSuccess {
-  border-color: var(--color-success);
-  background: var(--color-success-bg);
-  color: var(--color-success);
+  background: var(--color-success);
 }
 
 .cartBtnSuccess:hover:not(:disabled) {
-  border-color: var(--color-success);
-  background: var(--color-success-bg);
-  color: var(--color-success);
+  background: var(--color-success);
 }

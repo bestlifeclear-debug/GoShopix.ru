@@ -1,3 +1,4 @@
+import { formatDeliveryLabel } from '@goshopix/shared';
 import { ProductCard, ProductCardSkeleton } from '../design-system';
 import type { ProductListItem } from '../api/types';
 import styles from './ProductGrid.module.css';
@@ -6,15 +7,21 @@ interface ProductGridProps {
   products: ProductListItem[];
   onAddToCart?: (product: ProductListItem) => void;
   loading?: boolean;
-  highlightPrice?: boolean;
   skeletonCount?: number;
+}
+
+function buildSpecLines(product: ProductListItem): string[] {
+  const lines: string[] = [];
+  if (product.category?.name) lines.push(product.category.name);
+  const delivery = formatDeliveryLabel(product.deliveryDaysMin, product.deliveryDaysMax);
+  if (delivery) lines.push(delivery);
+  return lines.slice(0, 2);
 }
 
 export function ProductGrid({
   products,
   onAddToCart,
   loading,
-  highlightPrice,
   skeletonCount = 8,
 }: ProductGridProps) {
   if (loading) {
@@ -44,12 +51,8 @@ export function ProductGrid({
           discountPercent={product.discountPercent}
           rating={product.rating}
           reviewCount={product.reviewCount}
-          promoBadge={product.promoBadge}
-          deliveryDaysMin={product.deliveryDaysMin}
-          deliveryDaysMax={product.deliveryDaysMax}
+          specLines={buildSpecLines(product)}
           images={product.images}
-          highlightPrice={highlightPrice}
-          isHit={product.reviewCount >= 30}
           onAddToCart={(e) => {
             e.preventDefault();
             e.stopPropagation();

@@ -199,10 +199,29 @@
     border-color var(--transition-fast);
 }
 
-.navLink:hover {
+.navLink:hover,
+.navLink:focus-visible {
   color: var(--color-primary);
   border-bottom-color: var(--color-primary);
   text-decoration: none;
+  background: var(--color-primary-soft);
+}
+
+.navLinkActive {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-primary-soft);
+}
+
+.iconBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.catalogBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 @media (min-width: 768px) {

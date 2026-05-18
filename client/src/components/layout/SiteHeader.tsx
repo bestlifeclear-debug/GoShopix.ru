@@ -84,8 +84,9 @@ export function SiteHeader() {
   const navLinks = useMemo<HeaderNavLink[]>(() => {
     const fromCategories = categories
       .filter((c) => !c.parentId)
+      .slice(0, 3)
       .map((c) => ({ label: c.name, to: `/catalog?categorySlug=${c.slug}` }));
-    return [...fromCategories, ...STATIC_NAV];
+    return [...fromCategories, ...STATIC_NAV].slice(0, 6);
   }, [categories]);
 
   const goSearch = () => {

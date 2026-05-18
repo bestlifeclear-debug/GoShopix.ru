@@ -60,15 +60,19 @@
 }
 
 .primary {
-  background: var(--color-primary);
-  background: var(--gradient-brand-button);
+  background: var(--color-button-primary);
   color: var(--color-text-inverse);
   box-shadow: none;
 }
 
 .primary:hover:not(:disabled) {
-  background: var(--color-primary-hover);
-  background: var(--gradient-brand-button-hover);
+  background: var(--color-button-primary-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.primary:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 .primary:active:not(:disabled) {

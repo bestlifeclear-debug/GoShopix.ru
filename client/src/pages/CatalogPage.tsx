@@ -4,7 +4,7 @@ import { categoriesApi, productsApi } from '../api/index';
 import type { CategoryNode, ProductFacets, ProductListItem } from '../api/types';
 import { ProductGrid } from '../components/ProductGrid';
 import { Button, StatusBadge } from '../design-system';
-import { IconClose, IconFilter } from '../design-system/icons/Icons';
+import { IconCheck, IconClose, IconFilter } from '../design-system/icons/Icons';
 import { useCartStore } from '../stores/cartStore';
 import { ApiClientError } from '../api/client';
 import styles from './CatalogPage.module.css';
@@ -30,6 +30,40 @@ function getAttrFilters(params: URLSearchParams): Record<string, string> {
 
 const ELECTRONICS_SLUGS = new Set(['electronics', 'smartphones', 'laptops']);
 
+function FilterCheck({
+  active,
+  type,
+  name,
+  checked,
+  onChange,
+  children,
+  className,
+}: {
+  active: boolean;
+  type: 'checkbox' | 'radio';
+  name?: string;
+  checked: boolean;
+  onChange: () => void;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <label className={`${styles.checkItem} ${active ? styles.checkItemActive : ''} ${className ?? ''}`}>
+      <input
+        type={type}
+        name={name}
+        className={styles.checkInputNative}
+        checked={checked}
+        onChange={onChange}
+      />
+      <span className={styles.checkMark} aria-hidden>
+        {active ? <IconCheck width={16} height={16} /> : null}
+      </span>
+      <span className={styles.checkLabel}>{children}</span>
+    </label>
+  );
+}
+
 export function CatalogPage() {
   const [params, setParams] = useSearchParams();
   const [categories, setCategories] = useState<CategoryNode[]>([]);
@@ -53,6 +87,8 @@ export function CatalogPage() {
     [brandsParam],
   );
   const attrFilters = useMemo(() => getAttrFilters(params), [params]);
+
+  const categoryRoots = useMemo(() => categories.filter((c) => !c.parentId), [categories]);
 
   const flatCategories = useMemo(
     () => categories.flatMap((c) => [c, ...c.children, ...c.children.flatMap((ch) => ch.children)]),
@@ -176,27 +212,45 @@ export function CatalogPage() {
         <legend className={styles.filterLabel}>Категория</legend>
         <ul className={styles.checkList}>
           <li>
-            <label className={styles.checkItem}>
-              <input
+            <FilterCheck
+              active={!categorySlug}
+              type="radio"
+              name="category"
+              checked={!categorySlug}
+              onChange={() => setFilter('categorySlug', '')}
+            >
+              Все категории
+            </FilterCheck>
+          </li>
+          {categoryRoots.map((root) => (
+            <li key={root.id} className={styles.treeGroup}>
+              <FilterCheck
+                active={categorySlug === root.slug}
                 type="radio"
                 name="category"
-                checked={!categorySlug}
-                onChange={() => setFilter('categorySlug', '')}
-              />
-              <span>Все категории</span>
-            </label>
-          </li>
-          {flatCategories.map((c) => (
-            <li key={c.id}>
-              <label className={`${styles.checkItem} ${c.parentId ? styles.checkItemChild : ''}`}>
-                <input
-                  type="radio"
-                  name="category"
-                  checked={categorySlug === c.slug}
-                  onChange={() => setFilter('categorySlug', c.slug)}
-                />
-                <span>{c.name}</span>
-              </label>
+                checked={categorySlug === root.slug}
+                onChange={() => setFilter('categorySlug', root.slug)}
+              >
+                {root.name}
+              </FilterCheck>
+              {root.children.length > 0 && (
+                <ul className={styles.treeChildren}>
+                  {root.children.map((child) => (
+                    <li key={child.id}>
+                      <FilterCheck
+                        active={categorySlug === child.slug}
+                        type="radio"
+                        name="category"
+                        checked={categorySlug === child.slug}
+                        onChange={() => setFilter('categorySlug', child.slug)}
+                        className={styles.checkItemNested}
+                      >
+                        {child.name}
+                      </FilterCheck>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           ))}
         </ul>
@@ -237,14 +291,14 @@ export function CatalogPage() {
           <ul className={styles.checkList}>
             {facets.brands.map((brand) => (
               <li key={brand}>
-                <label className={styles.checkItem}>
-                  <input
-                    type="checkbox"
-                    checked={selectedBrands.includes(brand)}
-                    onChange={() => toggleBrand(brand)}
-                  />
-                  <span>{brand}</span>
-                </label>
+                <FilterCheck
+                  active={selectedBrands.includes(brand)}
+                  type="checkbox"
+                  checked={selectedBrands.includes(brand)}
+                  onChange={() => toggleBrand(brand)}
+                >
+                  {brand}
+                </FilterCheck>
               </li>
             ))}
           </ul>
@@ -253,14 +307,14 @@ export function CatalogPage() {
 
       <fieldset className={styles.filterGroup}>
         <legend className={styles.filterLabel}>Наличие</legend>
-        <label className={styles.checkItem}>
-          <input
-            type="checkbox"
-            checked={inStock}
-            onChange={(e) => setFilter('inStock', e.target.checked ? 'true' : '')}
-          />
-          <span>В наличии</span>
-        </label>
+        <FilterCheck
+          active={inStock}
+          type="checkbox"
+          checked={inStock}
+          onChange={() => setFilter('inStock', inStock ? '' : 'true')}
+        >
+          В наличии
+        </FilterCheck>
       </fieldset>
 
       {showAttributeFilters &&
@@ -270,15 +324,15 @@ export function CatalogPage() {
             <ul className={styles.checkList}>
               {attr.values.map((value) => (
                 <li key={value}>
-                  <label className={styles.checkItem}>
-                    <input
-                      type="radio"
-                      name={`attr-${attr.slug}`}
-                      checked={attrFilters[attr.slug] === value}
-                      onChange={() => setAttrFilter(attr.slug, value)}
-                    />
-                    <span>{value}</span>
-                  </label>
+                  <FilterCheck
+                    active={attrFilters[attr.slug] === value}
+                    type="radio"
+                    name={`attr-${attr.slug}`}
+                    checked={attrFilters[attr.slug] === value}
+                    onChange={() => setAttrFilter(attr.slug, value)}
+                  >
+                    {value}
+                  </FilterCheck>
                 </li>
               ))}
               {attrFilters[attr.slug] && (

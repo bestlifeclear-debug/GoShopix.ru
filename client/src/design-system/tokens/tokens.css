@@ -1,47 +1,55 @@
-/* GoShopix — 8px-сетка, Ozon/WB-плотность */
+/* GoShopix — 8px-сетка, токены темы (WCAG 2.1 AA: контраст текста ≥ 4.5:1) */
 :root {
+  /* Акцентная палитра (5 цветов): primary, CTA, sale, success, neutral */
   --color-primary: #d81b60;
   --color-primary-hover: #c2185b;
   --color-primary-active: #ad1457;
   --color-primary-soft: rgb(216 27 96 / 0.12);
-  --color-focus-glow: 0 0 0 3px rgb(216 27 96 / 0.22), 0 0 20px rgb(216 27 96 / 0.18);
+
+  --color-cta: #ff6b6b;
+  --color-cta-hover: #ff5252;
+  --color-cta-active: #e64545;
 
   --color-header-bg: #f2dfe8;
   --color-bg: #ffffff;
   --color-bg-subtle: #f7f7f8;
   --color-bg-elevated: #ffffff;
+  --color-surface-card: #ffffff;
 
-  --color-text: #222222;
-  --color-text-muted: #555555;
+  --color-text: #1a1a1a;
+  --color-text-muted: #5c5c5c;
   --color-text-inverse: #ffffff;
 
   --color-sale: #d81b60;
   --color-sale-bg: #f2dfe8;
-  --color-hit: #ff6f00;
+  --color-hit: #e65100;
   --color-hit-bg: #fff3e0;
 
   --color-success: #2e7d32;
   --color-success-bg: #e8f5e9;
-  --color-warning: #ff6f00;
+  --color-warning: #e65100;
   --color-warning-bg: #fff3e0;
-  --color-error: #d32f2f;
+  --color-error: #c62828;
   --color-error-bg: #ffebee;
-  --color-border: #ececec;
+
+  --color-border: #e0e0e0;
   --color-border-focus: var(--color-primary);
 
-  --gradient-brand: linear-gradient(135deg, #e91e63 0%, #d81b60 50%, #c2185b 100%);
-  --gradient-brand-button: linear-gradient(135deg, #e91e63 0%, #d81b60 100%);
-  --gradient-brand-button-hover: linear-gradient(135deg, #d81b60 0%, #ad1457 100%);
-  --gradient-brand-soft: linear-gradient(180deg, #f2dfe8 0%, #ffffff 100%);
+  --color-focus-glow: 0 0 0 3px rgb(216 27 96 / 0.22);
 
-  --shadow-sm: 0 2px 8px rgb(34 34 34 / 0.06);
-  --shadow-md: 0 6px 24px rgb(34 34 34 / 0.08);
-  --shadow-lg: 0 12px 40px rgb(34 34 34 / 0.12);
-  --shadow-card: 0 2px 12px rgb(34 34 34 / 0.06);
-  --shadow-card-hover: 0 8px 28px rgb(34 34 34 / 0.12);
-  --shadow-brand: 0 8px 24px rgb(216 27 96 / 0.28);
+  /* Сплошные фоны кнопок — без градиентов (меньше визуального шума) */
+  --color-button-primary: var(--color-primary);
+  --color-button-primary-hover: var(--color-primary-hover);
+
+  --shadow-sm: 0 2px 8px rgb(26 26 26 / 0.06);
+  --shadow-md: 0 6px 24px rgb(26 26 26 / 0.08);
+  --shadow-lg: 0 12px 40px rgb(26 26 26 / 0.1);
+  --shadow-card: 0 2px 12px rgb(26 26 26 / 0.06);
+  --shadow-card-hover: 0 8px 24px rgb(26 26 26 / 0.12);
+  --shadow-focus: 0 0 0 3px rgb(216 27 96 / 0.25);
 
   --font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
+  --font-size-caption: 0.75rem;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
@@ -71,48 +79,68 @@
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-ui: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-spring: 350ms cubic-bezier(0.34, 1.2, 0.64, 1);
 
   --header-top-height: 72px;
   --header-height: 120px;
   --container-max: 1320px;
   --touch-min: 48px;
   --cta-height: 48px;
-  --search-height: 52px;
+  --search-height: 48px;
+  --icon-size: 24px;
 
   --bp-sm: 768px;
   --bp-md: 1024px;
 }
 
+/* Тёмная тема: приглушённые акценты, контрастный текст на тёмных поверхностях */
 [data-theme='dark'] {
-  --color-header-bg: #2a1a24;
-  --color-bg: #141414;
-  --color-bg-subtle: #1c1c1c;
-  --color-bg-elevated: #222222;
+  --color-primary: #e85a7a;
+  --color-primary-hover: #f0708e;
+  --color-primary-active: #d44d6d;
+  --color-primary-soft: rgb(232 90 122 / 0.18);
 
-  --color-text: #f0f0f0;
-  --color-text-muted: #a8a8a8;
-  --color-text-inverse: #141414;
+  --color-cta: #ff6b6b;
+  --color-cta-hover: #ff8585;
+  --color-cta-active: #e65a5a;
 
-  --color-sale-bg: #3d2430;
-  --color-hit-bg: #3d2e14;
+  --color-header-bg: #1e1e1e;
+  --color-bg: #121212;
+  --color-bg-subtle: #1a1a1a;
+  --color-bg-elevated: #242424;
+  --color-surface-card: #1e1e1e;
 
-  --color-success-bg: #1b3320;
-  --color-warning-bg: #3d2e14;
-  --color-error-bg: #3d1f1f;
+  --color-text: #ececec;
+  --color-text-muted: #b3b3b3;
+  --color-text-inverse: #121212;
 
-  --color-border: #333333;
-  --color-primary-soft: rgb(216 27 96 / 0.2);
+  --color-sale: #ff8a8a;
+  --color-sale-bg: #3a2228;
+  --color-hit: #e8a04a;
+  --color-hit-bg: #2e2618;
 
-  --gradient-brand-soft: linear-gradient(180deg, #2a1a24 0%, #141414 100%);
+  --color-success: #81c784;
+  --color-success-bg: #1b2e1f;
+  --color-warning: #e8a04a;
+  --color-warning-bg: #2e2618;
+  --color-error: #ef9a9a;
+  --color-error-bg: #351c1c;
 
-  --shadow-sm: 0 2px 8px rgb(0 0 0 / 0.35);
-  --shadow-md: 0 6px 24px rgb(0 0 0 / 0.4);
-  --shadow-lg: 0 12px 40px rgb(0 0 0 / 0.5);
-  --shadow-card: 0 2px 12px rgb(0 0 0 / 0.3);
-  --shadow-card-hover: 0 8px 28px rgb(0 0 0 / 0.45);
+  --color-border: #3d3d3d;
+  --color-border-focus: var(--color-primary);
+
+  --color-focus-glow: 0 0 0 3px rgb(232 90 122 / 0.35);
+  --color-button-primary: var(--color-primary);
+  --color-button-primary-hover: var(--color-primary-hover);
+
+  --shadow-sm: 0 2px 8px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 6px 20px rgb(0 0 0 / 0.45);
+  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+  --shadow-card: 0 2px 12px rgb(0 0 0 / 0.35);
+  --shadow-card-hover: 0 8px 24px rgb(0 0 0 / 0.5);
+  --shadow-focus: 0 0 0 3px rgb(255 107 107 / 0.35);
 }
 
 @keyframes skeleton-shimmer {

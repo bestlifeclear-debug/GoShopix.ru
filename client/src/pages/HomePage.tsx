@@ -142,7 +142,6 @@ export function HomePage() {
           products={discounted}
           onAddToCart={handleAdd}
           loading={loading}
-          highlightPrice
         />
         <HomeProductSection
           title="Новинки"

@@ -10,7 +10,6 @@ interface HomeProductSectionProps {
   linkLabel: string;
   products: ProductListItem[];
   loading?: boolean;
-  highlightPrice?: boolean;
   onAddToCart?: (product: ProductListItem) => void;
 }
 
@@ -21,7 +20,6 @@ export function HomeProductSection({
   linkLabel,
   products,
   loading,
-  highlightPrice,
   onAddToCart,
 }: HomeProductSectionProps) {
   return (
@@ -41,7 +39,6 @@ export function HomeProductSection({
         products={products}
         onAddToCart={onAddToCart}
         loading={loading}
-        highlightPrice={highlightPrice}
         skeletonCount={10}
       />
     </section>

@@ -26,7 +26,7 @@ export const Default: Story = {
     discountPercent: 28,
     rating: 4.7,
     reviewCount: 891,
-    promoBadge: 'Хит продаж',
+    specLines: ['Аудио', 'Доставка за 2 дня'],
     images: demoImages,
   },
 };
@@ -41,7 +41,7 @@ export const LowStock: Story = {
     discountPercent: 29,
     rating: 4.3,
     reviewCount: 412,
-    promoBadge: 'Осталось 3 шт.',
+    specLines: ['Гаджеты', 'Доставка за 1 день'],
     images: demoImages,
   },
 };
