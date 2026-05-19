@@ -1,47 +1,41 @@
-import type { NavGroup } from './types';
+import type { ComponentType, SVGProps } from 'react';
+import {
+  IconAddress,
+  IconBell,
+  IconBonus,
+  IconFavorites,
+  IconHome,
+  IconOrders,
+  IconPayment,
+  IconProfile,
+  IconReturns,
+  IconSupport,
+} from './AccountIcons';
+import type { AccountSection } from './types';
 
-export const NAV_GROUPS: NavGroup[] = [
-  {
-    title: 'Мои покупки',
-    items: [
-      { id: 'orders', label: 'Все заказы' },
-      { id: 'returns', label: 'Возвраты' },
-      { id: 'reviews', label: 'Отзывы' },
-    ],
-  },
-  {
-    title: 'Мой профиль',
-    items: [
-      { id: 'profile', label: 'Данные' },
-      { id: 'security', label: 'Безопасность' },
-      { id: 'addresses', label: 'Адреса' },
-      { id: 'payments', label: 'Платежи' },
-    ],
-  },
-  {
-    title: 'Мои интересы',
-    items: [
-      { id: 'favorites', label: 'Избранное' },
-      { id: 'lists', label: 'Списки' },
-      { id: 'subscriptions', label: 'Подписки' },
-    ],
-  },
-  {
-    title: 'Финансы',
-    items: [{ id: 'finance', label: 'Баланс и бонусы' }],
-  },
-  {
-    title: 'Помощь',
-    items: [
-      { id: 'notifications', label: 'Уведомления' },
-      { id: 'support', label: 'Поддержка' },
-    ],
-  },
+export interface SidebarNavItem {
+  id: AccountSection;
+  label: string;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
+}
+
+/** Плоское меню ЛК — как на Ozon/WB */
+export const SIDEBAR_NAV: SidebarNavItem[] = [
+  { id: 'dashboard', label: 'Главная', icon: IconHome },
+  { id: 'orders', label: 'Мои заказы', icon: IconOrders },
+  { id: 'returns', label: 'Возвраты', icon: IconReturns },
+  { id: 'favorites', label: 'Избранное', icon: IconFavorites },
+  { id: 'finance', label: 'Баллы и бонусы', icon: IconBonus },
+  { id: 'profile', label: 'Личные данные', icon: IconProfile },
+  { id: 'addresses', label: 'Адреса', icon: IconAddress },
+  { id: 'payments', label: 'Способы оплаты', icon: IconPayment },
+  { id: 'notifications', label: 'Уведомления', icon: IconBell },
+  { id: 'support', label: 'Поддержка', icon: IconSupport },
 ];
 
 export const SECTION_TITLES: Record<string, string> = {
   dashboard: 'Главная',
-  orders: 'Все заказы',
+  orders: 'Мои заказы',
   returns: 'Возвраты',
   reviews: 'Отзывы',
   profile: 'Личные данные',
@@ -51,7 +45,7 @@ export const SECTION_TITLES: Record<string, string> = {
   favorites: 'Избранное',
   lists: 'Списки покупок',
   subscriptions: 'Подписки',
-  finance: 'Финансы',
+  finance: 'Баллы и бонусы',
   notifications: 'Уведомления',
   support: 'Поддержка',
 };

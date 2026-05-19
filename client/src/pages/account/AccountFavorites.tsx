@@ -14,7 +14,7 @@ export function AccountFavorites({ favorites }: AccountFavoritesProps) {
     return (
       <p className={styles.emptyState}>
         В избранном пока пусто.{' '}
-        <button type="button" className={styles.widgetLink} onClick={() => navigate('/catalog')}>
+        <button type="button" className={styles.textLink} onClick={() => navigate('/catalog')}>
           Перейти в каталог
         </button>
       </p>

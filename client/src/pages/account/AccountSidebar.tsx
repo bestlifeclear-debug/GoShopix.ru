@@ -1,12 +1,13 @@
-import { Link } from 'react-router-dom';
-import { NAV_GROUPS } from './constants';
 import type { AccountSection } from './types';
+import { SIDEBAR_NAV } from './constants';
 import styles from '../AccountPage.module.css';
 
 interface AccountSidebarProps {
   section: AccountSection;
   unreadCount: number;
+  userEmail?: string;
   onNavigate: (id: AccountSection) => void;
+  onLogout: () => void;
   mobileOpen: boolean;
   onCloseMobile: () => void;
 }
@@ -14,7 +15,9 @@ interface AccountSidebarProps {
 export function AccountSidebar({
   section,
   unreadCount,
+  userEmail,
   onNavigate,
+  onLogout,
   mobileOpen,
   onCloseMobile,
 }: AccountSidebarProps) {
@@ -29,12 +32,10 @@ export function AccountSidebar({
       />
       <aside
         className={`${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ''}`}
-        aria-label="Навигация личного кабинета"
+        aria-label="Меню личного кабинета"
       >
-        <div className={styles.sidebarBrand}>
-          <Link to="/" className={styles.sidebarLogo} onClick={onCloseMobile}>
-            GoShopix
-          </Link>
+        <div className={styles.sidebarHead}>
+          <p className={styles.sidebarTitle}>Личный кабинет</p>
           <button
             type="button"
             className={styles.sidebarClose}
@@ -46,43 +47,37 @@ export function AccountSidebar({
         </div>
 
         <nav className={styles.sidebarNav}>
-          <button
-            type="button"
-            className={`${styles.navItem} ${section === 'dashboard' ? styles.navItemActive : ''}`}
-            onClick={() => onNavigate('dashboard')}
-          >
-            <span className={styles.navIcon} aria-hidden>
-              ⌂
-            </span>
-            Главная
-          </button>
-
-          {NAV_GROUPS.map((group) => (
-            <div key={group.title} className={styles.navGroup}>
-              <p className={styles.navGroupTitle}>{group.title}</p>
-              <ul className={styles.navList}>
-                {group.items.map((item) => {
-                  const badge =
-                    item.id === 'notifications' && unreadCount > 0 ? unreadCount : item.badge;
-                  return (
-                    <li key={item.id}>
-                      <button
-                        type="button"
-                        className={`${styles.navItem} ${section === item.id ? styles.navItemActive : ''}`}
-                        onClick={() => onNavigate(item.id)}
-                      >
-                        {item.label}
-                        {badge != null && badge > 0 && (
-                          <span className={styles.navBadge}>{badge > 99 ? '99+' : badge}</span>
-                        )}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
+          <ul className={styles.navList}>
+            {SIDEBAR_NAV.map((item) => {
+              const Icon = item.icon;
+              const badge = item.id === 'notifications' && unreadCount > 0 ? unreadCount : undefined;
+              return (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    className={`${styles.navItem} ${section === item.id ? styles.navItemActive : ''}`}
+                    onClick={() => onNavigate(item.id)}
+                  >
+                    <span className={styles.navIconWrap}>
+                      <Icon />
+                    </span>
+                    <span className={styles.navLabel}>{item.label}</span>
+                    {badge != null && (
+                      <span className={styles.navBadge}>{badge > 99 ? '99+' : badge}</span>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
         </nav>
+
+        <footer className={styles.sidebarFooter}>
+          {userEmail && <p className={styles.sidebarEmail}>{userEmail}</p>}
+          <button type="button" className={styles.logoutBtn} onClick={onLogout}>
+            Выйти
+          </button>
+        </footer>
       </aside>
     </>
   );

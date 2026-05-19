@@ -1,144 +1,103 @@
 import { Link } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
-import type { FavoriteItem, Order, ProductListItem } from '../../api/types';
+import type { Order, ProductListItem } from '../../api/types';
 import { Button } from '../../design-system';
 import styles from '../AccountPage.module.css';
 import { isActiveOrder, orderShortId, statusLabel, statusTone } from './utils';
-import type { AccountSection } from './types';
 
 interface AccountDashboardProps {
+  displayName: string;
   orders: Order[];
-  favorites: FavoriteItem[];
   recommendations: ProductListItem[];
-  bonusBalance: number;
-  onNavigate: (section: AccountSection) => void;
   onOpenOrder: (orderId: string) => void;
+  onAllOrders: () => void;
 }
 
 export function AccountDashboard({
+  displayName,
   orders,
-  favorites,
   recommendations,
-  bonusBalance,
-  onNavigate,
   onOpenOrder,
+  onAllOrders,
 }: AccountDashboardProps) {
   const activeOrders = orders.filter(isActiveOrder).slice(0, 3);
-  const favPreview = favorites.slice(0, 4);
 
   return (
     <div className={styles.dashboard}>
-      <section className={`${styles.widget} ${styles.widgetWide}`} aria-labelledby="widget-orders">
-        <div className={styles.widgetHead}>
-          <h2 id="widget-orders" className={styles.widgetTitle}>
-            Активные заказы
-          </h2>
-          <button type="button" className={styles.widgetLink} onClick={() => onNavigate('orders')}>
-            Все заказы →
-          </button>
-        </div>
-        {activeOrders.length === 0 ? (
-          <p className={styles.widgetEmpty}>Нет активных заказов. Загляните в каталог!</p>
-        ) : (
-          <ul className={styles.activeOrdersList}>
-            {activeOrders.map((order) => {
-              const tone = statusTone(order.status);
-              return (
-                <li key={order.id}>
-                  <article className={styles.activeOrderCard}>
-                    <div className={styles.activeOrderTop}>
-                      <span className={styles.activeOrderId}>№ {orderShortId(order.id)}</span>
-                      <span className={`${styles.statusDot} ${styles[`status_${tone}`]}`}>
-                        {statusLabel(order)}
-                      </span>
-                    </div>
-                    <p className={styles.activeOrderDate}>
-                      {new Date(order.createdAt).toLocaleDateString('ru-RU')} ·{' '}
-                      <strong>{formatPrice(order.totalAmount)}</strong>
-                    </p>
-                    <div className={styles.activeOrderActions}>
-                      <Button size="sm" variant="outline" onClick={() => onOpenOrder(order.id)}>
-                        Подробнее
-                      </Button>
-                      <Button size="sm" onClick={() => onNavigate('support')}>
-                        Поддержка
-                      </Button>
-                    </div>
-                  </article>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+      <section className={styles.welcomeBlock} aria-labelledby="welcome-title">
+        <h1 id="welcome-title" className={styles.welcomeTitle}>
+          Добро пожаловать, {displayName}
+        </h1>
 
-      <section className={styles.widget} aria-labelledby="widget-bonus">
-        <h2 id="widget-bonus" className={styles.widgetTitle}>
-          Баланс бонусов
-        </h2>
-        <p className={styles.bonusValue}>{bonusBalance.toLocaleString('ru-RU')}</p>
-        <p className={styles.bonusHint}>бонусов на счёте</p>
-        <button type="button" className={styles.widgetLink} onClick={() => onNavigate('finance')}>
-          Как потратить →
-        </button>
-      </section>
-
-      <section
-        className={`${styles.widget} ${styles.widgetWide}`}
-        aria-labelledby="widget-reco"
-      >
-        <div className={styles.widgetHead}>
-          <h2 id="widget-reco" className={styles.widgetTitle}>
-            Персональные рекомендации
-          </h2>
-          <Link to="/catalog" className={styles.widgetLink}>
-            Каталог →
-          </Link>
-        </div>
-        <div className={styles.carousel}>
-          {recommendations.length === 0 ? (
-            <p className={styles.widgetEmpty}>Скоро подберём товары специально для вас.</p>
-          ) : (
-            recommendations.map((p) => (
-              <Link key={p.id} to={`/product/${p.id}`} className={styles.carouselCard}>
-                <span className={styles.carouselImg}>
-                  {p.imageUrl ? (
-                    <img src={p.imageUrl} alt="" loading="lazy" />
-                  ) : (
-                    <span>{p.name.charAt(0)}</span>
-                  )}
-                </span>
-                <span className={styles.carouselName}>{p.name}</span>
-                <span className={styles.carouselPrice}>{formatPrice(p.price)}</span>
+        <div className={styles.ordersBlock}>
+          <h2 className={styles.blockSubtitle}>Активные заказы</h2>
+          {activeOrders.length === 0 ? (
+            <div className={styles.emptyOrders}>
+              <p className={styles.emptyOrdersText}>
+                У вас пока нет активных заказов. Самое время выбрать что-нибудь в каталоге!
+              </p>
+              <Link to="/catalog">
+                <Button>Перейти в каталог</Button>
               </Link>
-            ))
+            </div>
+          ) : (
+            <>
+              <ul className={styles.activeOrdersList}>
+                {activeOrders.map((order) => {
+                  const tone = statusTone(order.status);
+                  return (
+                    <li key={order.id}>
+                      <button
+                        type="button"
+                        className={styles.activeOrderCard}
+                        onClick={() => onOpenOrder(order.id)}
+                      >
+                        <span className={styles.activeOrderId}>№ {orderShortId(order.id)}</span>
+                        <span className={`${styles.statusDot} ${styles[`status_${tone}`]}`}>
+                          {statusLabel(order)}
+                        </span>
+                        <span className={styles.activeOrderMeta}>
+                          {new Date(order.createdAt).toLocaleDateString('ru-RU')} ·{' '}
+                          {formatPrice(order.totalAmount)}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+              <button type="button" className={styles.textLink} onClick={onAllOrders}>
+                Все заказы
+              </button>
+            </>
           )}
         </div>
       </section>
 
-      <section className={styles.widget} aria-labelledby="widget-fav">
-        <div className={styles.widgetHead}>
-          <h2 id="widget-fav" className={styles.widgetTitle}>
-            Избранное
+      <section className={styles.recoBlock} aria-labelledby="reco-title">
+        <div className={styles.recoHead}>
+          <h2 id="reco-title" className={styles.blockSubtitle}>
+            Персональные рекомендации
           </h2>
-          <button type="button" className={styles.widgetLink} onClick={() => onNavigate('favorites')}>
-            Всё избранное →
-          </button>
+          <Link to="/catalog" className={styles.textLink}>
+            Весь каталог
+          </Link>
         </div>
-        {favPreview.length === 0 ? (
-          <p className={styles.widgetEmpty}>Добавляйте товары в избранное с карточки товара.</p>
+        {recommendations.length === 0 ? (
+          <p className={styles.recoEmpty}>Рекомендации появятся после просмотра каталога.</p>
         ) : (
-          <ul className={styles.favPreview}>
-            {favPreview.map((f) => (
-              <li key={f.id}>
-                <Link to={`/product/${f.productId}`} className={styles.favPreviewItem}>
-                  <span className={styles.favPreviewThumb}>
-                    {f.product.imageUrl ? (
-                      <img src={f.product.imageUrl} alt="" loading="lazy" />
+          <ul className={styles.recoGrid}>
+            {recommendations.map((p) => (
+              <li key={p.id}>
+                <Link to={`/product/${p.id}`} className={styles.recoCard}>
+                  <span className={styles.recoImg}>
+                    {p.imageUrl ? (
+                      <img src={p.imageUrl} alt="" loading="lazy" />
                     ) : (
-                      f.product.name.charAt(0)
+                      <span className={styles.recoImgFallback}>{p.name.charAt(0)}</span>
                     )}
                   </span>
+                  <span className={styles.recoName}>{p.name}</span>
+                  <span className={styles.recoPrice}>{formatPrice(p.price)}</span>
                 </Link>
               </li>
             ))}

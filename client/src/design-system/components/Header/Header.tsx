@@ -31,7 +31,7 @@ export function Header({
   catalogOpen = false,
   onCatalogToggle,
   onCartClick,
-  favoritesTo = '/account?tab=favorites',
+  favoritesTo = '/account?section=favorites',
   accountTo = '/account',
   accountLabel = 'Личный кабинет',
   navLinks = [],

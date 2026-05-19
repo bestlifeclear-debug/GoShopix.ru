@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { categoriesApi, productsApi } from '../../api/index';
 import type { CategoryNode } from '../../api/types';
 import { Header, type HeaderNavLink } from '../../design-system';
@@ -26,6 +26,8 @@ const STATIC_NAV: HeaderNavLink[] = [
 
 export function SiteHeader() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isAccountArea = location.pathname.startsWith('/account');
   const wrapRef = useRef<HTMLDivElement>(null);
   const [search, setSearch] = useState('');
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
@@ -134,9 +136,10 @@ export function SiteHeader() {
         extraActions={<ThemeToggle />}
         cartCount={cartCount}
         onCartClick={handleCartClick}
-        accountTo={token ? '/account' : '/auth'}
+        favoritesTo={token ? '/account?section=favorites' : '/auth'}
+        accountTo={token ? '/account?section=dashboard' : '/auth'}
         accountLabel={token ? 'Личный кабинет' : 'Войти'}
-        navLinks={navLinks}
+        navLinks={isAccountArea ? [] : navLinks}
         menuOpen={menuOpen}
         onMenuToggle={() => {
           setMenuOpen((o) => !o);

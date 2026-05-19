@@ -2,8 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { favoritesApi, notificationsApi, ordersApi, productsApi } from '../api/index';
 import type { FavoriteItem, NotificationItem, NotificationSettings, Order, ProductListItem } from '../api/types';
-import { ThemeToggle } from '../components/ThemeToggle/ThemeToggle';
-import { Button } from '../design-system';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import { AccountDashboard } from './account/AccountDashboard';
@@ -65,7 +63,7 @@ export function AccountPage() {
     if (!token) return;
     ordersApi.list(1, 50).then((r) => setOrders(r.items));
     favoritesApi.list().then(setFavorites);
-    productsApi.list({ page: 1, limit: 12, sort: 'popular' }).then((r) => setRecommendations(r.items));
+    productsApi.list({ page: 1, limit: 8, sort: 'popular' }).then((r) => setRecommendations(r.items));
     refreshNotifications();
   }, [token, refreshNotifications]);
 
@@ -104,9 +102,7 @@ export function AccountPage() {
     }
     try {
       for (const item of withVariants) {
-        if (item.variantId) {
-          await addToCart(item.variantId, item.quantity);
-        }
+        if (item.variantId) await addToCart(item.variantId, item.quantity);
       }
       navigate('/cart');
     } catch {
@@ -126,59 +122,64 @@ export function AccountPage() {
   }
 
   const sectionTitle = SECTION_TITLES[section] ?? 'Личный кабинет';
+  const showSectionHeading = section !== 'dashboard';
 
   return (
     <div className={`${styles.accountShell} ${themeClass}`}>
       <AccountSidebar
         section={section}
         unreadCount={unreadCount}
+        userEmail={user?.email}
         onNavigate={navigateSection}
+        onLogout={logout}
         mobileOpen={mobileNavOpen}
         onCloseMobile={() => setMobileNavOpen(false)}
       />
 
       <div className={styles.content}>
-        <header className={styles.topBar}>
-          <button
-            type="button"
-            className={styles.menuBtn}
-            aria-label="Открыть меню"
-            aria-expanded={mobileNavOpen}
-            onClick={() => setMobileNavOpen(true)}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
-          <div className={styles.topBarMain}>
-            <h1 className={styles.pageTitle}>{section === 'dashboard' ? 'Добро пожаловать' : sectionTitle}</h1>
-            <p className={styles.pageSubtitle}>
-              {section === 'dashboard' ? displayName : user?.email}
-            </p>
-          </div>
-          <div className={styles.topBarActions}>
-            <ThemeToggle />
+        {showSectionHeading && (
+          <header className={styles.sectionHead}>
+            <button
+              type="button"
+              className={styles.menuBtn}
+              aria-label="Открыть меню"
+              aria-expanded={mobileNavOpen}
+              onClick={() => setMobileNavOpen(true)}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
+            <h1 className={styles.sectionTitle}>{sectionTitle}</h1>
             {user?.role === 'SELLER' && (
-              <Button variant="secondary" size="sm" onClick={() => navigate('/seller/dashboard')}>
-                Продавец
-              </Button>
+              <button
+                type="button"
+                className={styles.sellerLink}
+                onClick={() => navigate('/seller/dashboard')}
+              >
+                Кабинет продавца
+              </button>
             )}
-            <Button variant="outline" size="sm" onClick={logout}>
-              Выйти
-            </Button>
-          </div>
-        </header>
+          </header>
+        )}
 
         <div className={styles.view} key={section}>
           {section === 'dashboard' && (
-            <AccountDashboard
-              orders={orders}
-              favorites={favorites}
-              recommendations={recommendations}
-              bonusBalance={DEMO_BONUS}
-              onNavigate={navigateSection}
-              onOpenOrder={openOrder}
-            />
+            <>
+              <button
+                type="button"
+                className={styles.menuBtnDesktopHidden}
+                aria-label="Открыть меню"
+                onClick={() => setMobileNavOpen(true)}
+              />
+              <AccountDashboard
+                displayName={displayName}
+                orders={orders}
+                recommendations={recommendations}
+                onOpenOrder={openOrder}
+                onAllOrders={() => navigateSection('orders')}
+              />
+            </>
           )}
 
           {section === 'orders' && (
@@ -218,22 +219,6 @@ export function AccountPage() {
             />
           )}
 
-          {section === 'reviews' && (
-            <AccountPlaceholder
-              title="Отзывы"
-              description="Оставляйте отзывы на товары из доставленных заказов — они помогут другим покупателям."
-            />
-          )}
-
-          {section === 'security' && (
-            <AccountPlaceholder
-              title="Безопасность"
-              description="Смена пароля и двухфакторная аутентификация появятся в следующем обновлении."
-              actionLabel="На страницу входа"
-              onAction={() => navigate('/auth')}
-            />
-          )}
-
           {section === 'addresses' && (
             <AccountPlaceholder
               title="Адреса доставки"
@@ -250,24 +235,10 @@ export function AccountPage() {
             />
           )}
 
-          {section === 'lists' && (
-            <AccountPlaceholder
-              title="Списки покупок"
-              description="Создавайте списки «На подарок», «Для дома» и делитесь ими с близкими."
-            />
-          )}
-
-          {section === 'subscriptions' && (
-            <AccountPlaceholder
-              title="Подписки"
-              description="Подписка на бренды и категории — уведомления о скидках и новинках."
-            />
-          )}
-
           {section === 'finance' && (
             <div className={styles.financeCard}>
               <p className={styles.bonusValue}>{DEMO_BONUS.toLocaleString('ru-RU')}</p>
-              <p className={styles.bonusHint}>бонусов доступно</p>
+              <p className={styles.bonusHint}>бонусов на счёте</p>
               <p className={styles.financeNote}>
                 1 бонус = 1 ₽ при оплате до 30% заказа. Бонусы начисляются после доставки.
               </p>
@@ -283,12 +254,12 @@ export function AccountPage() {
                   <a href="mailto:support@goshopix.ru">support@goshopix.ru</a>
                 </li>
                 <li>
-                  <button type="button" className={styles.widgetLink} onClick={() => navigateSection('orders')}>
+                  <button type="button" className={styles.textLink} onClick={() => navigateSection('orders')}>
                     Статус заказа
                   </button>
                 </li>
                 <li>
-                  <button type="button" className={styles.widgetLink} onClick={() => navigateSection('returns')}>
+                  <button type="button" className={styles.textLink} onClick={() => navigateSection('returns')}>
                     Возврат товара
                   </button>
                 </li>
