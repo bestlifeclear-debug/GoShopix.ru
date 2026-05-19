@@ -1,0 +1,118 @@
+/**
+ * Интерактив ЛК: привязка к data-theme на <html>, не зависит от hash CSS-modules.
+ */
+
+/* —— Меню сайдбара —— */
+[data-account-lk] [data-lk-nav] {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+[data-theme='light'] [data-account-lk] [data-lk-nav]:not([data-active='true']) {
+  color: #1a1a1a;
+}
+
+[data-theme='dark'] [data-account-lk] [data-lk-nav]:not([data-active='true']) {
+  color: #d4d4d8;
+}
+
+[data-theme='light'] [data-account-lk] [data-lk-nav-icon] {
+  color: #5c5c5c;
+  background-color: #f7f7f8;
+}
+
+[data-theme='dark'] [data-account-lk] [data-lk-nav-icon] {
+  color: #d4d4d8;
+  background-color: #2a2a2a;
+}
+
+@media (hover: hover) {
+  [data-account-lk] [data-lk-nav]:hover {
+    background-color: #d81b60 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 10px rgb(216 27 96 / 0.28) !important;
+    transform: translateY(-1px);
+  }
+
+  [data-account-lk] [data-lk-nav]:hover [data-lk-nav-icon] {
+    background-color: transparent !important;
+    color: #ffffff !important;
+  }
+}
+
+[data-account-lk] [data-lk-nav][data-active='true'] {
+  background-color: #d81b60 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgb(216 27 96 / 0.28) !important;
+  font-weight: 600;
+}
+
+[data-account-lk] [data-lk-nav][data-active='true'] [data-lk-nav-icon] {
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+[data-theme='dark'] [data-account-lk] [data-lk-footer-email] {
+  color: #a1a1aa;
+}
+
+[data-theme='light'] [data-account-lk] [data-lk-footer-email] {
+  color: #5c5c5c;
+}
+
+[data-account-lk] [data-lk-logout] {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+@media (hover: hover) {
+  [data-account-lk] [data-lk-logout]:hover {
+    background-color: #d81b60 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 10px rgb(216 27 96 / 0.28) !important;
+  }
+}
+
+/* —— Карточки рекомендаций —— */
+[data-account-lk] [data-lk-reco] {
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+@media (hover: hover) {
+  [data-theme='light'] [data-account-lk] [data-lk-reco]:hover {
+    background-color: #f2dfe8 !important;
+    box-shadow: 0 4px 14px rgb(216 27 96 / 0.22) !important;
+    transform: translateY(-3px);
+    text-decoration: none !important;
+  }
+
+  [data-theme='dark'] [data-account-lk] [data-lk-reco]:hover {
+    background-color: rgb(216 27 96 / 0.22) !important;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.45) !important;
+    transform: translateY(-3px);
+    text-decoration: none !important;
+  }
+}
+
+/* —— Карточки заказов на главной ЛК —— */
+@media (hover: hover) {
+  [data-theme='light'] [data-account-lk] [data-lk-order-card]:hover {
+    background-color: #f2dfe8 !important;
+    box-shadow: 0 4px 14px rgb(216 27 96 / 0.22) !important;
+    transform: translateY(-2px);
+  }
+
+  [data-theme='dark'] [data-account-lk] [data-lk-order-card]:hover {
+    background-color: rgb(216 27 96 / 0.22) !important;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.45) !important;
+    transform: translateY(-2px);
+  }
+}

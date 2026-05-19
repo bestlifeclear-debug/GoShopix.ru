@@ -55,10 +55,12 @@ export function AccountSidebar({
                 <li key={item.id}>
                   <button
                     type="button"
+                    data-lk-nav
+                    data-active={section === item.id ? 'true' : undefined}
                     className={`${styles.navItem} ${section === item.id ? styles.navItemActive : ''}`}
                     onClick={() => onNavigate(item.id)}
                   >
-                    <span className={styles.navIconWrap}>
+                    <span className={styles.navIconWrap} data-lk-nav-icon>
                       <Icon />
                     </span>
                     <span className={styles.navLabel}>{item.label}</span>
@@ -73,8 +75,12 @@ export function AccountSidebar({
         </nav>
 
         <footer className={styles.sidebarFooter}>
-          {userEmail && <p className={styles.sidebarEmail}>{userEmail}</p>}
-          <button type="button" className={styles.logoutBtn} onClick={onLogout}>
+          {userEmail && (
+            <p className={styles.sidebarEmail} data-lk-footer-email>
+              {userEmail}
+            </p>
+          )}
+          <button type="button" className={styles.logoutBtn} data-lk-logout onClick={onLogout}>
             Выйти
           </button>
         </footer>

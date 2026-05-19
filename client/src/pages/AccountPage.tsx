@@ -14,6 +14,7 @@ import { AccountSidebar } from './account/AccountSidebar';
 import { SECTION_TITLES } from './account/constants';
 import type { AccountSection } from './account/types';
 import { resolveSection } from './account/utils';
+import './account/accountLkInteractions.css';
 import styles from './AccountPage.module.css';
 
 const DEMO_BONUS = 1250;
@@ -125,7 +126,7 @@ export function AccountPage() {
   const showSectionHeading = section !== 'dashboard';
 
   return (
-    <div className={`container ${styles.accountShell} ${themeClass}`}>
+    <div className={`container ${styles.accountShell} ${themeClass}`} data-account-lk>
       <AccountSidebar
         section={section}
         unreadCount={unreadCount}

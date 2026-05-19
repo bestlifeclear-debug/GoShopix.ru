@@ -49,6 +49,7 @@ export function AccountDashboard({
                     <li key={order.id}>
                       <button
                         type="button"
+                        data-lk-order-card
                         className={styles.activeOrderCard}
                         onClick={() => onOpenOrder(order.id)}
                       >
@@ -88,7 +89,7 @@ export function AccountDashboard({
           <ul className={styles.recoGrid}>
             {recommendations.map((p) => (
               <li key={p.id}>
-                <Link to={`/product/${p.id}`} className={styles.recoCard}>
+                <Link to={`/product/${p.id}`} className={styles.recoCard} data-lk-reco>
                   <span className={styles.recoImg}>
                     {p.imageUrl ? (
                       <img src={p.imageUrl} alt="" loading="lazy" />
