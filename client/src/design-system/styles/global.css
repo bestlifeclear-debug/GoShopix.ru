@@ -29,6 +29,7 @@ body {
 
 /* Единая сетка контента (Ozon / Wildberries): 1400px + боковые отступы */
 .container {
+  box-sizing: border-box;
   width: 100%;
   max-width: var(--container-max);
   margin-left: auto;

@@ -87,6 +87,9 @@
   --header-height: 120px;
   --container-max: 1400px;
   --container-padding: 1.25rem;
+  --layout-sidebar-width: 272px;
+  --layout-main-gap: 32px;
+  --layout-sidebar-inset: 12px;
   --touch-min: 48px;
   --cta-height: 48px;
   --search-height: 48px;

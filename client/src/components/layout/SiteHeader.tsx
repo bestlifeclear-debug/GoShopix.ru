@@ -140,6 +140,7 @@ export function SiteHeader() {
         accountTo={token ? '/account?section=dashboard' : '/auth'}
         accountLabel={token ? 'Личный кабинет' : 'Войти'}
         navLinks={isAccountArea ? [] : navLinks}
+        accountGrid={isAccountArea}
         menuOpen={menuOpen}
         onMenuToggle={() => {
           setMenuOpen((o) => !o);

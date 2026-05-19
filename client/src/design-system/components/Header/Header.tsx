@@ -22,6 +22,8 @@ export interface HeaderProps {
   menuOpen?: boolean;
   onMenuToggle?: () => void;
   extraActions?: ReactNode;
+  /** На /account — колонки как в ЛК (sidebar | main) для выравнивания краёв */
+  accountGrid?: boolean;
 }
 
 export function Header({
@@ -38,6 +40,7 @@ export function Header({
   menuOpen = false,
   onMenuToggle,
   extraActions,
+  accountGrid = false,
 }: HeaderProps) {
   const location = useLocation();
   const currentPath = `${location.pathname}${location.search}`;
@@ -57,63 +60,81 @@ export function Header({
     }
   };
 
+  const leftBlock = (
+    <div className={styles.leftGroup}>
+      {onMenuToggle && (
+        <button
+          type="button"
+          className={styles.menuBtn}
+          onClick={onMenuToggle}
+          aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
+          aria-expanded={menuOpen}
+        >
+          {menuOpen ? <IconClose /> : <IconMenu />}
+        </button>
+      )}
+      <Link to="/" className={styles.logo} aria-label="GoShopix — на главную">
+        <span className={styles.logoMark}>G</span>
+        <span className={styles.logoText}>GoShopix</span>
+      </Link>
+      <div className={styles.catalogWrap}>
+        <button
+          type="button"
+          className={`${styles.catalogBtn} ${catalogOpen ? styles.catalogBtnActive : ''}`}
+          onClick={onCatalogToggle}
+          aria-expanded={catalogOpen}
+          aria-haspopup="true"
+        >
+          <IconCatalog />
+          <span className={styles.catalogLabel}>Каталог</span>
+        </button>
+        {catalogOpen && catalogMenu}
+      </div>
+    </div>
+  );
+
+  const actionsBlock = (
+    <div className={styles.actions}>
+      {extraActions}
+      <Link to={favoritesTo} className={styles.iconBtn} aria-label="Избранное">
+        <IconHeart />
+      </Link>
+      <button
+        type="button"
+        className={styles.iconBtn}
+        onClick={onCartClick}
+        aria-label={`Корзина, ${cartCount} товаров`}
+      >
+        <IconCart />
+        {cartCount > 0 && (
+          <span className={styles.cartBadge}>{cartCount > 99 ? '99+' : cartCount}</span>
+        )}
+      </button>
+      <Link to={accountTo} className={styles.iconBtn} aria-label={accountLabel}>
+        <IconUser />
+      </Link>
+    </div>
+  );
+
   return (
     <header className={styles.header}>
       <div className={styles.topBar}>
-        <div className={`container ${styles.inner}`}>
-          <div className={styles.leftGroup}>
-            {onMenuToggle && (
-              <button
-                type="button"
-                className={styles.menuBtn}
-                onClick={onMenuToggle}
-                aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
-                aria-expanded={menuOpen}
-              >
-                {menuOpen ? <IconClose /> : <IconMenu />}
-              </button>
-            )}
-            <Link to="/" className={styles.logo} aria-label="GoShopix — на главную">
-              <span className={styles.logoMark}>G</span>
-              <span className={styles.logoText}>GoShopix</span>
-            </Link>
-            <div className={styles.catalogWrap}>
-              <button
-                type="button"
-                className={`${styles.catalogBtn} ${catalogOpen ? styles.catalogBtnActive : ''}`}
-                onClick={onCatalogToggle}
-                aria-expanded={catalogOpen}
-                aria-haspopup="true"
-              >
-                <IconCatalog />
-                <span className={styles.catalogLabel}>Каталог</span>
-              </button>
-              {catalogOpen && catalogMenu}
-            </div>
-          </div>
-
-          <div className={styles.searchGroup}>{searchSlot}</div>
-
-          <div className={styles.actions}>
-            {extraActions}
-            <Link to={favoritesTo} className={styles.iconBtn} aria-label="Избранное">
-              <IconHeart />
-            </Link>
-            <button
-              type="button"
-              className={styles.iconBtn}
-              onClick={onCartClick}
-              aria-label={`Корзина, ${cartCount} товаров`}
-            >
-              <IconCart />
-              {cartCount > 0 && (
-                <span className={styles.cartBadge}>{cartCount > 99 ? '99+' : cartCount}</span>
-              )}
-            </button>
-            <Link to={accountTo} className={styles.iconBtn} aria-label={accountLabel}>
-              <IconUser />
-            </Link>
-          </div>
+        <div className={`container ${styles.inner} ${accountGrid ? styles.innerAccount : ''}`}>
+          {accountGrid ? (
+            <>
+              {leftBlock}
+              <div className={styles.accountMainCol}>
+                <div className={styles.searchGroup}>{searchSlot}</div>
+                {actionsBlock}
+              </div>
+            </>
+          ) : (
+            <>
+              {leftBlock}
+              <div className={styles.searchGroup}>{searchSlot}</div>
+              {actionsBlock}
+            </>
+          )}
         </div>
       </div>
 
