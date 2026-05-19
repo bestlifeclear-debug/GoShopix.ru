@@ -63,18 +63,32 @@
   color: #5c5c5c;
 }
 
+[data-account-lk] [data-lk-footer-email] {
+  text-align: center;
+}
+
 [data-account-lk] [data-lk-logout] {
+  background-color: #d81b60 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgb(216 27 96 / 0.28) !important;
+  font-weight: 600;
   transition:
     background-color 0.2s ease,
     color 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 @media (hover: hover) {
   [data-account-lk] [data-lk-logout]:hover {
-    background-color: #d81b60 !important;
+    background-color: #c2185b !important;
     color: #ffffff !important;
-    box-shadow: 0 2px 10px rgb(216 27 96 / 0.28) !important;
+    box-shadow: 0 4px 14px rgb(216 27 96 / 0.38) !important;
+    transform: translateY(-1px);
+  }
+
+  [data-theme='dark'] [data-account-lk] [data-lk-logout]:hover {
+    background-color: #e91e63 !important;
   }
 }
 

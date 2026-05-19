@@ -221,15 +221,20 @@
 }
 
 .sidebarFooter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 16px var(--layout-sidebar-inset);
   border-top: 1px solid var(--lk-border);
   background: var(--lk-bg-muted);
 }
 
 .sidebarEmail {
+  width: 100%;
   margin: 0 0 10px;
   font-size: 0.8125rem;
   color: var(--lk-footer-text);
+  text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -237,31 +242,31 @@
 
 .logoutBtn {
   width: 100%;
-  padding: 10px;
+  padding: 12px 14px;
   border: none;
   border-radius: 10px;
-  background: var(--lk-surface-raised);
+  background: var(--lk-nav-primary-bg);
   font-family: var(--font-family);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--lk-footer-text);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--lk-nav-on-primary);
   cursor: pointer;
-  box-shadow: none;
+  box-shadow: var(--lk-nav-shadow);
   transition:
-    color var(--lk-transition),
     background var(--lk-transition),
+    color var(--lk-transition),
     box-shadow var(--lk-transition),
     transform var(--lk-transition);
 }
 
 .logoutBtn:hover {
-  background: var(--lk-nav-primary-bg);
-  color: var(--lk-nav-on-primary);
-  box-shadow: var(--lk-nav-shadow);
+  background: var(--lk-nav-primary-hover);
+  box-shadow: 0 4px 14px rgb(216 27 96 / 0.35);
+  transform: translateY(-1px);
 }
 
 .logoutBtn:active {
-  transform: scale(0.98);
+  transform: translateY(0) scale(0.99);
 }
 
 .logoutBtn:focus-visible {
