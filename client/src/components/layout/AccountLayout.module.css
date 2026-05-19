@@ -1,0 +1,24 @@
+/* Сетка ЛК: только sidebar + main, шапка — снаружи в MainLayout */
+.shell {
+  display: grid;
+  grid-template-columns: var(--layout-sidebar-width) minmax(0, 1fr);
+  column-gap: var(--layout-main-gap);
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: var(--space-3);
+  padding-top: 0;
+  padding-bottom: 48px;
+  min-height: 560px;
+}
+
+.main {
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .shell {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding-bottom: 32px;
+  }
+}

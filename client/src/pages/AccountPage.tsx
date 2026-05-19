@@ -10,6 +10,7 @@ import { AccountNotifications } from './account/AccountNotifications';
 import { AccountOrders } from './account/AccountOrders';
 import { AccountPlaceholder } from './account/AccountPlaceholder';
 import { AccountProfile } from './account/AccountProfile';
+import { AccountLayout } from '../components/layout/AccountLayout';
 import { AccountSidebar } from './account/AccountSidebar';
 import { SECTION_TITLES } from './account/constants';
 import type { AccountSection } from './account/types';
@@ -126,17 +127,20 @@ export function AccountPage() {
   const showSectionHeading = section !== 'dashboard';
 
   return (
-    <div className={`container ${styles.accountShell} ${themeClass}`} data-account-lk>
-      <AccountSidebar
-        section={section}
-        unreadCount={unreadCount}
-        userEmail={user?.email}
-        onNavigate={navigateSection}
-        onLogout={logout}
-        mobileOpen={mobileNavOpen}
-        onCloseMobile={() => setMobileNavOpen(false)}
-      />
-
+    <AccountLayout
+      themeClass={themeClass}
+      sidebar={
+        <AccountSidebar
+          section={section}
+          unreadCount={unreadCount}
+          userEmail={user?.email}
+          onNavigate={navigateSection}
+          onLogout={logout}
+          mobileOpen={mobileNavOpen}
+          onCloseMobile={() => setMobileNavOpen(false)}
+        />
+      }
+    >
       <div className={styles.content}>
         {showSectionHeading && (
           <header className={styles.sectionHead}>
@@ -269,6 +273,6 @@ export function AccountPage() {
           )}
         </div>
       </div>
-    </div>
+    </AccountLayout>
   );
 }

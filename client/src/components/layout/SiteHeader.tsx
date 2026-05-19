@@ -27,7 +27,6 @@ const STATIC_NAV: HeaderNavLink[] = [
 export function SiteHeader() {
   const navigate = useNavigate();
   const location = useLocation();
-  const isAccountArea = location.pathname.startsWith('/account');
   const wrapRef = useRef<HTMLDivElement>(null);
   const [search, setSearch] = useState('');
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
@@ -139,8 +138,7 @@ export function SiteHeader() {
         favoritesTo={token ? '/account?section=favorites' : '/auth'}
         accountTo={token ? '/account?section=dashboard' : '/auth'}
         accountLabel={token ? 'Личный кабинет' : 'Войти'}
-        navLinks={isAccountArea ? [] : navLinks}
-        accountGrid={isAccountArea}
+        navLinks={location.pathname.startsWith('/account') ? [] : navLinks}
         menuOpen={menuOpen}
         onMenuToggle={() => {
           setMenuOpen((o) => !o);
