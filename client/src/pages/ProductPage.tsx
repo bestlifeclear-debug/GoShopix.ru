@@ -13,6 +13,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import { ApiClientError } from '../api/client';
 import { PageContainer } from '../components/layout/PageContainer';
+import { ProductReviews } from '../components/ProductReviews/ProductReviews';
 import styles from './ProductPage.module.css';
 
 const TRUST_SIGNALS = [
@@ -319,13 +320,7 @@ export function ProductPage() {
         )}
         {tab === 'reviews' && (
           <div className={styles.tabContent}>
-            <div className={styles.reviewsSummary}>
-              <span className={styles.reviewsBig}>{product.rating.toFixed(1)}</span>
-              <StarRating value={product.rating} reviewCount={product.reviewCount} />
-            </div>
-            <p className={styles.placeholder}>
-              Отзывы покупателей скоро появятся. Средняя оценка основана на демо-данных.
-            </p>
+            <ProductReviews averageRating={product.rating} reviewCount={product.reviewCount} />
           </div>
         )}
         {tab === 'delivery' && (
