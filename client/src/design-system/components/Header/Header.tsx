@@ -60,6 +60,24 @@ export function Header({
     }
   };
 
+  const catalogBlock = (
+    <div className={styles.catalogWrap}>
+      <button
+        type="button"
+        className={`${styles.catalogBtn} ${catalogOpen ? styles.catalogBtnActive : ''}`}
+        onClick={onCatalogToggle}
+        aria-expanded={catalogOpen}
+        aria-haspopup="true"
+      >
+        <span className={styles.catalogIcon} aria-hidden>
+          <IconCatalog />
+        </span>
+        <span className={styles.catalogLabel}>Каталог</span>
+      </button>
+      {catalogOpen && catalogMenu}
+    </div>
+  );
+
   const leftBlock = (
     <div className={styles.leftGroup}>
       {onMenuToggle && (
@@ -77,21 +95,7 @@ export function Header({
         <span className={styles.logoMark}>G</span>
         <span className={styles.logoText}>GoShopix</span>
       </Link>
-      <div className={styles.catalogWrap}>
-        <button
-          type="button"
-          className={`${styles.catalogBtn} ${catalogOpen ? styles.catalogBtnActive : ''}`}
-          onClick={onCatalogToggle}
-          aria-expanded={catalogOpen}
-          aria-haspopup="true"
-        >
-          <span className={styles.catalogIcon} aria-hidden>
-            <IconCatalog />
-          </span>
-          <span className={styles.catalogLabel}>Каталог</span>
-        </button>
-        {catalogOpen && catalogMenu}
-      </div>
+      {!accountGrid && catalogBlock}
     </div>
   );
 
@@ -126,6 +130,7 @@ export function Header({
             <>
               {leftBlock}
               <div className={styles.accountMainCol}>
+                {catalogBlock}
                 <div className={styles.searchGroup}>{searchSlot}</div>
                 {actionsBlock}
               </div>
