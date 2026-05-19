@@ -60,7 +60,7 @@ export function Header({
   return (
     <header className={styles.header}>
       <div className={styles.topBar}>
-        <div className={styles.inner}>
+        <div className={`container ${styles.inner}`}>
           <div className={styles.leftGroup}>
             {onMenuToggle && (
               <button
@@ -119,7 +119,7 @@ export function Header({
 
       {navLinks.length > 0 && (
         <nav className={styles.navBar} aria-label="Разделы каталога">
-          <div className={styles.navInner}>
+          <div className={`container ${styles.navInner}`}>
             {navLinks.map((link) => (
               <Link
                 key={link.to}

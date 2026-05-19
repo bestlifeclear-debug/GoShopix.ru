@@ -5,9 +5,8 @@
 }
 
 .inner {
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: var(--space-8) var(--space-4) var(--space-6);
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-6);
 }
 
 .columns {

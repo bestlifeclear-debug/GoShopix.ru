@@ -12,7 +12,7 @@ export function SiteFooter() {
 
   return (
     <footer className={styles.footer}>
-      <div className={styles.inner}>
+      <div className={`container ${styles.inner}`}>
         <div className={styles.columns}>
           <div className={styles.col}>
             <p className={styles.brand}>GoShopix</p>

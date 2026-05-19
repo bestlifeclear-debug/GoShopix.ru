@@ -72,8 +72,9 @@ export function HomePage() {
 
   return (
     <div className={styles.page}>
-      <HeroCarousel />
-      <div className={styles.mobileOnly}>
+      <div className="container">
+        <HeroCarousel />
+        <div className={styles.mobileOnly}>
         <section className={styles.block}>
           <h2 className={styles.blockTitle}>Категории</h2>
           <CategoryTiles categories={categories} variant="mobile" />
@@ -163,6 +164,7 @@ export function HomePage() {
           onAddToCart={handleAdd}
           loading={loading}
         />
+      </div>
       </div>
     </div>
   );

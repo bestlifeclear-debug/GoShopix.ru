@@ -85,7 +85,8 @@
 
   --header-top-height: 72px;
   --header-height: 120px;
-  --container-max: 1320px;
+  --container-max: 1400px;
+  --container-padding: 1.25rem;
   --touch-min: 48px;
   --cta-height: 48px;
   --search-height: 48px;

@@ -125,7 +125,7 @@ export function AccountPage() {
   const showSectionHeading = section !== 'dashboard';
 
   return (
-    <div className={`${styles.accountShell} ${themeClass}`}>
+    <div className={`container ${styles.accountShell} ${themeClass}`}>
       <AccountSidebar
         section={section}
         unreadCount={unreadCount}
