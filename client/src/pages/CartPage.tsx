@@ -5,6 +5,7 @@ import { ordersApi } from '../api/index';
 import { Button, Input, StatusBadge } from '../design-system';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
+import { PageContainer } from '../components/layout/PageContainer';
 import styles from './CartPage.module.css';
 
 export function CartPage() {
@@ -63,7 +64,8 @@ export function CartPage() {
   if (!token) return null;
 
   return (
-    <div className={styles.page}>
+    <PageContainer>
+      <div className={styles.page}>
       <h1 className={styles.title}>Корзина</h1>
 
       {isLoading && !cart && <p>Загрузка…</p>}
@@ -79,6 +81,7 @@ export function CartPage() {
 
       {cart && cart.items.length > 0 && (
         <div className={styles.layout}>
+          <div className={styles.itemsCol}>
           <ul className={styles.items}>
             {cart.items.map((item) => (
               <li key={item.id} className={styles.item}>
@@ -122,6 +125,7 @@ export function CartPage() {
               </li>
             ))}
           </ul>
+          </div>
 
           <aside className={styles.checkout}>
             <div className={styles.summary}>
@@ -172,6 +176,7 @@ export function CartPage() {
           </aside>
         </div>
       )}
-    </div>
+      </div>
+    </PageContainer>
   );
 }

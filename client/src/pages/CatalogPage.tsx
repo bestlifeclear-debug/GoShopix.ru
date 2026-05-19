@@ -8,6 +8,7 @@ import { IconCheck, IconClose, IconFilter } from '../design-system/icons/Icons';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
+import { PageContainer } from '../components/layout/PageContainer';
 import styles from './CatalogPage.module.css';
 
 const SORT_OPTIONS = [
@@ -351,7 +352,8 @@ export function CatalogPage() {
   );
 
   return (
-    <div className={styles.page}>
+    <PageContainer>
+      <div className={styles.page}>
       <div className={styles.toolbar}>
         <h1 className={styles.title}>{pageTitle}</h1>
       </div>
@@ -446,6 +448,7 @@ export function CatalogPage() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+    </PageContainer>
   );
 }

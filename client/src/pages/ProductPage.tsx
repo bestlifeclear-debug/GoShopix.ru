@@ -11,6 +11,7 @@ import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import { ApiClientError } from '../api/client';
+import { PageContainer } from '../components/layout/PageContainer';
 import styles from './ProductPage.module.css';
 
 export function ProductPage() {
@@ -134,8 +135,20 @@ export function ProductPage() {
     }
   };
 
-  if (loading) return <p className={styles.message}>Загрузка…</p>;
-  if (!product) return <p className={styles.message}>Товар не найден</p>;
+  if (loading) {
+    return (
+      <PageContainer>
+        <p className={styles.message}>Загрузка…</p>
+      </PageContainer>
+    );
+  }
+  if (!product) {
+    return (
+      <PageContainer>
+        <p className={styles.message}>Товар не найден</p>
+      </PageContainer>
+    );
+  }
 
   const images =
     selectedVariant?.images?.length && selectedVariant.images[0]?.url
@@ -148,7 +161,8 @@ export function ProductPage() {
       : '2–5 дней';
 
   return (
-    <div className={styles.page}>
+    <PageContainer>
+      <div className={styles.page}>
       <div className={styles.grid}>
         <ImageGallery images={images} name={product.name} />
 
@@ -309,6 +323,7 @@ export function ProductPage() {
           <ProductGrid products={alsoBought} onAddToCart={handleSimilarAdd} />
         </section>
       )}
-    </div>
+      </div>
+    </PageContainer>
   );
 }
