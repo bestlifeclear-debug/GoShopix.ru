@@ -47,7 +47,6 @@
 
 .nav {
   display: flex;
-  flex: 1;
   flex-direction: column;
   gap: 4px;
 }
@@ -96,15 +95,17 @@
 }
 
 .footer {
-  margin-top: auto;
-  padding: 16px 8px 0;
-  border-top: 1px solid #f1f5f9;
+  margin-top: 20px;
+  padding: 0 8px 8px;
 }
 
 .footerEmail {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
+  padding: 0 6px;
   font-size: 0.8125rem;
+  font-weight: 500;
   color: #64748b;
+  text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -112,38 +113,49 @@
 
 .footerActions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8125rem;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.footerActions a {
-  color: var(--color-primary);
-  font-weight: 500;
+.footerBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 10px;
+  background: #f1f5f9;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #475569;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.footerBtn:hover {
+  background: #fdf2f8;
+  color: #db2777;
+  box-shadow: 0 2px 8px rgb(216 27 96 / 0.12);
+  transform: translateY(-1px);
   text-decoration: none;
 }
 
-.footerActions a:hover {
-  text-decoration: underline;
+.footerBtn:active {
+  transform: translateY(0);
 }
 
-.footerActions button {
-  border: none;
-  padding: 0;
-  background: none;
-  font-family: inherit;
-  font-size: inherit;
-  color: #64748b;
-  cursor: pointer;
-}
-
-.footerActions button:hover {
-  color: #1e293b;
-}
-
-.footerDot {
-  color: #cbd5e1;
+.footerBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(216 27 96 / 0.2);
 }
 
 .main {
@@ -173,8 +185,17 @@
 
   .footer {
     flex: 1 1 100%;
-    margin-top: 0;
-    padding-top: 12px;
+    margin-top: 16px;
+  }
+
+  .footerActions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .footerBtn {
+    flex: 1;
+    min-width: 140px;
   }
 
   .main {

@@ -1,11 +1,13 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 import {
   BarChart3,
   LayoutDashboard,
+  LogOut,
   Package,
   Settings,
   ShoppingBag,
   Store,
+  ExternalLink,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import styles from './SellerLayout.module.css';
@@ -50,13 +52,14 @@ export function SellerLayout() {
           ))}
         </nav>
         <div className={styles.footer}>
-          <p className={styles.footerEmail}>{user?.email}</p>
+          {user?.email && <p className={styles.footerEmail}>{user.email}</p>}
           <div className={styles.footerActions}>
-            <a href="/">На витрину</a>
-            <span className={styles.footerDot} aria-hidden>
-              ·
-            </span>
-            <button type="button" onClick={logout}>
+            <Link to="/" className={styles.footerBtn}>
+              <ExternalLink size={18} strokeWidth={2} aria-hidden />
+              На витрину
+            </Link>
+            <button type="button" className={styles.footerBtn} onClick={logout}>
+              <LogOut size={18} strokeWidth={2} aria-hidden />
               Выйти
             </button>
           </div>
