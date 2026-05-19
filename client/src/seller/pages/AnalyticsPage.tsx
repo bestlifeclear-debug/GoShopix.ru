@@ -1,119 +1,164 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Percent, TrendingUp, Users } from 'lucide-react';
 import { formatPrice } from '@goshopix/shared';
-import { Input } from '../../design-system';
-import { sellerApi } from '../api/index';
-import type { GeographyReport, SalesReport, TopProductsReport } from '../api/types';
-import { exportCsv } from '../components/exportCsv';
-import styles from './sellerPages.module.css';
+import {
+  MOCK_ANALYTICS,
+  PERIOD_LABELS,
+  type AnalyticsPeriod,
+} from './analytics/mockData';
+import shared from './shared/sellerPremium.module.css';
+
+const CHART_COLOR = '#d81b60';
+const CHART_COLOR_SOFT = 'rgb(216 27 96 / 0.85)';
+
+const PERIODS: AnalyticsPeriod[] = ['today', 'week', 'month'];
+
+function ChartTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: { payload: { period: string; revenue: number; orderCount: number } }[];
+}) {
+  if (!active || !payload?.[0]) return null;
+  const row = payload[0].payload;
+  return (
+    <div
+      style={{
+        padding: '10px 14px',
+        borderRadius: 12,
+        border: '1px solid #f1f5f9',
+        background: '#fff',
+        boxShadow: '0 8px 24px rgb(15 23 42 / 0.12)',
+        fontSize: 13,
+      }}
+    >
+      <p style={{ margin: '0 0 4px', fontWeight: 600, color: '#1e293b' }}>{row.period}</p>
+      <p style={{ margin: 0, color: CHART_COLOR, fontWeight: 700 }}>{formatPrice(row.revenue)}</p>
+      <p style={{ margin: '4px 0 0', color: '#64748b' }}>{row.orderCount} заказов</p>
+    </div>
+  );
+}
+
+function formatKpiValue(kind: 'sales' | 'visitors' | 'conversion', value: number) {
+  if (kind === 'sales') return formatPrice(value);
+  if (kind === 'conversion') return `${value.toFixed(1)}%`;
+  return value.toLocaleString('ru-RU');
+}
 
 export function AnalyticsPage() {
-  const [from, setFrom] = useState('');
-  const [to, setTo] = useState('');
-  const [sales, setSales] = useState<SalesReport | null>(null);
-  const [top, setTop] = useState<TopProductsReport | null>(null);
-  const [geo, setGeo] = useState<GeographyReport | null>(null);
+  const [period, setPeriod] = useState<AnalyticsPeriod>('month');
+  const data = MOCK_ANALYTICS[period];
 
-  useEffect(() => {
-    const params = {
-      from: from ? new Date(from).toISOString() : undefined,
-      to: to ? new Date(to + 'T23:59:59').toISOString() : undefined,
-      groupBy: 'day',
-    };
-    Promise.all([
-      sellerApi.analytics.sales(params),
-      sellerApi.analytics.topProducts({ ...params, limit: 10 }),
-      sellerApi.analytics.geography(params),
-    ]).then(([s, t, g]) => {
-      setSales(s);
-      setTop(t);
-      setGeo(g);
-    });
-  }, [from, to]);
+  const kpiCards = useMemo(
+    () => [
+      {
+        label: 'Продажи',
+        value: data.sales,
+        meta: data.salesDelta,
+        icon: TrendingUp,
+        kind: 'sales' as const,
+      },
+      {
+        label: 'Посетители',
+        value: data.visitors,
+        meta: data.visitorsDelta,
+        icon: Users,
+        kind: 'visitors' as const,
+      },
+      {
+        label: 'Конверсия',
+        value: data.conversion,
+        meta: data.conversionDelta,
+        icon: Percent,
+        kind: 'conversion' as const,
+      },
+    ],
+    [data],
+  );
 
-  const exportTop = () => {
-    if (!top) return;
-    exportCsv(
-      'top-products.csv',
-      ['Товар', 'Продано', 'Выручка'],
-      top.items.map((i) => [i.name, i.unitsSold, i.revenue]),
-    );
-  };
-
-  const exportGeo = () => {
-    if (!geo) return;
-    exportCsv(
-      'geography.csv',
-      ['Регион', 'Заказы', 'Выручка', 'Единиц'],
-      geo.regions.map((r) => [r.region, r.orderCount, r.revenue, r.unitsSold]),
-    );
-  };
+  const chartTitle =
+    period === 'today'
+      ? 'Продажи за сегодня'
+      : period === 'week'
+        ? 'Продажи за неделю'
+        : 'Тренд продаж за месяц';
 
   return (
-    <div>
-      <h1 className={styles.pageTitle}>Аналитика</h1>
-      <div className={styles.filters}>
-        <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
-        <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+    <div className={shared.page}>
+      <div className={shared.analyticsHeader}>
+        <header className={shared.pageHeader} style={{ marginBottom: 0 }}>
+          <h1 className={shared.pageTitle}>Аналитика</h1>
+          <p className={shared.pageSubtitle}>Отчёты по продажам, трафику и конверсии магазина</p>
+        </header>
+        <div className={shared.periodToggle} role="group" aria-label="Период отчёта">
+          {PERIODS.map((p) => (
+            <button
+              key={p}
+              type="button"
+              className={`${shared.periodBtn} ${period === p ? shared.periodBtnActive : ''}`}
+              onClick={() => setPeriod(p)}
+            >
+              {PERIOD_LABELS[p]}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {sales && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Отчёт по продажам</h2>
-          <p>
-            Заказов: {sales.totals.orderCount}, единиц: {sales.totals.unitsSold}, выручка:{' '}
-            {formatPrice(sales.totals.revenue)}
-          </p>
-          <div className={styles.chart}>
-            {sales.periods.slice(-14).map((p) => {
-              const max = Math.max(...sales.periods.map((x) => x.revenue), 1);
-              return (
-                <div
-                  key={p.period}
-                  className={styles.chartBar}
-                  style={{ height: `${(p.revenue / max) * 100}%` }}
-                  title={`${p.period}: ${formatPrice(p.revenue)}`}
-                />
-              );
-            })}
-          </div>
-        </section>
-      )}
+      <div className={shared.kpiGrid}>
+        {kpiCards.map(({ label, value, meta, icon: Icon, kind }) => (
+          <article key={label} className={shared.kpiCard}>
+            <span className={shared.kpiIcon} aria-hidden>
+              <Icon size={22} strokeWidth={2} />
+            </span>
+            <p className={shared.kpiLabel}>{label}</p>
+            <p className={shared.kpiValue}>{formatKpiValue(kind, value)}</p>
+            <p className={shared.kpiMeta}>{meta}</p>
+          </article>
+        ))}
+      </div>
 
-      {top && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>
-            Топ товаров{' '}
-            <button type="button" onClick={exportTop}>
-              CSV
-            </button>
-          </h2>
-          <ol>
-            {top.items.map((i) => (
-              <li key={i.productId}>
-                {i.name} — {i.unitsSold} шт., {formatPrice(i.revenue)}
-              </li>
-            ))}
-          </ol>
-        </section>
-      )}
-
-      {geo && (
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>
-            География{' '}
-            <button type="button" onClick={exportGeo}>
-              CSV
-            </button>
-          </h2>
-          <ul>
-            {geo.regions.map((r) => (
-              <li key={r.region}>
-                {r.region}: {r.orderCount} заказов, {formatPrice(r.revenue)}
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <section className={shared.card}>
+        <h2 className={shared.cardTitle}>{chartTitle}</h2>
+        <div className={shared.chartWrap}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data.chart} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+              <XAxis
+                dataKey="period"
+                tick={{ fill: '#94a3b8', fontSize: 11 }}
+                axisLine={false}
+                tickLine={false}
+                interval="preserveStartEnd"
+              />
+              <YAxis
+                tick={{ fill: '#94a3b8', fontSize: 11 }}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`}
+                width={40}
+              />
+              <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgb(216 27 96 / 0.06)' }} />
+              <Bar
+                dataKey="revenue"
+                fill={CHART_COLOR_SOFT}
+                radius={[8, 8, 0, 0]}
+                maxBarSize={48}
+                activeBar={{ fill: CHART_COLOR }}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,103 +1,121 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
-import { Input } from '../../design-system';
-import { sellerApi } from '../api/index';
-import type { SellerOrder } from '../api/types';
-import { DataTable, type DataTableColumn } from '../components/DataTable';
-import { exportCsv } from '../components/exportCsv';
-import { OrderStatusBadge } from '../components/OrderStatusBadge';
-import styles from './sellerPages.module.css';
+import {
+  MOCK_ORDERS,
+  ORDER_STATUS_FILTER_OPTIONS,
+  type MockOrderStatus,
+  type MockSellerOrder,
+} from './orders/mockData';
+import shared from './shared/sellerPremium.module.css';
+import styles from './OrdersPage.module.css';
+
+function statusClass(status: MockOrderStatus) {
+  const map = {
+    delivered: shared.statusDelivered,
+    shipped: shared.statusShipped,
+    processing: shared.statusProcessing,
+    pending: shared.statusPending,
+  } as const;
+  return map[status];
+}
+
+function matchesDate(order: MockSellerOrder, from: string, to: string) {
+  if (from && order.dateIso < from) return false;
+  if (to && order.dateIso > to) return false;
+  return true;
+}
 
 export function OrdersPage() {
-  const [items, setItems] = useState<SellerOrder[]>([]);
   const [status, setStatus] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
 
-  const load = useCallback(() => {
-    sellerApi.orders
-      .list({
-        page: 1,
-        limit: 100,
-        status: status || undefined,
-        from: from ? new Date(from).toISOString() : undefined,
-        to: to ? new Date(to + 'T23:59:59').toISOString() : undefined,
-      })
-      .then((r) => setItems(r.items));
-  }, [status, from, to]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  const columns: DataTableColumn<SellerOrder>[] = [
-    {
-      key: 'id',
-      header: 'Заказ',
-      sortable: true,
-      sortValue: (r) => r.id,
-      csvValue: (r) => r.id,
-      render: (r) => (
-        <Link className={styles.link} to={`/seller/orders/${r.id}`}>
-          #{r.id.slice(0, 8)}
-        </Link>
-      ),
-    },
-    {
-      key: 'status',
-      header: 'Статус',
-      sortable: true,
-      sortValue: (r) => r.status,
-      csvValue: (r) => r.status,
-      render: (r) => <OrderStatusBadge status={r.status} />,
-    },
-    {
-      key: 'revenue',
-      header: 'Сумма продавца',
-      sortable: true,
-      sortValue: (r) => r.sellerRevenue,
-      csvValue: (r) => r.sellerRevenue,
-      render: (r) => formatPrice(r.sellerRevenue),
-    },
-    {
-      key: 'created',
-      header: 'Дата',
-      sortable: true,
-      sortValue: (r) => r.createdAt,
-      csvValue: (r) => r.createdAt,
-      render: (r) => new Date(r.createdAt).toLocaleString('ru-RU'),
-    },
-    {
-      key: 'shipping',
-      header: 'Адрес',
-      csvValue: (r) => r.shipping.address ?? '',
-      render: (r) => r.shipping.address ?? '—',
-    },
-  ];
+  const filtered = useMemo(
+    () =>
+      MOCK_ORDERS.filter((order) => {
+        if (status && order.status !== status) return false;
+        return matchesDate(order, from, to);
+      }),
+    [status, from, to],
+  );
 
   return (
-    <div>
-      <h1 className={styles.pageTitle}>Заказы</h1>
-      <div className={styles.filters}>
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="">Все статусы</option>
-          <option value="pending">Ожидает оплаты</option>
-          <option value="processing">В обработке</option>
-          <option value="shipped">Отправлен</option>
-          <option value="delivered">Доставлен</option>
-          <option value="cancelled">Отменён</option>
-          <option value="refunded">Возврат</option>
+    <div className={shared.page}>
+      <header className={shared.pageHeader}>
+        <h1 className={shared.pageTitle}>Заказы</h1>
+        <p className={shared.pageSubtitle}>Управление заказами и статусами доставки</p>
+      </header>
+
+      <div className={shared.toolbarCard}>
+        <select
+          className={shared.filterSelect}
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          aria-label="Статус заказа"
+        >
+          {ORDER_STATUS_FILTER_OPTIONS.map((opt) => (
+            <option key={opt.value || 'all'} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
         </select>
-        <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
-        <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+        <input
+          type="date"
+          className={shared.dateInput}
+          value={from}
+          onChange={(e) => setFrom(e.target.value)}
+          aria-label="Дата от"
+        />
+        <input
+          type="date"
+          className={shared.dateInput}
+          value={to}
+          onChange={(e) => setTo(e.target.value)}
+          aria-label="Дата до"
+        />
       </div>
-      <DataTable
-        columns={columns}
-        data={items}
-        keyField={(r) => r.id}
-        onExportCsv={(h, rows) => exportCsv('orders.csv', h, rows)}
-      />
+
+      <div className={shared.tableCard}>
+        <table className={shared.dataTable}>
+          <thead>
+            <tr>
+              <th>Заказ</th>
+              <th>Статус</th>
+              <th>Сумма</th>
+              <th>Клиент</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.length === 0 ? (
+              <tr className={shared.emptyRow}>
+                <td colSpan={4}>Заказы не найдены</td>
+              </tr>
+            ) : (
+              filtered.map((order) => (
+                <tr key={order.id}>
+                  <td>
+                    <Link className={styles.orderLink} to={`/seller/orders/${order.id}`}>
+                      {order.number}
+                    </Link>
+                    <span className={styles.orderDate}>{order.date}</span>
+                  </td>
+                  <td>
+                    <span className={`${shared.statusBadge} ${statusClass(order.status)}`}>
+                      {order.statusLabel}
+                    </span>
+                  </td>
+                  <td className={styles.amountCell}>{formatPrice(order.amount)}</td>
+                  <td>
+                    <p className={styles.customerName}>{order.customerName}</p>
+                    <p className={styles.customerAddress}>{order.customerAddress}</p>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

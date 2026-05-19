@@ -1,0 +1,39 @@
+.orderLink {
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.orderLink:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+.orderDate {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #94a3b8;
+}
+
+.amountCell {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+.customerName {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.customerAddress {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
