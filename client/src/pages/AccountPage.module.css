@@ -1,11 +1,6 @@
-/* GoShopix ЛК — палитра WB/Ozon: белый, пастельный розовый, тёмно-розовый акцент */
+/* GoShopix ЛК — акцент из глобальных токенов (--color-primary) */
 
 .accountShell {
-  --lk-accent: #ad1457;
-  --lk-accent-hover: #880e4f;
-  --lk-accent-soft: #fce4ec;
-  --lk-pastel: #f8bbd0;
-  --lk-pastel-bg: #fff5f8;
   --lk-radius: 12px;
   --lk-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -19,25 +14,37 @@
 }
 
 .accountShell.theme-light {
+  --lk-accent: var(--color-primary);
+  --lk-accent-hover: var(--color-primary-hover);
+  --lk-accent-soft: var(--color-primary-soft);
+  --lk-pastel: #f2dfe8;
+  --lk-pastel-bg: #f2dfe8;
   --lk-bg: #ffffff;
-  --lk-bg-muted: #fff5f8;
+  --lk-bg-muted: #f7f7f8;
   --lk-surface: #ffffff;
-  --lk-border: #f3d5e0;
+  --lk-surface-raised: #ffffff;
+  --lk-border: #e0e0e0;
   --lk-text: #1a1a1a;
-  --lk-text-muted: #5c4a52;
+  --lk-text-muted: #5c5c5c;
+  --lk-empty-bg: #f2dfe8;
+  --lk-empty-border: #e8b4c8;
 }
 
 .accountShell.theme-dark {
+  --lk-accent: var(--color-primary);
+  --lk-accent-hover: var(--color-primary-hover);
+  --lk-accent-soft: var(--color-primary-soft);
+  --lk-pastel: #4a3a42;
+  --lk-pastel-bg: #242424;
   --lk-bg: #121212;
-  --lk-bg-muted: #1a1418;
+  --lk-bg-muted: #1a1a1a;
   --lk-surface: #1e1e1e;
-  --lk-border: #3d3238;
-  --lk-text: #f5f0f2;
-  --lk-text-muted: #c4b4bc;
-  --lk-accent: #f48fb1;
-  --lk-accent-hover: #f06292;
-  --lk-accent-soft: rgb(244 143 177 / 0.15);
-  --lk-pastel-bg: #1a1418;
+  --lk-surface-raised: #282828;
+  --lk-border: #3d3d3d;
+  --lk-text: #ececec;
+  --lk-text-muted: #b3b3b3;
+  --lk-empty-bg: #282828;
+  --lk-empty-border: #4a3a42;
 }
 
 /* —— Sidebar —— */
@@ -60,7 +67,7 @@
   justify-content: space-between;
   padding: 20px 20px 12px;
   border-bottom: 1px solid var(--lk-border);
-  background: var(--lk-pastel-bg);
+  background: var(--lk-bg-muted);
 }
 
 .sidebarTitle {
@@ -137,14 +144,15 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: var(--lk-pastel-bg);
+  background: var(--lk-bg-muted);
   color: var(--lk-text-muted);
   flex-shrink: 0;
   transition: color var(--lk-transition), background var(--lk-transition);
 }
 
 .navItemActive .navIconWrap {
-  background: var(--lk-surface);
+  background: var(--lk-surface-raised);
+  color: var(--lk-accent);
 }
 
 .navLabel {
@@ -165,7 +173,7 @@
 .sidebarFooter {
   padding: 16px 20px;
   border-top: 1px solid var(--lk-border);
-  background: var(--lk-pastel-bg);
+  background: var(--lk-bg-muted);
 }
 
 .sidebarEmail {
@@ -182,11 +190,11 @@
   padding: 10px;
   border: 1px solid var(--lk-border);
   border-radius: 10px;
-  background: var(--lk-surface);
+  background: var(--lk-surface-raised);
   font-family: var(--font-family);
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--lk-text-muted);
+  color: var(--lk-text);
   cursor: pointer;
   transition: border-color var(--lk-transition), color var(--lk-transition);
 }
@@ -269,7 +277,7 @@
   background: var(--lk-surface);
   border: 1px solid var(--lk-border);
   border-radius: var(--lk-radius);
-  box-shadow: 0 2px 12px rgb(173 20 87 / 0.04);
+  box-shadow: var(--shadow-sm);
 }
 
 .welcomeTitle {
@@ -298,16 +306,16 @@
   align-items: flex-start;
   gap: 16px;
   padding: 20px 24px;
-  background: var(--lk-pastel-bg);
+  background: var(--lk-empty-bg);
   border-radius: var(--lk-radius);
-  border: 1px dashed var(--lk-pastel);
+  border: 1px dashed var(--lk-empty-border);
 }
 
 .emptyOrdersText {
   margin: 0;
   font-size: 1rem;
   line-height: 1.5;
-  color: var(--lk-text-muted);
+  color: var(--lk-text);
   max-width: 480px;
 }
 
@@ -329,7 +337,7 @@
   padding: 14px 18px;
   border: 1px solid var(--lk-border);
   border-radius: 10px;
-  background: var(--lk-pastel-bg);
+  background: var(--lk-surface-raised);
   font-family: var(--font-family);
   text-align: left;
   cursor: pointer;
@@ -421,7 +429,7 @@
   aspect-ratio: 1;
   border-radius: 10px;
   overflow: hidden;
-  background: var(--lk-pastel-bg);
+  background: var(--lk-bg-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -534,7 +542,7 @@
   border-radius: 10px;
   font-family: var(--font-family);
   font-size: 0.9375rem;
-  background: var(--lk-pastel-bg);
+  background: var(--lk-bg-muted);
   color: var(--lk-text);
 }
 
@@ -624,7 +632,7 @@
   gap: 12px;
   padding: 10px;
   border-radius: 10px;
-  background: var(--lk-pastel-bg);
+  background: var(--lk-bg-muted);
 }
 
 .orderItemThumb {
@@ -772,7 +780,7 @@
   text-align: center;
   padding: 48px 32px;
   background: var(--lk-surface);
-  border: 1px dashed var(--lk-pastel);
+  border: 1px dashed var(--lk-empty-border);
   border-radius: var(--lk-radius);
 }
 
@@ -785,6 +793,7 @@
 .placeholderTitle {
   margin: 0 0 8px;
   font-size: 1.25rem;
+  color: var(--lk-text);
 }
 
 .placeholderText {
@@ -827,6 +836,7 @@
   border: 1px solid var(--lk-border);
   border-radius: var(--lk-radius);
   max-width: 480px;
+  color: var(--lk-text);
 }
 
 .bonusValue {
@@ -851,6 +861,12 @@
 .supportTitle {
   margin: 0 0 12px;
   font-size: 1.25rem;
+  color: var(--lk-text);
+}
+
+.supportCard p {
+  margin: 0;
+  color: var(--lk-text-muted);
 }
 
 .supportList {

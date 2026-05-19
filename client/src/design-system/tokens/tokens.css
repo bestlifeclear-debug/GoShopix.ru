@@ -1,16 +1,16 @@
 /* GoShopix — 8px-сетка, токены темы (WCAG 2.1 AA: контраст текста ≥ 4.5:1) */
 :root {
   /* Акцентная палитра (5 цветов): primary, CTA, sale, success, neutral */
-  --color-primary: #ad1457;
-  --color-primary-hover: #880e4f;
-  --color-primary-active: #6a0a3d;
-  --color-primary-soft: rgb(173 20 87 / 0.1);
+  --color-primary: #d81b60;
+  --color-primary-hover: #c2185b;
+  --color-primary-active: #ad1457;
+  --color-primary-soft: rgb(216 27 96 / 0.12);
 
   --color-cta: #ff6b6b;
   --color-cta-hover: #ff5252;
   --color-cta-active: #e64545;
 
-  --color-header-bg: #fff5f8;
+  --color-header-bg: #f2dfe8;
   --color-bg: #ffffff;
   --color-bg-subtle: #f7f7f8;
   --color-bg-elevated: #ffffff;
