@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import {
   BarChart3,
+  CreditCard,
   LayoutDashboard,
   LogOut,
   Package,
@@ -18,6 +19,7 @@ const links = [
   { to: '/seller/orders', label: 'Заказы', icon: ShoppingBag },
   { to: '/seller/analytics', label: 'Аналитика', icon: BarChart3 },
   { to: '/seller/settings', label: 'Настройки', icon: Settings },
+  { to: '/seller/tariffs', label: 'Мой тариф', icon: CreditCard },
 ] as const;
 
 export function SellerLayout() {

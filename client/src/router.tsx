@@ -17,6 +17,7 @@ import { OrdersPage } from './seller/pages/OrdersPage';
 import { OrderDetailPage } from './seller/pages/OrderDetailPage';
 import { AnalyticsPage } from './seller/pages/AnalyticsPage';
 import { SettingsPage } from './seller/pages/SettingsPage';
+import { TariffsPage } from './seller/pages/TariffsPage';
 
 export const router = createBrowserRouter([
   { path: '/privacy', element: <PrivacyPolicyPage /> },
@@ -49,6 +50,7 @@ export const router = createBrowserRouter([
           { path: 'orders/:id', element: <OrderDetailPage /> },
           { path: 'analytics', element: <AnalyticsPage /> },
           { path: 'settings', element: <SettingsPage /> },
+          { path: 'tariffs', element: <TariffsPage /> },
         ],
       },
     ],
