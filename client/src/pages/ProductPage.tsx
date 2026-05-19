@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { CreditCard, RotateCcw, ShieldCheck, Store } from 'lucide-react';
 import { formatPrice } from '@goshopix/shared';
 import { favoritesApi, productsApi } from '../api/index';
 import type { ProductDetail, ProductListItem, ProductVariant } from '../api/types';
@@ -13,6 +14,34 @@ import { useCartStore } from '../stores/cartStore';
 import { ApiClientError } from '../api/client';
 import { PageContainer } from '../components/layout/PageContainer';
 import styles from './ProductPage.module.css';
+
+const TRUST_SIGNALS = [
+  { icon: ShieldCheck, label: 'Оригинальный товар' },
+  { icon: CreditCard, label: 'Безопасная оплата' },
+  { icon: RotateCcw, label: 'Возврат 14 дней' },
+] as const;
+
+function formatDeliveryPromise(deliveryDaysMin: number | null | undefined): string {
+  const days = Math.max(1, deliveryDaysMin ?? 1);
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  const dateLabel = new Intl.DateTimeFormat('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+  }).format(date);
+  if (days === 1) return `Доставим завтра, ${dateLabel}`;
+  return `Доставим ${dateLabel}`;
+}
+
+function StockStatus({ stock }: { stock: number }) {
+  if (stock <= 0) {
+    return <p className={styles.stockOut}>Нет в наличии</p>;
+  }
+  if (stock <= 5) {
+    return <p className={styles.stockLow}>Осталось всего {stock} шт.</p>;
+  }
+  return <p className={styles.stock}>В наличии: {stock} шт.</p>;
+}
 
 export function ProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -155,7 +184,8 @@ export function ProductPage() {
       ? selectedVariant.images
       : product.images;
 
-  const deliveryText =
+  const deliveryPromise = formatDeliveryPromise(product.deliveryDaysMin);
+  const deliveryRangeText =
     product.deliveryDaysMin && product.deliveryDaysMax
       ? `${product.deliveryDaysMin}–${product.deliveryDaysMax} дней`
       : '2–5 дней';
@@ -206,22 +236,24 @@ export function ProductPage() {
             </div>
           ))}
 
-          {selectedVariant && (
-            <p className={styles.stock}>
-              {selectedVariant.stock > 0
-                ? `В наличии: ${selectedVariant.stock} шт.`
-                : 'Нет в наличии'}
-            </p>
-          )}
+          {selectedVariant && <StockStatus stock={selectedVariant.stock} />}
 
           <div className={styles.deliveryCard}>
             <h3 className={styles.deliveryTitle}>Доставка</h3>
             <p>
-              По России: <strong>{deliveryText}</strong>
+              По России: <strong>{deliveryPromise}</strong>
             </p>
             <p>Курьер или пункт выдачи — бесплатно от 2 000 ₽</p>
             <p className={styles.deliveryNote}>Возврат в течение 14 дней</p>
           </div>
+
+          {product.store && (
+            <p className={styles.sellerRow}>
+              <Store size={16} strokeWidth={2} className={styles.sellerIcon} aria-hidden />
+              <span className={styles.sellerLabel}>Продавец:</span>
+              <span className={styles.sellerName}>{product.store.name}</span>
+            </p>
+          )}
 
           <div className={styles.actions}>
             <Button size="lg" onClick={handleAddToCart} disabled={!selectedVariant || selectedVariant.stock === 0}>
@@ -231,6 +263,16 @@ export function ProductPage() {
               {isFavorite ? '♥ В избранном' : '♡ В избранное'}
             </Button>
           </div>
+
+          <ul className={styles.trustRow} aria-label="Гарантии покупки">
+            {TRUST_SIGNALS.map(({ icon: Icon, label }) => (
+              <li key={label} className={styles.trustItem}>
+                <Icon size={16} strokeWidth={2} className={styles.trustIcon} aria-hidden />
+                <span>{label}</span>
+              </li>
+            ))}
+          </ul>
+
           {msg && <p className={styles.msg}>{msg}</p>}
         </div>
       </div>
@@ -288,7 +330,9 @@ export function ProductPage() {
         )}
         {tab === 'delivery' && (
           <div className={styles.tabContent}>
-            <p>Доставка по России: {deliveryText}.</p>
+            <p>
+              Доставка по России: {deliveryPromise} (ориентировочно {deliveryRangeText}).
+            </p>
             <p>Отслеживание заказа в личном кабинете.</p>
             <p>Возврат в течение 14 дней при сохранении товарного вида.</p>
           </div>
