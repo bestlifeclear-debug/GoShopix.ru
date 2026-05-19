@@ -134,6 +134,7 @@ export function AccountPage() {
           section={section}
           unreadCount={unreadCount}
           userEmail={user?.email}
+          isSeller={user?.role === 'SELLER'}
           onNavigate={navigateSection}
           onLogout={logout}
           mobileOpen={mobileNavOpen}
@@ -156,15 +157,6 @@ export function AccountPage() {
               <span />
             </button>
             <h1 className={styles.sectionTitle}>{sectionTitle}</h1>
-            {user?.role === 'SELLER' && (
-              <button
-                type="button"
-                className={styles.sellerLink}
-                onClick={() => navigate('/seller/dashboard')}
-              >
-                Кабинет продавца
-              </button>
-            )}
           </header>
         )}
 

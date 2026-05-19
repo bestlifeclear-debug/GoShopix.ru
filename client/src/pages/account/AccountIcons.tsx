@@ -133,3 +133,17 @@ export function IconHome(props: P) {
     </svg>
   );
 }
+
+export function IconStore(props: P) {
+  return (
+    <svg {...base} {...props}>
+      <path
+        d="M4 9l2-4h12l2 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9M9 20v-6h6v6"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

@@ -220,6 +220,62 @@
   font-weight: 700;
 }
 
+.sellerCabinetBlock {
+  flex-shrink: 0;
+  padding: 4px var(--layout-sidebar-inset) 12px;
+  border-top: 1px solid var(--lk-border);
+}
+
+.sellerCabinetLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--lk-accent);
+  border-radius: 10px;
+  background: var(--lk-accent-soft);
+  font-family: var(--font-family);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--lk-accent);
+  text-decoration: none;
+  box-sizing: border-box;
+  transition:
+    background var(--lk-transition),
+    color var(--lk-transition),
+    border-color var(--lk-transition),
+    box-shadow var(--lk-transition),
+    transform var(--lk-transition);
+}
+
+.sellerCabinetLink:hover {
+  background: var(--lk-nav-primary-bg);
+  border-color: var(--lk-nav-primary-bg);
+  color: var(--lk-nav-on-primary);
+  box-shadow: var(--lk-nav-shadow);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.sellerCabinetLink:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.sellerCabinetLink:focus-visible {
+  outline: none;
+  box-shadow: var(--color-focus-glow);
+}
+
+.sellerCabinetIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
 .sidebarFooter {
   display: flex;
   flex-direction: column;

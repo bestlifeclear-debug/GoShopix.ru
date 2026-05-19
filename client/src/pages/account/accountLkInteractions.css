@@ -67,6 +67,34 @@
   text-align: center;
 }
 
+[data-account-lk] [data-lk-seller-cabinet] {
+  border-color: #d81b60 !important;
+  background-color: #f2dfe8 !important;
+  color: #d81b60 !important;
+}
+
+[data-theme='dark'] [data-account-lk] [data-lk-seller-cabinet] {
+  border-color: #e85a7a !important;
+  background-color: rgb(232 90 122 / 0.14) !important;
+  color: #f0708e !important;
+}
+
+@media (hover: hover) {
+  [data-account-lk] [data-lk-seller-cabinet]:hover {
+    background-color: #d81b60 !important;
+    border-color: #d81b60 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 10px rgb(216 27 96 / 0.28) !important;
+    transform: translateY(-1px);
+  }
+
+  [data-theme='dark'] [data-account-lk] [data-lk-seller-cabinet]:hover {
+    background-color: #d81b60 !important;
+    border-color: #d81b60 !important;
+    color: #ffffff !important;
+  }
+}
+
 [data-account-lk] [data-lk-logout] {
   background-color: #d81b60 !important;
   color: #ffffff !important;

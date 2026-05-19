@@ -1,11 +1,14 @@
+import { Link } from 'react-router-dom';
 import type { AccountSection } from './types';
 import { SIDEBAR_NAV } from './constants';
+import { IconStore } from './AccountIcons';
 import styles from '../AccountPage.module.css';
 
 interface AccountSidebarProps {
   section: AccountSection;
   unreadCount: number;
   userEmail?: string;
+  isSeller?: boolean;
   onNavigate: (id: AccountSection) => void;
   onLogout: () => void;
   mobileOpen: boolean;
@@ -16,6 +19,7 @@ export function AccountSidebar({
   section,
   unreadCount,
   userEmail,
+  isSeller,
   onNavigate,
   onLogout,
   mobileOpen,
@@ -73,6 +77,22 @@ export function AccountSidebar({
             })}
           </ul>
         </nav>
+
+        {isSeller && (
+          <div className={styles.sellerCabinetBlock}>
+            <Link
+              to="/seller/dashboard"
+              className={styles.sellerCabinetLink}
+              data-lk-seller-cabinet
+              onClick={onCloseMobile}
+            >
+              <span className={styles.sellerCabinetIcon} aria-hidden>
+                <IconStore />
+              </span>
+              <span>Кабинет продавца</span>
+            </Link>
+          </div>
+        )}
 
         <footer className={styles.sidebarFooter}>
           {userEmail && (
