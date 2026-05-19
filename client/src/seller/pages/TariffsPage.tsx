@@ -19,13 +19,16 @@ interface TariffPlan {
 const PLANS: TariffPlan[] = [
   {
     id: 'start',
-    name: 'Start (Текущий)',
+    name: 'Start',
     price: '0 ₽',
     pricePeriod: '/мес',
     features: [
       { text: 'Полный доступ ко всем функциям кабинета' },
       { text: 'Комиссия с продаж: 6%' },
-      { text: 'Лимит: до 50 товаров' },
+      { text: 'Лимит: до 30 товаров' },
+      { text: 'Еженедельные выплаты на расчетный счет' },
+      { text: 'Управление магазином с любых устройств' },
+      { text: 'Базовая защита от фрод-заказов' },
     ],
     variant: 'current',
   },
