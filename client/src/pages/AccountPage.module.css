@@ -20,9 +20,14 @@
   --lk-accent: var(--color-primary);
   --lk-accent-hover: var(--color-primary-hover);
   --lk-accent-soft: var(--color-primary-soft);
+  --lk-nav-item-color: #1a1a1a;
+  --lk-nav-icon-color: #5c5c5c;
+  --lk-nav-icon-bg: #f7f7f8;
+  --lk-nav-primary-bg: #d81b60;
+  --lk-nav-primary-hover: #c2185b;
+  --lk-nav-on-primary: #ffffff;
   --lk-nav-fill: var(--color-header-bg);
-  --lk-nav-fill-active: rgb(216 27 96 / 0.14);
-  --lk-nav-shadow: 0 2px 10px rgb(216 27 96 / 0.2);
+  --lk-nav-shadow: 0 2px 10px rgb(216 27 96 / 0.25);
   --lk-hover-bg: #f2dfe8;
   --lk-hover-border: rgb(216 27 96 / 0.22);
   --lk-pastel: #f2dfe8;
@@ -36,15 +41,21 @@
   --lk-text-muted: #5c5c5c;
   --lk-empty-bg: #f2dfe8;
   --lk-empty-border: #e8b4c8;
+  --lk-footer-text: #5c5c5c;
 }
 
 .accountShell.theme-dark {
-  --lk-accent: var(--color-primary);
-  --lk-accent-hover: var(--color-primary-hover);
-  --lk-accent-soft: var(--color-primary-soft);
-  --lk-nav-fill: rgb(232 90 122 / 0.18);
-  --lk-nav-fill-active: rgb(232 90 122 / 0.26);
-  --lk-nav-shadow: 0 2px 12px rgb(0 0 0 / 0.35);
+  --lk-accent: #e85a7a;
+  --lk-accent-hover: #f0708e;
+  --lk-accent-soft: rgb(232 90 122 / 0.18);
+  --lk-nav-item-color: #d4d4d8;
+  --lk-nav-icon-color: #d4d4d8;
+  --lk-nav-icon-bg: #2a2a2a;
+  --lk-nav-primary-bg: #d81b60;
+  --lk-nav-primary-hover: #e91e63;
+  --lk-nav-on-primary: #ffffff;
+  --lk-nav-fill: rgb(216 27 96 / 0.2);
+  --lk-nav-shadow: 0 2px 12px rgb(0 0 0 / 0.4);
   --lk-hover-bg: rgb(232 90 122 / 0.14);
   --lk-hover-border: rgb(232 90 122 / 0.35);
   --lk-pastel: #4a3a42;
@@ -54,10 +65,11 @@
   --lk-surface: #1e1e1e;
   --lk-surface-raised: #282828;
   --lk-border: #3d3d3d;
-  --lk-text: #ececec;
-  --lk-text-muted: #b3b3b3;
+  --lk-text: #ffffff;
+  --lk-text-muted: #a1a1aa;
   --lk-empty-bg: #282828;
   --lk-empty-border: #4a3a42;
+  --lk-footer-text: #a1a1aa;
 }
 
 /* —— Sidebar —— */
@@ -99,17 +111,18 @@
   background: transparent;
   font-size: 1.5rem;
   cursor: pointer;
-  color: var(--lk-text);
+  color: var(--lk-nav-item-color);
   width: 44px;
   height: 44px;
   transition:
     background var(--lk-transition),
-    color var(--lk-transition);
+    color var(--lk-transition),
+    box-shadow var(--lk-transition);
 }
 
 .sidebarClose:hover {
-  background: var(--lk-nav-fill);
-  color: var(--lk-accent);
+  background: var(--lk-nav-primary-bg);
+  color: var(--lk-nav-on-primary);
   box-shadow: var(--lk-nav-shadow);
 }
 
@@ -125,7 +138,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 8px;
 }
 
 .navItem {
@@ -133,14 +146,14 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 11px 12px;
+  padding: 12px 14px;
   border: none;
   border-radius: 10px;
   background: transparent;
   font-family: var(--font-family);
   font-size: 0.9375rem;
   font-weight: 500;
-  color: var(--lk-text);
+  color: var(--lk-nav-item-color);
   text-align: left;
   cursor: pointer;
   box-shadow: none;
@@ -152,10 +165,10 @@
 }
 
 .navItem:hover {
-  background: var(--lk-nav-fill);
-  color: var(--lk-accent);
+  background: var(--lk-nav-primary-bg);
+  color: var(--lk-nav-on-primary);
   box-shadow: var(--lk-nav-shadow);
-  transform: var(--lk-lift-sm);
+  transform: none;
 }
 
 .navItem:active {
@@ -164,22 +177,18 @@
 
 .navItem:focus-visible {
   outline: none;
-  background: var(--lk-nav-fill);
-  color: var(--lk-accent);
+  background: var(--lk-nav-primary-bg);
+  color: var(--lk-nav-on-primary);
   box-shadow: var(--color-focus-glow);
 }
 
 .navItemActive,
 .navItemActive:hover {
-  background: var(--lk-nav-fill-active);
-  color: var(--lk-accent);
+  background: var(--lk-nav-primary-bg);
+  color: var(--lk-nav-on-primary);
   font-weight: 600;
   box-shadow: var(--lk-nav-shadow);
   transform: none;
-}
-
-.navItemActive .navIconWrap {
-  color: var(--lk-accent);
 }
 
 .navIconWrap {
@@ -189,24 +198,20 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: var(--lk-bg-muted);
-  color: var(--lk-text-muted);
+  background: var(--lk-nav-icon-bg);
+  color: var(--lk-nav-icon-color);
   flex-shrink: 0;
   transition:
     color var(--lk-transition),
-    background var(--lk-transition),
-    transform var(--lk-transition);
+    background var(--lk-transition);
 }
 
 .navItem:hover .navIconWrap,
-.navItemActive .navIconWrap {
-  background: rgb(216 27 96 / 0.12);
-  color: var(--lk-accent);
-}
-
-.accountShell.theme-dark .navItem:hover .navIconWrap,
-.accountShell.theme-dark .navItemActive .navIconWrap {
-  background: rgb(232 90 122 / 0.22);
+.navItem:focus-visible .navIconWrap,
+.navItemActive .navIconWrap,
+.navItemActive:hover .navIconWrap {
+  background: transparent;
+  color: var(--lk-nav-on-primary);
 }
 
 .navLabel {
@@ -233,7 +238,7 @@
 .sidebarEmail {
   margin: 0 0 10px;
   font-size: 0.8125rem;
-  color: var(--lk-text-muted);
+  color: var(--lk-footer-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -248,7 +253,7 @@
   font-family: var(--font-family);
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--lk-text);
+  color: var(--lk-footer-text);
   cursor: pointer;
   box-shadow: none;
   transition:
@@ -259,8 +264,8 @@
 }
 
 .logoutBtn:hover {
-  background: var(--lk-nav-fill);
-  color: var(--lk-accent);
+  background: var(--lk-nav-primary-bg);
+  color: var(--lk-nav-on-primary);
   box-shadow: var(--lk-nav-shadow);
 }
 
@@ -372,11 +377,16 @@
 }
 
 .welcomeBlock {
-  padding: 32px 0;
+  padding: 32px 24px;
   background: var(--lk-surface);
   border: 1px solid var(--lk-border);
   border-radius: var(--lk-radius);
   box-shadow: var(--shadow-sm);
+}
+
+.accountShell.theme-dark .welcomeBlock {
+  border-color: #2e2e2e;
+  box-shadow: 0 2px 16px rgb(0 0 0 / 0.35);
 }
 
 .welcomeTitle {
@@ -414,7 +424,7 @@
   margin: 0;
   font-size: 1rem;
   line-height: 1.5;
-  color: var(--lk-text);
+  color: var(--lk-text-muted);
   max-width: 480px;
 }
 
@@ -498,10 +508,16 @@
 
 /* Recommendations grid */
 .recoBlock {
-  padding: 28px 0 0;
+  padding: 28px 24px 32px;
   background: var(--lk-surface);
   border: 1px solid var(--lk-border);
   border-radius: var(--lk-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.accountShell.theme-dark .recoBlock {
+  border-color: #2e2e2e;
+  box-shadow: 0 2px 16px rgb(0 0 0 / 0.35);
 }
 
 .recoHead {
@@ -1236,8 +1252,7 @@
 
   .welcomeBlock,
   .recoBlock {
-    padding-top: 20px;
-    padding-bottom: 0;
+    padding: 20px 16px 24px;
   }
 
   .welcomeTitle {

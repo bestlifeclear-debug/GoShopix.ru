@@ -85,7 +85,9 @@ export function Header({
           aria-expanded={catalogOpen}
           aria-haspopup="true"
         >
-          <IconCatalog />
+          <span className={styles.catalogIcon} aria-hidden>
+            <IconCatalog />
+          </span>
           <span className={styles.catalogLabel}>Каталог</span>
         </button>
         {catalogOpen && catalogMenu}

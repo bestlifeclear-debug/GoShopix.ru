@@ -112,13 +112,13 @@
 
   --color-header-bg: #1e1e1e;
   --color-bg: #121212;
-  --color-bg-subtle: #1a1a1a;
+  --color-bg-subtle: #121212;
   --color-bg-elevated: #242424;
   --color-surface-card: #1e1e1e;
 
   --color-text: #ececec;
   --color-text-muted: #b3b3b3;
-  --color-text-inverse: #121212;
+  --color-text-inverse: #ffffff;
 
   --color-sale: #ff8a8a;
   --color-sale-bg: #3a2228;
