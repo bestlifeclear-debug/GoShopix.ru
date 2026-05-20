@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Store } from 'lucide-react';
+import { CreditCard, RotateCcw, ShieldCheck, Store } from 'lucide-react';
 import { formatPrice } from '@goshopix/shared';
 import { favoritesApi, productsApi } from '../api/index';
 import type { ProductDetail, ProductListItem, ProductVariant } from '../api/types';
@@ -16,6 +16,12 @@ import { PageContainer } from '../components/layout/PageContainer';
 import { ProductReviews } from '../components/ProductReviews/ProductReviews';
 import { track } from '../lib/analytics';
 import styles from './ProductPage.module.css';
+
+const TRUST_SIGNALS = [
+  { icon: ShieldCheck, label: 'Оригинальный товар' },
+  { icon: CreditCard, label: 'Безопасная оплата' },
+  { icon: RotateCcw, label: 'Возврат 14 дней' },
+] as const;
 
 function formatDeliveryPromise(deliveryDaysMin: number | null | undefined): string {
   const days = Math.max(1, deliveryDaysMin ?? 1);
@@ -244,18 +250,16 @@ export function ProductPage() {
       <PageContainer>
         <div className={styles.page} aria-busy="true" aria-label="Загрузка товара">
           <div className={styles.grid}>
-            <div className={styles.colGallery}>
+            <div className={styles.colLeft}>
               <div className={styles.skeletonGallery} />
+              <div className={styles.skeletonBlock} />
             </div>
-            <div className={styles.colMain}>
+            <aside className={styles.aside}>
               <div className={styles.skeletonMeta}>
                 <span className={styles.skeletonLine} />
                 <span className={`${styles.skeletonLine} ${styles.skeletonLineLg}`} />
                 <span className={styles.skeletonLine} />
               </div>
-              <div className={styles.skeletonBlock} />
-            </div>
-            <aside className={styles.colBuy}>
               <div className={styles.skeletonBuyBox}>
                 <span className={`${styles.skeletonLine} ${styles.skeletonLinePrice}`} />
                 <span className={styles.skeletonBlock} />
@@ -301,13 +305,46 @@ export function ProductPage() {
     <PageContainer>
       <div className={`${styles.page} ${showMobileBar ? styles.pageWithMobileBar : ''}`}>
         <div className={styles.grid}>
-          <div className={styles.colGallery}>
-            <div className={styles.gallerySticky}>
-              <ImageGallery images={images} name={product.name} />
+          <div className={styles.colLeft}>
+            <ImageGallery images={images} name={product.name} />
+
+            <div className={styles.colLeftDetails}>
+              <div className={styles.detailsCard}>
+                <h2 className={styles.detailsTitle}>Описание</h2>
+                <p className={styles.detailsText}>{product.description || 'Описание отсутствует.'}</p>
+              </div>
+
+              <div className={styles.detailsCard}>
+                <h2 className={styles.detailsTitle}>Характеристики</h2>
+                <table className={styles.specTable}>
+                  <tbody>
+                    {product.brand && (
+                      <tr>
+                        <th>Бренд</th>
+                        <td>{product.brand}</td>
+                      </tr>
+                    )}
+                    {product.attributes.map((a) => (
+                      <tr key={a.slug}>
+                        <th>{a.name}</th>
+                        <td>{a.value}</td>
+                      </tr>
+                    ))}
+                    {selectedVariant?.options.map((o) => (
+                      <tr key={o.id}>
+                        <th>{o.name}</th>
+                        <td>{o.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
             </div>
           </div>
 
-          <div className={styles.colMain}>
+          <aside className={styles.aside}>
             <div className={styles.productMeta}>
               {product.brand && <p className={styles.brand}>{product.brand}</p>}
               <h1 className={styles.name}>{product.name}</h1>
@@ -319,32 +356,9 @@ export function ProductPage() {
                   </button>
                 )}
               </div>
-              <Button variant="outline" size="sm" className={styles.favoriteBtn} onClick={toggleFavorite}>
-                {isFavorite ? '♥ В избранном' : '♡ В избранное'}
-              </Button>
             </div>
 
-            {[...optionGroups.entries()].map(([name, values]) => (
-              <div key={name} className={styles.optionGroup}>
-                <span className={styles.optionLabel}>{name}</span>
-                <div className={styles.optionValues}>
-                  {values.map((val) => (
-                    <button
-                      key={val}
-                      type="button"
-                      className={`${styles.optionBtn} ${selectedOptions[name] === val ? styles.optionActive : ''}`}
-                      onClick={() => setSelectedOptions((o) => ({ ...o, [name]: val }))}
-                    >
-                      {val}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <aside className={styles.colBuy}>
-            <div className={styles.buyBoxSticky}>
+            <div className={styles.asideSticky}>
               <div ref={buyBoxRef} className={styles.buyBox}>
                 <div className={styles.priceBlock}>
                   <span className={styles.price}>{formatPrice(displayPrice)}</span>
@@ -358,6 +372,24 @@ export function ProductPage() {
                   )}
                 </div>
 
+                {[...optionGroups.entries()].map(([name, values]) => (
+                  <div key={name} className={styles.optionGroup}>
+                    <span className={styles.optionLabel}>{name}</span>
+                    <div className={styles.optionValues}>
+                      {values.map((val) => (
+                        <button
+                          key={val}
+                          type="button"
+                          className={`${styles.optionBtn} ${selectedOptions[name] === val ? styles.optionActive : ''}`}
+                          onClick={() => setSelectedOptions((o) => ({ ...o, [name]: val }))}
+                        >
+                          {val}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+
                 {selectedVariant && <StockStatus stock={selectedVariant.stock} />}
 
                 <div className={styles.deliveryCard}>
@@ -369,57 +401,42 @@ export function ProductPage() {
                   <p className={styles.deliveryNote}>Возврат в течение 14 дней</p>
                 </div>
 
-                <Button
-                  size="lg"
-                  fullWidth
-                  className={styles.buyBoxCartBtn}
-                  onClick={handleAddToCart}
-                  disabled={outOfStock}
-                >
-                  В корзину
-                </Button>
+                {product.store && (
+                  <p className={styles.sellerRow}>
+                    <Store size={16} strokeWidth={2} className={styles.sellerIcon} aria-hidden />
+                    <span className={styles.sellerLabel}>Продавец:</span>
+                    <span className={styles.sellerName}>{product.store.name}</span>
+                  </p>
+                )}
+
+                <div className={styles.buyBoxActions}>
+                  <Button
+                    size="lg"
+                    fullWidth
+                    className={styles.buyBoxCartBtn}
+                    onClick={handleAddToCart}
+                    disabled={outOfStock}
+                  >
+                    В корзину
+                  </Button>
+                  <Button variant="outline" size="lg" fullWidth onClick={toggleFavorite}>
+                    {isFavorite ? '♥ В избранном' : '♡ В избранное'}
+                  </Button>
+                </div>
+
+                <ul className={styles.trustRow} aria-label="Гарантии покупки">
+                  {TRUST_SIGNALS.map(({ icon: Icon, label }) => (
+                    <li key={label} className={styles.trustItem}>
+                      <Icon size={16} strokeWidth={2} className={styles.trustIcon} aria-hidden />
+                      <span>{label}</span>
+                    </li>
+                  ))}
+                </ul>
 
                 {msg && <p className={styles.msg}>{msg}</p>}
               </div>
             </div>
           </aside>
-        </div>
-
-        <div className={styles.detailsGrid}>
-          <div className={styles.detailsInner}>
-            <div className={styles.detailsCard}>
-              <h2 className={styles.detailsTitle}>Описание</h2>
-              <p className={styles.detailsText}>{product.description || 'Описание отсутствует.'}</p>
-            </div>
-
-            <div className={styles.detailsCard}>
-              <h2 className={styles.detailsTitle}>Характеристики</h2>
-              <table className={styles.specTable}>
-                <tbody>
-                  {product.brand && (
-                    <tr>
-                      <th>Бренд</th>
-                      <td>{product.brand}</td>
-                    </tr>
-                  )}
-                  {product.attributes.map((a) => (
-                    <tr key={a.slug}>
-                      <th>{a.name}</th>
-                      <td>{a.value}</td>
-                    </tr>
-                  ))}
-                  {selectedVariant?.options.map((o) => (
-                    <tr key={o.id}>
-                      <th>{o.name}</th>
-                      <td>{o.value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
-          </div>
         </div>
 
         <div
