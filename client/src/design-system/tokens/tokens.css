@@ -6,15 +6,6 @@
   --color-primary-active: #880e4f;
   --color-primary-soft: rgb(194 24 91 / 0.12);
 
-  /* Каталог: градиент кнопки и заголовков мега-меню */
-  --gradient-catalog: linear-gradient(135deg, #ff7bac 0%, #ff6b4a 100%);
-  --gradient-catalog-title: linear-gradient(135deg, #c2185b 0%, #ff6b4a 100%);
-
-  /* Действия (по мотивам Ozon): покупка, успех, акции */
-  --color-action-buy: #005bff;
-  --color-action-success: #00be6c;
-  --color-action-promo: #ffa800;
-
   /* CTA = primary (без отдельного кораллового) */
   --color-cta: var(--color-primary);
   --color-cta-hover: var(--color-primary-hover);

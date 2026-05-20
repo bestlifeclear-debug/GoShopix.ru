@@ -4,13 +4,19 @@ import { categoriesApi, productsApi } from '../../api/index';
 import type { CategoryNode } from '../../api/types';
 import { Header, type HeaderNavLink } from '../../design-system';
 import { IconClose } from '../../design-system/icons/Icons';
-import { CatalogAccordion } from '../CatalogAccordion/CatalogAccordion';
 import { CatalogMenu } from '../CatalogMenu/CatalogMenu';
 import { HeaderDeliveryCity } from '../HeaderDeliveryCity/HeaderDeliveryCity';
 import { SearchBox, type SearchSuggestion } from '../SearchBox/SearchBox';
 import { useAuthStore } from '../../stores/authStore';
 import { selectCartItemCount, useCartStore } from '../../stores/cartStore';
 import styles from './SiteHeader.module.css';
+
+const CATEGORY_ICONS: Record<string, string> = {
+  electronics: '📱',
+  clothing: '👕',
+  smartphones: '📱',
+  laptops: '💻',
+};
 
 const STATIC_NAV: HeaderNavLink[] = [
   { label: 'Акции', to: '/catalog?sort=price_asc' },
@@ -157,8 +163,34 @@ export function SiteHeader() {
               <span className={styles.menuHeadSpacer} aria-hidden />
             </div>
             <div className={styles.menuBody}>
-              <CatalogAccordion categories={categories} onClose={() => setMenuOpen(false)} />
-              <hr className={styles.menuDivider} />
+              <p className={styles.mobileSectionTitle}>Категории</p>
+              {categories
+                .filter((c) => !c.parentId)
+                .map((cat) => (
+                  <div key={cat.id}>
+                    <Link
+                      to={`/catalog?categorySlug=${cat.slug}`}
+                      className={styles.mobileLink}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <span className={styles.catIcon} aria-hidden>
+                        {CATEGORY_ICONS[cat.slug] ?? '🛍'}
+                      </span>
+                      {cat.name}
+                    </Link>
+                    {cat.children.map((child) => (
+                      <Link
+                        key={child.id}
+                        to={`/catalog?categorySlug=${child.slug}`}
+                        className={styles.mobileLinkChild}
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        {child.name}
+                      </Link>
+                    ))}
+                    <hr className={styles.menuDivider} />
+                  </div>
+                ))}
               <p className={styles.mobileSectionTitle}>Разделы</p>
               {STATIC_NAV.map((link) => (
                 <Link key={link.to} to={link.to} className={styles.mobileLink} onClick={() => setMenuOpen(false)}>
