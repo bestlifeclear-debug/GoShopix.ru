@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CreditCard, RotateCcw, ShieldCheck, Store } from 'lucide-react';
+import { Store } from 'lucide-react';
 import { formatPrice } from '@goshopix/shared';
 import { favoritesApi, productsApi } from '../api/index';
 import type { ProductDetail, ProductListItem, ProductVariant } from '../api/types';
@@ -16,12 +16,6 @@ import { PageContainer } from '../components/layout/PageContainer';
 import { ProductReviews } from '../components/ProductReviews/ProductReviews';
 import { track } from '../lib/analytics';
 import styles from './ProductPage.module.css';
-
-const TRUST_SIGNALS = [
-  { icon: ShieldCheck, label: 'Оригинальный товар' },
-  { icon: CreditCard, label: 'Безопасная оплата' },
-  { icon: RotateCcw, label: 'Возврат 14 дней' },
-] as const;
 
 function formatDeliveryPromise(deliveryDaysMin: number | null | undefined): string {
   const days = Math.max(1, deliveryDaysMin ?? 1);
@@ -43,6 +37,43 @@ function StockStatus({ stock }: { stock: number }) {
     return <p className={styles.stockLow}>Осталось всего {stock} шт.</p>;
   }
   return <p className={styles.stock}>В наличии: {stock} шт.</p>;
+}
+
+function StoreCard({
+  product,
+  deliveryRangeText,
+}: {
+  product: ProductDetail;
+  deliveryRangeText: string;
+}) {
+  return (
+    <div className={styles.storeCard}>
+      <h2 className={styles.storeCardTitle}>О магазине</h2>
+      <p className={styles.storeLine}>
+        <Store size={18} strokeWidth={2} className={styles.storeIcon} aria-hidden />
+        <span className={styles.storeLabel}>Продавец:</span>
+        <strong className={styles.storeName}>{product.store?.name ?? '—'}</strong>
+      </p>
+      <div className={styles.storeKpis}>
+        <div className={styles.kpi}>
+          <span className={styles.kpiLabel}>Рейтинг товара</span>
+          <span className={styles.kpiValue}>{product.rating.toFixed(1)} / 5</span>
+        </div>
+        <div className={styles.kpi}>
+          <span className={styles.kpiLabel}>Отзывы</span>
+          <span className={styles.kpiValue}>{product.reviewCount}</span>
+        </div>
+        <div className={styles.kpi}>
+          <span className={styles.kpiLabel}>Доставка</span>
+          <span className={styles.kpiValue}>{deliveryRangeText}</span>
+        </div>
+      </div>
+      <p className={styles.storeHint}>
+        Проверяйте продавца и условия доставки перед оплатой — мы показываем основные данные прямо в
+        карточке.
+      </p>
+    </div>
+  );
 }
 
 export function ProductPage() {
@@ -213,16 +244,20 @@ export function ProductPage() {
       <PageContainer>
         <div className={styles.page} aria-busy="true" aria-label="Загрузка товара">
           <div className={styles.grid}>
-            <div className={styles.skeletonGallery} />
-            <aside className={styles.aside}>
+            <div className={styles.colGallery}>
+              <div className={styles.skeletonGallery} />
+            </div>
+            <div className={styles.colMain}>
               <div className={styles.skeletonMeta}>
                 <span className={styles.skeletonLine} />
                 <span className={`${styles.skeletonLine} ${styles.skeletonLineLg}`} />
                 <span className={styles.skeletonLine} />
               </div>
+              <div className={styles.skeletonBlock} />
+            </div>
+            <aside className={styles.colBuy}>
               <div className={styles.skeletonBuyBox}>
                 <span className={`${styles.skeletonLine} ${styles.skeletonLinePrice}`} />
-                <span className={styles.skeletonBlock} />
                 <span className={styles.skeletonBlock} />
                 <span className={styles.skeletonBtn} />
               </div>
@@ -265,107 +300,46 @@ export function ProductPage() {
   return (
     <PageContainer>
       <div className={`${styles.page} ${showMobileBar ? styles.pageWithMobileBar : ''}`}>
-      <div className={styles.grid}>
-        <ImageGallery images={images} name={product.name} />
-
-        <aside className={styles.aside}>
-          <div className={styles.productMeta}>
-            {product.brand && <p className={styles.brand}>{product.brand}</p>}
-            <h1 className={styles.name}>{product.name}</h1>
-            <div className={styles.ratingRow}>
-              <StarRating value={product.rating} reviewCount={product.reviewCount} />
-              {product.reviewCount > 0 && (
-                <button type="button" className={styles.reviewsJump} onClick={() => setTab('reviews')}>
-                  К отзывам ({product.reviewCount})
-                </button>
-              )}
-            </div>
+        <div className={styles.grid}>
+          <div className={styles.colGallery}>
+            <ImageGallery images={images} name={product.name} />
           </div>
 
-          <div className={styles.asideSticky}>
-          <div ref={buyBoxRef} className={styles.buyBox}>
-          <div className={styles.priceBlock}>
-            <span className={styles.price}>{formatPrice(displayPrice)}</span>
-            {compareAt != null && compareAt > displayPrice && (
-              <>
-                <span className={styles.oldPrice}>{formatPrice(compareAt)}</span>
-                {product.discountPercent != null && (
-                  <span className={styles.discountTag}>−{product.discountPercent}%</span>
-                )}
-              </>
-            )}
-          </div>
-
-          {[...optionGroups.entries()].map(([name, values]) => (
-            <div key={name} className={styles.optionGroup}>
-              <span className={styles.optionLabel}>{name}</span>
-              <div className={styles.optionValues}>
-                {values.map((val) => (
-                  <button
-                    key={val}
-                    type="button"
-                    className={`${styles.optionBtn} ${selectedOptions[name] === val ? styles.optionActive : ''}`}
-                    onClick={() => setSelectedOptions((o) => ({ ...o, [name]: val }))}
-                  >
-                    {val}
+          <div className={styles.colMain}>
+            <div className={styles.productMeta}>
+              {product.brand && <p className={styles.brand}>{product.brand}</p>}
+              <h1 className={styles.name}>{product.name}</h1>
+              <div className={styles.ratingRow}>
+                <StarRating value={product.rating} reviewCount={product.reviewCount} />
+                {product.reviewCount > 0 && (
+                  <button type="button" className={styles.reviewsJump} onClick={() => setTab('reviews')}>
+                    К отзывам ({product.reviewCount})
                   </button>
-                ))}
+                )}
               </div>
+              <Button variant="outline" size="sm" className={styles.favoriteBtn} onClick={toggleFavorite}>
+                {isFavorite ? '♥ В избранном' : '♡ В избранное'}
+              </Button>
             </div>
-          ))}
 
-          {selectedVariant && <StockStatus stock={selectedVariant.stock} />}
-
-          <div className={styles.deliveryCard}>
-            <h3 className={styles.deliveryTitle}>Доставка</h3>
-            <p>
-              По России: <strong>{deliveryPromise}</strong>
-            </p>
-            <p>Курьер или пункт выдачи — бесплатно от 2 000 ₽</p>
-            <p className={styles.deliveryNote}>Возврат в течение 14 дней</p>
-          </div>
-
-          {product.store && (
-            <p className={styles.sellerRow}>
-              <Store size={16} strokeWidth={2} className={styles.sellerIcon} aria-hidden />
-              <span className={styles.sellerLabel}>Продавец:</span>
-              <span className={styles.sellerName}>{product.store.name}</span>
-            </p>
-          )}
-
-          <div className={styles.buyBoxActions}>
-            <Button
-              size="lg"
-              fullWidth
-              className={styles.buyBoxCartBtn}
-              onClick={handleAddToCart}
-              disabled={outOfStock}
-            >
-              В корзину
-            </Button>
-            <Button variant="outline" size="lg" fullWidth onClick={toggleFavorite}>
-              {isFavorite ? '♥ В избранном' : '♡ В избранное'}
-            </Button>
-          </div>
-
-          <ul className={styles.trustRow} aria-label="Гарантии покупки">
-            {TRUST_SIGNALS.map(({ icon: Icon, label }) => (
-              <li key={label} className={styles.trustItem}>
-                <Icon size={16} strokeWidth={2} className={styles.trustIcon} aria-hidden />
-                <span>{label}</span>
-              </li>
+            {[...optionGroups.entries()].map(([name, values]) => (
+              <div key={name} className={styles.optionGroup}>
+                <span className={styles.optionLabel}>{name}</span>
+                <div className={styles.optionValues}>
+                  {values.map((val) => (
+                    <button
+                      key={val}
+                      type="button"
+                      className={`${styles.optionBtn} ${selectedOptions[name] === val ? styles.optionActive : ''}`}
+                      onClick={() => setSelectedOptions((o) => ({ ...o, [name]: val }))}
+                    >
+                      {val}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
-          </ul>
 
-          {msg && <p className={styles.msg}>{msg}</p>}
-          </div>
-          </div>
-        </aside>
-      </div>
-
-      <section className={styles.detailsSection} aria-label="Описание и характеристики">
-        <div className={styles.detailsGrid}>
-          <div className={styles.detailsCol}>
             <div className={styles.detailsCard}>
               <h2 className={styles.detailsTitle}>Описание</h2>
               <p className={styles.detailsText}>{product.description || 'Описание отсутствует.'}</p>
@@ -396,110 +370,122 @@ export function ProductPage() {
                 </tbody>
               </table>
             </div>
+
+            <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
           </div>
 
-          <aside className={styles.detailsAside}>
-            <div className={styles.detailsCard}>
-              <h2 className={styles.detailsTitle}>О магазине</h2>
-              <p className={styles.storeLine}>
-                <Store size={18} strokeWidth={2} className={styles.storeIcon} aria-hidden />
-                <span className={styles.storeLabel}>Продавец:</span>
-                <strong className={styles.storeName}>{product.store?.name ?? '—'}</strong>
-              </p>
-              <div className={styles.storeKpis}>
-                <div className={styles.kpi}>
-                  <span className={styles.kpiLabel}>Рейтинг товара</span>
-                  <span className={styles.kpiValue}>
-                    {product.rating.toFixed(1)} / 5
-                  </span>
+          <aside className={styles.colBuy}>
+            <div className={styles.buyBoxSticky}>
+              <div ref={buyBoxRef} className={styles.buyBox}>
+                <div className={styles.priceBlock}>
+                  <span className={styles.price}>{formatPrice(displayPrice)}</span>
+                  {compareAt != null && compareAt > displayPrice && (
+                    <>
+                      <span className={styles.oldPrice}>{formatPrice(compareAt)}</span>
+                      {product.discountPercent != null && (
+                        <span className={styles.discountTag}>−{product.discountPercent}%</span>
+                      )}
+                    </>
+                  )}
                 </div>
-                <div className={styles.kpi}>
-                  <span className={styles.kpiLabel}>Отзывы</span>
-                  <span className={styles.kpiValue}>{product.reviewCount}</span>
+
+                {selectedVariant && <StockStatus stock={selectedVariant.stock} />}
+
+                <div className={styles.deliveryCard}>
+                  <h3 className={styles.deliveryTitle}>Доставка</h3>
+                  <p>
+                    По России: <strong>{deliveryPromise}</strong>
+                  </p>
+                  <p>Курьер или пункт выдачи — бесплатно от 2 000 ₽</p>
+                  <p className={styles.deliveryNote}>Возврат в течение 14 дней</p>
                 </div>
-                <div className={styles.kpi}>
-                  <span className={styles.kpiLabel}>Доставка</span>
-                  <span className={styles.kpiValue}>{deliveryRangeText}</span>
-                </div>
+
+                <Button
+                  size="lg"
+                  fullWidth
+                  className={styles.buyBoxCartBtn}
+                  onClick={handleAddToCart}
+                  disabled={outOfStock}
+                >
+                  В корзину
+                </Button>
+
+                {msg && <p className={styles.msg}>{msg}</p>}
               </div>
-              <p className={styles.storeHint}>
-                Проверяйте продавца и условия доставки перед оплатой — мы показываем основные данные прямо в карточке.
-              </p>
             </div>
           </aside>
         </div>
-      </section>
 
-      <div
-        className={`${styles.mobileBar} ${showMobileBar ? styles.mobileBarVisible : ''}`}
-        aria-hidden={!showMobileBar}
-      >
-        <div className={styles.mobileBarThumb} aria-hidden>
-          {thumbUrl ? (
-            <img src={thumbUrl} alt="" />
-          ) : (
-            <span className={styles.mobileBarThumbPlaceholder}>?</span>
-          )}
-        </div>
-        <div className={styles.mobileBarPrice}>
-          <span className={styles.mobileBarPriceValue}>{formatPrice(displayPrice)}</span>
-          {compareAt != null && compareAt > displayPrice && (
-            <span className={styles.mobileBarOldPrice}>{formatPrice(compareAt)}</span>
-          )}
-        </div>
-        <Button
-          size="lg"
-          className={styles.mobileBarBtn}
-          onClick={handleAddToCart}
-          disabled={outOfStock}
+        <div
+          className={`${styles.mobileBar} ${showMobileBar ? styles.mobileBarVisible : ''}`}
+          aria-hidden={!showMobileBar}
         >
-          В корзину
-        </Button>
-      </div>
-
-      <Tabs
-        tabs={[
-          { id: 'reviews', label: `Отзывы (${product.reviewCount})` },
-          { id: 'qa', label: 'Вопросы' },
-        ]}
-        active={tab}
-        onChange={setTab}
-      >
-        {tab === 'reviews' && (
-          <div className={styles.tabContent}>
-            <ProductReviews averageRating={product.rating} reviewCount={product.reviewCount} />
+          <div className={styles.mobileBarThumb} aria-hidden>
+            {thumbUrl ? (
+              <img src={thumbUrl} alt="" />
+            ) : (
+              <span className={styles.mobileBarThumbPlaceholder}>?</span>
+            )}
           </div>
-        )}
-        {tab === 'qa' && (
-          <div className={styles.tabContent}>
-            <div className={styles.qaItem}>
-              <p className={styles.qaQ}>Подойдёт ли для подарка?</p>
-              <p className={styles.qaA}>Да, товар поставляется в фирменной упаковке.</p>
-            </div>
-            <div className={styles.qaItem}>
-              <p className={styles.qaQ}>Есть ли гарантия?</p>
-              <p className={styles.qaA}>Официальная гарантия продавца 12 месяцев.</p>
-            </div>
-            <Button variant="outline" size="sm">
-              Задать вопрос
-            </Button>
+          <div className={styles.mobileBarPrice}>
+            <span className={styles.mobileBarPriceValue}>{formatPrice(displayPrice)}</span>
+            {compareAt != null && compareAt > displayPrice && (
+              <span className={styles.mobileBarOldPrice}>{formatPrice(compareAt)}</span>
+            )}
           </div>
+          <Button
+            size="lg"
+            className={styles.mobileBarBtn}
+            onClick={handleAddToCart}
+            disabled={outOfStock}
+          >
+            В корзину
+          </Button>
+        </div>
+
+        <Tabs
+          tabs={[
+            { id: 'reviews', label: `Отзывы (${product.reviewCount})` },
+            { id: 'qa', label: 'Вопросы' },
+          ]}
+          active={tab}
+          onChange={setTab}
+        >
+          {tab === 'reviews' && (
+            <div className={styles.tabContent}>
+              <ProductReviews averageRating={product.rating} reviewCount={product.reviewCount} />
+            </div>
+          )}
+          {tab === 'qa' && (
+            <div className={styles.tabContent}>
+              <div className={styles.qaItem}>
+                <p className={styles.qaQ}>Подойдёт ли для подарка?</p>
+                <p className={styles.qaA}>Да, товар поставляется в фирменной упаковке.</p>
+              </div>
+              <div className={styles.qaItem}>
+                <p className={styles.qaQ}>Есть ли гарантия?</p>
+                <p className={styles.qaA}>Официальная гарантия продавца 12 месяцев.</p>
+              </div>
+              <Button variant="outline" size="sm">
+                Задать вопрос
+              </Button>
+            </div>
+          )}
+        </Tabs>
+
+        {similar.length > 0 && (
+          <section className={styles.related}>
+            <h2 className={styles.relatedTitle}>Похожие товары</h2>
+            <ProductGrid products={similar} onAddToCart={handleSimilarAdd} />
+          </section>
         )}
-      </Tabs>
 
-      {similar.length > 0 && (
-        <section className={styles.related}>
-          <h2 className={styles.relatedTitle}>Похожие товары</h2>
-          <ProductGrid products={similar} onAddToCart={handleSimilarAdd} />
-        </section>
-      )}
-
-      {alsoBought.length > 0 && (
-        <section className={styles.related}>
-          <h2 className={styles.relatedTitle}>С этим покупают</h2>
-          <ProductGrid products={alsoBought} onAddToCart={handleSimilarAdd} />
-        </section>
-      )}
+        {alsoBought.length > 0 && (
+          <section className={styles.related}>
+            <h2 className={styles.relatedTitle}>С этим покупают</h2>
+            <ProductGrid products={alsoBought} onAddToCart={handleSimilarAdd} />
+          </section>
+        )}
       </div>
     </PageContainer>
   );
