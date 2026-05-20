@@ -8,12 +8,13 @@
   padding: var(--space-4);
   background: rgb(0 0 0 / 0.45);
   animation: fadeIn var(--transition-base);
+  overflow: hidden;
 }
 
 .dialog {
   width: 100%;
   max-width: 480px;
-  max-height: min(90vh, 640px);
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
   background: var(--color-bg);
@@ -21,9 +22,11 @@
   box-shadow: var(--shadow-lg);
   animation: slideUp var(--transition-base);
   outline: none;
+  overflow: hidden;
 }
 
 .header {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -33,6 +36,7 @@
 }
 
 .title {
+  margin: 0;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
 }
@@ -60,18 +64,30 @@
 
 .body {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  padding: var(--space-6);
+  overscroll-behavior: contain;
+  padding: var(--space-5) var(--space-6);
   font-size: var(--font-size-md);
   color: var(--color-text);
 }
 
 .footer {
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
   display: flex;
-  justify-content: flex-end;
+  justify-content: stretch;
   gap: var(--space-3);
   padding: var(--space-4) var(--space-6) var(--space-6);
+  background: var(--color-bg);
   border-top: 1px solid var(--color-border);
+  box-shadow: 0 -8px 24px rgb(26 26 26 / 0.06);
+}
+
+.footer > * {
+  flex: 1;
 }
 
 @keyframes fadeIn {

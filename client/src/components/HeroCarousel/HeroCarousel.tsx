@@ -140,7 +140,11 @@ export function HeroCarousel() {
                   <h1 className={styles.title}>{slide.title}</h1>
                   <p className={styles.text}>{slide.text}</p>
                   {'countdownEndsAt' in slide && slide.countdownEndsAt && (
-                    <CountdownTimer endsAt={slide.countdownEndsAt} className={styles.countdown} />
+                    <CountdownTimer
+                      endsAt={slide.countdownEndsAt}
+                      className={styles.countdown}
+                      tone={(slide.tone as string) === 'dark' ? 'dark' : 'light'}
+                    />
                   )}
                   <Link to={slide.cta.to} className={styles.btnCta}>
                     {slide.cta.label}

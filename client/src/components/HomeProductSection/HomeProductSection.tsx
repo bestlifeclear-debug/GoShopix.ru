@@ -40,6 +40,7 @@ export function HomeProductSection({
         onAddToCart={onAddToCart}
         loading={loading}
         skeletonCount={10}
+        minSlots={4}
       />
     </section>
   );

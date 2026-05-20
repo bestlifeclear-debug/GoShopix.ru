@@ -94,10 +94,10 @@ export function Header({
             </div>
           </div>
           <div className={styles.searchGroup}>{searchSlot}</div>
-          <div className={styles.actions}>
+          <div className={styles.actionsTray}>
             {extraActions}
             <Link to={favoritesTo} className={styles.iconBtn} aria-label="Избранное">
-              <IconHeart />
+              <IconHeart className={styles.actionIcon} strokeWidth={1.5} />
             </Link>
             <button
               type="button"
@@ -105,13 +105,13 @@ export function Header({
               onClick={onCartClick}
               aria-label={`Корзина, ${cartCount} товаров`}
             >
-              <IconCart />
+              <IconCart className={styles.actionIcon} strokeWidth={1.5} />
               {cartCount > 0 && (
                 <span className={styles.cartBadge}>{cartCount > 99 ? '99+' : cartCount}</span>
               )}
             </button>
             <Link to={accountTo} className={styles.iconBtn} aria-label={accountLabel}>
-              <IconUser />
+              <IconUser className={styles.actionIcon} strokeWidth={1.5} />
             </Link>
           </div>
         </div>

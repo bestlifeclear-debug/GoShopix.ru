@@ -1,0 +1,69 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.media {
+  aspect-ratio: 1;
+  background: var(--color-bg-subtle);
+  animation: product-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.line {
+  display: block;
+  height: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-subtle);
+  animation: product-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.lineShort {
+  width: 40%;
+  height: 10px;
+}
+
+.lineTitle {
+  width: 92%;
+  height: 16px;
+}
+
+.lineMid {
+  width: 65%;
+}
+
+.linePrice {
+  width: 48%;
+  height: 20px;
+  margin-top: var(--space-1);
+}
+
+.btn {
+  display: block;
+  height: 48px;
+  margin-top: auto;
+  border-radius: var(--radius-cta);
+  background: var(--color-bg-subtle);
+  animation: product-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes product-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}

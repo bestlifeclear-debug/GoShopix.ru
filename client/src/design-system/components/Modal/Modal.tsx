@@ -21,13 +21,16 @@ export function Modal({ open, title, children, footer, onClose }: ModalProps) {
       if (e.key === 'Escape') onClose();
     };
 
-    const prevOverflow = document.body.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
     document.addEventListener('keydown', onKeyDown);
     dialogRef.current?.focus();
 
     return () => {
-      document.body.style.overflow = prevOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
       document.removeEventListener('keydown', onKeyDown);
     };
   }, [open, onClose]);

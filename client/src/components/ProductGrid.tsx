@@ -1,5 +1,5 @@
 import { formatDeliveryLabel } from '@goshopix/shared';
-import { ProductCard, ProductCardSkeleton } from '../design-system';
+import { ProductCard, ProductCardSkeleton, ProductSkeleton } from '../design-system';
 import type { ProductListItem } from '../api/types';
 import styles from './ProductGrid.module.css';
 
@@ -8,6 +8,8 @@ interface ProductGridProps {
   onAddToCart?: (product: ProductListItem) => void;
   loading?: boolean;
   skeletonCount?: number;
+  /** Минимум ячеек в сетке; недостающие заполняются ProductSkeleton */
+  minSlots?: number;
 }
 
 function buildSpecLines(product: ProductListItem): string[] {
@@ -23,6 +25,7 @@ export function ProductGrid({
   onAddToCart,
   loading,
   skeletonCount = 8,
+  minSlots = 0,
 }: ProductGridProps) {
   if (loading) {
     return (
@@ -37,6 +40,8 @@ export function ProductGrid({
   if (products.length === 0) {
     return <p className={styles.message}>Товары не найдены</p>;
   }
+
+  const fillerCount = Math.max(0, minSlots - products.length);
 
   return (
     <div className={styles.grid}>
@@ -60,6 +65,8 @@ export function ProductGrid({
           }}
         />
       ))}
+      {fillerCount > 0 &&
+        Array.from({ length: fillerCount }, (_, i) => <ProductSkeleton key={`slot-${i}`} />)}
     </div>
   );
 }

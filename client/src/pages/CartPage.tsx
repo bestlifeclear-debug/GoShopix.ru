@@ -182,6 +182,7 @@ export function CartPage() {
                 products={hits}
                 loading={hitsLoading}
                 skeletonCount={4}
+                minSlots={4}
                 onAddToCart={handleRecommendAdd}
               />
             </section>

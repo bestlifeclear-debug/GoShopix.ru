@@ -4,6 +4,8 @@ import styles from './CountdownTimer.module.css';
 interface CountdownTimerProps {
   endsAt: string | Date;
   className?: string;
+  /** light — для светлых слайдов hero, dark — для тёмного фона */
+  tone?: 'light' | 'dark';
 }
 
 interface TimeLeft {
@@ -28,7 +30,14 @@ function pad(n: number) {
   return String(n).padStart(2, '0');
 }
 
-export function CountdownTimer({ endsAt, className }: CountdownTimerProps) {
+const UNITS: { key: keyof TimeLeft; label: string }[] = [
+  { key: 'days', label: 'дни' },
+  { key: 'hours', label: 'часы' },
+  { key: 'minutes', label: 'мин' },
+  { key: 'seconds', label: 'сек' },
+];
+
+export function CountdownTimer({ endsAt, className, tone = 'dark' }: CountdownTimerProps) {
   const target = typeof endsAt === 'string' ? new Date(endsAt) : endsAt;
   const [left, setLeft] = useState<TimeLeft | null>(() => calcTimeLeft(target));
 
@@ -37,48 +46,29 @@ export function CountdownTimer({ endsAt, className }: CountdownTimerProps) {
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [target]);
+  }, [target.getTime()]);
 
   if (!left) {
-    return (
-      <p className={className ? `${styles.timer} ${className}` : styles.timer} role="timer" aria-live="polite">
-        Акция завершена
-      </p>
-    );
+    return null;
   }
 
   return (
     <div
-      className={className ? `${styles.timer} ${className}` : styles.timer}
+      className={
+        className
+          ? `${styles.timer} ${styles[tone]} ${className}`
+          : `${styles.timer} ${styles[tone]}`
+      }
       role="timer"
       aria-live="polite"
       aria-label={`До конца акции: ${left.days} дней, ${left.hours} часов, ${left.minutes} минут`}
     >
-      <span className={styles.unit}>
-        <strong>{pad(left.days)}</strong>
-        <small>дн</small>
-      </span>
-      <span className={styles.sep} aria-hidden>
-        :
-      </span>
-      <span className={styles.unit}>
-        <strong>{pad(left.hours)}</strong>
-        <small>ч</small>
-      </span>
-      <span className={styles.sep} aria-hidden>
-        :
-      </span>
-      <span className={styles.unit}>
-        <strong>{pad(left.minutes)}</strong>
-        <small>мин</small>
-      </span>
-      <span className={styles.sep} aria-hidden>
-        :
-      </span>
-      <span className={styles.unit}>
-        <strong>{pad(left.seconds)}</strong>
-        <small>сек</small>
-      </span>
+      {UNITS.map(({ key, label }) => (
+        <div key={key} className={styles.cell}>
+          <span className={styles.value}>{pad(left[key])}</span>
+          <span className={styles.label}>{label}</span>
+        </div>
+      ))}
     </div>
   );
 }
