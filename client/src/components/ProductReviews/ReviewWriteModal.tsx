@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { ImagePlus, Star, X } from 'lucide-react';
-import { Button, Modal } from '../../design-system';
+import { createPortal } from 'react-dom';
+import { Camera, Star, X } from 'lucide-react';
 import type { ProductReview } from './types';
-import styles from './ProductReviews.module.css';
+import styles from './ReviewWriteModal.module.css';
 
 export interface ReviewDraft {
   rating: number;
@@ -35,7 +35,9 @@ export function ReviewWriteModal({ open, onClose, onSubmit }: ReviewWriteModalPr
   const [cons, setCons] = useState('');
   const [comment, setComment] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
+  const [dragActive, setDragActive] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const blobUrls = useRef<string[]>([]);
 
   const reset = () => {
@@ -44,6 +46,7 @@ export function ReviewWriteModal({ open, onClose, onSubmit }: ReviewWriteModalPr
     setPros('');
     setCons('');
     setComment('');
+    setDragActive(false);
     for (const url of blobUrls.current) URL.revokeObjectURL(url);
     blobUrls.current = [];
     setPhotos([]);
@@ -53,6 +56,21 @@ export function ReviewWriteModal({ open, onClose, onSubmit }: ReviewWriteModalPr
     if (!open) reset();
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', onKeyDown);
+    dialogRef.current?.focus();
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open, onClose]);
+
   useEffect(
     () => () => {
       for (const url of blobUrls.current) URL.revokeObjectURL(url);
@@ -61,11 +79,12 @@ export function ReviewWriteModal({ open, onClose, onSubmit }: ReviewWriteModalPr
   );
 
   const displayRating = hoverRating || rating;
+  const canAddPhotos = photos.length < MAX_PHOTOS;
 
   const handleFiles = (files: FileList | null) => {
-    if (!files) return;
+    if (!files || !canAddPhotos) return;
     const slots = MAX_PHOTOS - photos.length;
-    const picked = Array.from(files).slice(0, slots);
+    const picked = Array.from(files).filter((f) => f.type.startsWith('image/')).slice(0, slots);
     for (const file of picked) {
       const url = URL.createObjectURL(file);
       blobUrls.current.push(url);
@@ -94,133 +113,194 @@ export function ReviewWriteModal({ open, onClose, onSubmit }: ReviewWriteModalPr
     onClose();
   };
 
+  const onDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (canAddPhotos) setDragActive(true);
+  };
+
+  const onDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragActive(false);
+  };
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragActive(false);
+    handleFiles(e.dataTransfer.files);
+  };
+
   const canSubmit = rating >= 1 && comment.trim().length > 0;
 
-  return (
-    <Modal
-      open={open}
-      title="Оставить отзыв"
-      onClose={onClose}
-      footer={
-        <>
-          <Button variant="outline" type="button" onClick={onClose}>
-            Отмена
-          </Button>
-          <Button type="button" onClick={handleSubmit} disabled={!canSubmit}>
-            Отправить отзыв
-          </Button>
-        </>
-      }
-    >
-      <div className={styles.modalForm}>
-        <div className={styles.modalField}>
-          <span className={styles.modalLabel}>Ваша оценка</span>
-          <div
-            className={styles.starPicker}
-            role="radiogroup"
-            aria-label="Оценка от 1 до 5"
-            onMouseLeave={() => setHoverRating(0)}
-          >
-            {[1, 2, 3, 4, 5].map((value) => (
-              <button
-                key={value}
-                type="button"
-                className={styles.starPickerBtn}
-                role="radio"
-                aria-checked={rating === value}
-                aria-label={`${value} из 5`}
-                onMouseEnter={() => setHoverRating(value)}
-                onClick={() => setRating(value)}
-              >
-                <Star
-                  size={28}
-                  strokeWidth={1.75}
-                  className={
-                    value <= displayRating ? styles.starPickerActive : styles.starPickerIdle
-                  }
-                  fill={value <= displayRating ? 'currentColor' : 'none'}
+  if (!open) return null;
+
+  return createPortal(
+    <div className={styles.overlay} role="presentation" onClick={onClose}>
+      <div
+        ref={dialogRef}
+        className={styles.dialog}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="review-modal-title"
+        tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <header className={styles.header}>
+          <h2 id="review-modal-title" className={styles.title}>
+            Оставить отзыв
+          </h2>
+          <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Закрыть">
+            <X size={20} strokeWidth={2} />
+          </button>
+        </header>
+
+        <div className={styles.body}>
+          <div className={styles.grid}>
+            <div className={styles.leftCol}>
+              <div className={styles.field}>
+                <span className={styles.label}>Ваша оценка</span>
+                <div
+                  className={styles.starPicker}
+                  role="radiogroup"
+                  aria-label="Оценка от 1 до 5"
+                  onMouseLeave={() => setHoverRating(0)}
+                >
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className={styles.starBtn}
+                      role="radio"
+                      aria-checked={rating === value}
+                      aria-label={`${value} из 5`}
+                      onMouseEnter={() => setHoverRating(value)}
+                      onClick={() => setRating(value)}
+                    >
+                      <Star
+                        size={34}
+                        strokeWidth={1.5}
+                        className={value <= displayRating ? styles.starActive : styles.starIdle}
+                        fill={value <= displayRating ? 'currentColor' : 'none'}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <label className={styles.field}>
+                <span className={styles.label}>Достоинства</span>
+                <textarea
+                  className={`${styles.textarea} ${styles.textareaPros}`}
+                  value={pros}
+                  onChange={(e) => setPros(e.target.value)}
+                  placeholder="Что понравилось?"
                 />
-              </button>
-            ))}
+              </label>
+
+              <label className={styles.field}>
+                <span className={styles.label}>Недостатки</span>
+                <textarea
+                  className={`${styles.textarea} ${styles.textareaCons}`}
+                  value={cons}
+                  onChange={(e) => setCons(e.target.value)}
+                  placeholder="Что можно улучшить?"
+                />
+              </label>
+
+              <label className={styles.field}>
+                <span className={styles.label}>Комментарий</span>
+                <textarea
+                  className={`${styles.textarea} ${styles.textareaComment}`}
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Расскажите о покупке подробнее"
+                  required
+                />
+              </label>
+            </div>
+
+            <div className={styles.rightCol}>
+              <div
+                className={`${styles.dropzone} ${dragActive ? styles.dropzoneActive : ''} ${!canAddPhotos ? styles.dropzoneDisabled : ''} ${photos.length > 0 ? styles.dropzoneWithPreviews : ''}`}
+                role="button"
+                tabIndex={0}
+                onDragOver={onDragOver}
+                onDragLeave={onDragLeave}
+                onDrop={onDrop}
+                onClick={() => canAddPhotos && fileRef.current?.click()}
+                onKeyDown={(e) => {
+                  if ((e.key === 'Enter' || e.key === ' ') && canAddPhotos) {
+                    e.preventDefault();
+                    fileRef.current?.click();
+                  }
+                }}
+              >
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className={styles.fileInput}
+                  disabled={!canAddPhotos}
+                  onChange={(e) => {
+                    handleFiles(e.target.files);
+                    e.target.value = '';
+                  }}
+                />
+                {photos.length === 0 ? (
+                  <>
+                    <span className={styles.dropzoneIcon} aria-hidden>
+                      <Camera size={26} strokeWidth={1.75} />
+                    </span>
+                    <p className={styles.dropzoneTitle}>Добавить фото</p>
+                    <p className={styles.dropzoneHint}>
+                      Перетащите файлы сюда или нажмите для выбора
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className={styles.dropzoneTitle}>Добавить фото</p>
+                    <p className={styles.dropzoneCount}>
+                      {photos.length} из {MAX_PHOTOS}
+                    </p>
+                    <ul className={styles.previewGrid}>
+                      {photos.map((url) => (
+                        <li key={url} className={styles.previewItem}>
+                          <img src={url} alt="" className={styles.previewImg} />
+                          <button
+                            type="button"
+                            className={styles.previewRemove}
+                            aria-label="Удалить фото"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removePhoto(url);
+                            }}
+                          >
+                            <X size={12} strokeWidth={2.5} />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    {canAddPhotos && (
+                      <p className={styles.dropzoneHint}>Нажмите или перетащите, чтобы добавить ещё</p>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
-        <label className={styles.modalField}>
-          <span className={styles.modalLabel}>Достоинства</span>
-          <textarea
-            className={styles.modalTextarea}
-            value={pros}
-            onChange={(e) => setPros(e.target.value)}
-            rows={2}
-            placeholder="Что понравилось?"
-          />
-        </label>
-
-        <label className={styles.modalField}>
-          <span className={styles.modalLabel}>Недостатки</span>
-          <textarea
-            className={styles.modalTextarea}
-            value={cons}
-            onChange={(e) => setCons(e.target.value)}
-            rows={2}
-            placeholder="Что можно улучшить?"
-          />
-        </label>
-
-        <label className={styles.modalField}>
-          <span className={styles.modalLabel}>Комментарий</span>
-          <textarea
-            className={styles.modalTextarea}
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            rows={3}
-            placeholder="Расскажите о покупке подробнее"
-            required
-          />
-        </label>
-
-        <div className={styles.modalField}>
-          <span className={styles.modalLabel}>Фото товара</span>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            multiple
-            className={styles.fileInput}
-            onChange={(e) => {
-              handleFiles(e.target.files);
-              e.target.value = '';
-            }}
-          />
-          <button
-            type="button"
-            className={styles.uploadBtn}
-            disabled={photos.length >= MAX_PHOTOS}
-            onClick={() => fileRef.current?.click()}
-          >
-            <ImagePlus size={18} strokeWidth={2} aria-hidden />
-            Загрузить фото ({photos.length}/{MAX_PHOTOS})
+        <footer className={styles.footer}>
+          <button type="button" className={styles.btnCancel} onClick={onClose}>
+            Отмена
           </button>
-          {photos.length > 0 && (
-            <ul className={styles.uploadPreview}>
-              {photos.map((url) => (
-                <li key={url}>
-                  <img src={url} alt="" className={styles.uploadThumb} />
-                  <button
-                    type="button"
-                    className={styles.uploadRemove}
-                    aria-label="Удалить фото"
-                    onClick={() => removePhoto(url)}
-                  >
-                    <X size={14} />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+          <button type="button" className={styles.btnSubmit} onClick={handleSubmit} disabled={!canSubmit}>
+            Отправить отзыв
+          </button>
+        </footer>
       </div>
-    </Modal>
+    </div>,
+    document.body,
   );
 }
 
