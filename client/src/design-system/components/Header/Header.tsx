@@ -86,6 +86,7 @@ export function Header({
                 onClick={onCatalogToggle}
                 aria-expanded={catalogOpen}
                 aria-haspopup="true"
+                aria-controls="catalog-mega-menu"
               >
                 <span className={styles.catalogIcon} aria-hidden>
                   <IconCatalog />

@@ -123,10 +123,6 @@ export function HomePage() {
           loading={loading}
           onAddToCart={handleAdd}
         />
-        <section className={styles.block}>
-          <h2 className={styles.blockTitle}>Категории</h2>
-          <CategoryTiles categories={categories} />
-        </section>
         <HomeQuickFilters />
         <HomeProductSection
           title="Бестселлеры"

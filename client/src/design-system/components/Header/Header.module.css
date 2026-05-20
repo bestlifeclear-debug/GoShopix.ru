@@ -91,7 +91,7 @@
   padding: 0 16px;
   border: none;
   border-radius: var(--radius-md);
-  background: var(--color-primary);
+  background: var(--gradient-catalog);
   color: #ffffff;
   font-family: inherit;
   font-size: var(--font-size-md);
@@ -126,7 +126,8 @@
 }
 
 .catalogBtn:hover {
-  background: var(--color-primary-hover);
+  filter: brightness(1.05);
+  background: var(--gradient-catalog);
 }
 
 .catalogBtnActive {
