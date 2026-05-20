@@ -1,18 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
-import { ordersApi, productsApi } from '../api/index';
+import { productsApi } from '../api/index';
 import type { ProductListItem } from '../api/types';
 import { ProductGrid } from '../components/ProductGrid';
 import { PageContainer } from '../components/layout/PageContainer';
 import { Button } from '../design-system';
-import { CheckoutModal } from '../components/CheckoutModal/CheckoutModal';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { track } from '../lib/analytics';
 import { ApiClientError } from '../api/client';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
-import { orderShortId } from './account/utils';
 import styles from './CartPage.module.css';
 
 const FREE_DELIVERY_FROM = 2000;
@@ -20,7 +18,6 @@ const FREE_DELIVERY_FROM = 2000;
 export function CartPage() {
   const navigate = useNavigate();
   const token = useAuthStore((s) => s.token);
-  const user = useAuthStore((s) => s.user);
   const cart = useCartStore((s) => s.cart);
   const fetchCart = useCartStore((s) => s.fetchCart);
   const addToCart = useCartStore((s) => s.addToCart);
@@ -31,19 +28,7 @@ export function CartPage() {
   const [hits, setHits] = useState<ProductListItem[]>([]);
   const [hitsLoading, setHitsLoading] = useState(false);
   const [compareAtByProduct, setCompareAtByProduct] = useState<Record<string, number | null>>({});
-  const [checkoutOpen, setCheckoutOpen] = useState(false);
-
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [payment, setPayment] = useState<'card' | 'sbp'>('card');
-  const [deliveryMethod, setDeliveryMethod] = useState<'post' | 'cdek'>('post');
-  const [postIndex, setPostIndex] = useState('');
-  const [postAddress, setPostAddress] = useState('');
-  const [cdekCity, setCdekCity] = useState('');
-  const [cdekPickupPoint, setCdekPickupPoint] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) {
@@ -52,14 +37,6 @@ export function CartPage() {
     }
     void fetchCart();
   }, [token, fetchCart, navigate]);
-
-  useEffect(() => {
-    if (user?.profile) {
-      const p = user.profile;
-      setName([p.firstName, p.lastName].filter(Boolean).join(' '));
-      setPhone(p.phone ?? '');
-    }
-  }, [user]);
 
   useEffect(() => {
     setHitsLoading(true);
@@ -98,20 +75,6 @@ export function CartPage() {
     };
   }, [cart?.updatedAt, cart?.itemCount, cart?.items.map((i) => `${i.id}:${i.quantity}`).join('|')]);
 
-  useEffect(() => {
-    if (checkoutOpen) track('checkout_open');
-  }, [checkoutOpen]);
-
-  useEffect(() => {
-    if (!placedOrderId) return;
-    document.body.classList.add('modal-open');
-    document.documentElement.classList.add('modal-open');
-    return () => {
-      document.body.classList.remove('modal-open');
-      document.documentElement.classList.remove('modal-open');
-    };
-  }, [placedOrderId]);
-
   const totals = useMemo(() => {
     if (!cart) {
       return {
@@ -143,34 +106,6 @@ export function CartPage() {
       freeDelivery,
     };
   }, [cart, compareAtByProduct]);
-
-  const handleOrder = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!cart?.items.length) return;
-    setSubmitting(true);
-    setError(null);
-    try {
-      const shippingAddress =
-        deliveryMethod === 'post'
-          ? `Почта России, индекс ${postIndex}, адрес: ${postAddress}`
-          : `СДЭК, город ${cdekCity}, ПВЗ: ${cdekPickupPoint}`;
-
-      const order = await ordersApi.create({
-        shippingName: name,
-        shippingPhone: phone,
-        shippingAddress,
-        paymentMethod: 'card',
-      });
-      setCheckoutOpen(false);
-      await fetchCart();
-      track('order_complete', { orderId: order.id, paymentMethod: payment });
-      setPlacedOrderId(order.id);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось оформить заказ');
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   const handleRecommendAdd = async (product: ProductListItem) => {
     try {
@@ -326,7 +261,8 @@ export function CartPage() {
                   className={styles.checkoutBtn}
                   onClick={() => {
                     setError(null);
-                    setCheckoutOpen(true);
+                    track('checkout_open');
+                    navigate('/checkout');
                   }}
                 >
                   Перейти к оформлению
@@ -342,73 +278,6 @@ export function CartPage() {
           </div>
         )}
 
-        <CheckoutModal
-          open={checkoutOpen}
-          onClose={() => !submitting && setCheckoutOpen(false)}
-          onSubmit={handleOrder}
-          name={name}
-          phone={phone}
-          payment={payment}
-          deliveryMethod={deliveryMethod}
-          postIndex={postIndex}
-          postAddress={postAddress}
-          cdekCity={cdekCity}
-          cdekPickupPoint={cdekPickupPoint}
-          onNameChange={setName}
-          onPhoneChange={setPhone}
-          onPaymentChange={setPayment}
-          onDeliveryMethodChange={setDeliveryMethod}
-          onPostIndexChange={setPostIndex}
-          onPostAddressChange={setPostAddress}
-          onCdekCityChange={setCdekCity}
-          onCdekPickupPointChange={setCdekPickupPoint}
-          total={totals.total}
-          itemCount={cart?.itemCount ?? 0}
-          originalSubtotal={totals.originalSubtotal}
-          discount={totals.discount}
-          freeDelivery={totals.freeDelivery}
-          freeDeliveryFrom={FREE_DELIVERY_FROM}
-          items={(cart?.items ?? []).map((it) => ({ name: it.product.name, quantity: it.quantity }))}
-          error={error}
-          submitting={submitting}
-        />
-
-        {placedOrderId && (
-          <div
-            className={styles.orderSuccessOverlay}
-            role="presentation"
-            onClick={() => setPlacedOrderId(null)}
-          >
-            <div
-              className={styles.orderSuccessDialog}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="order-success-title"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h2 id="order-success-title" className={styles.orderSuccessTitle}>
-                Заказ оформлен
-              </h2>
-              <p className={styles.orderSuccessMeta}>
-                Номер заказа: <strong>№ {orderShortId(placedOrderId)}</strong>
-              </p>
-              <p className={styles.orderSuccessHint}>Мы отправили детали в раздел «Мои заказы».</p>
-              <div className={styles.orderSuccessActions}>
-                <Link to="/catalog" className={styles.orderSuccessSecondary} onClick={() => setPlacedOrderId(null)}>
-                  В каталог
-                </Link>
-                <Button
-                  onClick={() => {
-                    setPlacedOrderId(null);
-                    navigate(`/account?tab=orders&orderId=${placedOrderId}`);
-                  }}
-                >
-                  К моим заказам
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </PageContainer>
   );
