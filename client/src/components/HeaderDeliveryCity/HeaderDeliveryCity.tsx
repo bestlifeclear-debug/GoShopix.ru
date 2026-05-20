@@ -3,11 +3,19 @@ import { cityDetectApi } from '../../api';
 import { DEFAULT_DELIVERY_CITY, readDeliveryCity, writeDeliveryCity } from '../../lib/deliveryCity';
 import styles from './HeaderDeliveryCity.module.css';
 
-export function HeaderDeliveryCity() {
+type HeaderDeliveryCityProps = {
+  className?: string;
+};
+
+export function HeaderDeliveryCity({ className }: HeaderDeliveryCityProps) {
   const [city, setCity] = useState(() => readDeliveryCity() ?? DEFAULT_DELIVERY_CITY);
 
   useEffect(() => {
-    if (readDeliveryCity()) return;
+    const stored = readDeliveryCity();
+    if (stored) {
+      setCity(stored);
+      return;
+    }
 
     void cityDetectApi.detect().then((res) => {
       const detected = res.city?.trim();
@@ -18,7 +26,7 @@ export function HeaderDeliveryCity() {
   }, []);
 
   return (
-    <div className={styles.root} title={`Доставка в ${city}`}>
+    <div className={[styles.root, className].filter(Boolean).join(' ')} title={`Доставка в ${city}`}>
       <span className={styles.icon} aria-hidden>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path

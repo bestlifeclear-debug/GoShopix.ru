@@ -79,8 +79,6 @@ export function Header({
               <span className={styles.logoMark}>G</span>
               <span className={styles.logoText}>GoShopix</span>
             </Link>
-          </div>
-          <div className={styles.searchRow}>
             <div className={styles.catalogWrap}>
               <button
                 type="button"
@@ -96,9 +94,9 @@ export function Header({
               </button>
               {catalogOpen && catalogMenu}
             </div>
-            {deliverySlot}
-            <div className={styles.searchGroup}>{searchSlot}</div>
+            {deliverySlot ? <div className={styles.deliverySlot}>{deliverySlot}</div> : null}
           </div>
+          <div className={styles.searchGroup}>{searchSlot}</div>
           <div className={styles.actionsTray}>
             {extraActions}
             <Link to={favoritesTo} className={styles.iconBtn} aria-label="Избранное">

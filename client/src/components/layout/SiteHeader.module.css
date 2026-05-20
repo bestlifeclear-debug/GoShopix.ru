@@ -4,6 +4,25 @@
   z-index: 200;
 }
 
+.searchColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.deliveryMobile {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .deliveryMobile {
+    display: inline-flex;
+    width: 100%;
+  }
+}
+
 .mobileOverlay {
   display: none;
 }

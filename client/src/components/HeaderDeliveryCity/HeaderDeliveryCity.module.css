@@ -21,29 +21,23 @@
 }
 
 .text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
+  display: inline;
   margin: 0;
   min-width: 0;
-  line-height: 1.2;
+  line-height: 1.25;
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
 }
 
 .prefix {
-  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-muted);
-  white-space: nowrap;
 }
 
 .city {
-  font-size: var(--font-size-sm);
+  margin-left: 4px;
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 140px;
 }
 
 @media (max-width: 767px) {
