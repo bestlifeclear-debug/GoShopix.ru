@@ -114,27 +114,25 @@
   color: var(--color-text);
 }
 
-.stepCurrent {
-  padding: 10px 8px 6px;
-  margin: -10px -8px -6px;
-  border-radius: 14px;
-  border: 2px solid var(--color-primary);
-  background: var(--color-primary-soft);
-  box-shadow: 0 4px 16px rgb(194 24 91 / 0.15);
-}
-
 .stepCurrent .stepDot {
-  transform: scale(1.15);
+  width: 18px;
+  height: 18px;
+  transform: scale(1.06);
   background: var(--color-primary);
   border-color: var(--color-primary);
+  border-width: 2px;
   box-shadow:
-    0 0 0 4px var(--color-bg-elevated),
-    0 0 0 7px rgb(194 24 91 / 0.28);
+    0 0 0 3px var(--color-bg-elevated),
+    0 0 0 5px rgb(194 24 91 / 0.18);
 }
 
 .stepCurrent .stepLabel {
   color: var(--color-primary);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: underline;
+  text-decoration-color: rgb(194 24 91 / 0.35);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
 }
 
 .stepperHint {
