@@ -119,57 +119,6 @@
   }
 }
 
-/* Тёмная тема */
-[data-theme='dark'] {
-  --color-primary: #e85a7a;
-  --color-primary-hover: #f0708e;
-  --color-primary-active: #d44d6d;
-  --color-primary-soft: rgb(232 90 122 / 0.18);
-
-  --color-cta: var(--color-primary);
-  --color-cta-hover: var(--color-primary-hover);
-  --color-cta-active: var(--color-primary-active);
-
-  --color-header-bg: #1e1e1e;
-  --color-header-border: #3d3d3d;
-  --color-actions-tray-bg: #2d2f33;
-
-  --color-bg: #121212;
-  --color-bg-subtle: #121212;
-  --color-bg-elevated: #242424;
-  --color-surface-card: #1e1e1e;
-
-  --color-text: #ececec;
-  --color-text-muted: #b3b3b3;
-  --color-text-inverse: #ffffff;
-
-  --color-sale: #ef5350;
-  --color-sale-bg: #3d2020;
-  --color-hit: #e8a04a;
-  --color-hit-bg: #2e2618;
-
-  --color-success: #81c784;
-  --color-success-bg: #1b2e1f;
-  --color-warning: #e8a04a;
-  --color-warning-bg: #2e2618;
-  --color-error: #ef9a9a;
-  --color-error-bg: #351c1c;
-
-  --color-border: #3d3d3d;
-  --color-border-focus: var(--color-primary);
-
-  --color-focus-glow: 0 0 0 3px rgb(232 90 122 / 0.35);
-  --color-button-primary: var(--color-primary);
-  --color-button-primary-hover: var(--color-primary-hover);
-
-  --shadow-sm: 0 2px 8px rgb(0 0 0 / 0.4);
-  --shadow-md: 0 6px 20px rgb(0 0 0 / 0.45);
-  --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
-  --shadow-card: 0 2px 12px rgb(0 0 0 / 0.35);
-  --shadow-card-hover: 0 8px 24px rgb(0 0 0 / 0.5);
-  --shadow-focus: 0 0 0 3px rgb(232 90 122 / 0.35);
-}
-
 @keyframes skeleton-shimmer {
   0% {
     background-position: 200% 0;

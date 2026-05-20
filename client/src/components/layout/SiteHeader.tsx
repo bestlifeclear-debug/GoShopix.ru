@@ -6,7 +6,6 @@ import { Header, type HeaderNavLink } from '../../design-system';
 import { IconClose } from '../../design-system/icons/Icons';
 import { CatalogMenu } from '../CatalogMenu/CatalogMenu';
 import { SearchBox, type SearchSuggestion } from '../SearchBox/SearchBox';
-import { ThemeToggle } from '../ThemeToggle/ThemeToggle';
 import { useAuthStore } from '../../stores/authStore';
 import { selectCartItemCount, useCartStore } from '../../stores/cartStore';
 import styles from './SiteHeader.module.css';
@@ -132,7 +131,6 @@ export function SiteHeader() {
         catalogMenu={
           <CatalogMenu categories={categories} onClose={() => setCatalogOpen(false)} />
         }
-        extraActions={<ThemeToggle />}
         cartCount={cartCount}
         onCartClick={handleCartClick}
         favoritesTo={token ? '/account?section=favorites' : '/auth'}

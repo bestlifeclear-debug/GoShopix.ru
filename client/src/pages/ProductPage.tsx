@@ -52,7 +52,7 @@ export function ProductPage() {
   const [similar, setSimilar] = useState<ProductListItem[]>([]);
   const [alsoBought, setAlsoBought] = useState<ProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState('desc');
+  const [tab, setTab] = useState('reviews');
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [isFavorite, setIsFavorite] = useState(false);
@@ -270,7 +270,6 @@ export function ProductPage() {
 
         <aside className={styles.aside}>
           <div className={styles.productMeta}>
-            {product.promoBadge && <span className={styles.promoRibbon}>{product.promoBadge}</span>}
             {product.brand && <p className={styles.brand}>{product.brand}</p>}
             <h1 className={styles.name}>{product.name}</h1>
             <div className={styles.ratingRow}>
@@ -364,6 +363,73 @@ export function ProductPage() {
         </aside>
       </div>
 
+      <section className={styles.detailsSection} aria-label="Описание и характеристики">
+        <div className={styles.detailsGrid}>
+          <div className={styles.detailsCol}>
+            <div className={styles.detailsCard}>
+              <h2 className={styles.detailsTitle}>Описание</h2>
+              <p className={styles.detailsText}>{product.description || 'Описание отсутствует.'}</p>
+            </div>
+
+            <div className={styles.detailsCard}>
+              <h2 className={styles.detailsTitle}>Характеристики</h2>
+              <table className={styles.specTable}>
+                <tbody>
+                  {product.brand && (
+                    <tr>
+                      <th>Бренд</th>
+                      <td>{product.brand}</td>
+                    </tr>
+                  )}
+                  {product.attributes.map((a) => (
+                    <tr key={a.slug}>
+                      <th>{a.name}</th>
+                      <td>{a.value}</td>
+                    </tr>
+                  ))}
+                  {selectedVariant?.options.map((o) => (
+                    <tr key={o.id}>
+                      <th>{o.name}</th>
+                      <td>{o.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <aside className={styles.detailsAside}>
+            <div className={styles.detailsCard}>
+              <h2 className={styles.detailsTitle}>О магазине</h2>
+              <p className={styles.storeLine}>
+                <Store size={18} strokeWidth={2} className={styles.storeIcon} aria-hidden />
+                <span className={styles.storeLabel}>Продавец:</span>
+                <strong className={styles.storeName}>{product.store?.name ?? '—'}</strong>
+              </p>
+              <div className={styles.storeKpis}>
+                <div className={styles.kpi}>
+                  <span className={styles.kpiLabel}>Рейтинг товара</span>
+                  <span className={styles.kpiValue}>
+                    {product.rating.toFixed(1)} / 5
+                  </span>
+                </div>
+                <div className={styles.kpi}>
+                  <span className={styles.kpiLabel}>Отзывы</span>
+                  <span className={styles.kpiValue}>{product.reviewCount}</span>
+                </div>
+                <div className={styles.kpi}>
+                  <span className={styles.kpiLabel}>Доставка</span>
+                  <span className={styles.kpiValue}>{deliveryRangeText}</span>
+                </div>
+              </div>
+              <p className={styles.storeHint}>
+                Проверяйте продавца и условия доставки перед оплатой — мы показываем основные данные прямо в карточке.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
       <div
         className={`${styles.mobileBar} ${showMobileBar ? styles.mobileBarVisible : ''}`}
         aria-hidden={!showMobileBar}
@@ -393,56 +459,15 @@ export function ProductPage() {
 
       <Tabs
         tabs={[
-          { id: 'desc', label: 'Описание' },
-          { id: 'specs', label: 'Характеристики' },
           { id: 'reviews', label: `Отзывы (${product.reviewCount})` },
-          { id: 'delivery', label: 'Доставка' },
           { id: 'qa', label: 'Вопросы' },
         ]}
         active={tab}
         onChange={setTab}
       >
-        {tab === 'desc' && (
-          <div className={styles.tabContent}>
-            <p>{product.description || 'Описание отсутствует.'}</p>
-          </div>
-        )}
-        {tab === 'specs' && (
-          <table className={styles.specTable}>
-            <tbody>
-              {product.brand && (
-                <tr>
-                  <th>Бренд</th>
-                  <td>{product.brand}</td>
-                </tr>
-              )}
-              {product.attributes.map((a) => (
-                <tr key={a.slug}>
-                  <th>{a.name}</th>
-                  <td>{a.value}</td>
-                </tr>
-              ))}
-              {selectedVariant?.options.map((o) => (
-                <tr key={o.id}>
-                  <th>{o.name}</th>
-                  <td>{o.value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
         {tab === 'reviews' && (
           <div className={styles.tabContent}>
             <ProductReviews averageRating={product.rating} reviewCount={product.reviewCount} />
-          </div>
-        )}
-        {tab === 'delivery' && (
-          <div className={styles.tabContent}>
-            <p>
-              Доставка по России: {deliveryPromise} (ориентировочно {deliveryRangeText}).
-            </p>
-            <p>Отслеживание заказа в личном кабинете.</p>
-            <p>Возврат в течение 14 дней при сохранении товарного вида.</p>
           </div>
         )}
         {tab === 'qa' && (

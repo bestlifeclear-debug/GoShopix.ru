@@ -35,8 +35,12 @@ export function CartPage() {
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
-  const [payment, setPayment] = useState('card');
+  const [payment, setPayment] = useState<'card' | 'sbp'>('card');
+  const [deliveryMethod, setDeliveryMethod] = useState<'post' | 'cdek'>('post');
+  const [postIndex, setPostIndex] = useState('');
+  const [postAddress, setPostAddress] = useState('');
+  const [cdekCity, setCdekCity] = useState('');
+  const [cdekPickupPoint, setCdekPickupPoint] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
@@ -146,11 +150,16 @@ export function CartPage() {
     setSubmitting(true);
     setError(null);
     try {
+      const shippingAddress =
+        deliveryMethod === 'post'
+          ? `Почта России, индекс ${postIndex}, адрес: ${postAddress}`
+          : `СДЭК, город ${cdekCity}, ПВЗ: ${cdekPickupPoint}`;
+
       const order = await ordersApi.create({
         shippingName: name,
         shippingPhone: phone,
-        shippingAddress: address,
-        paymentMethod: payment === 'cash' ? 'cash' : 'card',
+        shippingAddress,
+        paymentMethod: 'card',
       });
       setCheckoutOpen(false);
       await fetchCart();
@@ -339,18 +348,27 @@ export function CartPage() {
           onSubmit={handleOrder}
           name={name}
           phone={phone}
-          address={address}
           payment={payment}
+          deliveryMethod={deliveryMethod}
+          postIndex={postIndex}
+          postAddress={postAddress}
+          cdekCity={cdekCity}
+          cdekPickupPoint={cdekPickupPoint}
           onNameChange={setName}
           onPhoneChange={setPhone}
-          onAddressChange={setAddress}
           onPaymentChange={setPayment}
+          onDeliveryMethodChange={setDeliveryMethod}
+          onPostIndexChange={setPostIndex}
+          onPostAddressChange={setPostAddress}
+          onCdekCityChange={setCdekCity}
+          onCdekPickupPointChange={setCdekPickupPoint}
           total={totals.total}
           itemCount={cart?.itemCount ?? 0}
           originalSubtotal={totals.originalSubtotal}
           discount={totals.discount}
           freeDelivery={totals.freeDelivery}
           freeDeliveryFrom={FREE_DELIVERY_FROM}
+          items={(cart?.items ?? []).map((it) => ({ name: it.product.name, quantity: it.quantity }))}
           error={error}
           submitting={submitting}
         />

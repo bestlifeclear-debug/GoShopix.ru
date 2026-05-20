@@ -15,15 +15,6 @@
   color: var(--auth-color-primary-text);
 }
 
-[data-theme='dark'] .page {
-  --auth-color-primary-bg: #121212;
-  --auth-color-primary-text: #ffffff;
-  --auth-color-border: #333333;
-  --auth-color-surface: #1e1e1e;
-  --auth-color-hint: #aaaaaa;
-  --auth-focus-shadow: 0 0 0 3px rgb(255 64 129 / 0.35);
-}
-
 .header {
   position: sticky;
   top: 0;

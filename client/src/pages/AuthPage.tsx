@@ -3,7 +3,6 @@ import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthForm } from '../components/auth/AuthForm';
 import { PasswordResetForm } from '../components/auth/PasswordResetForm';
 import { SiteFooter } from '../components/layout/SiteFooter';
-import { ThemeToggle } from '../components/ThemeToggle/ThemeToggle';
 import { useAuthStore } from '../stores/authStore';
 import styles from './AuthPage.module.css';
 
@@ -41,7 +40,6 @@ export function AuthPage() {
           GoShopix
         </Link>
         <div className={styles.headerActions}>
-          <ThemeToggle />
           <Link to="/" className={styles.backLink}>
             Назад в магазин
           </Link>

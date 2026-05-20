@@ -25,13 +25,6 @@
   background: var(--legal-bg);
 }
 
-@media (prefers-color-scheme: light) {
-  .page {
-    --legal-bg: #121212;
-    --legal-text: #ffffff;
-  }
-}
-
 .header {
   position: sticky;
   top: 0;

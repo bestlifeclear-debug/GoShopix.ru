@@ -4,24 +4,41 @@ import { X } from 'lucide-react';
 import { formatPrice } from '@goshopix/shared';
 import styles from './CheckoutModal.module.css';
 
+export type PaymentMethodUi = 'card' | 'sbp';
+export type DeliveryMethodUi = 'post' | 'cdek';
+
+export interface CheckoutItemPreview {
+  name: string;
+  quantity: number;
+}
+
 export interface CheckoutModalProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (e: FormEvent) => void;
   name: string;
   phone: string;
-  address: string;
-  payment: string;
+  payment: PaymentMethodUi;
+  deliveryMethod: DeliveryMethodUi;
+  postIndex: string;
+  postAddress: string;
+  cdekCity: string;
+  cdekPickupPoint: string;
   onNameChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
-  onAddressChange: (value: string) => void;
-  onPaymentChange: (value: string) => void;
+  onPaymentChange: (value: PaymentMethodUi) => void;
+  onDeliveryMethodChange: (value: DeliveryMethodUi) => void;
+  onPostIndexChange: (value: string) => void;
+  onPostAddressChange: (value: string) => void;
+  onCdekCityChange: (value: string) => void;
+  onCdekPickupPointChange: (value: string) => void;
   total: number;
   itemCount: number;
   originalSubtotal: number;
   discount: number;
   freeDelivery: boolean;
   freeDeliveryFrom: number;
+  items: CheckoutItemPreview[];
   error: string | null;
   submitting: boolean;
 }
@@ -32,18 +49,27 @@ export function CheckoutModal({
   onSubmit,
   name,
   phone,
-  address,
   payment,
+  deliveryMethod,
+  postIndex,
+  postAddress,
+  cdekCity,
+  cdekPickupPoint,
   onNameChange,
   onPhoneChange,
-  onAddressChange,
   onPaymentChange,
+  onDeliveryMethodChange,
+  onPostIndexChange,
+  onPostAddressChange,
+  onCdekCityChange,
+  onCdekPickupPointChange,
   total,
   itemCount,
   originalSubtotal,
   discount,
   freeDelivery,
   freeDeliveryFrom,
+  items,
   error,
   submitting,
 }: CheckoutModalProps) {
@@ -121,17 +147,61 @@ export function CheckoutModal({
                 />
               </label>
 
-              <label className={styles.field}>
-                <span className={styles.label}>Адрес доставки</span>
-                <input
-                  className={styles.input}
-                  value={address}
-                  onChange={(e) => onAddressChange(e.target.value)}
-                  placeholder="Город, улица, дом, квартира"
-                  required
-                  autoComplete="street-address"
-                />
-              </label>
+              {deliveryMethod === 'post' && (
+                <>
+                  <label className={styles.field}>
+                    <span className={styles.label}>Индекс (Почта России)</span>
+                    <input
+                      className={styles.input}
+                      value={postIndex}
+                      onChange={(e) => onPostIndexChange(e.target.value)}
+                      placeholder="Например: 101000"
+                      inputMode="numeric"
+                      required
+                      autoComplete="postal-code"
+                    />
+                  </label>
+
+                  <label className={styles.field}>
+                    <span className={styles.label}>Адрес доставки</span>
+                    <input
+                      className={styles.input}
+                      value={postAddress}
+                      onChange={(e) => onPostAddressChange(e.target.value)}
+                      placeholder="Город, улица, дом, квартира"
+                      required
+                      autoComplete="street-address"
+                    />
+                  </label>
+                </>
+              )}
+
+              {deliveryMethod === 'cdek' && (
+                <>
+                  <label className={styles.field}>
+                    <span className={styles.label}>Город (СДЭК)</span>
+                    <input
+                      className={styles.input}
+                      value={cdekCity}
+                      onChange={(e) => onCdekCityChange(e.target.value)}
+                      placeholder="Например: Москва"
+                      required
+                      autoComplete="address-level2"
+                    />
+                  </label>
+
+                  <label className={styles.field}>
+                    <span className={styles.label}>Пункт выдачи СДЭК</span>
+                    <input
+                      className={styles.input}
+                      value={cdekPickupPoint}
+                      onChange={(e) => onCdekPickupPointChange(e.target.value)}
+                      placeholder="Адрес ПВЗ или код"
+                      required
+                    />
+                  </label>
+                </>
+              )}
 
               <div className={styles.trustUnderAddress} aria-label="Безопасная оплата">
                 <span className={styles.trustCaption}>Безопасная оплата</span>
@@ -157,6 +227,19 @@ export function CheckoutModal({
                   {itemCount} {itemCount === 1 ? 'товар' : itemCount < 5 ? 'товара' : 'товаров'} ·{' '}
                   {freeDelivery ? 'доставка бесплатно' : `бесплатно от ${formatPrice(freeDeliveryFrom)}`}
                 </p>
+                {items.length > 0 && (
+                  <div className={styles.itemsPreview} aria-label="Состав заказа">
+                    {items.slice(0, 3).map((it) => (
+                      <div key={`${it.name}-${it.quantity}`} className={styles.itemPreviewRow}>
+                        <span className={styles.itemPreviewName}>{it.name}</span>
+                        <strong className={styles.itemPreviewQty}>×{it.quantity}</strong>
+                      </div>
+                    ))}
+                    {items.length > 3 && (
+                      <p className={styles.itemsPreviewMore}>и ещё {items.length - 3}</p>
+                    )}
+                  </div>
+                )}
                 <div className={styles.summaryRow}>
                   <span>Товары</span>
                   <strong>{formatPrice(originalSubtotal)}</strong>
@@ -189,16 +272,46 @@ export function CheckoutModal({
                     Банковская карта
                   </label>
                   <label
-                    className={`${styles.paymentOption} ${payment === 'cash' ? styles.paymentOptionActive : ''}`}
+                    className={`${styles.paymentOption} ${payment === 'sbp' ? styles.paymentOptionActive : ''}`}
                   >
                     <input
                       type="radio"
                       name="payment"
-                      value="cash"
-                      checked={payment === 'cash'}
-                      onChange={() => onPaymentChange('cash')}
+                      value="sbp"
+                      checked={payment === 'sbp'}
+                      onChange={() => onPaymentChange('sbp')}
                     />
-                    При получении
+                    СБП
+                  </label>
+                </fieldset>
+              </div>
+
+              <div className={styles.deliveryBlock}>
+                <span className={styles.label}>Способ доставки</span>
+                <fieldset className={styles.paymentOptions}>
+                  <label
+                    className={`${styles.paymentOption} ${deliveryMethod === 'post' ? styles.paymentOptionActive : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      name="delivery"
+                      value="post"
+                      checked={deliveryMethod === 'post'}
+                      onChange={() => onDeliveryMethodChange('post')}
+                    />
+                    Почта России
+                  </label>
+                  <label
+                    className={`${styles.paymentOption} ${deliveryMethod === 'cdek' ? styles.paymentOptionActive : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      name="delivery"
+                      value="cdek"
+                      checked={deliveryMethod === 'cdek'}
+                      onChange={() => onDeliveryMethodChange('cdek')}
+                    />
+                    СДЭК
                   </label>
                 </fieldset>
               </div>

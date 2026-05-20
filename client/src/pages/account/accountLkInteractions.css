@@ -11,22 +11,13 @@
     transform 0.2s ease;
 }
 
-[data-theme='light'] [data-account-lk] [data-lk-nav]:not([data-active='true']) {
+[data-account-lk] [data-lk-nav]:not([data-active='true']) {
   color: #1a1a1a;
 }
 
-[data-theme='dark'] [data-account-lk] [data-lk-nav]:not([data-active='true']) {
-  color: #d4d4d8;
-}
-
-[data-theme='light'] [data-account-lk] [data-lk-nav-icon] {
+[data-account-lk] [data-lk-nav-icon] {
   color: #5c5c5c;
   background-color: #f7f7f8;
-}
-
-[data-theme='dark'] [data-account-lk] [data-lk-nav-icon] {
-  color: #d4d4d8;
-  background-color: #2a2a2a;
 }
 
 @media (hover: hover) {
@@ -55,11 +46,7 @@
   color: #ffffff !important;
 }
 
-[data-theme='dark'] [data-account-lk] [data-lk-footer-email] {
-  color: #a1a1aa;
-}
-
-[data-theme='light'] [data-account-lk] [data-lk-footer-email] {
+[data-account-lk] [data-lk-footer-email] {
   color: #5c5c5c;
 }
 
@@ -73,12 +60,6 @@
   color: #d81b60 !important;
 }
 
-[data-theme='dark'] [data-account-lk] [data-lk-seller-cabinet] {
-  border-color: #e85a7a !important;
-  background-color: rgb(232 90 122 / 0.14) !important;
-  color: #f0708e !important;
-}
-
 @media (hover: hover) {
   [data-account-lk] [data-lk-seller-cabinet]:hover {
     background-color: #d81b60 !important;
@@ -86,12 +67,6 @@
     color: #ffffff !important;
     box-shadow: 0 2px 10px rgb(216 27 96 / 0.28) !important;
     transform: translateY(-1px);
-  }
-
-  [data-theme='dark'] [data-account-lk] [data-lk-seller-cabinet]:hover {
-    background-color: #d81b60 !important;
-    border-color: #d81b60 !important;
-    color: #ffffff !important;
   }
 }
 
@@ -114,10 +89,6 @@
     box-shadow: 0 4px 14px rgb(216 27 96 / 0.38) !important;
     transform: translateY(-1px);
   }
-
-  [data-theme='dark'] [data-account-lk] [data-lk-logout]:hover {
-    background-color: #e91e63 !important;
-  }
 }
 
 /* —— Карточки рекомендаций —— */
@@ -129,16 +100,9 @@
 }
 
 @media (hover: hover) {
-  [data-theme='light'] [data-account-lk] [data-lk-reco]:hover {
+  [data-account-lk] [data-lk-reco]:hover {
     background-color: #f2dfe8 !important;
     box-shadow: 0 4px 14px rgb(216 27 96 / 0.22) !important;
-    transform: translateY(-3px);
-    text-decoration: none !important;
-  }
-
-  [data-theme='dark'] [data-account-lk] [data-lk-reco]:hover {
-    background-color: rgb(216 27 96 / 0.22) !important;
-    box-shadow: 0 4px 16px rgb(0 0 0 / 0.45) !important;
     transform: translateY(-3px);
     text-decoration: none !important;
   }
@@ -146,15 +110,9 @@
 
 /* —— Карточки заказов на главной ЛК —— */
 @media (hover: hover) {
-  [data-theme='light'] [data-account-lk] [data-lk-order-card]:hover {
+  [data-account-lk] [data-lk-order-card]:hover {
     background-color: #f2dfe8 !important;
     box-shadow: 0 4px 14px rgb(216 27 96 / 0.22) !important;
-    transform: translateY(-2px);
-  }
-
-  [data-theme='dark'] [data-account-lk] [data-lk-order-card]:hover {
-    background-color: rgb(216 27 96 / 0.22) !important;
-    box-shadow: 0 4px 16px rgb(0 0 0 / 0.45) !important;
     transform: translateY(-2px);
   }
 }
