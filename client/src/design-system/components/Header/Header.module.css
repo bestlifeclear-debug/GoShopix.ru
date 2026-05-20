@@ -11,6 +11,8 @@
 }
 
 .inner {
+  --header-delivery-width: 150px;
+  --header-search-max: 840px;
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -24,8 +26,9 @@
 .leftGroup {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--space-2);
   flex-shrink: 0;
+  min-width: 0;
 }
 
 .catalogWrap {
@@ -142,13 +145,15 @@
 
 .deliverySlot {
   display: none;
+  width: var(--header-delivery-width);
+  max-width: var(--header-delivery-width);
   flex-shrink: 0;
 }
 
 .searchGroup {
   flex: 1;
   min-width: 0;
-  max-width: 840px;
+  max-width: var(--header-search-max);
   margin: 0 auto;
 }
 
@@ -158,6 +163,7 @@
   justify-content: center;
   gap: 4px;
   flex-shrink: 0;
+  justify-self: end;
   height: 40px;
   padding: 0 6px;
   border-radius: var(--radius-md);
@@ -286,12 +292,55 @@
 }
 
 @media (min-width: 768px) {
+  .inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, var(--header-search-max)) minmax(0, 1fr);
+    grid-template-areas: 'lead search trail';
+    align-items: center;
+    column-gap: var(--space-2);
+    row-gap: var(--space-1);
+  }
+
+  .leftGroup {
+    grid-area: lead;
+    justify-self: start;
+    max-width: 100%;
+  }
+
+  .searchGroup {
+    grid-area: search;
+    flex: none;
+    width: 100%;
+    max-width: var(--header-search-max);
+    margin: 0;
+    justify-self: center;
+  }
+
+  .actionsTray {
+    grid-area: trail;
+  }
+
   .catalogWrap {
     display: block;
   }
 
   .deliverySlot {
     display: block;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .inner {
+    --header-delivery-width: 132px;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 560px) minmax(0, 1fr);
+  }
+
+  .searchGroup {
+    max-width: 560px;
+  }
+
+  .logoText {
+    display: none;
   }
 }
 
