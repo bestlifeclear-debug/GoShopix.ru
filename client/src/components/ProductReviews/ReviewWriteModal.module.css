@@ -129,9 +129,9 @@
   width: 100%;
   box-sizing: border-box;
   padding: 14px 16px;
-  border: none;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  background: #f8fafc;
+  background: #f1f5f9;
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -139,6 +139,7 @@
   resize: none;
   transition:
     background 0.2s ease,
+    border-color 0.2s ease,
     box-shadow 0.2s ease;
 }
 
@@ -148,8 +149,9 @@
 
 .textarea:focus {
   outline: none;
+  border-color: rgb(216 27 96 / 0.4);
   background: #ffffff;
-  box-shadow: 0 0 0 2px rgb(216 27 96 / 0.35);
+  box-shadow: 0 0 0 2px rgb(216 27 96 / 0.2);
 }
 
 .textareaPros {
