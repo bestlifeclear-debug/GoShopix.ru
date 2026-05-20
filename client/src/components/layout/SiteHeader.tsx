@@ -8,7 +8,7 @@ import { CatalogMenu } from '../CatalogMenu/CatalogMenu';
 import { SearchBox, type SearchSuggestion } from '../SearchBox/SearchBox';
 import { ThemeToggle } from '../ThemeToggle/ThemeToggle';
 import { useAuthStore } from '../../stores/authStore';
-import { useCartStore } from '../../stores/cartStore';
+import { selectCartItemCount, useCartStore } from '../../stores/cartStore';
 import styles from './SiteHeader.module.css';
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -35,7 +35,7 @@ export function SiteHeader() {
   const [categories, setCategories] = useState<CategoryNode[]>([]);
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
-  const cartCount = useCartStore((s) => s.itemCount());
+  const cartCount = useCartStore((s) => selectCartItemCount(s, Boolean(token)));
   const fetchCart = useCartStore((s) => s.fetchCart);
   const openDrawer = useCartStore((s) => s.openDrawer);
   const initGuestCart = useCartStore((s) => s.initGuestCart);

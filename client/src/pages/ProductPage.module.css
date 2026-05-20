@@ -23,6 +23,13 @@
   flex-direction: column;
   gap: var(--space-3);
   min-width: 0;
+  align-self: stretch;
+}
+
+.asideSticky {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .productMeta {
@@ -35,11 +42,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding: var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
+  padding: var(--space-3);
+  border: none;
+  border-radius: var(--radius-2xl);
   background: var(--color-bg-elevated);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-sm);
 }
 
 .buyBoxActions {
@@ -225,10 +232,10 @@
 }
 
 .deliveryCard {
-  padding: var(--space-4);
+  padding: var(--space-3);
   border-radius: var(--radius-md);
   background: var(--color-bg-subtle);
-  border: 1px solid var(--color-border);
+  border: none;
 }
 
 .deliveryCard p {
@@ -338,14 +345,107 @@
   .grid {
     grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
     gap: var(--space-5);
+    align-items: stretch;
   }
 
-  .buyBox {
+  .asideSticky {
     position: sticky;
-    top: calc(var(--header-height) + 16px);
-    max-height: calc(100vh - var(--header-height) - 32px);
+    top: var(--sticky-top);
+    align-self: start;
+    max-height: calc(100vh - var(--sticky-top) - var(--space-3));
     overflow-y: auto;
     overscroll-behavior: contain;
+  }
+}
+
+/* Скелетон PDP */
+.skeletonGallery {
+  aspect-ratio: 1;
+  max-width: 560px;
+  width: 100%;
+  justify-self: center;
+  border-radius: var(--radius-2xl);
+  background: var(--color-bg-subtle);
+  animation: pdp-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonMeta,
+.skeletonBuyBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-2xl);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-sm);
+}
+
+.skeletonLine {
+  display: block;
+  height: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-subtle);
+  animation: pdp-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonLineLg {
+  height: 28px;
+  width: 85%;
+}
+
+.skeletonLinePrice {
+  height: 32px;
+  width: 55%;
+}
+
+.skeletonBlock {
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  animation: pdp-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonBtn {
+  height: 52px;
+  border-radius: var(--radius-cta);
+  background: var(--color-bg-subtle);
+  animation: pdp-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonSectionTitle {
+  display: block;
+  width: 200px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-subtle);
+  animation: pdp-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .skeletonGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .skeletonGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@keyframes pdp-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
   }
 }
 

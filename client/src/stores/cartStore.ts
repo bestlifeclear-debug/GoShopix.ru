@@ -14,6 +14,11 @@ import {
   type CartItemSnapshot,
   type GuestCartLine,
 } from '../lib/guestCart.js';
+import {
+  optimisticAddToCart,
+  optimisticRemoveItem,
+  optimisticUpdateQuantity,
+} from '../lib/optimisticCart.js';
 import { useAuthStore } from './authStore.js';
 
 interface CartState {
@@ -106,14 +111,20 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   addToCart: async (variantId, quantity = 1, snapshot) => {
     if (isAuthenticated()) {
-      set({ isLoading: true, error: null });
+      const previousCart = get().cart;
+      if (snapshot) {
+        set({
+          cart: optimisticAddToCart(previousCart, snapshot, quantity),
+          error: null,
+        });
+      }
       try {
         const cart = await cartApi.addItem(variantId, quantity);
-        set({ cart, isLoading: false });
+        set({ cart, error: null });
       } catch (e) {
         set({
+          cart: previousCart,
           error: e instanceof ApiClientError ? e.message : 'Ошибка',
-          isLoading: false,
         });
         throw e;
       }
@@ -131,12 +142,15 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   updateQuantity: async (itemId, quantity) => {
     if (isAuthenticated()) {
-      set({ isLoading: true });
+      const previousCart = get().cart;
+      if (previousCart) {
+        set({ cart: optimisticUpdateQuantity(previousCart, itemId, quantity) });
+      }
       try {
         const cart = await cartApi.updateItem(itemId, quantity);
-        set({ cart, isLoading: false });
+        set({ cart });
       } catch (e) {
-        set({ isLoading: false });
+        set({ cart: previousCart });
         throw e;
       }
       return;
@@ -149,12 +163,15 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   removeItem: async (itemId) => {
     if (isAuthenticated()) {
-      set({ isLoading: true });
+      const previousCart = get().cart;
+      if (previousCart) {
+        set({ cart: optimisticRemoveItem(previousCart, itemId) });
+      }
       try {
         const cart = await cartApi.removeItem(itemId);
-        set({ cart, isLoading: false });
+        set({ cart });
       } catch (e) {
-        set({ isLoading: false });
+        set({ cart: previousCart });
         throw e;
       }
       return;
@@ -165,3 +182,9 @@ export const useCartStore = create<CartState>((set, get) => ({
     set({ guestItems });
   },
 }));
+
+/** Селектор для мгновенного бейджа корзины в шапке */
+export function selectCartItemCount(state: CartState, isLoggedIn: boolean): number {
+  if (isLoggedIn) return state.cart?.itemCount ?? 0;
+  return state.guestItems.reduce((n, line) => n + line.quantity, 0);
+}

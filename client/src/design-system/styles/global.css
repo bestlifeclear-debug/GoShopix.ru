@@ -81,6 +81,14 @@ input[type='reset'] {
   box-shadow: none;
 }
 
+/* Панели в стиле «пульта» в шапке: мягкая тень, скругление 2xl, чистый фон */
+.gsp-panel {
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-3);
+}
+
 @media (max-width: 767px) {
   body {
     font-size: max(var(--font-size-sm), 14px);

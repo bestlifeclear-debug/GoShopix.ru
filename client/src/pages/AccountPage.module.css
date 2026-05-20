@@ -1,7 +1,7 @@
 /* GoShopix ЛК — акцент из глобальных токенов (--color-primary) */
 
 [data-account-lk] {
-  --lk-radius: 12px;
+  --lk-radius: var(--radius-2xl);
   --lk-transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --lk-lift: translateY(-2px);
   --lk-lift-sm: translateY(-1px);
@@ -66,14 +66,15 @@
 /* —— Sidebar —— */
 .sidebar {
   position: sticky;
-  top: calc(var(--header-top-height) + 16px);
+  top: var(--sticky-top);
   align-self: start;
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - var(--header-top-height) - 32px);
+  max-height: calc(100vh - var(--sticky-top) - var(--space-3));
   background: var(--lk-surface);
-  border: 1px solid var(--lk-border);
+  border: none;
   border-radius: var(--lk-radius);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 

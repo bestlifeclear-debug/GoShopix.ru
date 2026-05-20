@@ -423,7 +423,12 @@ export function CatalogPage() {
         </aside>
 
         <div className={styles.content}>
-          <ProductGrid products={products} onAddToCart={handleAddSafe} loading={loading} />
+          <ProductGrid
+            products={products}
+            onAddToCart={handleAddSafe}
+            loading={loading}
+            skeletonCount={16}
+          />
 
           {totalPages > 1 && (
             <div className={styles.pagination}>

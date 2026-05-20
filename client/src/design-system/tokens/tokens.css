@@ -82,7 +82,9 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
+  --radius-2xl: 20px;
   --radius-full: 9999px;
+  --sticky-top: 100px;
   --radius-cta: var(--radius-md);
   --radius-card: var(--radius-lg);
   --radius-search: var(--radius-md);

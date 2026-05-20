@@ -1,14 +1,18 @@
 .skeleton {
   display: block;
-  background: linear-gradient(
-    90deg,
-    var(--color-bg-subtle) 0%,
-    #ececec 50%,
-    var(--color-bg-subtle) 100%
-  );
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+  background: var(--color-bg-subtle);
   border-radius: var(--radius-sm);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
 }
 
 .text {
@@ -27,10 +31,11 @@
 .card {
   display: flex;
   flex-direction: column;
-  background: var(--color-bg);
-  border-radius: var(--radius-lg);
+  height: 100%;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-card);
   overflow: hidden;
-  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
 }
 
 .cardImage {

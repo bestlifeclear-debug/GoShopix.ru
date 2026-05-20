@@ -7,7 +7,7 @@ import type { ProductDetail, ProductListItem, ProductVariant } from '../api/type
 import { ImageGallery } from '../components/ImageGallery';
 import { ProductGrid } from '../components/ProductGrid';
 import { Tabs } from '../components/Tabs';
-import { Button, StarRating } from '../design-system';
+import { Button, ProductCardSkeleton, StarRating } from '../design-system';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
@@ -205,7 +205,32 @@ export function ProductPage() {
   if (loading) {
     return (
       <PageContainer>
-        <p className={styles.message}>Загрузка…</p>
+        <div className={styles.page} aria-busy="true" aria-label="Загрузка товара">
+          <div className={styles.grid}>
+            <div className={styles.skeletonGallery} />
+            <aside className={styles.aside}>
+              <div className={styles.skeletonMeta}>
+                <span className={styles.skeletonLine} />
+                <span className={`${styles.skeletonLine} ${styles.skeletonLineLg}`} />
+                <span className={styles.skeletonLine} />
+              </div>
+              <div className={styles.skeletonBuyBox}>
+                <span className={`${styles.skeletonLine} ${styles.skeletonLinePrice}`} />
+                <span className={styles.skeletonBlock} />
+                <span className={styles.skeletonBlock} />
+                <span className={styles.skeletonBtn} />
+              </div>
+            </aside>
+          </div>
+          <section className={styles.related} aria-hidden>
+            <span className={styles.skeletonSectionTitle} />
+            <div className={styles.skeletonGrid}>
+              {Array.from({ length: 4 }, (_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))}
+            </div>
+          </section>
+        </div>
       </PageContainer>
     );
   }
@@ -247,6 +272,7 @@ export function ProductPage() {
             </div>
           </div>
 
+          <div className={styles.asideSticky}>
           <div ref={buyBoxRef} className={styles.buyBox}>
           <div className={styles.priceBlock}>
             <span className={styles.price}>{formatPrice(displayPrice)}</span>
@@ -322,6 +348,7 @@ export function ProductPage() {
           </ul>
 
           {msg && <p className={styles.msg}>{msg}</p>}
+          </div>
           </div>
         </aside>
       </div>

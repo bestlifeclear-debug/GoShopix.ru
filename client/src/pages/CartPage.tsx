@@ -149,7 +149,6 @@ export function CartPage() {
       const variant = detail.variants.find((v) => v.isDefault) ?? detail.variants[0];
       if (!variant) return;
       await addToCart(variant.id, 1, snapshotFromDetail(detail, variant));
-      await fetchCart();
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : 'Не удалось добавить товар');
     }
