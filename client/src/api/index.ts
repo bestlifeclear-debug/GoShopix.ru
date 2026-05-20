@@ -107,7 +107,12 @@ export const ordersApi = {
 
   get: (id: string) => apiFetch<Order>(`/api/orders/${id}`, { auth: true }),
 
-  create: (body: { shippingName: string; shippingPhone: string; shippingAddress: string }) =>
+  create: (body: {
+    shippingName: string;
+    shippingPhone: string;
+    shippingAddress: string;
+    paymentMethod?: 'card' | 'cash';
+  }) =>
     apiFetch<Order>('/api/orders', {
       method: 'POST',
       auth: true,

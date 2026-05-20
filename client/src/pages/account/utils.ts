@@ -1,12 +1,17 @@
 import { getStatusDefinition } from '@goshopix/shared';
 import type { Order, OrderStatus } from '../../api/types';
+import { HIDDEN_ACCOUNT_SECTIONS } from './constants';
 import type { AccountSection } from './types';
 
 export type StatusTone = 'processing' | 'transit' | 'delivered' | 'cancelled' | 'neutral';
 
 export function resolveSection(params: URLSearchParams): AccountSection {
   const section = params.get('section');
-  if (section) return section as AccountSection;
+  if (section) {
+    const s = section as AccountSection;
+    if (HIDDEN_ACCOUNT_SECTIONS.has(s)) return 'dashboard';
+    return s;
+  }
 
   const tab = params.get('tab');
   if (tab === 'orders') return 'orders';

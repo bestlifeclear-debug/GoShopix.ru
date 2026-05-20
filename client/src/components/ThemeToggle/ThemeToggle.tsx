@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { SunMoon } from 'lucide-react';
 import styles from './ThemeToggle.module.css';
 
 const STORAGE_KEY = 'goshopix_theme';
@@ -33,7 +34,7 @@ export function ThemeToggle() {
       aria-label={theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'}
       title={theme === 'light' ? 'Тёмная тема' : 'Светлая тема'}
     >
-      {theme === 'light' ? '🌙' : '☀️'}
+      <SunMoon className={styles.icon} strokeWidth={2} aria-hidden />
     </button>
   );
 }

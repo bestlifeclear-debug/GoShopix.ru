@@ -14,6 +14,7 @@ import { useCartStore } from '../stores/cartStore';
 import { ApiClientError } from '../api/client';
 import { PageContainer } from '../components/layout/PageContainer';
 import { ProductReviews } from '../components/ProductReviews/ProductReviews';
+import { track } from '../lib/analytics';
 import styles from './ProductPage.module.css';
 
 const TRUST_SIGNALS = [
@@ -80,6 +81,11 @@ export function ProductPage() {
       })
       .finally(() => setLoading(false));
   }, [id]);
+
+  useEffect(() => {
+    if (!product) return;
+    track('product_view', { productId: product.id });
+  }, [product?.id]);
 
   useEffect(() => {
     if (!product?.category?.slug) return;
@@ -269,6 +275,11 @@ export function ProductPage() {
             <h1 className={styles.name}>{product.name}</h1>
             <div className={styles.ratingRow}>
               <StarRating value={product.rating} reviewCount={product.reviewCount} />
+              {product.reviewCount > 0 && (
+                <button type="button" className={styles.reviewsJump} onClick={() => setTab('reviews')}>
+                  К отзывам ({product.reviewCount})
+                </button>
+              )}
             </div>
           </div>
 

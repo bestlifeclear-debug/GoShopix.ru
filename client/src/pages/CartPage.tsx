@@ -8,9 +8,11 @@ import { PageContainer } from '../components/layout/PageContainer';
 import { Button } from '../design-system';
 import { CheckoutModal } from '../components/CheckoutModal/CheckoutModal';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
+import { track } from '../lib/analytics';
 import { ApiClientError } from '../api/client';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
+import { orderShortId } from './account/utils';
 import styles from './CartPage.module.css';
 
 const FREE_DELIVERY_FROM = 2000;
@@ -37,6 +39,7 @@ export function CartPage() {
   const [payment, setPayment] = useState('card');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) {
@@ -91,6 +94,20 @@ export function CartPage() {
     };
   }, [cart?.updatedAt, cart?.itemCount, cart?.items.map((i) => `${i.id}:${i.quantity}`).join('|')]);
 
+  useEffect(() => {
+    if (checkoutOpen) track('checkout_open');
+  }, [checkoutOpen]);
+
+  useEffect(() => {
+    if (!placedOrderId) return;
+    document.body.classList.add('modal-open');
+    document.documentElement.classList.add('modal-open');
+    return () => {
+      document.body.classList.remove('modal-open');
+      document.documentElement.classList.remove('modal-open');
+    };
+  }, [placedOrderId]);
+
   const totals = useMemo(() => {
     if (!cart) {
       return {
@@ -133,10 +150,12 @@ export function CartPage() {
         shippingName: name,
         shippingPhone: phone,
         shippingAddress: address,
+        paymentMethod: payment === 'cash' ? 'cash' : 'card',
       });
       setCheckoutOpen(false);
       await fetchCart();
-      navigate(`/account?tab=orders&orderId=${order.id}`);
+      track('order_complete', { orderId: order.id, paymentMethod: payment });
+      setPlacedOrderId(order.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Не удалось оформить заказ');
     } finally {
@@ -244,7 +263,7 @@ export function CartPage() {
             </div>
 
             <aside className={styles.summaryCol}>
-              <div className={styles.summaryCard}>
+              <div className={`gsp-panel ${styles.summaryCard}`}>
                 <h2 className={styles.summaryHeading}>Итого</h2>
 
                 <dl className={styles.summaryRows}>
@@ -335,6 +354,43 @@ export function CartPage() {
           error={error}
           submitting={submitting}
         />
+
+        {placedOrderId && (
+          <div
+            className={styles.orderSuccessOverlay}
+            role="presentation"
+            onClick={() => setPlacedOrderId(null)}
+          >
+            <div
+              className={styles.orderSuccessDialog}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="order-success-title"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 id="order-success-title" className={styles.orderSuccessTitle}>
+                Заказ оформлен
+              </h2>
+              <p className={styles.orderSuccessMeta}>
+                Номер заказа: <strong>№ {orderShortId(placedOrderId)}</strong>
+              </p>
+              <p className={styles.orderSuccessHint}>Мы отправили детали в раздел «Мои заказы».</p>
+              <div className={styles.orderSuccessActions}>
+                <Link to="/catalog" className={styles.orderSuccessSecondary} onClick={() => setPlacedOrderId(null)}>
+                  В каталог
+                </Link>
+                <Button
+                  onClick={() => {
+                    setPlacedOrderId(null);
+                    navigate(`/account?tab=orders&orderId=${placedOrderId}`);
+                  }}
+                >
+                  К моим заказам
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </PageContainer>
   );

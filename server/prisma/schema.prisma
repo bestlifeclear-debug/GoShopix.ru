@@ -325,6 +325,7 @@ model Order {
   shippingName    String?
   shippingPhone   String?
   shippingAddress String?
+  paymentMethod   String?
   trackingNumber  String?
   carrier         String?
   carrierStatus   String?

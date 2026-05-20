@@ -132,6 +132,21 @@ export function CheckoutModal({
                   autoComplete="street-address"
                 />
               </label>
+
+              <div className={styles.trustUnderAddress} aria-label="Безопасная оплата">
+                <span className={styles.trustCaption}>Безопасная оплата</span>
+                <div className={styles.trustIconsRow}>
+                  <div className={styles.trustIconCell}>
+                    <img src="/payment-icons/yookassa.png" alt="" width={88} height={28} />
+                  </div>
+                  <div className={styles.trustIconCell}>
+                    <img src="/payment-icons/mir.png" alt="" width={56} height={28} />
+                  </div>
+                  <div className={styles.trustIconCell}>
+                    <img src="/payment-icons/sbp.png" alt="" width={56} height={28} />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className={styles.rightCol}>
@@ -198,14 +213,6 @@ export function CheckoutModal({
         </form>
 
         <footer className={styles.footer}>
-          <div className={styles.trustBlock} aria-label="Безопасная оплата">
-            <div className={styles.trustIcons}>
-              <img src="/payment-icons/yookassa.png" alt="ЮKassa" width={72} height={24} />
-              <img src="/payment-icons/mir.png" alt="Мир" width={48} height={24} />
-              <img src="/payment-icons/sbp.png" alt="СБП" width={48} height={24} />
-            </div>
-            <span className={styles.trustText}>Безопасная оплата</span>
-          </div>
           <div className={styles.footerActions}>
           <button type="button" className={styles.btnCancel} onClick={onClose} disabled={submitting}>
             Отмена

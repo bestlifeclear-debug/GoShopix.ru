@@ -102,6 +102,8 @@ function mapOrder(
 
     shippingAddress: string | null;
 
+    paymentMethod: string | null;
+
     trackingNumber: string | null;
 
     carrier: string | null;
@@ -190,6 +192,8 @@ function mapOrder(
 
     },
 
+    paymentMethod: order.paymentMethod ?? null,
+
     items: order.items.map((i) => ({
 
       id: i.id,
@@ -226,7 +230,7 @@ ordersRouter.post('/', validate({ body: createOrderSchema }), async (req, res, n
 
     const userId = req.user!.sub;
 
-    const { shippingName, shippingPhone, shippingAddress } = req.body;
+    const { shippingName, shippingPhone, shippingAddress, paymentMethod } = req.body;
 
 
 
@@ -299,6 +303,8 @@ ordersRouter.post('/', validate({ body: createOrderSchema }), async (req, res, n
           shippingPhone,
 
           shippingAddress,
+
+          paymentMethod: paymentMethod === 'cash' || paymentMethod === 'card' ? paymentMethod : 'card',
 
           items: { create: orderItemsData },
 

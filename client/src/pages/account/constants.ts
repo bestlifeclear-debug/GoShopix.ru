@@ -13,6 +13,13 @@ import {
 } from './AccountIcons';
 import type { AccountSection } from './types';
 
+/** Разделы-заглушки скрываем из меню, пока нет экранов */
+export const HIDDEN_ACCOUNT_SECTIONS: ReadonlySet<AccountSection> = new Set([
+  'payments',
+  'finance',
+  'returns',
+]);
+
 export interface SidebarNavItem {
   id: AccountSection;
   label: string;
@@ -32,6 +39,10 @@ export const SIDEBAR_NAV: SidebarNavItem[] = [
   { id: 'notifications', label: 'Уведомления', icon: IconBell },
   { id: 'support', label: 'Поддержка', icon: IconSupport },
 ];
+
+export const SIDEBAR_NAV_MAIN: SidebarNavItem[] = SIDEBAR_NAV.filter(
+  (item) => !HIDDEN_ACCOUNT_SECTIONS.has(item.id),
+);
 
 export const SECTION_TITLES: Record<string, string> = {
   dashboard: 'Главная',

@@ -263,8 +263,10 @@ export function CatalogPage() {
 
   const sidebarContent = (
     <>
-      <fieldset className={styles.filterGroup}>
-        <legend className={styles.filterLabel}>Категория</legend>
+      <fieldset className={styles.filterGroup} aria-labelledby="catalog-filter-category">
+        <div id="catalog-filter-category" className={styles.filterLegend}>
+          Категория
+        </div>
         <ul className={styles.checkList}>
           <li>
             <FilterCheck
@@ -311,8 +313,10 @@ export function CatalogPage() {
         </ul>
       </fieldset>
 
-      <fieldset className={styles.filterGroup}>
-        <legend className={styles.filterLabel}>Цена, ₽</legend>
+      <fieldset className={styles.filterGroup} aria-labelledby="catalog-filter-price">
+        <div id="catalog-filter-price" className={styles.filterLegend}>
+          Цена, ₽
+        </div>
         <div className={styles.priceRow}>
           <input
             type="number"
@@ -341,8 +345,10 @@ export function CatalogPage() {
       </fieldset>
 
       {facets.brands.length > 0 && (
-        <fieldset className={styles.filterGroup}>
-          <legend className={styles.filterLabel}>Бренд</legend>
+        <fieldset className={styles.filterGroup} aria-labelledby="catalog-filter-brand">
+          <div id="catalog-filter-brand" className={styles.filterLegend}>
+            Бренд
+          </div>
           <ul className={styles.checkList}>
             {facets.brands.map((brand) => (
               <li key={brand}>
@@ -360,8 +366,10 @@ export function CatalogPage() {
         </fieldset>
       )}
 
-      <fieldset className={styles.filterGroup}>
-        <legend className={styles.filterLabel}>Наличие</legend>
+      <fieldset className={styles.filterGroup} aria-labelledby="catalog-filter-stock">
+        <div id="catalog-filter-stock" className={styles.filterLegend}>
+          Наличие
+        </div>
         <FilterCheck
           active={inStock}
           type="checkbox"
@@ -374,8 +382,10 @@ export function CatalogPage() {
 
       {showAttributeFilters &&
         facets.attributes.map((attr) => (
-          <fieldset key={attr.slug} className={styles.filterGroup}>
-            <legend className={styles.filterLabel}>{attr.name}</legend>
+          <fieldset key={attr.slug} className={styles.filterGroup} aria-labelledby={`catalog-filter-attr-${attr.slug}`}>
+            <div id={`catalog-filter-attr-${attr.slug}`} className={styles.filterLegend}>
+              {attr.name}
+            </div>
             <ul className={styles.checkList}>
               {attr.values.map((value) => (
                 <li key={value}>
@@ -479,7 +489,10 @@ export function CatalogPage() {
       )}
 
       <div className={styles.layout}>
-        <aside className={`${styles.sidebar} ${filtersOpen ? styles.sidebarOpen : ''}`} aria-label="Фильтры">
+        <aside
+          className={`gsp-panel ${styles.sidebar} ${filtersOpen ? styles.sidebarOpen : ''}`}
+          aria-label="Фильтры"
+        >
           <div className={styles.sheetHead}>
             <h2 className={styles.sidebarTitle}>Фильтры</h2>
             <button

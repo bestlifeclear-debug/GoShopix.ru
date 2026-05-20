@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { AccountSection } from './types';
-import { SIDEBAR_NAV } from './constants';
+import { SIDEBAR_NAV_MAIN } from './constants';
 import { IconStore } from './AccountIcons';
 import styles from '../AccountPage.module.css';
 
@@ -52,7 +52,7 @@ export function AccountSidebar({
 
         <nav className={styles.sidebarNav}>
           <ul className={styles.navList}>
-            {SIDEBAR_NAV.map((item) => {
+            {SIDEBAR_NAV_MAIN.map((item) => {
               const Icon = item.icon;
               const badge = item.id === 'notifications' && unreadCount > 0 ? unreadCount : undefined;
               return (

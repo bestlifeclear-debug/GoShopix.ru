@@ -61,12 +61,13 @@ export function ReviewWriteModal({ open, onClose, onSubmit }: ReviewWriteModalPr
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open');
+    document.documentElement.classList.add('modal-open');
     document.addEventListener('keydown', onKeyDown);
     dialogRef.current?.focus();
     return () => {
-      document.body.style.overflow = prevOverflow;
+      document.body.classList.remove('modal-open');
+      document.documentElement.classList.remove('modal-open');
       document.removeEventListener('keydown', onKeyDown);
     };
   }, [open, onClose]);

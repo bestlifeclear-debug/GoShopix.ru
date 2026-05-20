@@ -5,6 +5,7 @@ export const createOrderSchema = z.object({
   shippingName: z.string().min(1).max(200),
   shippingPhone: z.string().min(5).max(30),
   shippingAddress: z.string().min(5).max(500),
+  paymentMethod: z.enum(['card', 'cash']).optional(),
 });
 
 export const ordersQuerySchema = paginationQuerySchema;
