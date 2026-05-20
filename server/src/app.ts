@@ -12,6 +12,7 @@ import { openApiSpec } from './openapi/spec.js';
 import { authRouter } from './routes/auth.js';
 import { cartRouter } from './routes/cart.js';
 import { categoriesRouter } from './routes/categories.js';
+import { cityDetectRouter } from './routes/city-detect.js';
 import { favoritesRouter } from './routes/favorites.js';
 import { healthRouter } from './routes/health.js';
 import { ordersRouter } from './routes/orders.js';
@@ -20,11 +21,6 @@ import { sellerRouter } from './routes/seller/index.js';
 import { orderStatusesRouter } from './routes/order-statuses.js';
 import { notificationsRouter } from './routes/notifications.js';
 import { webhooksRouter } from './routes/webhooks.js';
-import {
-  checkCityDeliveryHandlers,
-  citySuggestionsHandlers,
-  getCityDetect,
-} from './routes/city-delivery.js';
 import { isAllowedRequestOrigin } from './lib/allowed-origins.js';
 
 export function createApp() {
@@ -69,12 +65,10 @@ export function createApp() {
   });
 
   app.use('/api/health', healthRouter);
-  app.get('/api/city-suggestions', ...citySuggestionsHandlers);
-  app.post('/api/check-city-delivery', ...checkCityDeliveryHandlers);
-  app.get('/api/city-detect', getCityDetect);
   app.use('/api/auth', authRouter);
   app.use('/api/products', productsRouter);
   app.use('/api/categories', categoriesRouter);
+  app.use('/api/city-detect', cityDetectRouter);
   app.use('/api/cart', cartRouter);
   app.use('/api/orders', ordersRouter);
   app.use('/api/favorites', favoritesRouter);

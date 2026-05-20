@@ -140,11 +140,19 @@
   white-space: nowrap;
 }
 
+.searchRow {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
 .searchGroup {
   flex: 1;
   min-width: 0;
-  max-width: 840px;
-  margin: 0 auto;
 }
 
 .actionsTray {
@@ -326,15 +334,22 @@
     display: none;
   }
 
+  .searchRow {
+    grid-area: search;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
   .catalogWrap {
     display: none;
   }
 
   .searchGroup {
-    grid-area: search;
     width: 100%;
-    max-width: none;
-    margin: 0;
   }
 
   .actionsTray {

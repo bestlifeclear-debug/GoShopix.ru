@@ -11,6 +11,7 @@ export interface HeaderNavLink {
 export interface HeaderProps {
   cartCount?: number;
   searchSlot?: ReactNode;
+  deliverySlot?: ReactNode;
   catalogMenu?: ReactNode;
   catalogOpen?: boolean;
   onCatalogToggle?: () => void;
@@ -27,6 +28,7 @@ export interface HeaderProps {
 export function Header({
   cartCount = 0,
   searchSlot,
+  deliverySlot,
   catalogMenu,
   catalogOpen = false,
   onCatalogToggle,
@@ -77,6 +79,8 @@ export function Header({
               <span className={styles.logoMark}>G</span>
               <span className={styles.logoText}>GoShopix</span>
             </Link>
+          </div>
+          <div className={styles.searchRow}>
             <div className={styles.catalogWrap}>
               <button
                 type="button"
@@ -92,8 +96,9 @@ export function Header({
               </button>
               {catalogOpen && catalogMenu}
             </div>
+            {deliverySlot}
+            <div className={styles.searchGroup}>{searchSlot}</div>
           </div>
-          <div className={styles.searchGroup}>{searchSlot}</div>
           <div className={styles.actionsTray}>
             {extraActions}
             <Link to={favoritesTo} className={styles.iconBtn} aria-label="Избранное">
