@@ -94,10 +94,11 @@ export function Header({
               </button>
               {catalogOpen && catalogMenu}
             </div>
-            {deliverySlot ? <div className={styles.deliverySlot}>{deliverySlot}</div> : null}
           </div>
           <div className={styles.searchGroup}>{searchSlot}</div>
-          <div className={styles.actionsTray}>
+          <div className={styles.rightGroup}>
+            {deliverySlot ? <div className={styles.deliverySlot}>{deliverySlot}</div> : null}
+            <div className={styles.actionsTray}>
             {extraActions}
             <Link to={favoritesTo} className={styles.iconBtn} aria-label="Избранное">
               <IconHeart className={styles.actionIcon} strokeWidth={1.5} />
@@ -116,6 +117,7 @@ export function Header({
             <Link to={accountTo} className={styles.iconBtn} aria-label={accountLabel}>
               <IconUser className={styles.actionIcon} strokeWidth={1.5} />
             </Link>
+            </div>
           </div>
         </div>
       </div>

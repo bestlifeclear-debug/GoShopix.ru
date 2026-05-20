@@ -120,16 +120,13 @@ export function SiteHeader() {
       <Header
         deliverySlot={<HeaderDeliveryCity />}
         searchSlot={
-          <div className={styles.searchColumn}>
-            <HeaderDeliveryCity className={styles.deliveryMobile} />
-            <SearchBox
-              value={search}
-              onChange={setSearch}
-              onSubmit={goSearch}
-              suggestions={suggestions}
-              hideSubmit
-            />
-          </div>
+          <SearchBox
+            value={search}
+            onChange={setSearch}
+            onSubmit={goSearch}
+            suggestions={suggestions}
+            hideSubmit
+          />
         }
         catalogOpen={catalogOpen}
         onCatalogToggle={() => setCatalogOpen((o) => !o)}

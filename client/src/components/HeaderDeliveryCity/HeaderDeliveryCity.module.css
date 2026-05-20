@@ -1,17 +1,12 @@
 .root {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  width: 100%;
-  max-width: 150px;
-  flex-shrink: 0;
+  gap: 6px;
+  max-width: 128px;
   min-height: 40px;
-  padding: 0 10px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-subtle);
+  padding: 0 2px;
+  flex-shrink: 0;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .icon {
@@ -23,33 +18,12 @@
   line-height: 0;
 }
 
-.text {
-  display: block;
-  margin: 0;
-  min-width: 0;
-  line-height: 1.25;
+.city {
   font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.prefix {
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-muted);
-}
-
-.city {
-  margin-left: 4px;
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
-}
-
-@media (max-width: 767px) {
-  .root {
-    width: 100%;
-    max-width: none;
-    min-height: 36px;
-    padding: 6px 10px;
-  }
+  min-width: 0;
 }

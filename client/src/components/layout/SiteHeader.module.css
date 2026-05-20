@@ -4,30 +4,6 @@
   z-index: 200;
 }
 
-.searchColumn {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  width: 100%;
-  min-width: 0;
-}
-
-.deliveryMobile {
-  display: none;
-}
-
-@media (max-width: 767px) {
-  .searchColumn {
-    justify-content: center;
-  }
-
-  .deliveryMobile {
-    display: inline-flex;
-    width: 100%;
-    max-width: 100%;
-  }
-}
-
 .mobileOverlay {
   display: none;
 }
