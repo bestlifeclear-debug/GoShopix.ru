@@ -349,7 +349,7 @@ export function CatalogPage() {
           <div id="catalog-filter-brand" className={styles.filterLegend}>
             Бренд
           </div>
-          <ul className={styles.checkList}>
+          <ul className={`${styles.checkList} ${styles.checkListGrid}`}>
             {facets.brands.map((brand) => (
               <li key={brand}>
                 <FilterCheck
@@ -386,7 +386,7 @@ export function CatalogPage() {
             <div id={`catalog-filter-attr-${attr.slug}`} className={styles.filterLegend}>
               {attr.name}
             </div>
-            <ul className={styles.checkList}>
+            <ul className={`${styles.checkList} ${styles.checkListGrid}`}>
               {attr.values.map((value) => (
                 <li key={value}>
                   <FilterCheck
@@ -401,7 +401,7 @@ export function CatalogPage() {
                 </li>
               ))}
               {attrFilters[attr.slug] && (
-                <li>
+                <li className={styles.clearAttrRow}>
                   <button
                     type="button"
                     className={styles.clearAttr}

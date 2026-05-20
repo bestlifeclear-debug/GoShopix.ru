@@ -137,8 +137,8 @@
 
 .layout {
   display: grid;
-  grid-template-columns: 256px minmax(0, 1fr);
-  gap: var(--space-3);
+  grid-template-columns: minmax(288px, 320px) minmax(0, 1fr);
+  gap: var(--space-4);
   align-items: start;
 }
 
@@ -148,20 +148,8 @@
   gap: var(--space-4);
   position: sticky;
   top: calc(var(--header-height) + var(--space-4));
-  max-height: calc(100dvh - var(--header-height) - var(--space-4) * 2);
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-}
-
-.sidebar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-  border-radius: var(--radius-full);
-  background: var(--color-border);
+  overflow: visible;
+  align-self: start;
 }
 
 .sidebarTitle {
@@ -262,15 +250,25 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  max-height: 220px;
-  overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  gap: 6px;
 }
 
-.checkList::-webkit-scrollbar {
-  display: none;
+/* Плоские списки (бренды, значения атрибутов) — две колонки, без внутреннего скролла */
+.checkListGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px var(--space-2);
+  align-items: start;
+}
+
+@media (max-width: 380px) {
+  .checkListGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.checkListGrid .clearAttrRow {
+  grid-column: 1 / -1;
 }
 
 .checkInputNative {
@@ -339,7 +337,9 @@
 
 .checkLabel {
   flex: 1;
+  min-width: 0;
   line-height: var(--line-height-tight);
+  word-break: break-word;
 }
 
 .treeGroup {
@@ -495,7 +495,7 @@
     right: 0;
     bottom: 0;
     z-index: 400;
-    max-height: 88vh;
+    max-height: min(96dvh, calc(100dvh - var(--header-height)));
     margin: 0;
     padding: var(--space-4) var(--space-4) var(--space-6);
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
@@ -503,7 +503,8 @@
     box-shadow: var(--shadow-lg);
     transform: translateY(100%);
     transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
+    overflow: visible;
+    overflow-x: hidden;
     top: auto;
     pointer-events: none;
     visibility: hidden;
