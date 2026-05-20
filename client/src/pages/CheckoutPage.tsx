@@ -365,7 +365,7 @@ export function CheckoutPage() {
           <div className={styles.headTop}>
             <div>
               <h1 className={styles.title}>Оформление заказа</h1>
-              <p className={styles.subtitle}>Доставка и оплата — как в крупных маркетплейсах.</p>
+              <p className={styles.subtitle}>Доставка и оплата</p>
             </div>
             <Link className={styles.back} to="/cart">
               ← В корзину
@@ -726,7 +726,7 @@ export function CheckoutPage() {
                     <img src="/payment-icons/mir.png" alt="" className={styles.choiceLogo} width={32} height={20} />
                     <span className={styles.choiceBody}>
                       <span className={styles.choiceMain}>Банковская карта</span>
-                      <span className={styles.choiceMeta}>Visa / Mir</span>
+                      <span className={styles.choiceMeta}>МИР</span>
                     </span>
                   </label>
                   <label className={`${styles.choice} ${payment === 'sbp' ? styles.choiceActive : ''}`}>
@@ -741,7 +741,7 @@ export function CheckoutPage() {
                     <img src="/payment-icons/sbp.png" alt="" className={styles.choiceLogo} width={28} height={28} />
                     <span className={styles.choiceBody}>
                       <span className={styles.choiceMain}>СБП</span>
-                      <span className={styles.choiceMeta}>QR / приложение банка</span>
+                      <span className={styles.choiceMeta}>QR-Код / Приложение банка</span>
                     </span>
                   </label>
                 </div>
