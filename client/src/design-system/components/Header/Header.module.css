@@ -150,12 +150,13 @@
 .actionsTray {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  justify-content: center;
+  gap: 4px;
   flex-shrink: 0;
-  padding: 8px 16px;
-  border-radius: var(--radius-lg);
-  background: var(--color-bg-subtle);
-  border: 1px solid var(--color-border);
+  padding: 6px;
+  border-radius: var(--radius-md);
+  background: var(--color-actions-tray-bg);
+  border: none;
 }
 
 .actionIcon {
@@ -185,8 +186,12 @@
 
 .iconBtn:hover {
   color: var(--color-primary);
-  background: var(--color-bg-elevated);
+  background: rgb(0 0 0 / 0.06);
   text-decoration: none;
+}
+
+[data-theme='dark'] .iconBtn:hover {
+  background: rgb(255 255 255 / 0.08);
 }
 
 .actionsTray :global(button) {
@@ -325,8 +330,8 @@
   .actionsTray {
     grid-area: actions;
     justify-self: end;
-    gap: 6px;
-    padding: 6px 10px;
+    gap: 4px;
+    padding: 6px;
   }
 
   .iconBtn {

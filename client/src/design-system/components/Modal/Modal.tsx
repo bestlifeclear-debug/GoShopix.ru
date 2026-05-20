@@ -21,16 +21,14 @@ export function Modal({ open, title, children, footer, onClose }: ModalProps) {
       if (e.key === 'Escape') onClose();
     };
 
-    const prevBodyOverflow = document.body.style.overflow;
-    const prevHtmlOverflow = document.documentElement.style.overflow;
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
+    document.body.classList.add('modal-open');
+    document.documentElement.classList.add('modal-open');
     document.addEventListener('keydown', onKeyDown);
     dialogRef.current?.focus();
 
     return () => {
-      document.body.style.overflow = prevBodyOverflow;
-      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.classList.remove('modal-open');
+      document.documentElement.classList.remove('modal-open');
       document.removeEventListener('keydown', onKeyDown);
     };
   }, [open, onClose]);
@@ -56,7 +54,9 @@ export function Modal({ open, title, children, footer, onClose }: ModalProps) {
             <IconClose />
           </button>
         </header>
-        <div className={styles.body}>{children}</div>
+        <div className={styles.scrollArea}>
+          <div className={styles.contentInner}>{children}</div>
+        </div>
         {footer && <footer className={styles.footer}>{footer}</footer>}
       </div>
     </div>,

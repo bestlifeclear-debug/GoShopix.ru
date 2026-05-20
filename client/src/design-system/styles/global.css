@@ -81,6 +81,14 @@ input[type='reset'] {
   box-shadow: none;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
+html.modal-open {
+  overflow: hidden;
+}
+
 /* Панели в стиле «пульта» в шапке: мягкая тень, скругление 2xl, чистый фон */
 .gsp-panel {
   background: var(--color-bg-elevated);

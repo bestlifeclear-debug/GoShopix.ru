@@ -160,7 +160,7 @@ export function SiteHeader() {
                 <IconClose />
               </button>
               <h2 className={styles.menuTitle}>Каталог</h2>
-              <span style={{ width: 48 }} aria-hidden />
+              <span className={styles.menuHeadSpacer} aria-hidden />
             </div>
             <div className={styles.menuBody}>
               <p className={styles.mobileSectionTitle}>Категории</p>
