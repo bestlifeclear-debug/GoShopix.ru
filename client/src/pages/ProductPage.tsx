@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CreditCard, RotateCcw, ShieldCheck, Store } from 'lucide-react';
 import { formatPrice } from '@goshopix/shared';
@@ -56,6 +56,8 @@ export function ProductPage() {
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [isFavorite, setIsFavorite] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [showMobileBar, setShowMobileBar] = useState(false);
+  const buyBoxRef = useRef<HTMLDivElement>(null);
 
   const token = useAuthStore((s) => s.token);
   const addToCart = useCartStore((s) => s.addToCart);
@@ -122,6 +124,41 @@ export function ProductPage() {
 
   const displayPrice = selectedVariant?.price ?? product?.price ?? 0;
   const compareAt = product?.compareAtPrice ?? null;
+
+  useEffect(() => {
+    if (loading || !product) return;
+
+    const el = buyBoxRef.current;
+    if (!el) return;
+
+    const mq = window.matchMedia('(max-width: 768px)');
+
+    const syncObserver = () => {
+      if (!mq.matches) {
+        setShowMobileBar(false);
+        return undefined;
+      }
+
+      const observer = new IntersectionObserver(
+        ([entry]) => setShowMobileBar(!entry.isIntersecting),
+        { threshold: 0, rootMargin: '0px 0px -1px 0px' },
+      );
+      observer.observe(el);
+      return () => observer.disconnect();
+    };
+
+    let teardown = syncObserver();
+    const onMqChange = () => {
+      teardown?.();
+      teardown = syncObserver();
+    };
+    mq.addEventListener('change', onMqChange);
+
+    return () => {
+      teardown?.();
+      mq.removeEventListener('change', onMqChange);
+    };
+  }, [loading, product?.id, selectedVariant?.id]);
 
   const handleAddToCart = async () => {
     if (!selectedVariant || !product) return;
@@ -191,22 +228,26 @@ export function ProductPage() {
       ? `${product.deliveryDaysMin}–${product.deliveryDaysMax} дней`
       : '2–5 дней';
 
+  const thumbUrl = images[0]?.url ?? '';
+  const outOfStock = !selectedVariant || selectedVariant.stock === 0;
+
   return (
     <PageContainer>
-      <div className={styles.page}>
+      <div className={`${styles.page} ${showMobileBar ? styles.pageWithMobileBar : ''}`}>
       <div className={styles.grid}>
         <ImageGallery images={images} name={product.name} />
 
-        <div className={styles.info}>
-          {product.promoBadge && <span className={styles.promoRibbon}>{product.promoBadge}</span>}
-
-          {product.brand && <p className={styles.brand}>{product.brand}</p>}
-          <h1 className={styles.name}>{product.name}</h1>
-
-          <div className={styles.ratingRow}>
-            <StarRating value={product.rating} reviewCount={product.reviewCount} />
+        <aside className={styles.aside}>
+          <div className={styles.productMeta}>
+            {product.promoBadge && <span className={styles.promoRibbon}>{product.promoBadge}</span>}
+            {product.brand && <p className={styles.brand}>{product.brand}</p>}
+            <h1 className={styles.name}>{product.name}</h1>
+            <div className={styles.ratingRow}>
+              <StarRating value={product.rating} reviewCount={product.reviewCount} />
+            </div>
           </div>
 
+          <div ref={buyBoxRef} className={styles.buyBox}>
           <div className={styles.priceBlock}>
             <span className={styles.price}>{formatPrice(displayPrice)}</span>
             {compareAt != null && compareAt > displayPrice && (
@@ -256,11 +297,17 @@ export function ProductPage() {
             </p>
           )}
 
-          <div className={styles.actions}>
-            <Button size="lg" onClick={handleAddToCart} disabled={!selectedVariant || selectedVariant.stock === 0}>
+          <div className={styles.buyBoxActions}>
+            <Button
+              size="lg"
+              fullWidth
+              className={styles.buyBoxCartBtn}
+              onClick={handleAddToCart}
+              disabled={outOfStock}
+            >
               В корзину
             </Button>
-            <Button variant="outline" size="lg" onClick={toggleFavorite}>
+            <Button variant="outline" size="lg" fullWidth onClick={toggleFavorite}>
               {isFavorite ? '♥ В избранном' : '♡ В избранное'}
             </Button>
           </div>
@@ -275,7 +322,35 @@ export function ProductPage() {
           </ul>
 
           {msg && <p className={styles.msg}>{msg}</p>}
+          </div>
+        </aside>
+      </div>
+
+      <div
+        className={`${styles.mobileBar} ${showMobileBar ? styles.mobileBarVisible : ''}`}
+        aria-hidden={!showMobileBar}
+      >
+        <div className={styles.mobileBarThumb} aria-hidden>
+          {thumbUrl ? (
+            <img src={thumbUrl} alt="" />
+          ) : (
+            <span className={styles.mobileBarThumbPlaceholder}>?</span>
+          )}
         </div>
+        <div className={styles.mobileBarPrice}>
+          <span className={styles.mobileBarPriceValue}>{formatPrice(displayPrice)}</span>
+          {compareAt != null && compareAt > displayPrice && (
+            <span className={styles.mobileBarOldPrice}>{formatPrice(compareAt)}</span>
+          )}
+        </div>
+        <Button
+          size="lg"
+          className={styles.mobileBarBtn}
+          onClick={handleAddToCart}
+          disabled={outOfStock}
+        >
+          В корзину
+        </Button>
       </div>
 
       <Tabs
