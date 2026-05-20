@@ -168,3 +168,25 @@ export const favoritesApi = {
       auth: true,
     }),
 };
+
+export type CitySuggestionResponse = { suggestions: string[] };
+
+export type CheckCityDeliveryResponse = {
+  is_available: boolean;
+  city: string;
+  delivery_services: string[];
+  cdek_pickup_points?: { id: string; label: string }[];
+};
+
+export const cityDeliveryApi = {
+  suggestions: (q: string) =>
+    apiFetch<CitySuggestionResponse>(`/api/city-suggestions${buildQuery({ q })}`),
+
+  check: (body: { city: string; index?: string }) =>
+    apiFetch<CheckCityDeliveryResponse>('/api/check-city-delivery', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+
+  detect: () => apiFetch<{ city: string | null }>('/api/city-detect'),
+};

@@ -6,7 +6,8 @@ import type { CartItem } from '../api/types';
 import { PageContainer } from '../components/layout/PageContainer';
 import { Button } from '../design-system';
 import { track } from '../lib/analytics';
-import { CDEK_CITY_HINTS, getCdekPickupOptions } from '../lib/cdekPickup';
+import { CDEK_CITY_HINTS, getCdekPickupOptions, normalizeCity } from '../lib/cdekPickup';
+import { DELIVERY_CITY_CHANGED_EVENT, readStoredDeliveryCity } from '../lib/deliveryCityStorage';
 import { digitsRuPhone, formatRuPhoneDisplay, isRuPhoneComplete } from '../lib/phoneFormat';
 import { ApiClientError } from '../api/client';
 import { useAuthStore } from '../stores/authStore';
@@ -92,13 +93,21 @@ export function CheckoutPage() {
   const [payment, setPayment] = useState<PaymentMethodUi>('card');
 
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethodUi>('post');
-  const [postIndex, setPostIndex] = useState('');
-  const [postCity, setPostCity] = useState('');
+  const [postIndex, setPostIndex] = useState(() =>
+    typeof window !== 'undefined'
+      ? (readStoredDeliveryCity()?.index ?? '').replace(/\D/g, '').slice(0, 5)
+      : '',
+  );
+  const [postCity, setPostCity] = useState(() =>
+    typeof window !== 'undefined' ? readStoredDeliveryCity()?.city ?? '' : '',
+  );
   const [postStreet, setPostStreet] = useState('');
   const [postHouse, setPostHouse] = useState('');
   const [postApartment, setPostApartment] = useState('');
 
-  const [cdekCity, setCdekCity] = useState('');
+  const [cdekCity, setCdekCity] = useState(() =>
+    typeof window !== 'undefined' ? readStoredDeliveryCity()?.city ?? '' : '',
+  );
   const [cdekPickupPointId, setCdekPickupPointId] = useState('');
   const [cdekClientId, setCdekClientId] = useState('');
 
@@ -201,7 +210,31 @@ export function CheckoutPage() {
 
   const isEmpty = cart && cart.items.length === 0;
 
-  const cdekPickupOptions = useMemo(() => getCdekPickupOptions(cdekCity), [cdekCity]);
+  useEffect(() => {
+    const sync = () => {
+      const s = readStoredDeliveryCity();
+      if (s?.city) {
+        setPostCity(s.city);
+        setCdekCity(s.city);
+      }
+      if (s?.index && /^\d{5}$/.test(s.index)) {
+        setPostIndex(s.index);
+      }
+    };
+    window.addEventListener(DELIVERY_CITY_CHANGED_EVENT, sync);
+    return () => window.removeEventListener(DELIVERY_CITY_CHANGED_EVENT, sync);
+  }, []);
+
+  const cdekPickupOptions = useMemo(() => {
+    const stored = typeof window !== 'undefined' ? readStoredDeliveryCity() : null;
+    if (
+      stored?.cdek_pickup_points?.length &&
+      normalizeCity(cdekCity) === normalizeCity(stored.city)
+    ) {
+      return stored.cdek_pickup_points;
+    }
+    return getCdekPickupOptions(cdekCity);
+  }, [cdekCity]);
 
   const errors = useMemo(() => {
     const e: Record<string, string> = {};

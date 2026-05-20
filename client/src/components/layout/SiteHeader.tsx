@@ -5,6 +5,7 @@ import type { CategoryNode } from '../../api/types';
 import { Header, type HeaderNavLink } from '../../design-system';
 import { IconClose } from '../../design-system/icons/Icons';
 import { CatalogMenu } from '../CatalogMenu/CatalogMenu';
+import { CityDeliveryPicker } from '../CityDeliveryPicker/CityDeliveryPicker';
 import { SearchBox, type SearchSuggestion } from '../SearchBox/SearchBox';
 import { useAuthStore } from '../../stores/authStore';
 import { selectCartItemCount, useCartStore } from '../../stores/cartStore';
@@ -118,13 +119,16 @@ export function SiteHeader() {
     <div ref={wrapRef} className={styles.wrap}>
       <Header
         searchSlot={
-          <SearchBox
-            value={search}
-            onChange={setSearch}
-            onSubmit={goSearch}
-            suggestions={suggestions}
-            hideSubmit
-          />
+          <div className={styles.searchRow}>
+            <CityDeliveryPicker />
+            <SearchBox
+              value={search}
+              onChange={setSearch}
+              onSubmit={goSearch}
+              suggestions={suggestions}
+              hideSubmit
+            />
+          </div>
         }
         catalogOpen={catalogOpen}
         onCatalogToggle={() => setCatalogOpen((o) => !o)}

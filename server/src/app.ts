@@ -20,6 +20,11 @@ import { sellerRouter } from './routes/seller/index.js';
 import { orderStatusesRouter } from './routes/order-statuses.js';
 import { notificationsRouter } from './routes/notifications.js';
 import { webhooksRouter } from './routes/webhooks.js';
+import {
+  checkCityDeliveryHandlers,
+  citySuggestionsHandlers,
+  getCityDetect,
+} from './routes/city-delivery.js';
 import { isAllowedRequestOrigin } from './lib/allowed-origins.js';
 
 export function createApp() {
@@ -64,6 +69,9 @@ export function createApp() {
   });
 
   app.use('/api/health', healthRouter);
+  app.get('/api/city-suggestions', ...citySuggestionsHandlers);
+  app.post('/api/check-city-delivery', ...checkCityDeliveryHandlers);
+  app.get('/api/city-detect', getCityDetect);
   app.use('/api/auth', authRouter);
   app.use('/api/products', productsRouter);
   app.use('/api/categories', categoriesRouter);

@@ -179,3 +179,24 @@
     transform: translateY(0);
   }
 }
+
+.searchRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+}
+
+.searchRow > :last-child {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .searchRow {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 14px;
+  }
+}
