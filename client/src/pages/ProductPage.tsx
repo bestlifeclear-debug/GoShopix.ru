@@ -302,7 +302,9 @@ export function ProductPage() {
       <div className={`${styles.page} ${showMobileBar ? styles.pageWithMobileBar : ''}`}>
         <div className={styles.grid}>
           <div className={styles.colGallery}>
-            <ImageGallery images={images} name={product.name} />
+            <div className={styles.gallerySticky}>
+              <ImageGallery images={images} name={product.name} />
+            </div>
           </div>
 
           <div className={styles.colMain}>
@@ -339,39 +341,6 @@ export function ProductPage() {
                 </div>
               </div>
             ))}
-
-            <div className={styles.detailsCard}>
-              <h2 className={styles.detailsTitle}>Описание</h2>
-              <p className={styles.detailsText}>{product.description || 'Описание отсутствует.'}</p>
-            </div>
-
-            <div className={styles.detailsCard}>
-              <h2 className={styles.detailsTitle}>Характеристики</h2>
-              <table className={styles.specTable}>
-                <tbody>
-                  {product.brand && (
-                    <tr>
-                      <th>Бренд</th>
-                      <td>{product.brand}</td>
-                    </tr>
-                  )}
-                  {product.attributes.map((a) => (
-                    <tr key={a.slug}>
-                      <th>{a.name}</th>
-                      <td>{a.value}</td>
-                    </tr>
-                  ))}
-                  {selectedVariant?.options.map((o) => (
-                    <tr key={o.id}>
-                      <th>{o.name}</th>
-                      <td>{o.value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
           </div>
 
           <aside className={styles.colBuy}>
@@ -414,6 +383,43 @@ export function ProductPage() {
               </div>
             </div>
           </aside>
+        </div>
+
+        <div className={styles.detailsGrid}>
+          <div className={styles.detailsInner}>
+            <div className={styles.detailsCard}>
+              <h2 className={styles.detailsTitle}>Описание</h2>
+              <p className={styles.detailsText}>{product.description || 'Описание отсутствует.'}</p>
+            </div>
+
+            <div className={styles.detailsCard}>
+              <h2 className={styles.detailsTitle}>Характеристики</h2>
+              <table className={styles.specTable}>
+                <tbody>
+                  {product.brand && (
+                    <tr>
+                      <th>Бренд</th>
+                      <td>{product.brand}</td>
+                    </tr>
+                  )}
+                  {product.attributes.map((a) => (
+                    <tr key={a.slug}>
+                      <th>{a.name}</th>
+                      <td>{a.value}</td>
+                    </tr>
+                  ))}
+                  {selectedVariant?.options.map((o) => (
+                    <tr key={o.id}>
+                      <th>{o.name}</th>
+                      <td>{o.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
+          </div>
         </div>
 
         <div
