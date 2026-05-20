@@ -70,12 +70,11 @@
   align-self: start;
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - var(--sticky-top) - var(--space-3));
   background: var(--lk-surface);
   border: none;
   border-radius: var(--lk-radius);
   box-shadow: var(--shadow-sm);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .sidebarHead {
@@ -119,8 +118,8 @@
 }
 
 .sidebarNav {
-  flex: 1;
-  overflow-y: auto;
+  flex: 0 0 auto;
+  overflow: visible;
   padding: 8px var(--layout-sidebar-inset);
 }
 
@@ -1245,10 +1244,16 @@
     left: 0;
     bottom: 0;
     width: min(300px, 88vw);
-    max-height: none;
     border-radius: 0;
     transform: translateX(-100%);
     transition: transform var(--lk-transition);
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .sidebar::-webkit-scrollbar {
+    display: none;
   }
 
   .sidebarOpen {
