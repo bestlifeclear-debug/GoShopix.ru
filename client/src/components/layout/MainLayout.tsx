@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { CartDrawer } from '../CartDrawer/CartDrawer';
+import { Toast } from '../Toast/Toast';
 import { useCartStore } from '../../stores/cartStore';
 import { SiteFooter } from './SiteFooter';
 import { SiteHeader } from './SiteHeader';
@@ -21,6 +22,7 @@ export function MainLayout() {
       </main>
       <SiteFooter />
       <CartDrawer />
+      <Toast />
     </div>
   );
 }

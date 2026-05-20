@@ -1,14 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { CategoryNode } from '../../api/types';
+import { categoryImageUrl } from '../../lib/categoryImages';
 import styles from './CatalogMenu.module.css';
-
-const CATEGORY_IMAGES: Record<string, string> = {
-  electronics: '/product-images/gophone-x-1.svg',
-  clothing: '/product-images/urban-wind-jacket-1.svg',
-  smartphones: '/product-images/gophone-x-1.svg',
-  laptops: '/product-images/probook-15-1.svg',
-};
 
 interface CatalogMenuProps {
   categories: CategoryNode[];
@@ -46,7 +40,7 @@ export function CatalogMenu({ categories, onClose }: CatalogMenuProps) {
               onClick={onClose}
             >
               <img
-                src={CATEGORY_IMAGES[root.slug] ?? '/product-images/soundwave-pro-1.svg'}
+                src={categoryImageUrl(root.slug)}
                 alt=""
                 className={styles.thumb}
               />

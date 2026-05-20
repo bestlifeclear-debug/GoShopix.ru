@@ -20,6 +20,14 @@ const SORT_OPTIONS = [
 
 const ATTR_PREFIX = 'attr_';
 
+function productCountLabel(count: number): string {
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'товар';
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return 'товара';
+  return 'товаров';
+}
+
 function getAttrFilters(params: URLSearchParams): Record<string, string> {
   const attrs: Record<string, string> = {};
   params.forEach((value, key) => {
@@ -72,6 +80,7 @@ export function CatalogPage() {
   const [facets, setFacets] = useState<ProductFacets>({ brands: [], attributes: [] });
   const [products, setProducts] = useState<ProductListItem[]>([]);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const token = useAuthStore((s) => s.token);
@@ -127,6 +136,7 @@ export function CatalogPage() {
       const res = await productsApi.list(query);
       setProducts(res.items);
       setTotalPages(res.meta.totalPages);
+      setTotalCount(res.meta.total);
     } finally {
       setLoading(false);
     }
@@ -200,6 +210,54 @@ export function CatalogPage() {
     if (sort) next.set('sort', sort);
     setParams(next);
   };
+
+  const clearPriceFilter = () => {
+    const next = new URLSearchParams(params);
+    next.delete('minPrice');
+    next.delete('maxPrice');
+    next.set('page', '1');
+    setParams(next);
+  };
+
+  const activeFilterChips = useMemo(() => {
+    const chips: { id: string; label: string; onRemove: () => void }[] = [];
+    if (categorySlug) {
+      const label = activeCategory?.name ?? categorySlug;
+      chips.push({
+        id: 'category',
+        label,
+        onRemove: () => setFilter('categorySlug', ''),
+      });
+    }
+    for (const brand of selectedBrands) {
+      chips.push({
+        id: `brand-${brand}`,
+        label: brand,
+        onRemove: () => toggleBrand(brand),
+      });
+    }
+    if (minPrice || maxPrice) {
+      const priceLabel =
+        minPrice && maxPrice
+          ? `${minPrice}–${maxPrice} ₽`
+          : minPrice
+            ? `от ${minPrice} ₽`
+            : `до ${maxPrice} ₽`;
+      chips.push({ id: 'price', label: `Цена: ${priceLabel}`, onRemove: clearPriceFilter });
+    }
+    if (inStock) {
+      chips.push({ id: 'inStock', label: 'В наличии', onRemove: () => setFilter('inStock', '') });
+    }
+    return chips;
+  }, [
+    categorySlug,
+    activeCategory?.name,
+    selectedBrands,
+    minPrice,
+    maxPrice,
+    inStock,
+    params,
+  ]);
 
   const pageTitle = activeCategory?.name ?? (q ? `Поиск: ${q}` : 'Каталог');
 
@@ -399,6 +457,23 @@ export function CatalogPage() {
         )}
       </div>
 
+      {activeFilterChips.length > 0 && (
+        <div className={styles.activeFilters} role="list" aria-label="Активные фильтры">
+          {activeFilterChips.map((chip) => (
+            <button
+              key={chip.id}
+              type="button"
+              className={styles.filterChip}
+              onClick={chip.onRemove}
+              role="listitem"
+            >
+              <span>{chip.label}</span>
+              <IconClose width={14} height={14} aria-hidden />
+            </button>
+          ))}
+        </div>
+      )}
+
       {filtersOpen && (
         <div className={styles.filterOverlay} role="presentation" onClick={() => setFiltersOpen(false)} />
       )}
@@ -423,6 +498,11 @@ export function CatalogPage() {
         </aside>
 
         <div className={styles.content}>
+          {!loading && (
+            <p className={styles.resultsCount}>
+              Найдено {totalCount} {productCountLabel(totalCount)}
+            </p>
+          )}
           <ProductGrid
             products={products}
             onAddToCart={handleAddSafe}

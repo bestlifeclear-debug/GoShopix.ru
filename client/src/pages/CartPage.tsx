@@ -275,6 +275,23 @@ export function CartPage() {
                   <strong>{formatPrice(totals.total)}</strong>
                 </div>
 
+                {!totals.freeDelivery && totals.subtotal > 0 && (
+                  <div className={styles.deliveryProgress}>
+                    <p className={styles.deliveryProgressText}>
+                      До бесплатной доставки осталось{' '}
+                      {formatPrice(Math.max(0, FREE_DELIVERY_FROM - totals.subtotal))}
+                    </p>
+                    <div className={styles.deliveryProgressTrack} aria-hidden>
+                      <div
+                        className={styles.deliveryProgressFill}
+                        style={{
+                          width: `${Math.min(100, (totals.subtotal / FREE_DELIVERY_FROM) * 100)}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 <Button
                   size="lg"
                   fullWidth

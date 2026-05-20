@@ -1,13 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { CategoryNode } from '../../api/types';
+import { categoryImageUrl } from '../../lib/categoryImages';
 import styles from './CategoryTiles.module.css';
-
-const TILE_IMAGES: Record<string, string> = {
-  electronics: '/product-images/gophone-x-1.svg',
-  clothing: '/product-images/urban-wind-jacket-1.svg',
-  smartphones: '/product-images/gophone-x-1.svg',
-  laptops: '/product-images/probook-15-1.svg',
-};
 
 interface CategoryTilesProps {
   categories: CategoryNode[];
@@ -35,7 +29,7 @@ export function CategoryTiles({ categories, variant = 'default' }: CategoryTiles
         >
           <span className={styles.imageBox}>
             <img
-              src={TILE_IMAGES[cat.slug] ?? '/product-images/soundwave-pro-1.svg'}
+              src={categoryImageUrl(cat.slug)}
               alt=""
               className={styles.image}
               loading="lazy"

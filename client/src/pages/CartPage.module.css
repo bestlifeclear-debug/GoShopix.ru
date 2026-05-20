@@ -142,8 +142,10 @@
 }
 
 .qtyRow button {
-  width: 36px;
-  height: 36px;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-bg);
@@ -259,6 +261,33 @@
 .summaryDelivery {
   max-width: 160px;
   line-height: var(--line-height-tight);
+}
+
+.deliveryProgress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.deliveryProgressText {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: var(--line-height-normal);
+}
+
+.deliveryProgressTrack {
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-subtle);
+  overflow: hidden;
+}
+
+.deliveryProgressFill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  transition: width var(--transition-base);
 }
 
 .summaryTotal {

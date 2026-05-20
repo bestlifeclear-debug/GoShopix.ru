@@ -297,15 +297,14 @@
     display: none;
   }
 
+  .slide,
+  .slideInner {
+    min-height: 240px;
+  }
+
   .slideInner {
     padding-left: var(--space-4);
     padding-right: var(--space-4);
-  }
-}
-
-@media (max-width: 480px) {
-  .slide {
-    min-height: 440px;
   }
 }
 

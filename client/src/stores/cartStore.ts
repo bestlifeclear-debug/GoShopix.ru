@@ -19,6 +19,7 @@ import {
   optimisticRemoveItem,
   optimisticUpdateQuantity,
 } from '../lib/optimisticCart.js';
+import { showCartAddedToast } from './toastStore.js';
 import { useAuthStore } from './authStore.js';
 
 interface CartState {
@@ -121,6 +122,7 @@ export const useCartStore = create<CartState>((set, get) => ({
       try {
         const cart = await cartApi.addItem(variantId, quantity);
         set({ cart, error: null });
+        showCartAddedToast();
       } catch (e) {
         set({
           cart: previousCart,
@@ -138,6 +140,7 @@ export const useCartStore = create<CartState>((set, get) => ({
     const guestItems = addGuestLine(get().guestItems, snapshot, quantity);
     saveGuestCart(guestItems);
     set({ guestItems, error: null });
+    showCartAddedToast();
   },
 
   updateQuantity: async (itemId, quantity) => {
