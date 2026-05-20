@@ -22,7 +22,9 @@ type DeliveryMethodUi = 'post' | 'cdek';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const STEPS = ['Корзина', 'Доставка', 'Оплата', 'Подтверждение'] as const;
+const STEPS = ['Корзина', 'Доставка', 'Подтверждение', 'Оплата'] as const;
+
+const COMMENT_SUGGESTIONS = ['Оставить у двери', 'Позвонить перед доставкой', 'Не звонить в домофон'] as const;
 
 function buildItemsPreview(items: CartItem[]) {
   return items.map((it) => ({
@@ -206,7 +208,7 @@ export function CheckoutPage() {
 
     if (!name.trim()) e.name = 'Введите ФИО';
     if (!isRuPhoneComplete(phone)) e.phone = 'Введите телефон в формате +7 (999) 000-00-00';
-    if (!email.trim() || !EMAIL_RE.test(email.trim())) e.email = 'Введите корректный email';
+    if (email.trim() && !EMAIL_RE.test(email.trim())) e.email = 'Введите корректный email';
 
     if (deliveryMethod === 'post') {
       const index = postIndex.replace(/\D/g, '');
@@ -259,9 +261,9 @@ export function CheckoutPage() {
   const activeStep = useMemo(() => {
     if (!stepper.cartOk) return 0;
     if (!stepper.deliveryOk) return 1;
-    if (!stepper.paymentOk) return 2;
+    if (!canSubmit) return 2;
     return 3;
-  }, [stepper]);
+  }, [canSubmit, stepper]);
 
   const deliveryLineLabel = useMemo(() => {
     if (totals.freeDelivery) return 'Бесплатно';
@@ -459,6 +461,7 @@ export function CheckoutPage() {
                   <CheckoutField
                     id="checkout-email"
                     label="Email"
+                    optional
                     error={errors.email}
                     showError={showError('email')}
                     showValid={showValid('email', Boolean(email.trim()) && EMAIL_RE.test(email.trim()))}
@@ -495,7 +498,7 @@ export function CheckoutPage() {
                     />
                     <span className={styles.choiceBody}>
                       <span className={styles.choiceMain}>СДЭК</span>
-                      <span className={styles.choiceMeta}>3–5 дней · от {formatPrice(DELIVERY_ESTIMATE_CDEK)}</span>
+                      <span className={styles.choiceEta}>3–5 дней</span>
                     </span>
                   </label>
 
@@ -509,7 +512,7 @@ export function CheckoutPage() {
                     />
                     <span className={styles.choiceBody}>
                       <span className={styles.choiceMain}>Почта России</span>
-                      <span className={styles.choiceMeta}>4–8 дней · от {formatPrice(DELIVERY_ESTIMATE_POST)}</span>
+                      <span className={styles.choiceEta}>4–8 дней</span>
                     </span>
                   </label>
                 </div>
@@ -723,7 +726,7 @@ export function CheckoutPage() {
                       onChange={() => setPayment('card')}
                       disabled={!stepper.deliveryOk}
                     />
-                    <img src="/payment-icons/mir.png" alt="" className={styles.choiceLogo} width={32} height={20} />
+                    <img src="/payment-icons/mir.png" alt="" className={styles.choiceLogo} width={44} height={28} />
                     <span className={styles.choiceBody}>
                       <span className={styles.choiceMain}>Банковская карта</span>
                       <span className={styles.choiceMeta}>МИР</span>
@@ -738,7 +741,7 @@ export function CheckoutPage() {
                       onChange={() => setPayment('sbp')}
                       disabled={!stepper.deliveryOk}
                     />
-                    <img src="/payment-icons/sbp.png" alt="" className={styles.choiceLogo} width={28} height={28} />
+                    <img src="/payment-icons/sbp.png" alt="" className={styles.choiceLogo} width={40} height={40} />
                     <span className={styles.choiceBody}>
                       <span className={styles.choiceMain}>СБП</span>
                       <span className={styles.choiceMeta}>QR-Код / Приложение банка</span>
@@ -746,14 +749,23 @@ export function CheckoutPage() {
                   </label>
                 </div>
 
-                <p className={styles.hint}>
-                  Данные карты на сайте не вводятся — после подтверждения заказа вы перейдёте на платёжный шлюз.
-                </p>
               </section>
 
               <section className={styles.block}>
                 <div className={styles.blockHead}>
                   <h2 className={styles.blockTitle}>Комментарий</h2>
+                </div>
+                <div className={styles.commentHints} aria-label="Примеры комментариев">
+                  {COMMENT_SUGGESTIONS.map((hint) => (
+                    <button
+                      key={hint}
+                      type="button"
+                      className={styles.commentChip}
+                      onClick={() => setComment(hint)}
+                    >
+                      {hint}
+                    </button>
+                  ))}
                 </div>
                 <textarea
                   className={styles.textarea}
@@ -809,6 +821,8 @@ export function CheckoutPage() {
                   ))}
                 </div>
 
+                <div className={styles.summaryDivider} aria-hidden />
+
                 <div className={styles.totals}>
                   <div className={styles.totalRow}>
                     <span>Товары</span>
@@ -826,7 +840,7 @@ export function CheckoutPage() {
                   </div>
                   <div className={styles.totalPay}>
                     <span>Итого к оплате</span>
-                    <strong>{formatPrice(totals.total)}</strong>
+                    <strong className={styles.totalAmount}>{formatPrice(totals.total)}</strong>
                   </div>
                 </div>
 
