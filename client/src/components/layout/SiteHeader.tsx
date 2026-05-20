@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { categoriesApi, productsApi } from '../../api/index';
 import type { CategoryNode } from '../../api/types';
@@ -28,6 +28,7 @@ export function SiteHeader() {
   const navigate = useNavigate();
   const location = useLocation();
   const wrapRef = useRef<HTMLDivElement>(null);
+  const catalogCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [search, setSearch] = useState('');
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -64,6 +65,23 @@ export function SiteHeader() {
     };
   }, [menuOpen]);
 
+  const clearCatalogCloseTimer = useCallback(() => {
+    if (catalogCloseTimer.current) {
+      clearTimeout(catalogCloseTimer.current);
+      catalogCloseTimer.current = null;
+    }
+  }, []);
+
+  const openCatalog = useCallback(() => {
+    clearCatalogCloseTimer();
+    setCatalogOpen(true);
+  }, [clearCatalogCloseTimer]);
+
+  const scheduleCloseCatalog = useCallback(() => {
+    clearCatalogCloseTimer();
+    catalogCloseTimer.current = setTimeout(() => setCatalogOpen(false), 120);
+  }, [clearCatalogCloseTimer]);
+
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
       if (!wrapRef.current?.contains(e.target as Node)) setCatalogOpen(false);
@@ -71,6 +89,8 @@ export function SiteHeader() {
     if (catalogOpen) document.addEventListener('mousedown', onDoc);
     return () => document.removeEventListener('mousedown', onDoc);
   }, [catalogOpen]);
+
+  useEffect(() => () => clearCatalogCloseTimer(), [clearCatalogCloseTimer]);
 
   useEffect(() => {
     const q = search.trim();
@@ -130,9 +150,8 @@ export function SiteHeader() {
         }
         catalogOpen={catalogOpen}
         onCatalogToggle={() => setCatalogOpen((o) => !o)}
-        catalogMenu={
-          <CatalogMenu categories={categories} onClose={() => setCatalogOpen(false)} />
-        }
+        onCatalogMouseEnter={openCatalog}
+        onCatalogMouseLeave={scheduleCloseCatalog}
         cartCount={cartCount}
         onCartClick={handleCartClick}
         favoritesTo={token ? '/account?section=favorites' : '/auth'}
@@ -145,6 +164,18 @@ export function SiteHeader() {
           setCatalogOpen(false);
         }}
       />
+
+      {catalogOpen && (
+        <div
+          className={styles.catalogMegaAnchor}
+          onMouseEnter={openCatalog}
+          onMouseLeave={scheduleCloseCatalog}
+        >
+          <div className={styles.catalogMegaAnchorInner}>
+            <CatalogMenu onClose={() => setCatalogOpen(false)} />
+          </div>
+        </div>
+      )}
 
       {menuOpen && (
         <>

@@ -15,6 +15,8 @@ export interface HeaderProps {
   catalogMenu?: ReactNode;
   catalogOpen?: boolean;
   onCatalogToggle?: () => void;
+  onCatalogMouseEnter?: () => void;
+  onCatalogMouseLeave?: () => void;
   onCartClick?: () => void;
   favoritesTo?: string;
   accountTo?: string;
@@ -29,9 +31,11 @@ export function Header({
   cartCount = 0,
   searchSlot,
   deliverySlot,
-  catalogMenu,
+  catalogMenu: _catalogMenu,
   catalogOpen = false,
   onCatalogToggle,
+  onCatalogMouseEnter,
+  onCatalogMouseLeave,
   onCartClick,
   favoritesTo = '/account?section=favorites',
   accountTo = '/account',
@@ -79,7 +83,11 @@ export function Header({
               <span className={styles.logoMark}>G</span>
               <span className={styles.logoText}>GoShopix</span>
             </Link>
-            <div className={styles.catalogWrap}>
+            <div
+              className={styles.catalogWrap}
+              onMouseEnter={onCatalogMouseEnter}
+              onMouseLeave={onCatalogMouseLeave}
+            >
               <button
                 type="button"
                 className={`${styles.catalogBtn} ${catalogOpen ? styles.catalogBtnActive : ''}`}
@@ -92,7 +100,6 @@ export function Header({
                 </span>
                 <span className={styles.catalogLabel}>Каталог</span>
               </button>
-              {catalogOpen && catalogMenu}
             </div>
           </div>
           <div className={styles.searchGroup}>{searchSlot}</div>

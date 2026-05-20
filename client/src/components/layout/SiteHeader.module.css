@@ -4,6 +4,29 @@
   z-index: 200;
 }
 
+.catalogMegaAnchor {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 250;
+  display: flex;
+  justify-content: center;
+  margin-top: -48px;
+  padding: calc(48px + var(--space-2)) var(--container-padding) 0;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.catalogMegaAnchor > * {
+  pointer-events: auto;
+}
+
+.catalogMegaAnchorInner {
+  width: 100%;
+  max-width: var(--container-max);
+}
+
 .mobileOverlay {
   display: none;
 }
@@ -84,6 +107,10 @@
 }
 
 @media (max-width: 767px) {
+  .catalogMegaAnchor {
+    display: none;
+  }
+
   .mobileOverlay {
     display: block;
     position: fixed;
