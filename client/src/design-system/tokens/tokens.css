@@ -1,18 +1,22 @@
 /* GoShopix — 8px-сетка, токены темы (WCAG 2.1 AA: контраст текста ≥ 4.5:1) */
 :root {
-  /* Акцентная палитра (5 цветов): primary, CTA, sale, success, neutral */
-  --color-primary: #d81b60;
-  --color-primary-hover: #c2185b;
-  --color-primary-active: #ad1457;
-  --color-primary-soft: rgb(216 27 96 / 0.12);
+  /* Акцент: единый премиальный бордовый для CTA, кнопок, активных состояний */
+  --color-primary: #c2185b;
+  --color-primary-hover: #ad1457;
+  --color-primary-active: #880e4f;
+  --color-primary-soft: rgb(194 24 91 / 0.12);
 
-  --color-cta: #ff6b6b;
-  --color-cta-hover: #ff5252;
-  --color-cta-active: #e64545;
+  /* CTA = primary (без отдельного кораллового) */
+  --color-cta: var(--color-primary);
+  --color-cta-hover: var(--color-primary-hover);
+  --color-cta-active: var(--color-primary-active);
 
-  --color-header-bg: #f2dfe8;
+  /* Header: белый фон, тонкая граница */
+  --color-header-bg: #ffffff;
+  --color-header-border: #eeeeee;
+
   --color-bg: #ffffff;
-  --color-bg-subtle: #f7f7f8;
+  --color-bg-subtle: #fafafa;
   --color-bg-elevated: #ffffff;
   --color-surface-card: #ffffff;
 
@@ -20,8 +24,9 @@
   --color-text-muted: #5c5c5c;
   --color-text-inverse: #ffffff;
 
-  --color-sale: #d81b60;
-  --color-sale-bg: #f2dfe8;
+  /* Скидки: контрастный красный на бледном фоне */
+  --color-sale: #e53935;
+  --color-sale-bg: #ffebee;
   --color-hit: #e65100;
   --color-hit-bg: #fff3e0;
 
@@ -35,18 +40,17 @@
   --color-border: #e0e0e0;
   --color-border-focus: var(--color-primary);
 
-  --color-focus-glow: 0 0 0 3px rgb(216 27 96 / 0.22);
+  --color-focus-glow: 0 0 0 3px rgb(194 24 91 / 0.22);
 
-  /* Сплошные фоны кнопок — без градиентов (меньше визуального шума) */
   --color-button-primary: var(--color-primary);
   --color-button-primary-hover: var(--color-primary-hover);
 
   --shadow-sm: 0 2px 8px rgb(26 26 26 / 0.06);
   --shadow-md: 0 6px 24px rgb(26 26 26 / 0.08);
   --shadow-lg: 0 12px 40px rgb(26 26 26 / 0.1);
-  --shadow-card: 0 2px 12px rgb(26 26 26 / 0.06);
-  --shadow-card-hover: 0 8px 24px rgb(26 26 26 / 0.12);
-  --shadow-focus: 0 0 0 3px rgb(216 27 96 / 0.25);
+  --shadow-card: 0 1px 2px rgb(26 26 26 / 0.04), 0 4px 16px rgb(26 26 26 / 0.06);
+  --shadow-card-hover: 0 8px 24px rgb(26 26 26 / 0.08);
+  --shadow-focus: 0 0 0 3px rgb(194 24 91 / 0.25);
 
   --font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
   --font-size-caption: 0.75rem;
@@ -73,18 +77,23 @@
   --space-6: 48px;
   --space-8: 64px;
 
+  /* Скругления: CTA 12px, карточки 16px, поиск 12px */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
   --radius-full: 9999px;
+  --radius-cta: var(--radius-md);
+  --radius-card: var(--radius-lg);
+  --radius-search: var(--radius-md);
 
   --transition-ui: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
 
-  --header-top-height: 72px;
-  --header-height: 120px;
+  /* Высота шапки: 64px mobile, 80px desktop (top + sub-nav) */
+  --header-top-height: 48px;
+  --header-height: 64px;
   --container-max: 1400px;
   --container-padding: 1.25rem;
   --layout-sidebar-width: 272px;
@@ -92,25 +101,34 @@
   --layout-sidebar-inset: 12px;
   --touch-min: 48px;
   --cta-height: 48px;
-  --search-height: 56px;
+  --search-height: 48px;
   --icon-size: 24px;
 
   --bp-sm: 768px;
   --bp-md: 1024px;
 }
 
-/* Тёмная тема: приглушённые акценты, контрастный текст на тёмных поверхностях */
+@media (min-width: 768px) {
+  :root {
+    --header-top-height: 52px;
+    --header-height: 80px;
+  }
+}
+
+/* Тёмная тема */
 [data-theme='dark'] {
   --color-primary: #e85a7a;
   --color-primary-hover: #f0708e;
   --color-primary-active: #d44d6d;
   --color-primary-soft: rgb(232 90 122 / 0.18);
 
-  --color-cta: #ff6b6b;
-  --color-cta-hover: #ff8585;
-  --color-cta-active: #e65a5a;
+  --color-cta: var(--color-primary);
+  --color-cta-hover: var(--color-primary-hover);
+  --color-cta-active: var(--color-primary-active);
 
   --color-header-bg: #1e1e1e;
+  --color-header-border: #3d3d3d;
+
   --color-bg: #121212;
   --color-bg-subtle: #121212;
   --color-bg-elevated: #242424;
@@ -120,8 +138,8 @@
   --color-text-muted: #b3b3b3;
   --color-text-inverse: #ffffff;
 
-  --color-sale: #ff8a8a;
-  --color-sale-bg: #3a2228;
+  --color-sale: #ef5350;
+  --color-sale-bg: #3d2020;
   --color-hit: #e8a04a;
   --color-hit-bg: #2e2618;
 
@@ -144,7 +162,7 @@
   --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
   --shadow-card: 0 2px 12px rgb(0 0 0 / 0.35);
   --shadow-card-hover: 0 8px 24px rgb(0 0 0 / 0.5);
-  --shadow-focus: 0 0 0 3px rgb(255 107 107 / 0.35);
+  --shadow-focus: 0 0 0 3px rgb(232 90 122 / 0.35);
 }
 
 @keyframes skeleton-shimmer {

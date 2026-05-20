@@ -28,8 +28,8 @@
   align-self: flex-start;
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-sm);
-  background: var(--gradient-brand);
-  color: #fff;
+  background: var(--color-sale-bg);
+  color: var(--color-sale);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
 }
@@ -75,10 +75,10 @@
 }
 
 .discountTag {
-  padding: var(--space-1) var(--space-2);
+  padding: 4px 10px;
   border-radius: var(--radius-sm);
-  background: var(--gradient-brand);
-  color: #fff;
+  background: var(--color-sale-bg);
+  color: var(--color-sale);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
 }
@@ -120,7 +120,7 @@
 
 .optionActive {
   border-color: var(--color-primary);
-  background: var(--gradient-brand-soft);
+  background: var(--color-primary-soft);
   color: var(--color-primary);
   font-weight: var(--font-weight-semibold);
 }

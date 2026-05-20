@@ -5,9 +5,13 @@
 export const brandGradient = 'linear-gradient(180deg, #FF9D2E 0%, #FF4D4D 50%, #D81B60 100%)';
 
 export const colors = {
-  primary: '#D81B60',
-  primaryHover: '#C2185B',
-  primaryActive: '#AD1457',
+  primary: '#C2185B',
+  primaryHover: '#AD1457',
+  primaryActive: '#880E4F',
+  sale: '#E53935',
+  saleBg: '#FFEBEE',
+  headerBg: '#FFFFFF',
+  headerBorder: '#EEEEEE',
   white: '#FFFFFF',
   bgSubtle: '#F5F5F7',
   text: '#1D1D1F',
@@ -54,14 +58,18 @@ export const spacing = {
 
 /** px */
 export const radius = {
-  sm: 4,
-  md: 8,
-  lg: 12,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  cta: 12,
+  card: 16,
+  search: 12,
   full: 9999,
 } as const;
 
 export const layout = {
   headerHeight: 64,
+  headerHeightDesktop: 80,
   containerMax: 1200,
   touchTargetMin: 44,
 } as const;
@@ -78,6 +86,10 @@ export function toCssVariables(): Record<string, string> {
     '--color-primary': colors.primary,
     '--color-primary-hover': colors.primaryHover,
     '--color-primary-active': colors.primaryActive,
+    '--color-sale': colors.sale,
+    '--color-sale-bg': colors.saleBg,
+    '--color-header-bg': colors.headerBg,
+    '--color-header-border': colors.headerBorder,
     '--color-bg': colors.white,
     '--color-bg-subtle': colors.bgSubtle,
     '--color-text': colors.text,
@@ -102,6 +114,9 @@ export function toCssVariables(): Record<string, string> {
     '--radius-sm': `${radius.sm}px`,
     '--radius-md': `${radius.md}px`,
     '--radius-lg': `${radius.lg}px`,
+    '--radius-cta': `${radius.cta}px`,
+    '--radius-card': `${radius.card}px`,
+    '--radius-search': `${radius.search}px`,
     '--header-height': `${layout.headerHeight}px`,
     '--container-max': `${layout.containerMax}px`,
   };

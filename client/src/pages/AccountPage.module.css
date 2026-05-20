@@ -14,15 +14,15 @@
   --lk-nav-item-color: #1a1a1a;
   --lk-nav-icon-color: #5c5c5c;
   --lk-nav-icon-bg: #f7f7f8;
-  --lk-nav-primary-bg: #d81b60;
-  --lk-nav-primary-hover: #c2185b;
+  --lk-nav-primary-bg: var(--color-primary);
+  --lk-nav-primary-hover: var(--color-primary-hover);
   --lk-nav-on-primary: #ffffff;
-  --lk-nav-fill: var(--color-header-bg);
+  --lk-nav-fill: var(--color-primary-soft);
   --lk-nav-shadow: 0 2px 10px rgb(216 27 96 / 0.25);
-  --lk-hover-bg: #f2dfe8;
-  --lk-hover-border: rgb(216 27 96 / 0.22);
-  --lk-pastel: #f2dfe8;
-  --lk-pastel-bg: #f2dfe8;
+  --lk-hover-bg: var(--color-primary-soft);
+  --lk-hover-border: rgb(194 24 91 / 0.22);
+  --lk-pastel: var(--color-primary-soft);
+  --lk-pastel-bg: var(--color-primary-soft);
   --lk-bg: #ffffff;
   --lk-bg-muted: #f7f7f8;
   --lk-surface: #ffffff;
@@ -30,8 +30,8 @@
   --lk-border: #e0e0e0;
   --lk-text: #1a1a1a;
   --lk-text-muted: #5c5c5c;
-  --lk-empty-bg: #f2dfe8;
-  --lk-empty-border: #e8b4c8;
+  --lk-empty-bg: var(--color-primary-soft);
+  --lk-empty-border: rgb(194 24 91 / 0.28);
   --lk-footer-text: #5c5c5c;
 }
 
@@ -42,7 +42,7 @@
   --lk-nav-item-color: #d4d4d8;
   --lk-nav-icon-color: #d4d4d8;
   --lk-nav-icon-bg: #2a2a2a;
-  --lk-nav-primary-bg: #d81b60;
+  --lk-nav-primary-bg: var(--color-primary);
   --lk-nav-primary-hover: #e91e63;
   --lk-nav-on-primary: #ffffff;
   --lk-nav-fill: rgb(216 27 96 / 0.2);
