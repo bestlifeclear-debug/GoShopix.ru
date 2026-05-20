@@ -230,7 +230,19 @@ ordersRouter.post('/', validate({ body: createOrderSchema }), async (req, res, n
 
     const userId = req.user!.sub;
 
-    const { shippingName, shippingPhone, shippingAddress, paymentMethod } = req.body;
+    const { shippingName, shippingPhone, shippingAddress, paymentMethod, deliveryMethod, customerNote } =
+      req.body;
+
+    const carrier =
+      deliveryMethod === 'cdek' ? 'СДЭК' : deliveryMethod === 'post' ? 'Почта России' : undefined;
+
+    const historyNote = [
+      'Заказ создан',
+      carrier ? `Доставка: ${carrier}` : null,
+      customerNote?.trim() ? `Комментарий: ${customerNote.trim()}` : null,
+    ]
+      .filter(Boolean)
+      .join(' · ');
 
 
 
@@ -304,6 +316,8 @@ ordersRouter.post('/', validate({ body: createOrderSchema }), async (req, res, n
 
           shippingAddress,
 
+          carrier,
+
           paymentMethod: paymentMethod === 'cash' || paymentMethod === 'card' || paymentMethod === 'sbp' ? paymentMethod : 'card',
 
           items: { create: orderItemsData },
@@ -314,7 +328,7 @@ ordersRouter.post('/', validate({ body: createOrderSchema }), async (req, res, n
 
               status: OrderStatus.pending,
 
-              note: 'Заказ создан',
+              note: historyNote,
 
               reason: 'Заказ создан',
 

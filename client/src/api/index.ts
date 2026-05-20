@@ -112,6 +112,8 @@ export const ordersApi = {
     shippingPhone: string;
     shippingAddress: string;
     paymentMethod?: 'card' | 'cash' | 'sbp';
+    deliveryMethod?: 'post' | 'cdek';
+    customerNote?: string;
   }) =>
     apiFetch<Order>('/api/orders', {
       method: 'POST',
