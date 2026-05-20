@@ -5,7 +5,8 @@ import { ordersApi, productsApi } from '../api/index';
 import type { ProductListItem } from '../api/types';
 import { ProductGrid } from '../components/ProductGrid';
 import { PageContainer } from '../components/layout/PageContainer';
-import { Button, Input, Modal, StatusBadge } from '../design-system';
+import { Button } from '../design-system';
+import { CheckoutModal } from '../components/CheckoutModal/CheckoutModal';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { ApiClientError } from '../api/client';
 import { useAuthStore } from '../stores/authStore';
@@ -296,62 +297,27 @@ export function CartPage() {
           </div>
         )}
 
-        <Modal
+        <CheckoutModal
           open={checkoutOpen}
-          title="Оформление заказа"
           onClose={() => !submitting && setCheckoutOpen(false)}
-          footer={
-            <Button
-              type="submit"
-              form="cart-checkout-form"
-              fullWidth
-              loading={submitting}
-              disabled={submitting}
-            >
-              Оформить заказ
-            </Button>
-          }
-        >
-          <form id="cart-checkout-form" className={styles.checkoutForm} onSubmit={handleOrder}>
-            <p className={styles.checkoutTotalPreview}>
-              К оплате: <strong>{formatPrice(totals.total)}</strong>
-            </p>
-            <Input label="ФИО" value={name} onChange={(e) => setName(e.target.value)} required />
-            <Input label="Телефон" value={phone} onChange={(e) => setPhone(e.target.value)} required />
-            <Input
-              label="Адрес доставки"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              required
-            />
-
-            <fieldset className={styles.payment}>
-              <legend>Способ оплаты</legend>
-              <label>
-                <input
-                  type="radio"
-                  name="payment"
-                  value="card"
-                  checked={payment === 'card'}
-                  onChange={() => setPayment('card')}
-                />
-                Банковская карта
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="payment"
-                  value="cash"
-                  checked={payment === 'cash'}
-                  onChange={() => setPayment('cash')}
-                />
-                При получении
-              </label>
-            </fieldset>
-
-            {error && <StatusBadge variant="error" label={error} dot={false} />}
-          </form>
-        </Modal>
+          onSubmit={handleOrder}
+          name={name}
+          phone={phone}
+          address={address}
+          payment={payment}
+          onNameChange={setName}
+          onPhoneChange={setPhone}
+          onAddressChange={setAddress}
+          onPaymentChange={setPayment}
+          total={totals.total}
+          itemCount={cart?.itemCount ?? 0}
+          originalSubtotal={totals.originalSubtotal}
+          discount={totals.discount}
+          freeDelivery={totals.freeDelivery}
+          freeDeliveryFrom={FREE_DELIVERY_FROM}
+          error={error}
+          submitting={submitting}
+        />
       </div>
     </PageContainer>
   );
