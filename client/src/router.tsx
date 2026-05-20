@@ -5,6 +5,8 @@ import { CatalogPage } from './pages/CatalogPage';
 import { ProductPage } from './pages/ProductPage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
+import { CheckoutConfirmationPage } from './pages/CheckoutConfirmationPage';
+import { PayPage } from './pages/PayPage';
 import { AccountPage } from './pages/AccountPage';
 import { AuthPage } from './pages/AuthPage';
 import { AboutPage } from './pages/AboutPage';
@@ -33,6 +35,8 @@ export const router = createBrowserRouter([
       { path: 'product/:id', element: <ProductPage /> },
       { path: 'cart', element: <CartPage /> },
       { path: 'checkout', element: <CheckoutPage /> },
+      { path: 'checkout/confirmation', element: <CheckoutConfirmationPage /> },
+      { path: 'pay', element: <PayPage /> },
       { path: 'account', element: <AccountPage /> },
     ],
   },

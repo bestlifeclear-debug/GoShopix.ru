@@ -18,7 +18,7 @@ import { requireCustomer } from '../middleware/auth.js';
 
 import { validate } from '../middleware/validate.js';
 
-import { createOrderSchema, orderParamsSchema, ordersQuerySchema } from '../schemas/orders.js';
+import { createOrderSchema, orderParamsSchema, ordersQuerySchema, paymentRedirectSchema } from '../schemas/orders.js';
 
 import { getOrCreateCart } from '../services/cart.js';
 
@@ -304,7 +304,7 @@ ordersRouter.post('/', validate({ body: createOrderSchema }), async (req, res, n
 
           shippingAddress,
 
-          paymentMethod: paymentMethod === 'cash' || paymentMethod === 'card' ? paymentMethod : 'card',
+          paymentMethod: paymentMethod === 'cash' || paymentMethod === 'card' || paymentMethod === 'sbp' ? paymentMethod : 'card',
 
           items: { create: orderItemsData },
 
@@ -365,6 +365,36 @@ ordersRouter.post('/', validate({ body: createOrderSchema }), async (req, res, n
   }
 
 });
+
+ordersRouter.post(
+  '/:id/payment-redirect',
+  validate({ params: orderParamsSchema, body: paymentRedirectSchema }),
+  async (req, res, next) => {
+    try {
+      const orderId = paramString(req.params.id);
+      const { paymentMethod, returnUrl } = req.body as { paymentMethod: 'card' | 'sbp'; returnUrl?: string };
+
+      const order = await prisma.order.findFirst({
+        where: { id: orderId, userId: req.user!.sub },
+        select: { id: true, status: true },
+      });
+
+      if (!order) throw new AppError(404, 'Order not found');
+      if (order.status !== OrderStatus.pending) throw new AppError(400, 'Order is not payable');
+
+      // MVP: редирект на внутреннюю "страницу шлюза". Интеграцию с реальным PSP можно подменить здесь.
+      const safeReturnUrl = typeof returnUrl === 'string' && returnUrl.length > 0 ? returnUrl : '/checkout/confirmation';
+      const redirectUrl =
+        `/pay?orderId=${encodeURIComponent(order.id)}` +
+        `&method=${encodeURIComponent(paymentMethod)}` +
+        `&returnUrl=${encodeURIComponent(safeReturnUrl)}`;
+
+      ok(res, { redirectUrl });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 
 

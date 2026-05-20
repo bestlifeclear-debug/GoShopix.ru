@@ -111,7 +111,7 @@ export const ordersApi = {
     shippingName: string;
     shippingPhone: string;
     shippingAddress: string;
-    paymentMethod?: 'card' | 'cash';
+    paymentMethod?: 'card' | 'cash' | 'sbp';
   }) =>
     apiFetch<Order>('/api/orders', {
       method: 'POST',
@@ -120,6 +120,13 @@ export const ordersApi = {
     }),
 
   pay: (id: string) => apiFetch<Order>(`/api/orders/${id}/pay`, { method: 'POST', auth: true }),
+
+  paymentRedirect: (id: string, body: { paymentMethod: 'card' | 'sbp'; returnUrl?: string }) =>
+    apiFetch<{ redirectUrl: string }>(`/api/orders/${id}/payment-redirect`, {
+      method: 'POST',
+      auth: true,
+      body: JSON.stringify(body),
+    }),
 
   cancel: (id: string) => apiFetch<Order>(`/api/orders/${id}/cancel`, { method: 'POST', auth: true }),
 };

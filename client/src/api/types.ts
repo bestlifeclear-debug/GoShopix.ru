@@ -183,7 +183,7 @@ export interface Order {
     carrierStatusAt: string | null;
   };
   shipping: { name: string | null; phone: string | null; address: string | null };
-  paymentMethod: 'card' | 'cash' | null;
+  paymentMethod: 'card' | 'cash' | 'sbp' | null;
   items: {
     id: string;
     productName: string;
