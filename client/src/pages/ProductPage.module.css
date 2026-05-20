@@ -352,9 +352,6 @@
     position: sticky;
     top: var(--sticky-top);
     align-self: start;
-    max-height: calc(100vh - var(--sticky-top) - var(--space-3));
-    overflow-y: auto;
-    overscroll-behavior: contain;
   }
 }
 
