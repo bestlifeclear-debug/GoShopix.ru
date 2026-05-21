@@ -55,7 +55,7 @@
 }
 
 .links a:hover {
-  color: var(--color-primary);
+  color: #ff3d2e;
   text-decoration: none;
 }
 
@@ -77,7 +77,7 @@
 }
 
 .contactLink:hover {
-  color: var(--color-primary);
+  color: #ff3d2e;
   text-decoration: none;
 }
 
@@ -109,7 +109,7 @@
 }
 
 a.socialLink:hover {
-  color: var(--color-primary);
+  color: #ff3d2e;
   text-decoration: none;
 }
 

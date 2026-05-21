@@ -263,11 +263,11 @@
 }
 
 .stockBarCritical {
-  background: var(--gradient-marketing);
+  background: linear-gradient(90deg, #ef4444, #f87171);
 }
 
 .stockBarLow {
-  background: linear-gradient(90deg, #ff8f82, #ff7a6b);
+  background: linear-gradient(90deg, #f97316, #fb923c);
 }
 
 .stockCount {

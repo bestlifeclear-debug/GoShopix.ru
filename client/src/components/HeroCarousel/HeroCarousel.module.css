@@ -2,7 +2,7 @@
   --hero-arrow-size: 48px;
   --hero-arrow-inset: 12px;
   --hero-arrow-safe: calc(var(--hero-arrow-inset) + var(--hero-arrow-size) + 12px);
-  --hero-text-shadow: 0 1px 3px rgb(15 23 42 / 0.18);
+  --hero-text-shadow: 0 1px 3px rgb(255 61 46 / 0.22);
 
   position: relative;
   border-radius: var(--radius-xl);
@@ -33,7 +33,6 @@
   position: absolute;
   inset: 0;
   background: var(--hero-banner-overlay);
-  opacity: var(--hero-banner-sheen-opacity);
   pointer-events: none;
 }
 
@@ -86,7 +85,7 @@
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-tight);
   color: var(--hero-banner-text);
-  text-shadow: 0 1px 4px rgb(var(--color-primary-rgb) / 0.2);
+  text-shadow: 0 1px 4px rgb(255 61 46 / 0.2);
 }
 
 .text {
