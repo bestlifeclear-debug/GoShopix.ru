@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react';
-import { Star, ThumbsUp } from 'lucide-react';
+import { Star, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { Button, StarRating } from '../../design-system';
 import { buildDistribution, getInitialReviews } from './mockReviews';
+import { filterAndSortReviews, REVIEW_SORT_OPTIONS } from './reviewFilters';
 import { draftToReview, ReviewWriteModal, type ReviewDraft } from './ReviewWriteModal';
-import type { ProductReview } from './types';
+import type { ProductReview, ReviewSort } from './types';
 import styles from './ProductReviews.module.css';
+
+type ReviewVote = 'up' | 'down';
 
 interface ProductReviewsProps {
   averageRating: number;
@@ -29,18 +32,18 @@ function ReviewStars({ value }: { value: number }) {
 
 function ReviewItem({
   review,
-  helpfulVoted,
-  onHelpful,
+  vote,
+  onVote,
 }: {
   review: ProductReview;
-  helpfulVoted: boolean;
-  onHelpful: () => void;
+  vote: ReviewVote | null;
+  onVote: (kind: ReviewVote) => void;
 }) {
   return (
     <li className={styles.reviewCard}>
       <div className={styles.reviewHeader}>
         <p className={styles.reviewAuthor}>{review.authorName}</p>
-        <time className={styles.reviewDate} dateTime={review.date}>
+        <time className={styles.reviewDate} dateTime={review.createdAt}>
           {review.date}
         </time>
       </div>
@@ -71,28 +74,55 @@ function ReviewItem({
         </ul>
       )}
       <div className={styles.helpfulRow}>
-        <span className={styles.helpfulLabel}>Полезно?</span>
-        <button
-          type="button"
-          className={`${styles.helpfulBtn} ${helpfulVoted ? styles.helpfulBtnActive : ''}`}
-          onClick={onHelpful}
-          aria-pressed={helpfulVoted}
-        >
-          <ThumbsUp size={16} strokeWidth={2} aria-hidden />
-          {review.helpfulCount}
-        </button>
+        <span className={styles.helpfulLabel}>Полезен отзыв?</span>
+        <div className={styles.voteGroup}>
+          <button
+            type="button"
+            className={`${styles.voteBtn} ${vote === 'up' ? styles.voteBtnActive : ''}`}
+            onClick={() => onVote('up')}
+            aria-pressed={vote === 'up'}
+            aria-label={`Полезно, ${review.helpfulCount}`}
+          >
+            <ThumbsUp size={16} strokeWidth={2} aria-hidden />
+            <span>{review.helpfulCount}</span>
+          </button>
+          <button
+            type="button"
+            className={`${styles.voteBtn} ${styles.voteBtnDown} ${vote === 'down' ? styles.voteBtnDownActive : ''}`}
+            onClick={() => onVote('down')}
+            aria-pressed={vote === 'down'}
+            aria-label={`Не полезно, ${review.notHelpfulCount}`}
+          >
+            <ThumbsDown size={16} strokeWidth={2} aria-hidden />
+            <span>{review.notHelpfulCount}</span>
+          </button>
+        </div>
       </div>
     </li>
   );
 }
 
+function initVoteCounts(reviews: ProductReview[]) {
+  const helpful: Record<string, number> = {};
+  const notHelpful: Record<string, number> = {};
+  for (const r of reviews) {
+    helpful[r.id] = r.helpfulCount;
+    notHelpful[r.id] = r.notHelpfulCount;
+  }
+  return { helpful, notHelpful };
+}
+
 export function ProductReviews({ averageRating, reviewCount }: ProductReviewsProps) {
-  const [reviews, setReviews] = useState<ProductReview[]>(() => getInitialReviews());
+  const initial = getInitialReviews();
+  const initialCounts = initVoteCounts(initial);
+
+  const [reviews, setReviews] = useState<ProductReview[]>(initial);
   const [totalCount, setTotalCount] = useState(reviewCount);
-  const [helpfulVotes, setHelpfulVotes] = useState<Record<string, boolean>>({});
-  const [helpfulCounts, setHelpfulCounts] = useState<Record<string, number>>(() =>
-    Object.fromEntries(getInitialReviews().map((r) => [r.id, r.helpfulCount])),
-  );
+  const [votes, setVotes] = useState<Record<string, ReviewVote | null>>({});
+  const [helpfulCounts, setHelpfulCounts] = useState(initialCounts.helpful);
+  const [notHelpfulCounts, setNotHelpfulCounts] = useState(initialCounts.notHelpful);
+  const [sort, setSort] = useState<ReviewSort>('newest');
+  const [withPhotosOnly, setWithPhotosOnly] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   const distribution = useMemo(
@@ -100,13 +130,44 @@ export function ProductReviews({ averageRating, reviewCount }: ProductReviewsPro
     [reviews, totalCount, averageRating],
   );
 
-  const handleHelpful = (reviewId: string) => {
-    if (helpfulVotes[reviewId]) return;
-    setHelpfulVotes((prev) => ({ ...prev, [reviewId]: true }));
-    setHelpfulCounts((prev) => ({
-      ...prev,
-      [reviewId]: (prev[reviewId] ?? 0) + 1,
+  const displayedReviews = useMemo(() => {
+    const enriched = reviews.map((r) => ({
+      ...r,
+      helpfulCount: helpfulCounts[r.id] ?? r.helpfulCount,
+      notHelpfulCount: notHelpfulCounts[r.id] ?? r.notHelpfulCount,
     }));
+    return filterAndSortReviews(enriched, sort, withPhotosOnly);
+  }, [reviews, sort, withPhotosOnly, helpfulCounts, notHelpfulCounts]);
+
+  const photosCount = useMemo(() => reviews.filter((r) => r.photos.length > 0).length, [reviews]);
+
+  const handleVote = (reviewId: string, kind: ReviewVote) => {
+    setVotes((prev) => {
+      const current = prev[reviewId] ?? null;
+      if (current === kind) {
+        if (kind === 'up') {
+          setHelpfulCounts((c) => ({ ...c, [reviewId]: Math.max(0, (c[reviewId] ?? 0) - 1) }));
+        } else {
+          setNotHelpfulCounts((c) => ({ ...c, [reviewId]: Math.max(0, (c[reviewId] ?? 0) - 1) }));
+        }
+        return { ...prev, [reviewId]: null };
+      }
+
+      if (current === 'up') {
+        setHelpfulCounts((c) => ({ ...c, [reviewId]: Math.max(0, (c[reviewId] ?? 0) - 1) }));
+      }
+      if (current === 'down') {
+        setNotHelpfulCounts((c) => ({ ...c, [reviewId]: Math.max(0, (c[reviewId] ?? 0) - 1) }));
+      }
+
+      if (kind === 'up') {
+        setHelpfulCounts((c) => ({ ...c, [reviewId]: (c[reviewId] ?? 0) + 1 }));
+      } else {
+        setNotHelpfulCounts((c) => ({ ...c, [reviewId]: (c[reviewId] ?? 0) + 1 }));
+      }
+
+      return { ...prev, [reviewId]: kind };
+    });
   };
 
   const handleSubmitReview = (draft: ReviewDraft) => {
@@ -115,6 +176,7 @@ export function ProductReviews({ averageRating, reviewCount }: ProductReviewsPro
     setReviews((prev) => [review, ...prev]);
     setTotalCount((c) => c + 1);
     setHelpfulCounts((prev) => ({ ...prev, [id]: 0 }));
+    setNotHelpfulCounts((prev) => ({ ...prev, [id]: 0 }));
   };
 
   return (
@@ -144,19 +206,62 @@ export function ProductReviews({ averageRating, reviewCount }: ProductReviewsPro
         </div>
       </div>
 
-      <ul className={styles.reviewList}>
-        {reviews.map((review) => (
-          <ReviewItem
-            key={review.id}
-            review={{
-              ...review,
-              helpfulCount: helpfulCounts[review.id] ?? review.helpfulCount,
-            }}
-            helpfulVoted={!!helpfulVotes[review.id]}
-            onHelpful={() => handleHelpful(review.id)}
+      <div className={styles.toolbar}>
+        <div className={styles.toolbarMain}>
+          <label className={styles.sortLabel} htmlFor="review-sort">
+            Сортировка
+          </label>
+          <select
+            id="review-sort"
+            className={styles.sortSelect}
+            value={sort}
+            onChange={(e) => setSort(e.target.value as ReviewSort)}
+          >
+            {REVIEW_SORT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <label className={styles.filterCheck}>
+          <input
+            type="checkbox"
+            checked={withPhotosOnly}
+            onChange={(e) => setWithPhotosOnly(e.target.checked)}
           />
-        ))}
-      </ul>
+          <span>С фотографиями</span>
+          {photosCount > 0 && <span className={styles.filterBadge}>{photosCount}</span>}
+        </label>
+      </div>
+
+      <p className={styles.resultsMeta}>
+        {withPhotosOnly ? (
+          <>
+            Показано {displayedReviews.length} из {reviews.length} отзывов с фото
+          </>
+        ) : (
+          <>Показано {displayedReviews.length} отзывов</>
+        )}
+      </p>
+
+      {displayedReviews.length === 0 ? (
+        <p className={styles.emptyFiltered}>
+          Нет отзывов по выбранным фильтрам. Попробуйте изменить сортировку или снять фильтр «С фотографиями».
+        </p>
+      ) : (
+        <ul className={styles.reviewList}>
+          {displayedReviews.map((review) => (
+            <ReviewItem
+              key={review.id}
+              review={review}
+              vote={votes[review.id] ?? null}
+              onVote={(kind) => handleVote(review.id, kind)}
+            />
+          ))}
+        </ul>
+      )}
 
       <ReviewWriteModal
         open={modalOpen}

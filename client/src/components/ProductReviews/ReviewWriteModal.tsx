@@ -310,11 +310,13 @@ export function draftToReview(draft: ReviewDraft, id: string): ProductReview {
     id,
     authorName: 'Вы',
     date: formatTodayRu(),
+    createdAt: new Date().toISOString(),
     rating: draft.rating,
     pros: draft.pros || undefined,
     cons: draft.cons || undefined,
     comment: draft.comment,
     photos: draft.photos,
     helpfulCount: 0,
+    notHelpfulCount: 0,
   };
 }
