@@ -5,33 +5,44 @@ import styles from '../ProductReviews/ReviewWriteModal.module.css';
 
 export interface QuestionDraft {
   name: string;
-  email: string;
   question: string;
 }
 
 interface QuestionWriteModalProps {
   open: boolean;
   onClose: () => void;
+  isAuthenticated: boolean;
+  userName: string | null;
+  onRequireAuth: () => void;
   onSubmit: (draft: QuestionDraft) => void;
 }
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-export function QuestionWriteModal({ open, onClose, onSubmit }: QuestionWriteModalProps) {
+export function QuestionWriteModal({
+  open,
+  onClose,
+  isAuthenticated,
+  userName,
+  onRequireAuth,
+  onSubmit,
+}: QuestionWriteModalProps) {
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
   const [question, setQuestion] = useState('');
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const reset = () => {
     setName('');
-    setEmail('');
     setQuestion('');
   };
 
   useEffect(() => {
     if (!open) reset();
   }, [open]);
+
+  useEffect(() => {
+    if (open && isAuthenticated && userName) {
+      setName(userName);
+    }
+  }, [open, isAuthenticated, userName]);
 
   useEffect(() => {
     if (!open) return;
@@ -50,14 +61,19 @@ export function QuestionWriteModal({ open, onClose, onSubmit }: QuestionWriteMod
   }, [open, onClose]);
 
   const handleSubmit = () => {
-    const trimmedName = name.trim();
-    const trimmedEmail = email.trim();
     const trimmedQuestion = question.trim();
-    if (!trimmedName || !trimmedEmail || !trimmedQuestion) return;
-    if (!EMAIL_RE.test(trimmedEmail)) return;
+    if (!trimmedQuestion) return;
+
+    if (!isAuthenticated) {
+      onRequireAuth();
+      return;
+    }
+
+    const trimmedName = (name.trim() || userName?.trim() || '').trim();
+    if (!trimmedName) return;
+
     onSubmit({
       name: trimmedName,
-      email: trimmedEmail,
       question: trimmedQuestion,
     });
     reset();
@@ -65,9 +81,8 @@ export function QuestionWriteModal({ open, onClose, onSubmit }: QuestionWriteMod
   };
 
   const canSubmit =
-    name.trim().length > 0 &&
-    EMAIL_RE.test(email.trim()) &&
-    question.trim().length > 0;
+    question.trim().length > 0 &&
+    (!isAuthenticated || !!(name.trim() || userName?.trim()));
 
   if (!open) return null;
 
@@ -93,29 +108,20 @@ export function QuestionWriteModal({ open, onClose, onSubmit }: QuestionWriteMod
 
         <div className={styles.body}>
           <div className={styles.formStack}>
-            <label className={styles.field}>
-              <span className={styles.label}>Ваше имя</span>
-              <input
-                type="text"
-                className={styles.input}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Как к вам обращаться?"
-                autoComplete="name"
-              />
-            </label>
-
-            <label className={styles.field}>
-              <span className={styles.label}>Email</span>
-              <input
-                type="email"
-                className={styles.input}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="example@mail.ru"
-                autoComplete="email"
-              />
-            </label>
+            {isAuthenticated && (
+              <label className={styles.field}>
+                <span className={styles.label}>Ваше имя</span>
+                <input
+                  type="text"
+                  className={styles.input}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  readOnly={!!userName}
+                  placeholder="Как к вам обращаться?"
+                  autoComplete="name"
+                />
+              </label>
+            )}
 
             <label className={styles.field}>
               <span className={styles.label}>Ваш вопрос</span>

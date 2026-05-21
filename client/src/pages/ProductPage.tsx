@@ -101,7 +101,13 @@ export function ProductPage() {
   const buyBoxRef = useRef<HTMLDivElement>(null);
 
   const token = useAuthStore((s) => s.token);
+  const user = useAuthStore((s) => s.user);
   const showToast = useToastStore((s) => s.show);
+
+  const questionAuthorName =
+    [user?.profile?.firstName, user?.profile?.lastName].filter(Boolean).join(' ') ||
+    user?.profile?.username ||
+    null;
   const addToCart = useCartStore((s) => s.addToCart);
   const openDrawer = useCartStore((s) => s.openDrawer);
 
@@ -521,6 +527,15 @@ export function ProductPage() {
         <QuestionWriteModal
           open={questionModalOpen}
           onClose={() => setQuestionModalOpen(false)}
+          isAuthenticated={!!token}
+          userName={questionAuthorName}
+          onRequireAuth={() => {
+            setQuestionModalOpen(false);
+            navigate(
+              '/auth?returnUrl=' +
+                encodeURIComponent(window.location.pathname + window.location.search),
+            );
+          }}
           onSubmit={() => showToast('Вопрос отправлен')}
         />
 
