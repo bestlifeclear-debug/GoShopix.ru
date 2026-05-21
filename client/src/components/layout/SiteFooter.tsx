@@ -17,7 +17,7 @@ const SOCIAL_LINKS = [
   {
     id: 'max',
     label: 'Мы в MAX',
-    href: undefined,
+    href: 'https://max.ru/join/6-tKaVQcvgWwgs8IYhY-DcgkIjJzsoJIJOXZ7a4GI6w',
     icon: '/footer-icons/max.jpg',
   },
 ] as const;
