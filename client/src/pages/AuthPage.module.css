@@ -1,11 +1,11 @@
 .page {
   --auth-color-primary-bg: #ffffff;
   --auth-color-primary-text: #121212;
-  --auth-color-accent: #ff4081;
+  --auth-color-accent: var(--color-primary);
   --auth-color-border: #e0e0e0;
   --auth-color-surface: #f5f5f5;
   --auth-color-hint: #666666;
-  --auth-focus-shadow: 0 0 0 3px rgb(255 64 129 / 0.22);
+  --auth-focus-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.22);
 
   min-height: 100vh;
   display: flex;

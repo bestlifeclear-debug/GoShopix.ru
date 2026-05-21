@@ -26,7 +26,6 @@ const SLIDES = [
     text: 'Смартфоны, ноутбуки и гаджеты — только до конца недели.',
     image: '/product-images/gophone-x-1.svg',
     imageAlt: 'Смартфон',
-    tone: 'rose',
     countdownEndsAt: endOfCurrentWeek(),
     cta: { to: '/catalog?categorySlug=electronics', label: 'Купить со скидкой' },
   },
@@ -39,7 +38,6 @@ const SLIDES = [
     text: 'Куртки, кроссовки и базовый гардероб от топ-продавцов.',
     image: '/product-images/urban-wind-jacket-1.svg',
     imageAlt: 'Куртка',
-    tone: 'plum',
     cta: { to: '/catalog?categorySlug=clothing', label: 'Купить со скидкой' },
   },
   {
@@ -51,7 +49,6 @@ const SLIDES = [
     text: 'Проверенные модели с тысячами отзывов.',
     image: '/product-images/soundwave-pro-1.svg',
     imageAlt: 'Наушники',
-    tone: 'dark',
     cta: { to: '/catalog?sort=popular', label: 'Купить со скидкой' },
   },
   {
@@ -63,7 +60,6 @@ const SLIDES = [
     text: 'Мощные конфигурации с быстрой доставкой.',
     image: '/product-images/probook-15-1.svg',
     imageAlt: 'Ноутбук',
-    tone: 'light',
     cta: { to: '/catalog?sort=newest', label: 'Смотреть новинки' },
   },
   {
@@ -75,7 +71,6 @@ const SLIDES = [
     text: 'Соберите корзину и получите доставку в ПВЗ за 0 ₽.',
     image: '/product-images/street-run-sneakers-1.svg',
     imageAlt: 'Кроссовки',
-    tone: 'rose',
     cta: { to: '/catalog', label: 'Купить со скидкой' },
   },
 ] as const;
@@ -130,7 +125,7 @@ export function HeroCarousel() {
           {slides.map((slide) => (
             <article
               key={slide.id}
-              className={`${styles.slide} ${styles[slide.tone]}`}
+              className={styles.slide}
               aria-hidden={slides[index].id !== slide.id}
             >
               <div className={styles.slideInner}>
@@ -143,7 +138,7 @@ export function HeroCarousel() {
                     <CountdownTimer
                       endsAt={slide.countdownEndsAt}
                       className={styles.countdown}
-                      tone={(slide.tone as string) === 'dark' ? 'dark' : 'light'}
+                      tone="dark"
                     />
                   )}
                   <Link to={slide.cta.to} className={styles.btnCta}>

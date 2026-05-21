@@ -7,6 +7,21 @@ const PAYMENT_ICONS = [
   { id: 'sbp', label: 'СБП', src: '/payment-icons/sbp.png' },
 ] as const;
 
+const SOCIAL_LINKS = [
+  {
+    id: 'vk',
+    label: 'Мы в VK',
+    href: 'https://vk.com/goshopix',
+    icon: '/footer-icons/vk.jpg',
+  },
+  {
+    id: 'max',
+    label: 'Мы в MAX',
+    href: undefined,
+    icon: '/footer-icons/max.jpg',
+  },
+] as const;
+
 export function SiteFooter() {
   const year = new Date().getFullYear();
 
@@ -50,27 +65,41 @@ export function SiteFooter() {
               <li>
                 <Link to="/about">О нас</Link>
               </li>
+            </ul>
+          </div>
+
+          <div className={styles.col}>
+            <h3 className={styles.colTitle}>Контакты</h3>
+            <ul className={styles.contactList}>
               <li>
-                <a
-                  href="https://vk.com/goshopix"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className={styles.linkWithIcon}
-                >
-                  <span>Мы в VK</span>
-                  <span className={styles.iconWrap}>
-                    <img src="/footer-icons/vk.jpg" alt="" className={styles.menuIcon} width={24} height={24} />
-                  </span>
+                <a href="mailto:support@goshopix.ru" className={styles.contactLink}>
+                  support@goshopix.ru
                 </a>
               </li>
-              <li>
-                <span className={styles.linkWithIcon}>
-                  <span>Мы в MAX</span>
-                  <span className={styles.iconWrap}>
-                    <img src="/footer-icons/max.jpg" alt="" className={styles.menuIcon} width={24} height={24} />
-                  </span>
-                </span>
-              </li>
+              <li className={styles.contactHours}>Пн–Вс 9:00 — 21:00</li>
+            </ul>
+            <ul className={styles.socialList} aria-label="Социальные сети">
+              {SOCIAL_LINKS.map((social) => (
+                <li key={social.id}>
+                  {social.href ? (
+                    <a
+                      href={social.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className={styles.socialLink}
+                      aria-label={social.label}
+                    >
+                      <img src={social.icon} alt="" className={styles.socialIcon} width={28} height={28} />
+                      <span>{social.label}</span>
+                    </a>
+                  ) : (
+                    <span className={styles.socialLink} aria-label={social.label}>
+                      <img src={social.icon} alt="" className={styles.socialIcon} width={28} height={28} />
+                      <span>{social.label}</span>
+                    </span>
+                  )}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -97,4 +126,3 @@ export function SiteFooter() {
     </footer>
   );
 }
-

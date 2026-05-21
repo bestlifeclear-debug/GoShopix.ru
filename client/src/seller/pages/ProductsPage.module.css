@@ -364,7 +364,7 @@
 }
 
 .rowActionBtn:hover {
-  background: #fdf2f8;
+  background: var(--color-primary-soft);
   color: var(--color-primary);
 }
 

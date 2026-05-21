@@ -23,7 +23,7 @@
     "darkThemeOverrides": {
       "--color-text": "#ececec",
       "--color-text-muted": "#b3b3b3",
-      "--color-primary": "#e85a7a",
+      "--color-primary": "#ff7062",
       "--color-bg": "#121212",
       "--color-bg-elevated": "#242424",
       "--color-surface-card": "#1e1e1e"
