@@ -16,7 +16,7 @@
   flex-direction: column;
   width: 100%;
   max-width: 800px;
-  border-radius: 16px;
+  border-radius: 24px;
   background: #ffffff;
   box-shadow:
     0 24px 48px rgb(15 23 42 / 0.18),
@@ -164,6 +164,45 @@
 
 .textareaComment {
   min-height: 88px;
+}
+
+.formStack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f1f5f9;
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #1e293b;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.input::placeholder {
+  color: #94a3b8;
+}
+
+.input:focus {
+  outline: none;
+  border-color: rgb(216 27 96 / 0.4);
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgb(216 27 96 / 0.2);
+}
+
+.textareaQuestion {
+  min-height: 120px;
+  resize: vertical;
 }
 
 .rightCol {
@@ -319,9 +358,9 @@
 }
 
 .btnSubmit {
-  padding: 12px 24px;
+  padding: 12px 30px;
   border: none;
-  border-radius: 12px;
+  border-radius: 9999px;
   background: var(--color-primary);
   font-family: inherit;
   font-size: 0.9375rem;

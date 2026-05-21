@@ -14,7 +14,9 @@ import { useCartStore } from '../stores/cartStore';
 import { ApiClientError } from '../api/client';
 import { PageContainer } from '../components/layout/PageContainer';
 import { ProductReviews } from '../components/ProductReviews/ProductReviews';
+import { QuestionWriteModal } from '../components/ProductQa/QuestionWriteModal';
 import { track } from '../lib/analytics';
+import { useToastStore } from '../stores/toastStore';
 import styles from './ProductPage.module.css';
 
 const TRUST_SIGNALS = [
@@ -95,9 +97,11 @@ export function ProductPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [showMobileBar, setShowMobileBar] = useState(false);
+  const [questionModalOpen, setQuestionModalOpen] = useState(false);
   const buyBoxRef = useRef<HTMLDivElement>(null);
 
   const token = useAuthStore((s) => s.token);
+  const showToast = useToastStore((s) => s.show);
   const addToCart = useCartStore((s) => s.addToCart);
   const openDrawer = useCartStore((s) => s.openDrawer);
 
@@ -507,12 +511,18 @@ export function ProductPage() {
                 <p className={styles.qaQ}>Есть ли гарантия?</p>
                 <p className={styles.qaA}>Официальная гарантия продавца 12 месяцев.</p>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" type="button" onClick={() => setQuestionModalOpen(true)}>
                 Задать вопрос
               </Button>
             </div>
           )}
         </Tabs>
+
+        <QuestionWriteModal
+          open={questionModalOpen}
+          onClose={() => setQuestionModalOpen(false)}
+          onSubmit={() => showToast('Вопрос отправлен')}
+        />
 
         {similar.length > 0 && (
           <section className={styles.related}>
