@@ -104,7 +104,7 @@
   justify-content: center;
   min-height: var(--cta-height);
   padding: 0 28px;
-  border: 1px solid rgb(255 255 255 / 0.5);
+  border: none;
   border-radius: var(--radius-full);
   background: var(--hero-banner-cta-bg);
   color: var(--hero-banner-cta-text);
@@ -112,9 +112,7 @@
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.01em;
   text-decoration: none;
-  box-shadow:
-    0 6px 20px rgb(var(--color-primary-rgb) / 0.2),
-    inset 0 1px 0 rgb(255 255 255 / 1);
+  box-shadow: 0 4px 16px rgb(var(--color-primary-rgb) / 0.22);
   transition:
     transform var(--transition-fast),
     background var(--transition-fast),
@@ -127,16 +125,14 @@
   color: var(--hero-banner-cta-text);
   transform: translateY(-1px);
   text-decoration: none;
-  box-shadow:
-    0 10px 24px rgb(var(--color-primary-rgb) / 0.24),
-    inset 0 1px 0 rgb(255 255 255 / 1);
+  box-shadow: 0 8px 22px rgb(var(--color-primary-rgb) / 0.28);
 }
 
 .btnCta:focus-visible {
   outline: none;
   box-shadow:
     0 0 0 3px rgb(255 255 255 / 0.55),
-    0 4px 16px rgb(35 22 20 / 0.14);
+    0 4px 16px rgb(var(--color-primary-rgb) / 0.2);
 }
 
 .visual {

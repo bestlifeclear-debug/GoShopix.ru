@@ -15,7 +15,7 @@
     color var(--transition-fast),
     opacity var(--transition-fast),
     box-shadow var(--transition-fast),
-    filter var(--transition-fast);
+    transform var(--transition-fast);
   box-shadow: none;
 }
 
@@ -70,7 +70,6 @@
 .primary:hover:not(:disabled) {
   background: var(--color-button-primary-hover);
   box-shadow: var(--shadow-primary-sm);
-  filter: brightness(1.03);
 }
 
 .primary:focus-visible {
@@ -79,7 +78,7 @@
 }
 
 .primary:active:not(:disabled) {
-  opacity: 0.92;
+  transform: scale(0.98);
 }
 
 .secondary {

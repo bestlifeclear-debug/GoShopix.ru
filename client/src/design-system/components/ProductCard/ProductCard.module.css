@@ -269,9 +269,7 @@
 }
 
 .cartBtn:active:not(:disabled) {
-  transform: scale(0.9);
-  background: var(--gradient-primary);
-  filter: brightness(0.96);
+  transform: scale(0.98);
 }
 
 .cartBtnLoading {

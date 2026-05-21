@@ -377,7 +377,6 @@
 .btnSubmit:hover:not(:disabled) {
   background: var(--gradient-primary-hover);
   box-shadow: var(--shadow-primary);
-  filter: brightness(1.03);
   transform: translateY(-1px);
 }
 
