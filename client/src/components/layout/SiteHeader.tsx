@@ -145,7 +145,6 @@ export function SiteHeader() {
             onChange={setSearch}
             onSubmit={goSearch}
             suggestions={suggestions}
-            hideSubmit
           />
         }
         catalogOpen={catalogOpen}
