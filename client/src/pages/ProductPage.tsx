@@ -14,6 +14,7 @@ import { useCartStore } from '../stores/cartStore';
 import { ApiClientError } from '../api/client';
 import { PageContainer } from '../components/layout/PageContainer';
 import { ProductReviews } from '../components/ProductReviews/ProductReviews';
+import { ProductQa } from '../components/ProductQa/ProductQa';
 import { QuestionWriteModal } from '../components/ProductQa/QuestionWriteModal';
 import { track } from '../lib/analytics';
 import { useToastStore } from '../stores/toastStore';
@@ -501,6 +502,15 @@ export function ProductPage() {
           ]}
           active={tab}
           onChange={setTab}
+          actions={
+            <button
+              type="button"
+              className={styles.askQuestionBtn}
+              onClick={() => setQuestionModalOpen(true)}
+            >
+              Задать вопрос
+            </button>
+          }
         >
           {tab === 'reviews' && (
             <div className={styles.tabContent}>
@@ -509,17 +519,7 @@ export function ProductPage() {
           )}
           {tab === 'qa' && (
             <div className={styles.tabContent}>
-              <div className={styles.qaItem}>
-                <p className={styles.qaQ}>Подойдёт ли для подарка?</p>
-                <p className={styles.qaA}>Да, товар поставляется в фирменной упаковке.</p>
-              </div>
-              <div className={styles.qaItem}>
-                <p className={styles.qaQ}>Есть ли гарантия?</p>
-                <p className={styles.qaA}>Официальная гарантия продавца 12 месяцев.</p>
-              </div>
-              <Button variant="outline" size="sm" type="button" onClick={() => setQuestionModalOpen(true)}>
-                Задать вопрос
-              </Button>
+              <ProductQa />
             </div>
           )}
         </Tabs>

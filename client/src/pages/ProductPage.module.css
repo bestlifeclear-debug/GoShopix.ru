@@ -482,19 +482,36 @@
   font-weight: var(--font-weight-medium);
 }
 
-.qaItem {
-  padding: var(--space-4) 0;
-  border-bottom: 1px solid var(--color-border);
+.askQuestionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  border: 1px solid rgb(194 24 91 / 0.35);
+  border-radius: var(--radius-full);
+  background: transparent;
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+  color: var(--color-primary);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
-.qaQ {
-  margin: 0 0 var(--space-2);
-  font-weight: var(--font-weight-semibold);
+.askQuestionBtn:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
 }
 
-.qaA {
-  margin: 0;
-  color: var(--color-text-muted);
+@media (max-width: 768px) {
+  .askQuestionBtn {
+    width: 100%;
+  }
 }
 
 .message {

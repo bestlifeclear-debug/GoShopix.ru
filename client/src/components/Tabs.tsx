@@ -12,12 +12,15 @@ interface TabsProps {
   active: string;
   onChange: (id: string) => void;
   children: ReactNode;
+  /** Дополнительные элементы справа от табов (например, кнопка действия) */
+  actions?: ReactNode;
 }
 
-export function Tabs({ tabs, active, onChange, children }: TabsProps) {
+export function Tabs({ tabs, active, onChange, children, actions }: TabsProps) {
   return (
     <div className={styles.tabs}>
-      <div className={styles.list} role="tablist">
+      <div className={cn(styles.header, actions ? styles.headerWithActions : undefined)}>
+        <div className={styles.list} role="tablist">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -30,6 +33,8 @@ export function Tabs({ tabs, active, onChange, children }: TabsProps) {
             {tab.label}
           </button>
         ))}
+        </div>
+        {actions ? <div className={styles.actions}>{actions}</div> : null}
       </div>
       <div className={styles.panel} role="tabpanel">
         {children}
