@@ -104,7 +104,7 @@ export function Header({
           </div>
           <div className={styles.searchGroup}>{searchSlot}</div>
           <div className={styles.rightGroup}>
-            {deliverySlot ? <div className={styles.deliverySlot}>{deliverySlot}</div> : null}
+            {deliverySlot ? <div className={styles.deliverySlotMobile}>{deliverySlot}</div> : null}
             <div className={styles.actionsTray}>
             {extraActions}
             <Link to={favoritesTo} className={styles.iconBtn} aria-label="Избранное">
@@ -129,19 +129,24 @@ export function Header({
         </div>
       </div>
 
-      {navLinks.length > 0 && (
+      {(navLinks.length > 0 || deliverySlot) && (
         <nav className={styles.navBar} aria-label="Разделы каталога">
           <div className={`container ${styles.navInner}`}>
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`${styles.navLink} ${isNavActive(link.to) ? styles.navLinkActive : ''}`}
-                aria-current={isNavActive(link.to) ? 'page' : undefined}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.length > 0 && (
+              <div className={styles.navLinksGroup}>
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className={`${styles.navLink} ${isNavActive(link.to) ? styles.navLinkActive : ''}`}
+                    aria-current={isNavActive(link.to) ? 'page' : undefined}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+            {deliverySlot ? <div className={styles.navDeliverySlot}>{deliverySlot}</div> : null}
           </div>
         </nav>
       )}

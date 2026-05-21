@@ -3,8 +3,8 @@
   align-items: center;
   gap: 6px;
   max-width: 128px;
-  min-height: var(--cta-height);
-  padding: 0 2px;
+  min-height: 40px;
+  padding: 0 4px;
   flex-shrink: 0;
   box-sizing: border-box;
 }
