@@ -306,7 +306,9 @@ export function ProductPage() {
       <div className={`${styles.page} ${showMobileBar ? styles.pageWithMobileBar : ''}`}>
         <div className={styles.grid}>
           <div className={styles.colLeft}>
-            <ImageGallery images={images} name={product.name} />
+            <div className={styles.galleryFrame}>
+              <ImageGallery images={images} name={product.name} />
+            </div>
 
             <div className={styles.colLeftDetails}>
               <div className={styles.detailsCard}>
