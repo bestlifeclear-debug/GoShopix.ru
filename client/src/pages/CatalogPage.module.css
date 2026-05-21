@@ -53,7 +53,7 @@
 
 .sortChipActive {
   border-color: var(--color-primary);
-  background: var(--color-primary);
+  background: var(--gradient-primary);
   color: var(--color-text-inverse);
   font-weight: var(--font-weight-semibold);
 }
@@ -212,7 +212,7 @@
   outline: none;
   border-color: var(--color-primary);
   background: var(--color-bg);
-  box-shadow: 0 0 0 3px rgb(216 27 96 / 0.14);
+  box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.14);
 }
 
 .filterControl::placeholder {
@@ -331,7 +331,7 @@
 
 .checkItemActive .checkMark {
   border-color: var(--color-primary);
-  background: var(--color-primary);
+  background: var(--gradient-primary);
   color: var(--color-text-inverse);
 }
 
@@ -442,7 +442,7 @@
     width: 8px;
     height: 8px;
     border-radius: var(--radius-full);
-    background: var(--color-primary);
+    background: var(--gradient-primary);
   }
 
   .sortSelectWrap {

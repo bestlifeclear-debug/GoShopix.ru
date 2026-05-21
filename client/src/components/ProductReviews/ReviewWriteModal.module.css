@@ -114,7 +114,7 @@
 
 .starBtn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgb(216 27 96 / 0.25);
+  box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.25);
 }
 
 .starActive {
@@ -149,9 +149,9 @@
 
 .textarea:focus {
   outline: none;
-  border-color: rgb(216 27 96 / 0.4);
+  border-color: rgb(var(--color-primary-rgb) / 0.4);
   background: #ffffff;
-  box-shadow: 0 0 0 2px rgb(216 27 96 / 0.2);
+  box-shadow: 0 0 0 2px rgb(var(--color-primary-rgb) / 0.2);
 }
 
 .textareaPros {
@@ -195,9 +195,9 @@
 
 .input:focus {
   outline: none;
-  border-color: rgb(216 27 96 / 0.4);
+  border-color: rgb(var(--color-primary-rgb) / 0.4);
   background: #ffffff;
-  box-shadow: 0 0 0 2px rgb(216 27 96 / 0.2);
+  box-shadow: 0 0 0 2px rgb(var(--color-primary-rgb) / 0.2);
 }
 
 .textareaQuestion {
@@ -238,8 +238,8 @@
 
 .dropzoneActive {
   border-color: var(--color-primary);
-  background: rgb(216 27 96 / 0.04);
-  box-shadow: 0 0 0 2px rgb(216 27 96 / 0.15);
+  background: rgb(var(--color-primary-rgb) / 0.04);
+  box-shadow: 0 0 0 2px rgb(var(--color-primary-rgb) / 0.15);
 }
 
 .dropzoneDisabled {
@@ -361,7 +361,7 @@
   padding: 12px 30px;
   border: none;
   border-radius: 9999px;
-  background: var(--color-primary);
+  background: var(--gradient-primary);
   font-family: inherit;
   font-size: 0.9375rem;
   font-weight: 600;
@@ -370,12 +370,14 @@
   transition:
     background 0.2s ease,
     box-shadow 0.2s ease,
-    transform 0.2s ease;
+    transform 0.2s ease,
+    filter 0.2s ease;
 }
 
 .btnSubmit:hover:not(:disabled) {
-  background: var(--color-primary-hover);
-  box-shadow: 0 8px 20px rgb(216 27 96 / 0.28);
+  background: var(--gradient-primary-hover);
+  box-shadow: var(--shadow-primary);
+  filter: brightness(1.03);
   transform: translateY(-1px);
 }
 

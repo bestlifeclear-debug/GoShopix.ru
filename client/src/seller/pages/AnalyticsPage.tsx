@@ -17,8 +17,8 @@ import {
 } from './analytics/mockData';
 import shared from './shared/sellerPremium.module.css';
 
-const CHART_COLOR = '#d81b60';
-const CHART_COLOR_SOFT = 'rgb(216 27 96 / 0.85)';
+const CHART_COLOR = '#ff3d2e';
+const CHART_COLOR_SOFT = 'rgb(var(--color-primary-rgb) / 0.85)';
 
 const PERIODS: AnalyticsPeriod[] = ['today', 'week', 'month'];
 
@@ -147,7 +147,7 @@ export function AnalyticsPage() {
                 tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`}
                 width={40}
               />
-              <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgb(216 27 96 / 0.06)' }} />
+              <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgb(var(--color-primary-rgb) / 0.06)' }} />
               <Bar
                 dataKey="revenue"
                 fill={CHART_COLOR_SOFT}

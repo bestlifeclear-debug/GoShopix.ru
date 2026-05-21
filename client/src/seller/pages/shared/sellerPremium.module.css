@@ -69,7 +69,7 @@
   outline: none;
   border-color: var(--color-primary);
   background-color: #ffffff;
-  box-shadow: 0 0 0 3px rgb(216 27 96 / 0.12);
+  box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.12);
 }
 
 .tableCard {
@@ -183,7 +183,7 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgb(216 27 96 / 0.08);
+  background: rgb(var(--color-primary-rgb) / 0.08);
   color: var(--color-primary);
 }
 
@@ -363,7 +363,7 @@
   outline: none;
   border-color: var(--color-primary);
   background: #ffffff;
-  box-shadow: 0 0 0 3px rgb(216 27 96 / 0.12);
+  box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.12);
 }
 
 .checkboxRow {
@@ -398,7 +398,7 @@
   padding: 12px 24px;
   border: none;
   border-radius: 10px;
-  background: var(--color-primary);
+  background: var(--gradient-primary);
   font-family: inherit;
   font-size: 0.9375rem;
   font-weight: 600;
@@ -411,8 +411,8 @@
 }
 
 .btnSave:hover {
-  background: var(--color-primary-hover);
-  box-shadow: 0 4px 12px rgb(216 27 96 / 0.25);
+  background: var(--gradient-primary-hover);
+  box-shadow: 0 4px 12px rgb(var(--color-primary-rgb) / 0.25);
   transform: translateY(-1px);
 }
 

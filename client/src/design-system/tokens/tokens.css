@@ -1,12 +1,22 @@
 /* GoShopix — 8px-сетка, токены темы (WCAG 2.1 AA: контраст текста ≥ 4.5:1) */
 :root {
-  /* Акцент: единый премиальный бордовый для CTA, кнопок, активных состояний */
-  --color-primary: #c2185b;
-  --color-primary-hover: #ad1457;
-  --color-primary-active: #880e4f;
-  --color-primary-soft: rgb(194 24 91 / 0.12);
+  /* Акцент: кораллово-оранжевый градиент (#FF7062 → #FF3D2E) */
+  --color-primary-light: #ff7062;
+  --color-primary: #ff3d2e;
+  --color-primary-hover: #ff5748;
+  --color-primary-active: #e63628;
+  --color-primary-rgb: 255 61 46;
+  --color-primary-light-rgb: 255 112 98;
+  --color-primary-soft: rgb(var(--color-primary-light-rgb) / 0.14);
+  --color-primary-border: rgb(var(--color-primary-rgb) / 0.35);
+  --color-primary-border-strong: rgb(var(--color-primary-rgb) / 0.55);
+  --gradient-primary: linear-gradient(180deg, #ff7062 0%, #ff3d2e 100%);
+  --gradient-primary-hover: linear-gradient(180deg, #ff8578 0%, #ff4f40 100%);
+  --gradient-primary-horizontal: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
+  --shadow-primary: 0 8px 24px rgb(var(--color-primary-rgb) / 0.28);
+  --shadow-primary-sm: 0 4px 14px rgb(var(--color-primary-rgb) / 0.22);
 
-  /* CTA = primary (без отдельного кораллового) */
+  /* CTA = primary gradient */
   --color-cta: var(--color-primary);
   --color-cta-hover: var(--color-primary-hover);
   --color-cta-active: var(--color-primary-active);
@@ -42,17 +52,17 @@
   --color-border: #e0e0e0;
   --color-border-focus: var(--color-primary);
 
-  --color-focus-glow: 0 0 0 3px rgb(194 24 91 / 0.22);
+  --color-focus-glow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.22);
 
-  --color-button-primary: var(--color-primary);
-  --color-button-primary-hover: var(--color-primary-hover);
+  --color-button-primary: var(--gradient-primary);
+  --color-button-primary-hover: var(--gradient-primary-hover);
 
   --shadow-sm: 0 2px 8px rgb(26 26 26 / 0.06);
   --shadow-md: 0 6px 24px rgb(26 26 26 / 0.08);
   --shadow-lg: 0 12px 40px rgb(26 26 26 / 0.1);
   --shadow-card: 0 1px 2px rgb(26 26 26 / 0.04), 0 4px 16px rgb(26 26 26 / 0.06);
   --shadow-card-hover: 0 8px 24px rgb(26 26 26 / 0.08);
-  --shadow-focus: 0 0 0 3px rgb(194 24 91 / 0.25);
+  --shadow-focus: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.25);
 
   --font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
   --font-size-caption: 0.75rem;

@@ -10,7 +10,7 @@ export default meta;
 type Story = StoryObj;
 
 const colors = [
-  { name: 'Primary', token: '--color-primary', hex: '#E31837' },
+  { name: 'Primary', token: '--color-primary', hex: '#FF3D2E' },
   { name: 'Secondary', token: '--color-secondary', hex: '#6A0DAD' },
   { name: 'Background', token: '--color-bg', hex: '#FFFFFF' },
   { name: 'Background Subtle', token: '--color-bg-subtle', hex: '#F5F5F7' },

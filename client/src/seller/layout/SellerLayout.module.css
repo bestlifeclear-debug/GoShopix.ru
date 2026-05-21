@@ -30,7 +30,7 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: rgb(216 27 96 / 0.1);
+  background: rgb(var(--color-primary-rgb) / 0.1);
   color: var(--color-primary);
 }
 
@@ -144,7 +144,7 @@
 .footerBtn:hover {
   background: #fdf2f8;
   color: #db2777;
-  box-shadow: 0 2px 8px rgb(216 27 96 / 0.12);
+  box-shadow: 0 2px 8px rgb(var(--color-primary-rgb) / 0.12);
   transform: translateY(-1px);
   text-decoration: none;
 }
@@ -155,7 +155,7 @@
 
 .footerBtn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgb(216 27 96 / 0.2);
+  box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.2);
 }
 
 .main {

@@ -22,9 +22,9 @@
 
 @media (hover: hover) {
   [data-account-lk] [data-lk-nav]:hover {
-    background-color: #d81b60 !important;
+    background-color: #ff3d2e !important;
     color: #ffffff !important;
-    box-shadow: 0 2px 10px rgb(216 27 96 / 0.28) !important;
+    box-shadow: 0 2px 10px rgb(var(--color-primary-rgb) / 0.28) !important;
     transform: translateY(-1px);
   }
 
@@ -35,9 +35,9 @@
 }
 
 [data-account-lk] [data-lk-nav][data-active='true'] {
-  background-color: #d81b60 !important;
+  background-color: #ff3d2e !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 10px rgb(216 27 96 / 0.28) !important;
+  box-shadow: 0 2px 10px rgb(var(--color-primary-rgb) / 0.28) !important;
   font-weight: 600;
 }
 
@@ -55,25 +55,25 @@
 }
 
 [data-account-lk] [data-lk-seller-cabinet] {
-  border-color: #d81b60 !important;
-  background-color: #f2dfe8 !important;
-  color: #d81b60 !important;
+  border-color: #ff3d2e !important;
+  background-color: #ffe8e4 !important;
+  color: #ff3d2e !important;
 }
 
 @media (hover: hover) {
   [data-account-lk] [data-lk-seller-cabinet]:hover {
-    background-color: #d81b60 !important;
-    border-color: #d81b60 !important;
+    background-color: #ff3d2e !important;
+    border-color: #ff3d2e !important;
     color: #ffffff !important;
-    box-shadow: 0 2px 10px rgb(216 27 96 / 0.28) !important;
+    box-shadow: 0 2px 10px rgb(var(--color-primary-rgb) / 0.28) !important;
     transform: translateY(-1px);
   }
 }
 
 [data-account-lk] [data-lk-logout] {
-  background-color: #d81b60 !important;
+  background-color: #ff3d2e !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 10px rgb(216 27 96 / 0.28) !important;
+  box-shadow: 0 2px 10px rgb(var(--color-primary-rgb) / 0.28) !important;
   font-weight: 600;
   transition:
     background-color 0.2s ease,
@@ -84,9 +84,9 @@
 
 @media (hover: hover) {
   [data-account-lk] [data-lk-logout]:hover {
-    background-color: #c2185b !important;
+    background: var(--gradient-primary) !important;
     color: #ffffff !important;
-    box-shadow: 0 4px 14px rgb(216 27 96 / 0.38) !important;
+    box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.38) !important;
     transform: translateY(-1px);
   }
 }
@@ -101,8 +101,8 @@
 
 @media (hover: hover) {
   [data-account-lk] [data-lk-reco]:hover {
-    background-color: #f2dfe8 !important;
-    box-shadow: 0 4px 14px rgb(216 27 96 / 0.22) !important;
+    background-color: #ffe8e4 !important;
+    box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.22) !important;
     transform: translateY(-3px);
     text-decoration: none !important;
   }
@@ -111,8 +111,8 @@
 /* —— Карточки заказов на главной ЛК —— */
 @media (hover: hover) {
   [data-account-lk] [data-lk-order-card]:hover {
-    background-color: #f2dfe8 !important;
-    box-shadow: 0 4px 14px rgb(216 27 96 / 0.22) !important;
+    background-color: #ffe8e4 !important;
+    box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.22) !important;
     transform: translateY(-2px);
   }
 }

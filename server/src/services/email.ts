@@ -30,7 +30,7 @@ function buildHtml(ctx: OrderStatusEmailContext): { subject: string; html: strin
     .filter(Boolean)
     .join('\n');
 
-  const color = def?.color ?? '#E31837';
+  const color = def?.color ?? '#FF3D2E';
   const html = `
 <!DOCTYPE html>
 <html>

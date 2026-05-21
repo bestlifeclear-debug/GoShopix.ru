@@ -252,9 +252,10 @@
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
   transition:
-    background-color var(--transition-ui),
+    background var(--transition-ui),
     box-shadow var(--transition-ui),
-    transform var(--transition-ui);
+    transform var(--transition-ui),
+    filter var(--transition-ui);
 }
 
 .cartBtn:hover:not(:disabled) {
@@ -269,7 +270,8 @@
 
 .cartBtn:active:not(:disabled) {
   transform: scale(0.9);
-  background: var(--color-primary-active);
+  background: var(--gradient-primary);
+  filter: brightness(0.96);
 }
 
 .cartBtnLoading {

@@ -16,10 +16,10 @@
 }
 
 .tariffCardCurrent {
-  border-color: rgb(216 27 96 / 0.35);
+  border-color: rgb(var(--color-primary-rgb) / 0.35);
   box-shadow:
     0 1px 3px rgb(15 23 42 / 0.06),
-    0 0 0 1px rgb(216 27 96 / 0.08);
+    0 0 0 1px rgb(var(--color-primary-rgb) / 0.08);
 }
 
 .tariffCardMuted {

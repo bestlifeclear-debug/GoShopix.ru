@@ -70,7 +70,7 @@
   width: 40px;
   height: 40px;
   border-radius: var(--radius-md);
-  background: var(--color-primary);
+  background: var(--gradient-primary);
   color: var(--color-text-inverse);
   font-weight: var(--font-weight-bold);
 }
@@ -88,7 +88,7 @@
   padding: 10px 20px;
   border: none;
   border-radius: var(--radius-md);
-  background: var(--color-primary);
+  background: var(--gradient-primary);
   color: #ffffff;
   font-family: inherit;
   font-size: var(--font-size-sm);
@@ -121,7 +121,7 @@
 }
 
 .catalogBtn:hover {
-  background: var(--color-primary-hover);
+  background: var(--gradient-primary-hover);
 }
 
 .catalogBtnActive {
@@ -163,7 +163,7 @@
   height: 40px;
   padding: 0 6px;
   border-radius: var(--radius-md);
-  background: var(--color-primary);
+  background: var(--gradient-primary);
   border: none;
   box-sizing: border-box;
   transition:
@@ -172,7 +172,7 @@
 }
 
 .actionsTray:hover {
-  background: var(--color-primary-hover);
+  background: var(--gradient-primary-hover);
 }
 
 .actionIcon {

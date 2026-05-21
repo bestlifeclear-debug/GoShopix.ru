@@ -14,13 +14,13 @@
   --lk-nav-item-color: #1a1a1a;
   --lk-nav-icon-color: #5c5c5c;
   --lk-nav-icon-bg: #f7f7f8;
-  --lk-nav-primary-bg: var(--color-primary);
-  --lk-nav-primary-hover: var(--color-primary-hover);
+  --lk-nav-primary-bg: var(--gradient-primary);
+  --lk-nav-primary-hover: var(--gradient-primary-hover);
   --lk-nav-on-primary: #ffffff;
   --lk-nav-fill: var(--color-primary-soft);
-  --lk-nav-shadow: 0 2px 10px rgb(216 27 96 / 0.25);
+  --lk-nav-shadow: 0 2px 10px rgb(var(--color-primary-rgb) / 0.25);
   --lk-hover-bg: var(--color-primary-soft);
-  --lk-hover-border: rgb(194 24 91 / 0.22);
+  --lk-hover-border: rgb(var(--color-primary-rgb) / 0.22);
   --lk-pastel: var(--color-primary-soft);
   --lk-pastel-bg: var(--color-primary-soft);
   --lk-bg: #ffffff;
@@ -31,24 +31,24 @@
   --lk-text: #1a1a1a;
   --lk-text-muted: #5c5c5c;
   --lk-empty-bg: var(--color-primary-soft);
-  --lk-empty-border: rgb(194 24 91 / 0.28);
+  --lk-empty-border: rgb(var(--color-primary-rgb) / 0.28);
   --lk-footer-text: #5c5c5c;
 }
 
 [data-account-lk].theme-dark {
-  --lk-accent: #e85a7a;
-  --lk-accent-hover: #f0708e;
-  --lk-accent-soft: rgb(232 90 122 / 0.18);
+  --lk-accent: #ff7062;
+  --lk-accent-hover: #ff8578;
+  --lk-accent-soft: rgb(var(--color-primary-light-rgb) / 0.18);
   --lk-nav-item-color: #d4d4d8;
   --lk-nav-icon-color: #d4d4d8;
   --lk-nav-icon-bg: #2a2a2a;
-  --lk-nav-primary-bg: var(--color-primary);
-  --lk-nav-primary-hover: #e91e63;
+  --lk-nav-primary-bg: var(--gradient-primary);
+  --lk-nav-primary-hover: var(--gradient-primary-hover);
   --lk-nav-on-primary: #ffffff;
-  --lk-nav-fill: rgb(216 27 96 / 0.2);
+  --lk-nav-fill: rgb(var(--color-primary-rgb) / 0.2);
   --lk-nav-shadow: 0 2px 12px rgb(0 0 0 / 0.4);
-  --lk-hover-bg: rgb(232 90 122 / 0.14);
-  --lk-hover-border: rgb(232 90 122 / 0.35);
+  --lk-hover-bg: rgb(var(--color-primary-light-rgb) / 0.14);
+  --lk-hover-border: rgb(var(--color-primary-rgb) / 0.35);
   --lk-pastel: #4a3a42;
   --lk-pastel-bg: #242424;
   --lk-bg: #121212;
@@ -317,7 +317,7 @@
 
 .logoutBtn:hover {
   background: var(--lk-nav-primary-hover);
-  box-shadow: 0 4px 14px rgb(216 27 96 / 0.35);
+  box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.35);
   transform: translateY(-1px);
 }
 
@@ -620,7 +620,7 @@
 }
 
 .recoCard:hover .recoImg {
-  box-shadow: 0 4px 12px rgb(216 27 96 / 0.15);
+  box-shadow: 0 4px 12px rgb(var(--color-primary-rgb) / 0.15);
 }
 
 .recoCard:active {
