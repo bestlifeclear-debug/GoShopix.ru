@@ -71,7 +71,7 @@ const SLIDES = [
     text: 'Соберите корзину и получите доставку в ПВЗ за 0 ₽.',
     image: '/product-images/street-run-sneakers-1.svg',
     imageAlt: 'Кроссовки',
-    cta: { to: '/catalog', label: 'Купить со скидкой' },
+    cta: { to: '/catalog', label: 'Перейти в каталог' },
   },
 ] as const;
 
