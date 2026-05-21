@@ -85,6 +85,26 @@ export function Header({
             <span className={styles.logoText}>GoShopix</span>
           </Link>
           <div className={styles.searchGroup}>{searchSlot}</div>
+          <div className={styles.topActions}>
+            {extraActions}
+            <Link to={favoritesTo} className={styles.topIconBtn} aria-label="Избранное">
+              <IconHeart className={styles.topActionIcon} strokeWidth={1.5} />
+            </Link>
+            <button
+              type="button"
+              className={styles.topIconBtn}
+              onClick={onCartClick}
+              aria-label={`Корзина, ${cartCount} товаров`}
+            >
+              <IconCart className={styles.topActionIcon} strokeWidth={1.5} />
+              {cartCount > 0 && (
+                <span className={styles.topCartBadge}>{cartCount > 99 ? '99+' : cartCount}</span>
+              )}
+            </button>
+            <Link to={accountTo} className={styles.topIconBtn} aria-label={accountLabel}>
+              <IconUser className={styles.topActionIcon} strokeWidth={1.5} />
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -129,26 +149,6 @@ export function Header({
 
           <div className={styles.navRight}>
             {deliverySlot ? <div className={styles.navDeliverySlot}>{deliverySlot}</div> : null}
-            <div className={styles.navActions}>
-              {extraActions}
-              <Link to={favoritesTo} className={styles.navIconBtn} aria-label="Избранное">
-                <IconHeart className={styles.actionIcon} strokeWidth={1.5} />
-              </Link>
-              <button
-                type="button"
-                className={styles.navIconBtn}
-                onClick={onCartClick}
-                aria-label={`Корзина, ${cartCount} товаров`}
-              >
-                <IconCart className={styles.actionIcon} strokeWidth={1.5} />
-                {cartCount > 0 && (
-                  <span className={styles.cartBadge}>{cartCount > 99 ? '99+' : cartCount}</span>
-                )}
-              </button>
-              <Link to={accountTo} className={styles.navIconBtn} aria-label={accountLabel}>
-                <IconUser className={styles.actionIcon} strokeWidth={1.5} />
-              </Link>
-            </div>
           </div>
         </div>
       </nav>
