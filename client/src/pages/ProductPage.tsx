@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CreditCard, RotateCcw, ShieldCheck, Store } from 'lucide-react';
+import { CreditCard, Package, RotateCcw, ShieldCheck, Store, Truck } from 'lucide-react';
 import { formatPrice } from '@goshopix/shared';
 import { favoritesApi, productsApi } from '../api/index';
 import type { ProductDetail, ProductListItem, ProductVariant } from '../api/types';
@@ -374,33 +374,49 @@ export function ProductPage() {
                   )}
                 </div>
 
-                {[...optionGroups.entries()].map(([name, values]) => (
-                  <div key={name} className={styles.optionGroup}>
-                    <span className={styles.optionLabel}>{name}</span>
-                    <div className={styles.optionValues}>
-                      {values.map((val) => (
-                        <button
-                          key={val}
-                          type="button"
-                          className={`${styles.optionBtn} ${selectedOptions[name] === val ? styles.optionActive : ''}`}
-                          onClick={() => setSelectedOptions((o) => ({ ...o, [name]: val }))}
-                        >
-                          {val}
-                        </button>
-                      ))}
+                {[...optionGroups.entries()].map(([name, values]) => {
+                  const isSizeGroup =
+                    name === 'Размер' || values.some((v) => /\d+\s*мм/i.test(v));
+                  return (
+                    <div key={name} className={styles.optionGroup}>
+                      <span className={styles.optionLabel}>{name}</span>
+                      <div className={styles.optionValues}>
+                        {values.map((val) => (
+                          <button
+                            key={val}
+                            type="button"
+                            className={`${styles.optionBtn} ${isSizeGroup ? styles.optionBtnCompact : ''} ${selectedOptions[name] === val ? styles.optionActive : ''}`}
+                            onClick={() => setSelectedOptions((o) => ({ ...o, [name]: val }))}
+                          >
+                            {val}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 {selectedVariant && <StockStatus stock={selectedVariant.stock} />}
 
                 <div className={styles.deliveryCard}>
                   <h3 className={styles.deliveryTitle}>Доставка</h3>
-                  <p>
+                  <p className={styles.deliveryMain}>
                     По России: <strong>{deliveryPromise}</strong>
                   </p>
-                  <p>Курьер или пункт выдачи — бесплатно от 2 000 ₽</p>
-                  <p className={styles.deliveryNote}>Возврат в течение 14 дней</p>
+                  <ul className={styles.deliveryList}>
+                    <li className={styles.deliveryItem}>
+                      <Truck size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
+                      <span>Курьер — бесплатно от 2 000 ₽</span>
+                    </li>
+                    <li className={styles.deliveryItem}>
+                      <Package size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
+                      <span>Пункт выдачи — бесплатно от 2 000 ₽</span>
+                    </li>
+                    <li className={`${styles.deliveryItem} ${styles.deliveryItemMuted}`}>
+                      <RotateCcw size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
+                      <span>Возврат в течение 14 дней</span>
+                    </li>
+                  </ul>
                 </div>
 
                 {product.store && (
