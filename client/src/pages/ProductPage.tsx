@@ -250,22 +250,20 @@ export function ProductPage() {
       <PageContainer>
         <div className={styles.page} aria-busy="true" aria-label="Загрузка товара">
           <div className={styles.grid}>
-            <div className={styles.colLeft}>
-              <div className={styles.skeletonGallery} />
-              <div className={styles.skeletonBlock} />
+            <div className={styles.skeletonGallery} />
+            <div className={styles.skeletonMeta}>
+              <span className={styles.skeletonLine} />
+              <span className={`${styles.skeletonLine} ${styles.skeletonLineLg}`} />
+              <span className={styles.skeletonLine} />
             </div>
             <aside className={styles.aside}>
-              <div className={styles.skeletonMeta}>
-                <span className={styles.skeletonLine} />
-                <span className={`${styles.skeletonLine} ${styles.skeletonLineLg}`} />
-                <span className={styles.skeletonLine} />
-              </div>
               <div className={styles.skeletonBuyBox}>
                 <span className={`${styles.skeletonLine} ${styles.skeletonLinePrice}`} />
                 <span className={styles.skeletonBlock} />
                 <span className={styles.skeletonBtn} />
               </div>
             </aside>
+            <div className={styles.skeletonBlock} />
           </div>
           <section className={styles.related} aria-hidden>
             <span className={styles.skeletonSectionTitle} />
@@ -305,48 +303,11 @@ export function ProductPage() {
     <PageContainer>
       <div className={`${styles.page} ${showMobileBar ? styles.pageWithMobileBar : ''}`}>
         <div className={styles.grid}>
-          <div className={styles.colLeft}>
-            <div className={styles.galleryFrame}>
-              <ImageGallery images={images} name={product.name} />
-            </div>
-
-            <div className={styles.colLeftDetails}>
-              <div className={styles.detailsCard}>
-                <h2 className={styles.detailsTitle}>Описание</h2>
-                <p className={styles.detailsText}>{product.description || 'Описание отсутствует.'}</p>
-              </div>
-
-              <div className={styles.detailsCard}>
-                <h2 className={styles.detailsTitle}>Характеристики</h2>
-                <table className={styles.specTable}>
-                  <tbody>
-                    {product.brand && (
-                      <tr>
-                        <th>Бренд</th>
-                        <td>{product.brand}</td>
-                      </tr>
-                    )}
-                    {product.attributes.map((a) => (
-                      <tr key={a.slug}>
-                        <th>{a.name}</th>
-                        <td>{a.value}</td>
-                      </tr>
-                    ))}
-                    {selectedVariant?.options.map((o) => (
-                      <tr key={o.id}>
-                        <th>{o.name}</th>
-                        <td>{o.value}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
-            </div>
+          <div className={styles.galleryFrame}>
+            <ImageGallery images={images} name={product.name} />
           </div>
 
-          <aside className={styles.aside}>
+          <div className={styles.productInfo}>
             <div className={styles.productMeta}>
               {product.brand && <p className={styles.brand}>{product.brand}</p>}
               <h1 className={styles.name}>{product.name}</h1>
@@ -360,6 +321,26 @@ export function ProductPage() {
               </div>
             </div>
 
+            {[...optionGroups.entries()].map(([name, values]) => (
+              <div key={name} className={styles.optionGroup}>
+                <span className={styles.optionLabel}>{name}</span>
+                <div className={styles.optionValues}>
+                  {values.map((val) => (
+                    <button
+                      key={val}
+                      type="button"
+                      className={`${styles.optionBtn} ${selectedOptions[name] === val ? styles.optionActive : ''}`}
+                      onClick={() => setSelectedOptions((o) => ({ ...o, [name]: val }))}
+                    >
+                      {val}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <aside className={styles.aside}>
             <div className={styles.asideSticky}>
               <div ref={buyBoxRef} className={styles.buyBox}>
                 <div className={styles.priceBlock}>
@@ -373,24 +354,6 @@ export function ProductPage() {
                     </>
                   )}
                 </div>
-
-                {[...optionGroups.entries()].map(([name, values]) => (
-                  <div key={name} className={styles.optionGroup}>
-                    <span className={styles.optionLabel}>{name}</span>
-                    <div className={styles.optionValues}>
-                      {values.map((val) => (
-                        <button
-                          key={val}
-                          type="button"
-                          className={`${styles.optionBtn} ${selectedOptions[name] === val ? styles.optionActive : ''}`}
-                          onClick={() => setSelectedOptions((o) => ({ ...o, [name]: val }))}
-                        >
-                          {val}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
 
                 {selectedVariant && <StockStatus stock={selectedVariant.stock} />}
 
@@ -439,6 +402,41 @@ export function ProductPage() {
               </div>
             </div>
           </aside>
+
+          <div className={styles.colLeftDetails}>
+            <div className={styles.detailsCard}>
+              <h2 className={styles.detailsTitle}>Описание</h2>
+              <p className={styles.detailsText}>{product.description || 'Описание отсутствует.'}</p>
+            </div>
+
+            <div className={styles.detailsCard}>
+              <h2 className={styles.detailsTitle}>Характеристики</h2>
+              <table className={styles.specTable}>
+                <tbody>
+                  {product.brand && (
+                    <tr>
+                      <th>Бренд</th>
+                      <td>{product.brand}</td>
+                    </tr>
+                  )}
+                  {product.attributes.map((a) => (
+                    <tr key={a.slug}>
+                      <th>{a.name}</th>
+                      <td>{a.value}</td>
+                    </tr>
+                  ))}
+                  {selectedVariant?.options.map((o) => (
+                    <tr key={o.id}>
+                      <th>{o.name}</th>
+                      <td>{o.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
+          </div>
         </div>
 
         <div
