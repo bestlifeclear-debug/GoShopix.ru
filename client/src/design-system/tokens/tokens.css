@@ -13,18 +13,18 @@
   --gradient-primary: linear-gradient(180deg, #ff7062 0%, #ff3d2e 100%);
   --gradient-primary-hover: linear-gradient(180deg, #ff8578 0%, #ff4f40 100%);
   --gradient-primary-horizontal: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
-  /* Баннер главной: приглушённый градиент бренда, лучше для длительного просмотра */
-  --hero-banner-gradient: linear-gradient(128deg, #d97362 0%, #c45c4f 46%, #a8483f 100%);
+  /* Баннер главной: живой коралл бренда, без тёмного «затемнения» */
+  --hero-banner-gradient: linear-gradient(118deg, #ff8a7d 0%, #ff7062 42%, #ff4f42 100%);
   --hero-banner-overlay: linear-gradient(
     165deg,
-    rgb(255 255 255 / 0.06) 0%,
-    rgb(55 32 28 / 0.18) 55%,
-    rgb(35 22 20 / 0.32) 100%
+    rgb(255 255 255 / 0.14) 0%,
+    transparent 45%,
+    rgb(255 61 46 / 0.08) 100%
   );
   --hero-banner-text: #ffffff;
-  --hero-banner-text-muted: rgb(255 255 255 / 0.9);
-  --hero-banner-cta-bg: #fffaf8;
-  --hero-banner-cta-text: #9e4238;
+  --hero-banner-text-muted: rgb(255 255 255 / 0.94);
+  --hero-banner-cta-bg: #ffffff;
+  --hero-banner-cta-text: #ff3d2e;
   --hero-banner-cta-hover-bg: #ffffff;
   --shadow-primary: 0 8px 24px rgb(var(--color-primary-rgb) / 0.28);
   --shadow-primary-sm: 0 4px 14px rgb(var(--color-primary-rgb) / 0.22);
