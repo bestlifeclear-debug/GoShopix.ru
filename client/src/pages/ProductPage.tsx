@@ -11,13 +11,13 @@ import { Button, ProductCardSkeleton, StarRating } from '../design-system';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
-import { ApiClientError } from '../api/client';
+import { mapApiError } from '../api/mapApiError';
 import { PageContainer } from '../components/layout/PageContainer';
 import { ProductReviews } from '../components/ProductReviews/ProductReviews';
 import { ProductQa } from '../components/ProductQa/ProductQa';
 import { QuestionWriteModal } from '../components/ProductQa/QuestionWriteModal';
 import { track } from '../lib/analytics';
-import { useToastStore } from '../stores/toastStore';
+import { showInfoToast } from '../stores/toastStore';
 import styles from './ProductPage.module.css';
 
 const TRUST_SIGNALS = [
@@ -103,8 +103,6 @@ export function ProductPage() {
 
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
-  const showToast = useToastStore((s) => s.show);
-
   const questionAuthorName =
     [user?.profile?.firstName, user?.profile?.lastName].filter(Boolean).join(' ') ||
     user?.profile?.username ||
@@ -222,7 +220,7 @@ export function ProductPage() {
       setMsg('Добавлено в корзину');
       if (!token) openDrawer();
     } catch (e) {
-      setMsg(e instanceof ApiClientError ? e.message : 'Ошибка');
+      setMsg(mapApiError(e, 'Не удалось добавить в корзину'));
     }
   };
 
@@ -252,7 +250,7 @@ export function ProductPage() {
       await addToCart(variant.id, 1, snapshotFromDetail(detail, variant));
       if (!token) openDrawer();
     } catch (e) {
-      setMsg(e instanceof ApiClientError ? e.message : 'Ошибка');
+      setMsg(mapApiError(e, 'Не удалось добавить в корзину'));
     }
   };
 
@@ -536,7 +534,7 @@ export function ProductPage() {
                 encodeURIComponent(window.location.pathname + window.location.search),
             );
           }}
-          onSubmit={() => showToast('Вопрос отправлен')}
+          onSubmit={() => showInfoToast('Вопрос отправлен. Ответ появится после модерации.')}
         />
 
         {similar.length > 0 && (

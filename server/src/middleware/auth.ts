@@ -45,5 +45,5 @@ export function requireRole(...roles: UserRole[]) {
   };
 }
 
-/** Покупательские эндпоинты: CUSTOMER и ADMIN */
-export const requireCustomer = [authenticate, requireRole('CUSTOMER', 'ADMIN')];
+/** Покупательские эндпоинты: покупатель, продавец (тоже может покупать) и админ */
+export const requireCustomer = [authenticate, requireRole('CUSTOMER', 'SELLER', 'ADMIN')];

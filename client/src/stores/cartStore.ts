@@ -19,7 +19,7 @@ import {
   optimisticRemoveItem,
   optimisticUpdateQuantity,
 } from '../lib/optimisticCart.js';
-import { showCartAddedToast } from './toastStore.js';
+import { showCartAddedToast, showInfoToast } from './toastStore.js';
 import { track } from '../lib/analytics.js';
 import { useAuthStore } from './authStore.js';
 
@@ -140,10 +140,9 @@ export const useCartStore = create<CartState>((set, get) => ({
         showCartAddedToast();
         track('add_to_cart', { variantId, quantity });
       } catch (e) {
-        set({
-          cart: previousCart,
-          error: e instanceof ApiClientError ? e.message : 'Ошибка',
-        });
+        const message = mapApiError(e, 'Не удалось добавить в корзину');
+        set({ cart: previousCart, error: message });
+        showInfoToast(message);
         throw e;
       } finally {
         set({ pendingCartOps: Math.max(0, get().pendingCartOps - 1) });
