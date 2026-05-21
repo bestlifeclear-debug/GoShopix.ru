@@ -120,14 +120,15 @@ export function CartPage() {
 
   if (!token) return null;
 
-  const isEmpty = cart && cart.items.length === 0;
+  const showInitialLoader = isLoading && cart === null;
+  const isEmpty = !showInitialLoader && (cart?.items.length ?? 0) === 0;
 
   return (
     <PageContainer>
       <div className={styles.page}>
         <h1 className={styles.title}>Корзина</h1>
 
-        {isLoading && !cart && <Loader variant="block" label="Загружаем корзину…" />}
+        {showInitialLoader && <Loader variant="block" label="Загружаем корзину…" />}
 
         {isEmpty && (
           <>

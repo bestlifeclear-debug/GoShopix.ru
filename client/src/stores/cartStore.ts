@@ -28,6 +28,8 @@ interface CartState {
   guestItems: GuestCartLine[];
   drawerOpen: boolean;
   isLoading: boolean;
+  /** Блокирует fetchCart, пока идёт add/update/remove — иначе сервер затирает оптимистичное состояние */
+  pendingCartOps: number;
   error: string | null;
   initGuestCart: () => void;
   openDrawer: () => void;
@@ -50,6 +52,7 @@ export const useCartStore = create<CartState>((set, get) => ({
   guestItems: [],
   drawerOpen: false,
   isLoading: false,
+  pendingCartOps: 0,
   error: null,
 
   initGuestCart: () => {
@@ -76,12 +79,22 @@ export const useCartStore = create<CartState>((set, get) => ({
   fetchCart: async () => {
     if (!isAuthenticated()) {
       const guestItems = loadGuestCart();
-      set({ cart: null, guestItems });
+      set({ cart: null, guestItems, isLoading: false });
       return;
     }
-    set({ isLoading: true, error: null });
+
+    if (get().pendingCartOps > 0) {
+      return;
+    }
+
+    const showLoading = get().cart === null;
+    set({ isLoading: showLoading, error: null });
     try {
       const cart = await cartApi.get();
+      if (get().pendingCartOps > 0) {
+        set({ isLoading: false });
+        return;
+      }
       set({ cart, isLoading: false });
     } catch (e) {
       if (e instanceof ApiClientError && e.status === 401) {
@@ -113,6 +126,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   addToCart: async (variantId, quantity = 1, snapshot) => {
     if (isAuthenticated()) {
+      set({ pendingCartOps: get().pendingCartOps + 1 });
       const previousCart = get().cart;
       if (snapshot) {
         set({
@@ -131,6 +145,8 @@ export const useCartStore = create<CartState>((set, get) => ({
           error: e instanceof ApiClientError ? e.message : 'Ошибка',
         });
         throw e;
+      } finally {
+        set({ pendingCartOps: Math.max(0, get().pendingCartOps - 1) });
       }
       return;
     }
@@ -148,6 +164,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   updateQuantity: async (itemId, quantity) => {
     if (isAuthenticated()) {
+      set({ pendingCartOps: get().pendingCartOps + 1 });
       const previousCart = get().cart;
       if (previousCart) {
         set({ cart: optimisticUpdateQuantity(previousCart, itemId, quantity) });
@@ -158,6 +175,8 @@ export const useCartStore = create<CartState>((set, get) => ({
       } catch (e) {
         set({ cart: previousCart });
         throw e;
+      } finally {
+        set({ pendingCartOps: Math.max(0, get().pendingCartOps - 1) });
       }
       return;
     }
@@ -169,6 +188,7 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   removeItem: async (itemId) => {
     if (isAuthenticated()) {
+      set({ pendingCartOps: get().pendingCartOps + 1 });
       const previousCart = get().cart;
       if (previousCart) {
         set({ cart: optimisticRemoveItem(previousCart, itemId) });
@@ -179,6 +199,8 @@ export const useCartStore = create<CartState>((set, get) => ({
       } catch (e) {
         set({ cart: previousCart });
         throw e;
+      } finally {
+        set({ pendingCartOps: Math.max(0, get().pendingCartOps - 1) });
       }
       return;
     }
