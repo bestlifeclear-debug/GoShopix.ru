@@ -12,7 +12,7 @@
 }
 
 [data-account-lk] [data-lk-nav]:not([data-active='true']) {
-  color: #1a1a1a;
+  color: #0f172a;
 }
 
 [data-account-lk] [data-lk-nav-icon] {
@@ -22,7 +22,7 @@
 
 @media (hover: hover) {
   [data-account-lk] [data-lk-nav]:hover {
-    background-color: #ff5748 !important;
+    background-color: #ff6356 !important;
     color: #ffffff !important;
   }
 
@@ -33,7 +33,7 @@
 }
 
 [data-account-lk] [data-lk-nav][data-active='true'] {
-  background-color: #ff3d2e !important;
+  background-color: #ff4d3d !important;
   color: #ffffff !important;
   box-shadow: 0 2px 10px rgb(var(--color-primary-rgb) / 0.28) !important;
   font-weight: 600;
@@ -53,21 +53,21 @@
 }
 
 [data-account-lk] [data-lk-seller-cabinet] {
-  border-color: #ff3d2e !important;
+  border-color: #ff4d3d !important;
   background-color: #ffe8e4 !important;
-  color: #ff3d2e !important;
+  color: #ff4d3d !important;
 }
 
 @media (hover: hover) {
   [data-account-lk] [data-lk-seller-cabinet]:hover {
-    background-color: #ff3d2e !important;
-    border-color: #ff3d2e !important;
+    background-color: #ff4d3d !important;
+    border-color: #ff4d3d !important;
     color: #ffffff !important;
   }
 }
 
 [data-account-lk] [data-lk-logout] {
-  background-color: #ff3d2e !important;
+  background-color: #ff4d3d !important;
   color: #ffffff !important;
   box-shadow: 0 2px 10px rgb(var(--color-primary-rgb) / 0.28) !important;
   font-weight: 600;
@@ -80,7 +80,7 @@
 
 @media (hover: hover) {
   [data-account-lk] [data-lk-logout]:hover {
-    background-color: #ff5748 !important;
+    background-color: #ff6356 !important;
     color: #ffffff !important;
   }
 }

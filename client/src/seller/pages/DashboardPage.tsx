@@ -19,7 +19,7 @@ import {
 } from './dashboard/mockData';
 import styles from './DashboardPage.module.css';
 
-const CHART_COLOR = '#ff3d2e';
+const CHART_COLOR = '#ff4d3d';
 const CHART_COLOR_SOFT = 'rgb(var(--color-primary-rgb) / 0.85)';
 
 function ChartTooltip({

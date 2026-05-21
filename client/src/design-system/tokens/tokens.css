@@ -1,30 +1,35 @@
 /* GoShopix — 8px-сетка, токены темы (WCAG 2.1 AA: контраст текста ≥ 4.5:1) */
 :root {
-  /* Акцент: кораллово-оранжевый градиент (#FF7062 → #FF3D2E) */
-  --color-primary-light: #ff7062;
-  --color-primary: #ff3d2e;
-  --color-primary-hover: #ff5748;
-  --color-primary-active: #e63628;
-  --color-primary-rgb: 255 61 46;
-  --color-primary-light-rgb: 255 112 98;
-  --color-primary-soft: rgb(var(--color-primary-light-rgb) / 0.14);
-  --color-primary-border: rgb(var(--color-primary-rgb) / 0.35);
-  --color-primary-border-strong: rgb(var(--color-primary-rgb) / 0.55);
-  --gradient-primary: linear-gradient(180deg, #ff7062 0%, #ff3d2e 100%);
-  --gradient-primary-hover: linear-gradient(180deg, #ff8578 0%, #ff4f40 100%);
-  --gradient-primary-horizontal: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
-  /* Баннер главной: живой коралл бренда, без тёмного «затемнения» */
-  --hero-banner-gradient: linear-gradient(118deg, #ff8a7d 0%, #ff7062 42%, #ff4f42 100%);
+  /* Вариант C — «Свежий marketplace 2025»: flat CTA + градиенты только в маркетинге */
+  --color-primary-light: #ff7a6b;
+  --color-primary: #ff4d3d;
+  --color-primary-hover: #ff6356;
+  --color-primary-active: #e64538;
+  --color-primary-rgb: 255 77 61;
+  --color-primary-light-rgb: 255 122 107;
+  --color-primary-soft: rgb(var(--color-primary-rgb) / 0.1);
+  --color-primary-border: rgb(var(--color-primary-rgb) / 0.32);
+  --color-primary-border-strong: rgb(var(--color-primary-rgb) / 0.5);
+  /* Маркетинговые градиенты (баннер, прогресс, плейсхолдеры) — не на flat-кнопках */
+  --gradient-marketing: linear-gradient(90deg, #ff7a6b 0%, #ff4d3d 100%);
+  --gradient-marketing-soft: linear-gradient(160deg, #fff5f3 0%, #ffe8e4 48%, #f8fafc 100%);
+  --gradient-product-media: linear-gradient(135deg, #ff7a6b 0%, #ffb199 100%);
+  --gradient-primary: var(--gradient-marketing);
+  --gradient-primary-hover: linear-gradient(90deg, #ff8f82 0%, #ff6356 100%);
+  --gradient-primary-horizontal: var(--gradient-marketing);
+  /* Hero: brand-gradient + лёгкий оверлей (≈0.9 поверх визуала) */
+  --hero-banner-gradient: linear-gradient(118deg, #ff7a6b 0%, #ff6356 40%, #ff4d3d 100%);
   --hero-banner-overlay: linear-gradient(
     165deg,
     rgb(255 255 255 / 0.14) 0%,
-    transparent 45%,
-    rgb(255 61 46 / 0.08) 100%
+    transparent 42%,
+    rgb(15 23 42 / 0.08) 100%
   );
+  --hero-banner-sheen-opacity: 0.92;
   --hero-banner-text: #ffffff;
   --hero-banner-text-muted: rgb(255 255 255 / 0.94);
   --hero-banner-cta-bg: #ffffff;
-  --hero-banner-cta-text: #ff3d2e;
+  --hero-banner-cta-text: #ff4d3d;
   --hero-banner-cta-hover-bg: #fff5f3;
   --shadow-primary: 0 8px 24px rgb(var(--color-primary-rgb) / 0.28);
   --shadow-primary-sm: 0 4px 14px rgb(var(--color-primary-rgb) / 0.22);
@@ -36,17 +41,17 @@
 
   /* Header: белый фон, тонкая граница */
   --color-header-bg: #ffffff;
-  --color-header-border: #eeeeee;
+  --color-header-border: #e2e8f0;
   /* Пульт иконок в шапке (slate-50 / gray-100) */
   --color-actions-tray-bg: #f8fafc;
 
   --color-bg: #ffffff;
-  --color-bg-subtle: #fafafa;
+  --color-bg-subtle: #f8fafc;
   --color-bg-elevated: #ffffff;
   --color-surface-card: #ffffff;
 
-  --color-text: #1a1a1a;
-  --color-text-muted: #5c5c5c;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
   --color-text-inverse: #ffffff;
 
   /* Скидки: контрастный красный на бледном фоне */
@@ -62,7 +67,7 @@
   --color-error: #c62828;
   --color-error-bg: #ffebee;
 
-  --color-border: #e0e0e0;
+  --color-border: #e2e8f0;
   --color-border-focus: var(--color-primary);
 
   --color-focus-glow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.22);

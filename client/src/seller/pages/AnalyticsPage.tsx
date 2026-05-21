@@ -17,7 +17,7 @@ import {
 } from './analytics/mockData';
 import shared from './shared/sellerPremium.module.css';
 
-const CHART_COLOR = '#ff3d2e';
+const CHART_COLOR = '#ff4d3d';
 const CHART_COLOR_SOFT = 'rgb(var(--color-primary-rgb) / 0.85)';
 
 const PERIODS: AnalyticsPeriod[] = ['today', 'week', 'month'];

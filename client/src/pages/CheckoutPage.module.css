@@ -73,7 +73,7 @@
   display: block;
   height: 100%;
   width: var(--step-progress);
-  background: var(--gradient-primary);
+  background: var(--gradient-marketing);
   border-radius: inherit;
   transition: width 280ms ease;
 }
@@ -106,7 +106,7 @@
 }
 
 .stepDone .stepDot {
-  background: var(--gradient-primary);
+  background: var(--color-primary);
   border-color: var(--color-primary);
 }
 
@@ -118,7 +118,7 @@
   width: 18px;
   height: 18px;
   transform: scale(1.06);
-  background: var(--gradient-primary);
+  background: var(--color-primary);
   border-color: var(--color-primary);
   border-width: 2px;
   box-shadow:

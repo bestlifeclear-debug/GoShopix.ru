@@ -11,9 +11,9 @@
   --lk-accent: var(--color-primary);
   --lk-accent-hover: var(--color-primary-hover);
   --lk-accent-soft: var(--color-primary-soft);
-  --lk-nav-item-color: #1a1a1a;
-  --lk-nav-icon-color: #5c5c5c;
-  --lk-nav-icon-bg: #f7f7f8;
+  --lk-nav-item-color: #0f172a;
+  --lk-nav-icon-color: #64748b;
+  --lk-nav-icon-bg: #f8fafc;
   --lk-nav-primary-bg: var(--color-button-primary);
   --lk-nav-primary-hover: var(--color-button-primary-hover);
   --lk-nav-on-primary: #ffffff;
@@ -24,20 +24,20 @@
   --lk-pastel: var(--color-primary-soft);
   --lk-pastel-bg: var(--color-primary-soft);
   --lk-bg: #ffffff;
-  --lk-bg-muted: #f7f7f8;
+  --lk-bg-muted: #f8fafc;
   --lk-surface: #ffffff;
   --lk-surface-raised: #ffffff;
-  --lk-border: #e0e0e0;
-  --lk-text: #1a1a1a;
-  --lk-text-muted: #5c5c5c;
+  --lk-border: #e2e8f0;
+  --lk-text: #0f172a;
+  --lk-text-muted: #64748b;
   --lk-empty-bg: var(--color-primary-soft);
   --lk-empty-border: rgb(var(--color-primary-rgb) / 0.28);
   --lk-footer-text: #5c5c5c;
 }
 
 [data-account-lk].theme-dark {
-  --lk-accent: #ff7062;
-  --lk-accent-hover: #ff8578;
+  --lk-accent: #ff4d3d;
+  --lk-accent-hover: #ff6356;
   --lk-accent-soft: rgb(var(--color-primary-light-rgb) / 0.18);
   --lk-nav-item-color: #d4d4d8;
   --lk-nav-icon-color: #d4d4d8;

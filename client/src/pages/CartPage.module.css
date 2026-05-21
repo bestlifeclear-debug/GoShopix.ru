@@ -286,7 +286,7 @@
 .deliveryProgressFill {
   height: 100%;
   border-radius: var(--radius-full);
-  background: var(--gradient-primary);
+  background: var(--gradient-marketing);
   transition: width var(--transition-base);
 }
 

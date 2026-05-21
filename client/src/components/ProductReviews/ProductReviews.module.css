@@ -59,7 +59,7 @@
 .distFill {
   height: 100%;
   border-radius: 999px;
-  background: var(--gradient-primary-horizontal);
+  background: var(--gradient-marketing);
   transition: width 0.35s ease;
 }
 

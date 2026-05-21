@@ -2,7 +2,9 @@
  * Единый источник дизайн-токенов GoShopix.
  * CSS-переменные в client/src/design-system/tokens/tokens.css синхронизированы с этими значениями.
  */
-export const brandGradient = 'linear-gradient(180deg, #FF9D2E 0%, #FF4D4D 50%, #D81B60 100%)';
+export const brandGradient = 'linear-gradient(90deg, #FF7A6B 0%, #FF4D3D 100%)';
+export const brandPrimary = '#FF4D3D';
+export const brandText = '#0F172A';
 
 export const colors = {
   primary: '#C2185B',
