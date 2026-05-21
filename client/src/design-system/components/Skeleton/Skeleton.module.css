@@ -1,8 +1,22 @@
 .skeleton {
   display: block;
-  background: var(--color-bg-subtle);
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-subtle) 0%,
+    #f3f4f6 42%,
+    var(--color-bg-subtle) 84%
+  );
+  background-size: 200% 100%;
   border-radius: var(--radius-sm);
-  animation: skeleton-pulse 1.4s ease-in-out infinite;
+  animation: skeleton-shimmer 1.35s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: skeleton-pulse 1.4s ease-in-out infinite;
+    background: var(--color-bg-subtle);
+    background-size: auto;
+  }
 }
 
 @keyframes skeleton-pulse {

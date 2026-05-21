@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { ordersApi } from '../api';
 import type { Order } from '../api/types';
 import { PageContainer } from '../components/layout/PageContainer';
-import { Button } from '../design-system';
+import { Button, Loader } from '../design-system';
 import styles from './CheckoutConfirmationPage.module.css';
 
 export function CheckoutConfirmationPage() {
@@ -50,7 +50,7 @@ export function CheckoutConfirmationPage() {
 
         {orderId && (
           <div className={styles.card}>
-            {loading && <p className={styles.muted}>Загрузка…</p>}
+            {loading && <Loader variant="inline" label="Загружаем заказ…" />}
             {error && <p className={styles.error}>{error}</p>}
 
             {order && (

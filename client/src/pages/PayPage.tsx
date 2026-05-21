@@ -64,8 +64,8 @@ export function PayPage() {
             </div>
 
             <div className={styles.actions}>
-              <Button size="lg" onClick={() => void handlePay()} disabled={loading}>
-                {loading ? 'Оплачиваем…' : 'Оплатить'}
+              <Button size="lg" onClick={() => void handlePay()} loading={loading}>
+                Оплатить
               </Button>
               <button type="button" className={styles.cancel} onClick={() => goReturn('cancelled')} disabled={loading}>
                 Отменить

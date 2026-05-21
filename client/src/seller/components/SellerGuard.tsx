@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Loader } from '../../design-system';
 import { useAuthStore } from '../../stores/authStore';
 
 export function SellerGuard() {
@@ -16,7 +17,11 @@ export function SellerGuard() {
     return <Navigate to="/auth?returnUrl=/seller/dashboard" state={{ from: location }} replace />;
   }
 
-  if (user && user.role !== 'SELLER') {
+  if (!user) {
+    return <Loader variant="page" label="Проверяем доступ…" />;
+  }
+
+  if (user.role !== 'SELLER') {
     return <Navigate to="/account" replace />;
   }
 

@@ -7,3 +7,5 @@ export { StatusBadge, type StatusBadgeProps, type StatusVariant } from './compon
 export { StarRating, type StarRatingProps } from './components/StarRating/StarRating';
 export { Skeleton, ProductCardSkeleton, type SkeletonProps } from './components/Skeleton/Skeleton';
 export { ProductSkeleton } from './components/ProductSkeleton/ProductSkeleton';
+export { Spinner, type SpinnerProps, type SpinnerSize, type SpinnerTone } from './components/Spinner/Spinner';
+export { Loader, type LoaderProps, type LoaderVariant } from './components/Loader/Loader';

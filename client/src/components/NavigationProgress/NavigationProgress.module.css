@@ -1,0 +1,35 @@
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 500;
+  height: 3px;
+  pointer-events: none;
+  background: transparent;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.barActive {
+  opacity: 1;
+}
+
+.fill {
+  height: 100%;
+  width: 0;
+  background: var(--gradient-primary-horizontal);
+  box-shadow: 0 0 12px rgb(var(--color-primary-rgb) / 0.45);
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fillDone {
+  width: 100%;
+  transition: width 0.18s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transition: none;
+  }
+}

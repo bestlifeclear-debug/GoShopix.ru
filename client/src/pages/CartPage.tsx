@@ -5,7 +5,7 @@ import { productsApi } from '../api/index';
 import type { ProductListItem } from '../api/types';
 import { ProductGrid } from '../components/ProductGrid';
 import { PageContainer } from '../components/layout/PageContainer';
-import { Button } from '../design-system';
+import { Button, Loader } from '../design-system';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { track } from '../lib/analytics';
 import { ApiClientError } from '../api/client';
@@ -127,7 +127,7 @@ export function CartPage() {
       <div className={styles.page}>
         <h1 className={styles.title}>Корзина</h1>
 
-        {isLoading && !cart && <p className={styles.loading}>Загрузка…</p>}
+        {isLoading && !cart && <Loader variant="block" label="Загружаем корзину…" />}
 
         {isEmpty && (
           <>

@@ -10,8 +10,14 @@
 
 .media {
   aspect-ratio: 1;
-  background: var(--color-bg-subtle);
-  animation: product-skeleton-pulse 1.4s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-subtle) 0%,
+    #f3f4f6 42%,
+    var(--color-bg-subtle) 84%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.35s ease-in-out infinite;
 }
 
 .body {
@@ -25,8 +31,14 @@
   display: block;
   height: 12px;
   border-radius: var(--radius-sm);
-  background: var(--color-bg-subtle);
-  animation: product-skeleton-pulse 1.4s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-subtle) 0%,
+    #f3f4f6 42%,
+    var(--color-bg-subtle) 84%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.35s ease-in-out infinite;
 }
 
 .lineShort {
@@ -54,8 +66,24 @@
   height: 48px;
   margin-top: auto;
   border-radius: var(--radius-cta);
-  background: var(--color-bg-subtle);
-  animation: product-skeleton-pulse 1.4s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-subtle) 0%,
+    #f3f4f6 42%,
+    var(--color-bg-subtle) 84%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.35s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media,
+  .line,
+  .btn {
+    animation: product-skeleton-pulse 1.4s ease-in-out infinite;
+    background: var(--color-bg-subtle);
+    background-size: auto;
+  }
 }
 
 @keyframes product-skeleton-pulse {

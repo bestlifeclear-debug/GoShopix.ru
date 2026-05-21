@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { sellerApi } from '../api/index';
 import type { SellerStore } from '../api/types';
+import { Loader } from '../../design-system';
 import shared from './shared/sellerPremium.module.css';
 
 const DELIVERY_KEY = 'goshopix_seller_delivery';
@@ -133,7 +134,7 @@ export function SettingsPage() {
   };
 
   if (!store) {
-    return <p className={shared.loadingText}>Загрузка…</p>;
+    return <Loader variant="block" label="Загружаем настройки…" />;
   }
 
   const inputClass = `${shared.fieldInput} ${shared.fieldInputWithIcon}`;

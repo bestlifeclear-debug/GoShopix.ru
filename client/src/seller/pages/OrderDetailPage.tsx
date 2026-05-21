@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
-import { Button } from '../../design-system';
+import { Button, Loader } from '../../design-system';
 import { sellerApi } from '../api/index';
 import type { SellerOrderDetail } from '../api/types';
 import { OrderStatusBadge } from '../components/OrderStatusBadge';
@@ -38,7 +38,7 @@ export function OrderDetailPage() {
 
   const print = () => window.print();
 
-  if (!order) return <p>Загрузка…</p>;
+  if (!order) return <Loader variant="block" label="Загружаем заказ…" />;
 
   return (
     <div>

@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { Spinner } from '../Spinner/Spinner';
 import { cn } from '../../utils/cn';
 import styles from './Button.module.css';
 
@@ -40,7 +41,7 @@ export function Button({
       disabled={disabled || loading}
       {...props}
     >
-      {loading && <span className={styles.spinner} aria-hidden />}
+      {loading && <Spinner size="sm" tone="inherit" className={styles.buttonSpinner} />}
       {leftIcon && <span className={styles.icon}>{leftIcon}</span>}
       <span className={styles.label}>{children}</span>
       {rightIcon && <span className={styles.icon}>{rightIcon}</span>}

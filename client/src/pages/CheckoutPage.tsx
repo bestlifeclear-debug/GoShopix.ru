@@ -849,10 +849,11 @@ export function CheckoutPage() {
                   fullWidth
                   leftIcon={payButtonIcon}
                   onClick={handlePay}
+                  loading={submitting}
                   disabled={submitting || !canSubmit || loadingPriceMeta}
                   data-testid="checkout-submit"
                 >
-                  {submitting ? 'Переходим…' : payment === 'sbp' ? 'Перейти к оплате (СБП)' : 'Перейти к оплате (карта)'}
+                  {payment === 'sbp' ? 'Перейти к оплате (СБП)' : 'Перейти к оплате (карта)'}
                 </Button>
                 <p className={styles.payHint}>
                   <img src="/payment-icons/yookassa.png" alt="" className={styles.payHintLogo} width={72} height={16} />

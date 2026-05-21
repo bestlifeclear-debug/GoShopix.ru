@@ -1,0 +1,56 @@
+.spinner {
+  display: inline-block;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border-style: solid;
+  border-color: rgb(var(--color-primary-rgb) / 0.18);
+  border-top-color: var(--color-primary);
+  animation: goshopix-spin 0.7s linear infinite;
+}
+
+.sm {
+  width: 18px;
+  height: 18px;
+  border-width: 2px;
+}
+
+.md {
+  width: 28px;
+  height: 28px;
+  border-width: 3px;
+}
+
+.lg {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+.neutral {
+  border-color: rgb(26 26 26 / 0.12);
+  border-top-color: var(--color-text-muted);
+}
+
+.inverse {
+  border-color: rgb(255 255 255 / 0.35);
+  border-top-color: #ffffff;
+}
+
+.inherit {
+  border-color: currentColor;
+  border-right-color: transparent;
+  border-top-color: currentColor;
+  opacity: 0.85;
+}
+
+@keyframes goshopix-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1.4s;
+  }
+}
