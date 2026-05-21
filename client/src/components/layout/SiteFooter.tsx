@@ -60,6 +60,9 @@ export function SiteFooter() {
             <h3 className={styles.colTitle}>О компании</h3>
             <ul className={styles.links}>
               <li>
+                <Link to="/auth?returnUrl=/seller/dashboard">Стать продавцом</Link>
+              </li>
+              <li>
                 <Link to="/privacy">Политика конфиденциальности</Link>
               </li>
               <li>
@@ -76,7 +79,6 @@ export function SiteFooter() {
                   support@goshopix.ru
                 </a>
               </li>
-              <li className={styles.contactHours}>Пн–Вс 9:00 — 21:00</li>
             </ul>
             <ul className={styles.socialList} aria-label="Социальные сети">
               {SOCIAL_LINKS.map((social) => (
@@ -112,9 +114,9 @@ export function SiteFooter() {
                 <img
                   src={method.src}
                   alt={method.label}
-                  className={styles.paymentIcon}
-                  width={80}
-                  height={32}
+                  className={`${styles.paymentIcon} ${method.id === 'mir' ? styles.paymentIconMir : ''}`}
+                  width={method.id === 'mir' ? 96 : 88}
+                  height={method.id === 'mir' ? 40 : 38}
                   loading="lazy"
                   decoding="async"
                 />

@@ -81,13 +81,6 @@
   text-decoration: none;
 }
 
-.contactHours {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  color: #64748b;
-  line-height: var(--line-height-relaxed);
-}
-
 .socialList {
   margin: 0;
   padding: 0;
@@ -119,17 +112,10 @@ a.socialLink:hover {
   height: 28px;
   border-radius: 8px;
   object-fit: cover;
-  filter: grayscale(1) brightness(0.55);
-  opacity: 0.9;
-  transition:
-    filter var(--transition-fast),
-    opacity var(--transition-fast),
-    transform var(--transition-fast);
+  transition: transform var(--transition-fast);
 }
 
 a.socialLink:hover .socialIcon {
-  filter: none;
-  opacity: 1;
   transform: scale(1.05);
 }
 
@@ -162,9 +148,14 @@ a.socialLink:hover .socialIcon {
 .paymentIcon {
   display: block;
   width: auto;
-  height: 32px;
-  max-width: 88px;
+  height: 38px;
+  max-width: 100px;
   object-fit: contain;
+}
+
+.paymentIconMir {
+  height: 44px;
+  max-width: 110px;
 }
 
 @media (max-width: 767px) {
@@ -173,8 +164,13 @@ a.socialLink:hover .socialIcon {
   }
 
   .paymentIcon {
-    height: 28px;
-    max-width: 76px;
+    height: 34px;
+    max-width: 92px;
+  }
+
+  .paymentIconMir {
+    height: 40px;
+    max-width: 102px;
   }
 
   .bottom {
