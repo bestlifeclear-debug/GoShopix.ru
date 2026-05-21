@@ -353,6 +353,10 @@
   line-height: var(--line-height-relaxed);
 }
 
+.tabContentQa {
+  padding-top: 0;
+}
+
 .detailsCard {
   padding: var(--space-4) var(--space-4) var(--space-3);
   border-radius: var(--radius-xl);

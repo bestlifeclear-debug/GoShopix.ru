@@ -518,7 +518,7 @@ export function ProductPage() {
             </div>
           )}
           {tab === 'qa' && (
-            <div className={styles.tabContent}>
+            <div className={`${styles.tabContent} ${styles.tabContentQa}`}>
               <ProductQa />
             </div>
           )}

@@ -57,7 +57,7 @@
 }
 
 .panel {
-  padding: var(--space-5) 0;
+  padding: var(--space-3) 0 var(--space-5);
 }
 
 @media (max-width: 768px) {
