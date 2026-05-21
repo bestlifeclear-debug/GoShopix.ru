@@ -34,7 +34,10 @@ export function HeaderDeliveryCity() {
           <circle cx="12" cy="11" r="2.5" stroke="currentColor" strokeWidth="2" />
         </svg>
       </span>
-      <span className={styles.city}>{city}</span>
+      <span className={styles.text}>
+        <span className={styles.label}>Город:</span>{' '}
+        <span className={styles.city}>{city}</span>
+      </span>
     </div>
   );
 }

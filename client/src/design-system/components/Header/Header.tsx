@@ -63,75 +63,54 @@ export function Header({
     }
   };
 
+  const showCatalog = Boolean(onCatalogToggle);
+
   return (
     <header className={styles.header}>
       <div className={styles.topBar}>
         <div className={`container ${styles.inner}`}>
-          <div className={styles.leftGroup}>
-            {onMenuToggle && (
-              <button
-                type="button"
-                className={styles.menuBtn}
-                onClick={onMenuToggle}
-                aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
-                aria-expanded={menuOpen}
-              >
-                {menuOpen ? <IconClose /> : <IconMenu />}
-              </button>
-            )}
-            <Link to="/" className={styles.logo} aria-label="GoShopix — на главную">
-              <span className={styles.logoMark}>G</span>
-              <span className={styles.logoText}>GoShopix</span>
-            </Link>
-            <div
-              className={styles.catalogWrap}
-              onMouseEnter={onCatalogMouseEnter}
-              onMouseLeave={onCatalogMouseLeave}
-            >
-              <button
-                type="button"
-                className={`${styles.catalogBtn} ${catalogOpen ? styles.catalogBtnActive : ''}`}
-                onClick={onCatalogToggle}
-                aria-expanded={catalogOpen}
-                aria-haspopup="true"
-              >
-                <span className={styles.catalogIcon} aria-hidden>
-                  <IconCatalog />
-                </span>
-                <span className={styles.catalogLabel}>Каталог</span>
-              </button>
-            </div>
-          </div>
-          <div className={styles.searchGroup}>{searchSlot}</div>
-          <div className={styles.rightGroup}>
-            {deliverySlot ? <div className={styles.deliverySlotMobile}>{deliverySlot}</div> : null}
-            <div className={styles.actionsTray}>
-            {extraActions}
-            <Link to={favoritesTo} className={styles.iconBtn} aria-label="Избранное">
-              <IconHeart className={styles.actionIcon} strokeWidth={1.5} />
-            </Link>
+          {onMenuToggle && (
             <button
               type="button"
-              className={styles.iconBtn}
-              onClick={onCartClick}
-              aria-label={`Корзина, ${cartCount} товаров`}
+              className={styles.menuBtn}
+              onClick={onMenuToggle}
+              aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
+              aria-expanded={menuOpen}
             >
-              <IconCart className={styles.actionIcon} strokeWidth={1.5} />
-              {cartCount > 0 && (
-                <span className={styles.cartBadge}>{cartCount > 99 ? '99+' : cartCount}</span>
-              )}
+              {menuOpen ? <IconClose /> : <IconMenu />}
             </button>
-            <Link to={accountTo} className={styles.iconBtn} aria-label={accountLabel}>
-              <IconUser className={styles.actionIcon} strokeWidth={1.5} />
-            </Link>
-            </div>
-          </div>
+          )}
+          <Link to="/" className={styles.logo} aria-label="GoShopix — на главную">
+            <span className={styles.logoMark}>G</span>
+            <span className={styles.logoText}>GoShopix</span>
+          </Link>
+          <div className={styles.searchGroup}>{searchSlot}</div>
         </div>
       </div>
 
-      {(navLinks.length > 0 || deliverySlot) && (
-        <nav className={styles.navBar} aria-label="Разделы каталога">
-          <div className={`container ${styles.navInner}`}>
+      <nav className={styles.navBar} aria-label="Навигация магазина">
+        <div className={`container ${styles.navInner}`}>
+          <div className={styles.navLeft}>
+            {showCatalog && (
+              <div
+                className={styles.catalogWrap}
+                onMouseEnter={onCatalogMouseEnter}
+                onMouseLeave={onCatalogMouseLeave}
+              >
+                <button
+                  type="button"
+                  className={`${styles.catalogBtn} ${catalogOpen ? styles.catalogBtnActive : ''}`}
+                  onClick={onCatalogToggle}
+                  aria-expanded={catalogOpen}
+                  aria-haspopup="true"
+                >
+                  <span className={styles.catalogIcon} aria-hidden>
+                    <IconCatalog />
+                  </span>
+                  <span className={styles.catalogLabel}>Каталог</span>
+                </button>
+              </div>
+            )}
             {navLinks.length > 0 && (
               <div className={styles.navLinksGroup}>
                 {navLinks.map((link) => (
@@ -146,10 +125,33 @@ export function Header({
                 ))}
               </div>
             )}
-            {deliverySlot ? <div className={styles.navDeliverySlot}>{deliverySlot}</div> : null}
           </div>
-        </nav>
-      )}
+
+          <div className={styles.navRight}>
+            {deliverySlot ? <div className={styles.navDeliverySlot}>{deliverySlot}</div> : null}
+            <div className={styles.navActions}>
+              {extraActions}
+              <Link to={favoritesTo} className={styles.navIconBtn} aria-label="Избранное">
+                <IconHeart className={styles.actionIcon} strokeWidth={1.5} />
+              </Link>
+              <button
+                type="button"
+                className={styles.navIconBtn}
+                onClick={onCartClick}
+                aria-label={`Корзина, ${cartCount} товаров`}
+              >
+                <IconCart className={styles.actionIcon} strokeWidth={1.5} />
+                {cartCount > 0 && (
+                  <span className={styles.cartBadge}>{cartCount > 99 ? '99+' : cartCount}</span>
+                )}
+              </button>
+              <Link to={accountTo} className={styles.navIconBtn} aria-label={accountLabel}>
+                <IconUser className={styles.actionIcon} strokeWidth={1.5} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
     </header>
   );
 }
