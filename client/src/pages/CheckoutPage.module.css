@@ -357,8 +357,8 @@
 }
 
 .choice:hover:not(:has(input:disabled)) {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  background: var(--color-primary-soft);
+  border-color: rgb(var(--color-primary-rgb) / 0.35);
 }
 
 .choiceActive {

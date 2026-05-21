@@ -123,9 +123,8 @@
 .btnCta:hover {
   background: var(--hero-banner-cta-hover-bg);
   color: var(--hero-banner-cta-text);
-  transform: translateY(-1px);
   text-decoration: none;
-  box-shadow: 0 8px 22px rgb(var(--color-primary-rgb) / 0.28);
+  box-shadow: 0 6px 18px rgb(var(--color-primary-rgb) / 0.2);
 }
 
 .btnCta:focus-visible {
@@ -224,7 +223,7 @@
 
 .arrowPrev:hover,
 .arrowNext:hover {
-  transform: translateY(-50%) scale(1.05);
+  transform: translateY(-50%);
   background: rgb(255 250 248 / 0.95);
   color: var(--hero-banner-cta-text);
   border-color: rgb(255 255 255 / 0.7);

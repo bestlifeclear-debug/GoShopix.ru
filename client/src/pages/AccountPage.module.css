@@ -14,8 +14,8 @@
   --lk-nav-item-color: #1a1a1a;
   --lk-nav-icon-color: #5c5c5c;
   --lk-nav-icon-bg: #f7f7f8;
-  --lk-nav-primary-bg: var(--gradient-primary);
-  --lk-nav-primary-hover: var(--gradient-primary-hover);
+  --lk-nav-primary-bg: var(--color-button-primary);
+  --lk-nav-primary-hover: var(--color-button-primary-hover);
   --lk-nav-on-primary: #ffffff;
   --lk-nav-fill: var(--color-primary-soft);
   --lk-nav-shadow: 0 2px 10px rgb(var(--color-primary-rgb) / 0.25);
@@ -42,8 +42,8 @@
   --lk-nav-item-color: #d4d4d8;
   --lk-nav-icon-color: #d4d4d8;
   --lk-nav-icon-bg: #2a2a2a;
-  --lk-nav-primary-bg: var(--gradient-primary);
-  --lk-nav-primary-hover: var(--gradient-primary-hover);
+  --lk-nav-primary-bg: var(--color-button-primary);
+  --lk-nav-primary-hover: var(--color-button-primary-hover);
   --lk-nav-on-primary: #ffffff;
   --lk-nav-fill: rgb(var(--color-primary-rgb) / 0.2);
   --lk-nav-shadow: 0 2px 12px rgb(0 0 0 / 0.4);

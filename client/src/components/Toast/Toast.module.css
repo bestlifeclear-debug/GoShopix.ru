@@ -24,16 +24,17 @@
 .link {
   padding: 6px 12px;
   border-radius: var(--radius-md);
-  background: var(--gradient-primary);
+  background: var(--color-button-primary);
   color: #fff;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   text-decoration: none;
   white-space: nowrap;
+  transition: background-color var(--transition-fast);
 }
 
 .link:hover {
-  background: var(--gradient-primary-hover);
+  background: var(--color-button-primary-hover);
   text-decoration: none;
   color: #fff;
 }

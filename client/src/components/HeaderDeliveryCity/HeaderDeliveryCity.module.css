@@ -3,7 +3,7 @@
   align-items: center;
   gap: 6px;
   max-width: 128px;
-  min-height: 40px;
+  min-height: var(--cta-height);
   padding: 0 2px;
   flex-shrink: 0;
   box-sizing: border-box;
@@ -19,7 +19,7 @@
 }
 
 .city {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
   white-space: nowrap;

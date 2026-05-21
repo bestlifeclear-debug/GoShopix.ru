@@ -22,10 +22,8 @@
 
 @media (hover: hover) {
   [data-account-lk] [data-lk-nav]:hover {
-    background-color: #ff3d2e !important;
+    background-color: #ff5748 !important;
     color: #ffffff !important;
-    box-shadow: 0 2px 10px rgb(var(--color-primary-rgb) / 0.28) !important;
-    transform: translateY(-1px);
   }
 
   [data-account-lk] [data-lk-nav]:hover [data-lk-nav-icon] {
@@ -65,8 +63,6 @@
     background-color: #ff3d2e !important;
     border-color: #ff3d2e !important;
     color: #ffffff !important;
-    box-shadow: 0 2px 10px rgb(var(--color-primary-rgb) / 0.28) !important;
-    transform: translateY(-1px);
   }
 }
 
@@ -84,10 +80,8 @@
 
 @media (hover: hover) {
   [data-account-lk] [data-lk-logout]:hover {
-    background: var(--gradient-primary) !important;
+    background-color: #ff5748 !important;
     color: #ffffff !important;
-    box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.38) !important;
-    transform: translateY(-1px);
   }
 }
 
@@ -102,8 +96,6 @@
 @media (hover: hover) {
   [data-account-lk] [data-lk-reco]:hover {
     background-color: #ffe8e4 !important;
-    box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.22) !important;
-    transform: translateY(-3px);
     text-decoration: none !important;
   }
 }
@@ -112,7 +104,5 @@
 @media (hover: hover) {
   [data-account-lk] [data-lk-order-card]:hover {
     background-color: #ffe8e4 !important;
-    box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.22) !important;
-    transform: translateY(-2px);
   }
 }

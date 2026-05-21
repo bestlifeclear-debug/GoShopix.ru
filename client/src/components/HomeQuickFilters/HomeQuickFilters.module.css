@@ -73,7 +73,8 @@
 }
 
 .allFilters:hover {
-  background: var(--gradient-primary);
+  background: var(--color-button-primary);
+  border-color: var(--color-button-primary);
   color: var(--color-text-inverse);
   text-decoration: none;
 }

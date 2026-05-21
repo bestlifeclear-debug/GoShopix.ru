@@ -46,13 +46,13 @@
 }
 
 .md {
-  min-height: 40px;
+  min-height: var(--cta-height);
   padding: 0 var(--space-4);
   font-size: var(--font-size-md);
 }
 
 .lg {
-  min-height: 48px;
+  min-height: 56px;
   padding: 0 var(--space-6);
   font-size: var(--font-size-lg);
 }
@@ -69,7 +69,6 @@
 
 .primary:hover:not(:disabled) {
   background: var(--color-button-primary-hover);
-  box-shadow: var(--shadow-primary-sm);
 }
 
 .primary:focus-visible {

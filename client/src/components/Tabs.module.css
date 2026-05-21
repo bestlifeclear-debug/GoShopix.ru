@@ -49,6 +49,8 @@
 
 .tab:hover {
   color: var(--color-text);
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
 .active {

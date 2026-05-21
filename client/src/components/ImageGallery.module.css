@@ -44,11 +44,13 @@
   color: var(--color-text);
   box-shadow: none;
   cursor: pointer;
-  transition: transform var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .arrow:hover {
-  transform: scale(1.05);
+  background: var(--color-primary-soft);
   color: var(--color-primary);
 }
 

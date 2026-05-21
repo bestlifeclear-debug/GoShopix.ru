@@ -53,9 +53,13 @@
 
 .sortChipActive {
   border-color: var(--color-primary);
-  background: var(--gradient-primary);
+  background: var(--color-button-primary);
   color: var(--color-text-inverse);
   font-weight: var(--font-weight-semibold);
+}
+
+.sortChipActive:hover {
+  background: var(--color-button-primary-hover);
 }
 
 .resultsCount {
@@ -331,7 +335,7 @@
 
 .checkItemActive .checkMark {
   border-color: var(--color-primary);
-  background: var(--gradient-primary);
+  background: var(--color-button-primary);
   color: var(--color-text-inverse);
 }
 
@@ -432,6 +436,12 @@
       border-color var(--transition-fast);
   }
 
+  .mobileFilterBtn:hover {
+    background: var(--color-primary-soft);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
   .mobileFilterBtn:active {
     background: var(--color-primary-soft);
     border-color: var(--color-primary);
@@ -442,7 +452,7 @@
     width: 8px;
     height: 8px;
     border-radius: var(--radius-full);
-    background: var(--gradient-primary);
+    background: var(--color-primary);
   }
 
   .sortSelectWrap {

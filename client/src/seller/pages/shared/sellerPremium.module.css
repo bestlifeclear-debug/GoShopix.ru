@@ -398,22 +398,17 @@
   padding: 12px 24px;
   border: none;
   border-radius: 10px;
-  background: var(--gradient-primary);
+  background: var(--color-button-primary);
   font-family: inherit;
   font-size: 0.9375rem;
   font-weight: 600;
   color: #ffffff;
   cursor: pointer;
-  transition:
-    background 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
 .btnSave:hover {
-  background: var(--gradient-primary-hover);
-  box-shadow: 0 4px 12px rgb(var(--color-primary-rgb) / 0.25);
-  transform: translateY(-1px);
+  background: var(--color-button-primary-hover);
 }
 
 .savedHint {

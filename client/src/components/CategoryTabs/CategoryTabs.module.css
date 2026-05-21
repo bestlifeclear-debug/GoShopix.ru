@@ -32,11 +32,21 @@
     color var(--transition-fast);
 }
 
+.tab:hover:not(.tabActive) {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
 .tabActive {
   border-color: var(--color-primary);
-  background: var(--gradient-primary);
+  background: var(--color-button-primary);
   color: var(--color-text-inverse);
   font-weight: var(--font-weight-semibold);
+}
+
+.tabActive:hover {
+  background: var(--color-button-primary-hover);
 }
 
 .panel {

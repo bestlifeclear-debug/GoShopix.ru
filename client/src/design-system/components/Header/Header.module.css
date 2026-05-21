@@ -41,14 +41,22 @@
   height: var(--touch-min);
   border: none;
   border-radius: var(--radius-md);
-  background: var(--color-bg);
+  background: var(--color-bg-subtle);
   color: var(--color-text);
   cursor: pointer;
-  transition: transform var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.menuBtn:hover,
+.menuBtn:focus-visible {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 }
 
 .menuBtn:active {
-  transform: scale(0.96);
+  background: var(--color-primary-soft);
 }
 
 .logo {
@@ -67,16 +75,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-md);
-  background: var(--gradient-primary);
+  background: var(--color-primary);
   color: var(--color-text-inverse);
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
 }
 
 .logoText {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   letter-spacing: -0.02em;
 }
@@ -84,14 +93,15 @@
 .catalogBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
+  gap: 10px;
+  min-height: var(--cta-height);
+  padding: 0 24px;
   border: none;
   border-radius: var(--radius-md);
-  background: var(--gradient-primary);
+  background: var(--color-button-primary);
   color: #ffffff;
   font-family: inherit;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
   line-height: 1;
   cursor: pointer;
@@ -121,7 +131,7 @@
 }
 
 .catalogBtn:hover {
-  background: var(--gradient-primary-hover);
+  background: var(--color-button-primary-hover);
 }
 
 .catalogBtnActive {
@@ -158,26 +168,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   flex-shrink: 0;
-  height: 40px;
-  padding: 0 6px;
+  min-height: var(--cta-height);
+  padding: 0 8px;
   border-radius: var(--radius-md);
-  background: var(--gradient-primary);
+  background: var(--color-button-primary);
   border: none;
   box-sizing: border-box;
-  transition:
-    background-color var(--transition-fast),
-    box-shadow var(--transition-fast);
+  transition: background-color var(--transition-fast);
 }
 
 .actionsTray:hover {
-  background: var(--gradient-primary-hover);
+  background: var(--color-button-primary-hover);
 }
 
 .actionIcon {
-  width: 24px;
-  height: 24px;
+  width: var(--icon-size);
+  height: var(--icon-size);
   flex-shrink: 0;
 }
 
@@ -186,8 +194,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: none;
   border-radius: var(--radius-md);
   background: transparent;
@@ -236,11 +244,12 @@
 .navBar {
   background: var(--color-bg);
   border-top: 1px solid var(--color-border);
+  padding: 4px 0;
 }
 
 .navInner {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -251,8 +260,8 @@
 
 .navLink {
   flex-shrink: 0;
-  padding: 8px 14px;
-  font-size: var(--font-size-sm);
+  padding: 10px 16px;
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-medium);
   color: var(--color-text);
   text-decoration: none;
@@ -299,7 +308,7 @@
 
 @media (max-width: 767px) {
   .header {
-    --header-mobile-height: 64px;
+    --header-mobile-height: 72px;
   }
 
   .inner {
@@ -363,8 +372,8 @@
   }
 
   .iconBtn {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
   }
 
   .navBar {
