@@ -83,23 +83,16 @@ export function SiteFooter() {
             <ul className={styles.socialList} aria-label="Социальные сети">
               {SOCIAL_LINKS.map((social) => (
                 <li key={social.id}>
-                  {social.href ? (
-                    <a
-                      href={social.href}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className={styles.socialLink}
-                      aria-label={social.label}
-                    >
-                      <img src={social.icon} alt="" className={styles.socialIcon} width={28} height={28} />
-                      <span>{social.label}</span>
-                    </a>
-                  ) : (
-                    <span className={styles.socialLink} aria-label={social.label}>
-                      <img src={social.icon} alt="" className={styles.socialIcon} width={28} height={28} />
-                      <span>{social.label}</span>
-                    </span>
-                  )}
+                  <a
+                    href={social.href}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className={styles.socialLink}
+                    aria-label={social.label}
+                  >
+                    <img src={social.icon} alt="" className={styles.socialIcon} width={28} height={28} />
+                    <span>{social.label}</span>
+                  </a>
                 </li>
               ))}
             </ul>
