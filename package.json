@@ -26,6 +26,7 @@
     "db:migrate:deploy": "npm run db:migrate:deploy -w server",
     "db:check-schema": "node scripts/check-db-schema.mjs",
     "db:apply-auth-migrations": "node scripts/apply-pending-auth-migrations.mjs",
+    "db:apply-passwordless": "node scripts/apply-passwordless-migration.mjs",
     "db:reset": "npm run db:reset -w server",
     "test": "npm run test -w server",
     "test:unit": "npm run test:unit -w server",

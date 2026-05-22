@@ -82,9 +82,15 @@ export async function createOtp(params: {
       ? maskPhone(params.parsed.value)
       : maskEmail(params.parsed.value);
 
+  const exposeDevCode =
+    process.env.NODE_ENV !== 'production' ||
+    process.env.VERCEL_ENV === 'preview' ||
+    process.env.VERCEL_ENV === 'development' ||
+    process.env.EXPOSE_OTP_DEV_CODE === 'true';
+
   return {
     maskedDestination,
-    ...(process.env.NODE_ENV !== 'production' ? { devCode: code } : {}),
+    ...(exposeDevCode ? { devCode: code } : {}),
   };
 }
 
