@@ -82,11 +82,13 @@ export async function createOtp(params: {
       ? maskPhone(params.parsed.value)
       : maskEmail(params.parsed.value);
 
+  /** Без SMTP письма не уходят — показываем код в API, иначе на тесте войти нельзя. */
   const exposeDevCode =
+    !process.env.SMTP_HOST ||
+    process.env.EXPOSE_OTP_DEV_CODE === 'true' ||
     process.env.NODE_ENV !== 'production' ||
     process.env.VERCEL_ENV === 'preview' ||
-    process.env.VERCEL_ENV === 'development' ||
-    process.env.EXPOSE_OTP_DEV_CODE === 'true';
+    process.env.VERCEL_ENV === 'development';
 
   return {
     maskedDestination,

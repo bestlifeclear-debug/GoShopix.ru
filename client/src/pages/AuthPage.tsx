@@ -44,11 +44,7 @@ export function AuthPage() {
       </header>
 
       <main className={styles.main} id="main-content">
-        <div className={styles.card}>
-          <h1 className={styles.title}>Войдите или зарегистрируйтесь</h1>
-          <p className={styles.subtitle}>Один код на телефон или email — без пароля</p>
-          <AuthForm onSuccess={handleSuccess} />
-        </div>
+        <AuthForm onSuccess={handleSuccess} />
       </main>
 
       <SiteFooter />

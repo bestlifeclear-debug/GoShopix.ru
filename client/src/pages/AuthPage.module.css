@@ -81,29 +81,3 @@
   padding: var(--space-3) var(--space-2);
 }
 
-.card {
-  width: 100%;
-  max-width: 360px;
-  padding: var(--space-3);
-  background: var(--auth-color-surface);
-  border: 1px solid var(--auth-color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-}
-
-.title {
-  margin: 0 0 6px;
-  font-size: 1.375rem;
-  font-weight: var(--font-weight-bold);
-  line-height: 1.2;
-  text-align: center;
-  color: var(--auth-color-accent);
-}
-
-.subtitle {
-  margin: 0 0 12px;
-  font-size: var(--font-size-sm);
-  text-align: center;
-  color: var(--auth-color-hint);
-  line-height: 1.45;
-}
