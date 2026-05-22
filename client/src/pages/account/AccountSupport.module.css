@@ -1,8 +1,14 @@
 .support {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 0;
   max-width: 920px;
+}
+
+.helpZone {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
 .hero {
@@ -29,37 +35,57 @@
 
 .searchWrap {
   position: relative;
+  padding: 3px;
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--color-primary-rgb) / 0.14) 0%,
+    rgb(var(--color-primary-rgb) / 0.04) 100%
+  );
+  border: 1px solid rgb(var(--color-primary-rgb) / 0.28);
+  box-shadow:
+    0 2px 10px rgb(var(--color-primary-rgb) / 0.1),
+    inset 0 1px 0 rgb(255 255 255 / 0.6);
 }
 
 .searchIcon {
   position: absolute;
-  left: 14px;
+  left: 18px;
   top: 50%;
+  z-index: 1;
   transform: translateY(-50%);
-  color: var(--lk-text-muted);
+  color: var(--lk-accent);
   pointer-events: none;
 }
 
 .searchInput {
+  position: relative;
   width: 100%;
   box-sizing: border-box;
-  min-height: 48px;
-  padding: 12px 16px 12px 44px;
-  border: 1px solid var(--lk-border);
-  border-radius: 12px;
-  background: var(--lk-bg-muted);
+  min-height: 50px;
+  padding: 12px 16px 12px 46px;
+  border: 2px solid rgb(var(--color-primary-rgb) / 0.22);
+  border-radius: 11px;
+  background: var(--lk-surface);
   font-family: inherit;
   font-size: 1rem;
   color: var(--lk-text);
+  box-shadow: 0 1px 4px rgb(15 23 42 / 0.06);
   transition:
     border-color var(--lk-transition),
     box-shadow var(--lk-transition);
 }
 
+.searchInput:hover {
+  border-color: rgb(var(--color-primary-rgb) / 0.4);
+}
+
 .searchInput:focus {
   outline: none;
   border-color: var(--lk-accent);
-  box-shadow: 0 0 0 2px rgb(var(--color-primary-rgb) / 0.15);
+  box-shadow:
+    0 0 0 3px rgb(var(--color-primary-rgb) / 0.18),
+    0 2px 8px rgb(var(--color-primary-rgb) / 0.12);
 }
 
 .searchInput::placeholder {
@@ -279,6 +305,65 @@
   background: var(--lk-nav-fill);
 }
 
+.ticketsZone {
+  margin-top: 40px;
+  padding: 32px 24px 8px;
+  background: var(--lk-bg-muted);
+  border-radius: var(--lk-radius);
+  border: 1px solid var(--lk-border);
+}
+
+.ticketsDivider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: -8px 0 28px;
+}
+
+.ticketsDividerLine {
+  flex: 1;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--lk-accent) 15%,
+    var(--lk-accent) 85%,
+    transparent 100%
+  );
+}
+
+.ticketsDividerLabel {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--lk-accent);
+  color: var(--lk-nav-on-primary, #fff);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.ticketsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ticketsSectionTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--lk-text);
+}
+
+.ticketsSectionHint {
+  margin: 0 0 4px;
+  font-size: 0.875rem;
+  color: var(--lk-text-muted);
+}
+
 .ticketsList {
   list-style: none;
   margin: 0;
@@ -425,7 +510,7 @@
   padding: 24px;
   text-align: center;
   color: var(--lk-text-muted);
-  background: var(--lk-bg-muted);
+  background: var(--lk-surface);
   border-radius: var(--lk-radius);
   border: 1px dashed var(--lk-empty-border);
 }
@@ -437,6 +522,16 @@
 @media (max-width: 768px) {
   .quickGrid {
     grid-template-columns: 1fr;
+  }
+
+  .ticketsZone {
+    margin-top: 32px;
+    padding: 24px 16px 4px;
+  }
+
+  .ticketsDividerLabel {
+    font-size: 0.75rem;
+    padding: 5px 10px;
   }
 
   .contactCard {

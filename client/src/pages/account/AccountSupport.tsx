@@ -220,6 +220,7 @@ export function AccountSupport({
         </div>
       )}
 
+      <div className={styles.helpZone}>
       <section className={styles.hero} aria-labelledby="support-hero-title">
         <h2 id="support-hero-title" className={styles.heroTitle}>
           Чем помочь?
@@ -321,11 +322,22 @@ export function AccountSupport({
         </div>
         <Button onClick={() => openModal(contextOrderId ? 'order' : undefined)}>Написать в поддержку</Button>
       </section>
+      </div>
 
-      <section className={styles.sectionBlock} aria-labelledby="support-tickets-title">
-        <h2 id="support-tickets-title" className={styles.sectionTitle}>
-          Мои обращения
+      <div className={styles.ticketsZone}>
+        <div className={styles.ticketsDivider} aria-hidden>
+          <span className={styles.ticketsDividerLine} />
+          <span className={styles.ticketsDividerLabel}>Мои обращения</span>
+          <span className={styles.ticketsDividerLine} />
+        </div>
+
+      <section className={styles.ticketsSection} aria-labelledby="support-tickets-title">
+        <h2 id="support-tickets-title" className={styles.ticketsSectionTitle}>
+          История обращений
         </h2>
+        <p className={styles.ticketsSectionHint}>
+          Здесь отображаются ваши диалоги со службой поддержки
+        </p>
         {ticketsLoading ? (
           <p className={styles.ticketsEmpty}>Загрузка…</p>
         ) : tickets.length === 0 ? (
@@ -417,6 +429,7 @@ export function AccountSupport({
           </ul>
         )}
       </section>
+      </div>
 
       <div className={styles.stickyCta}>
         <Button onClick={() => openModal()}>Написать в поддержку</Button>
