@@ -42,15 +42,32 @@
 
 @media (max-width: 768px) {
   .root {
-    max-width: min(52vw, 180px);
-    min-height: 36px;
+    align-items: center;
+    gap: 4px;
+    max-width: min(58vw, 200px);
+    min-height: 0;
+    padding: 0;
+  }
+
+  .icon svg {
+    width: 16px;
+    height: 16px;
   }
 
   .text {
-    font-size: var(--font-size-xs);
+    align-items: center;
+    gap: 4px;
+    font-size: 0.875rem;
+    line-height: 1.2;
   }
 
   .label {
     display: none;
+  }
+
+  .city {
+    font-size: 14px;
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.2;
   }
 }

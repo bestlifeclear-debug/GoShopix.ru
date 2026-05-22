@@ -313,21 +313,25 @@
     --header-mobile-top-height: auto;
   }
 
-  .inner {
+  .topBar .inner {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 0;
     min-height: 0;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    max-width: none;
+    margin: 0;
+    padding: 8px 16px 12px;
+    box-sizing: border-box;
   }
 
   .topRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 12px;
     width: 100%;
+    padding: 0;
+    box-sizing: border-box;
   }
 
   .menuBtn {
@@ -335,13 +339,18 @@
   }
 
   .logo {
+    display: inline-flex;
+    align-items: center;
     flex-shrink: 0;
+    line-height: 0;
   }
 
   .logoMark {
-    width: 40px;
-    height: 40px;
-    font-size: var(--font-size-md);
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    line-height: 1;
   }
 
   .logoText {
@@ -354,11 +363,13 @@
     justify-content: flex-end;
     flex: 1;
     min-width: 0;
+    max-width: calc(100% - 46px);
   }
 
   .searchGroup {
     width: 100%;
     flex: none;
+    margin-top: 12px;
   }
 
   .navBar {
