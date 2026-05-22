@@ -16,13 +16,13 @@ const DEMO_EMAIL = 'customer@goshopix.ru';
 const DEMO_PHONE = '9001112233';
 
 const inputClass =
-  'w-full rounded-xl border border-slate-200 bg-white py-3.5 px-4 text-base text-slate-800 placeholder:text-slate-300 transition-all duration-200 outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 disabled:opacity-60';
+  'w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-800 placeholder-slate-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 focus:outline-none transition-all disabled:opacity-60';
 
 const labelClass =
   'mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500';
 
 const primaryBtnClass =
-  'mt-2 flex w-full items-center justify-center rounded-xl bg-red-500 py-3.5 text-base font-medium text-white transition-colors duration-150 hover:bg-red-600 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-60';
+  'w-full bg-red-500 hover:bg-red-600 text-white font-medium py-3.5 px-4 rounded-xl transition-colors active:scale-[0.99] text-base mt-2 disabled:pointer-events-none disabled:opacity-60';
 
 export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
   const sendOtp = useAuthStore((s) => s.sendOtp);
@@ -103,61 +103,71 @@ export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
   };
 
   return (
-    <div className="w-full max-w-[400px] rounded-2xl bg-white p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] sm:p-10">
+    <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
       {step === 'identifier' ? (
-        <form className="flex flex-col" onSubmit={handleSendOtp} noValidate>
+        <form onSubmit={handleSendOtp} noValidate>
           <h2 className="text-center text-2xl font-bold text-slate-800">Вход или регистрация</h2>
-          <p className="mb-6 mt-2 text-center text-sm text-slate-400">Мы отправим код подтверждения</p>
+          <span className="mb-6 mt-2 block text-center text-sm text-slate-400">
+            Мы отправим код подтверждения
+          </span>
 
-          <label htmlFor="auth-identifier" className={labelClass}>
-            Телефон или Email
-          </label>
-          <input
-            id="auth-identifier"
-            type="text"
-            className={`${inputClass}${identifierError ? ' border-red-400 focus:border-red-500 focus:ring-red-500/10' : ''}`}
-            placeholder="customer@goshopix.ru или +7..."
-            autoComplete="username tel email"
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            onBlur={() => setTouched(true)}
-            required
-            data-testid="auth-identifier"
-          />
-          {identifierError && (
-            <p className="mt-1.5 text-sm text-red-500" role="alert">
-              {identifierError}
-            </p>
-          )}
-          {displayError && (
-            <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-center text-sm text-red-600" role="alert">
-              {displayError}
-            </p>
-          )}
+          <div className="flex flex-col space-y-4">
+            <div>
+              <label htmlFor="auth-identifier" className={labelClass}>
+                Телефон или Email
+              </label>
+              <input
+                id="auth-identifier"
+                type="text"
+                className={`${inputClass}${identifierError ? ' border-red-400 focus:border-red-500 focus:ring-red-500/10' : ''}`}
+                placeholder="customer@goshopix.ru или +7..."
+                autoComplete="username tel email"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                onBlur={() => setTouched(true)}
+                required
+                data-testid="auth-identifier"
+              />
+              {identifierError && (
+                <p className="mt-1.5 text-sm text-red-500" role="alert">
+                  {identifierError}
+                </p>
+              )}
+            </div>
 
-          <button
-            type="submit"
-            className={primaryBtnClass}
-            disabled={isLoading}
-            data-testid="auth-submit"
-          >
-            {isLoading ? 'Отправка…' : 'Продолжить'}
-          </button>
+            {displayError && (
+              <p
+                className="rounded-lg bg-red-50 px-3 py-2 text-center text-sm text-red-600"
+                role="alert"
+              >
+                {displayError}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className={primaryBtnClass}
+              disabled={isLoading}
+              data-testid="auth-submit"
+            >
+              {isLoading ? 'Отправка…' : 'Продолжить'}
+            </button>
+          </div>
 
           {showDemoHint && (
-            <div className="mt-6 border-t border-slate-100 pt-4">
-              <span className="mb-2 block text-center text-xs text-slate-400">Демо-вход:</span>
-              <div className="text-center">
+            <div className="mt-6 border-t border-slate-100 pt-5 text-center">
+              <span className="mb-3 block text-xs text-slate-400">Демо-вход</span>
+              <div>
                 <button
                   type="button"
-                  className="mx-1 inline-block rounded-lg border border-slate-200/60 bg-slate-50 px-3 py-1.5 text-xs text-slate-600 transition-colors hover:bg-slate-100"
+                  className="m-1 inline-block rounded-lg border border-slate-200/60 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100"
                   onClick={() => fillDemo(DEMO_EMAIL)}
                 >
                   {DEMO_EMAIL}
                 </button>
                 <button
                   type="button"
-                  className="mx-1 inline-block rounded-lg border border-slate-200/60 bg-slate-50 px-3 py-1.5 text-xs text-slate-600 transition-colors hover:bg-slate-100"
+                  className="m-1 inline-block rounded-lg border border-slate-200/60 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100"
                   onClick={() => fillDemo(DEMO_PHONE)}
                 >
                   +7 {DEMO_PHONE}
@@ -167,93 +177,101 @@ export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
           )}
         </form>
       ) : (
-        <form className="flex flex-col" onSubmit={handleVerify} noValidate>
+        <form onSubmit={handleVerify} noValidate>
           <h2 className="text-center text-2xl font-bold text-slate-800">Код подтверждения</h2>
-          <p className="mb-6 mt-2 text-center text-sm text-slate-400">
+          <span className="mb-6 mt-2 block text-center text-sm text-slate-400">
             Отправлен на {maskedDestination || 'указанный контакт'}
-          </p>
+          </span>
 
-          {devCode && (
-            <div
-              className="mb-4 rounded-xl border border-red-200 bg-red-50/80 px-4 py-3 text-center"
-              role="status"
-            >
-              <p className="text-xs font-medium text-slate-600">Код для тестового стенда</p>
-              <p className="mt-1 text-2xl font-bold tracking-[0.2em] text-red-500">
-                <code data-testid="auth-dev-code">{devCode}</code>
-              </p>
-            </div>
-          )}
-
-          <label htmlFor="auth-otp" className={labelClass}>
-            Код из письма или SMS
-          </label>
-          <input
-            id="auth-otp"
-            type="text"
-            inputMode="numeric"
-            className={`${inputClass} text-center tracking-[0.25em]${codeError ? ' border-red-400' : ''}`}
-            placeholder="000000"
-            autoComplete="one-time-code"
-            value={code}
-            onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-            onBlur={() => setTouched(true)}
-            required
-            data-testid="auth-otp"
-          />
-          {codeError && (
-            <p className="mt-1.5 text-sm text-red-500" role="alert">
-              {codeError}
-            </p>
-          )}
-
-          <label className="mt-4 flex cursor-pointer items-start gap-2.5 text-sm text-slate-600">
-            <input
-              type="checkbox"
-              className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-red-500 focus:ring-red-500/20"
-              checked={consent}
-              onChange={(e) => setConsent(e.target.checked)}
-              required
-            />
-            <span>
-              Согласен на{' '}
-              <Link
-                to="/privacy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-red-500 hover:text-red-600 hover:underline"
+          <div className="flex flex-col space-y-4">
+            {devCode && (
+              <div
+                className="rounded-xl border border-red-200 bg-red-50/80 px-4 py-3 text-center"
+                role="status"
               >
-                обработку персональных данных
-              </Link>
-            </span>
-          </label>
-          {submitted && !consent && (
-            <p className="mt-2 text-sm text-red-500" role="alert">
-              Подтвердите согласие
-            </p>
-          )}
-          {authError && (
-            <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-center text-sm text-red-600" role="alert">
-              {authError}
-            </p>
-          )}
+                <p className="text-xs font-medium text-slate-600">Код для тестового стенда</p>
+                <p className="mt-1 text-2xl font-bold tracking-[0.2em] text-red-500">
+                  <code data-testid="auth-dev-code">{devCode}</code>
+                </p>
+              </div>
+            )}
 
-          <button
-            type="submit"
-            className={primaryBtnClass}
-            disabled={isLoading}
-            data-testid="auth-submit"
-          >
-            {isLoading ? 'Проверка…' : 'Войти'}
-          </button>
+            <div>
+              <label htmlFor="auth-otp" className={labelClass}>
+                Код из письма или SMS
+              </label>
+              <input
+                id="auth-otp"
+                type="text"
+                inputMode="numeric"
+                className={`${inputClass} text-center tracking-[0.25em]${codeError ? ' border-red-400' : ''}`}
+                placeholder="000000"
+                autoComplete="one-time-code"
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                onBlur={() => setTouched(true)}
+                required
+                data-testid="auth-otp"
+              />
+              {codeError && (
+                <p className="mt-1.5 text-sm text-red-500" role="alert">
+                  {codeError}
+                </p>
+              )}
+            </div>
 
-          <button
-            type="button"
-            className="mt-4 w-full text-center text-sm text-slate-400 transition-colors hover:text-red-500"
-            onClick={resetToIdentifier}
-          >
-            ← Другой телефон или email
-          </button>
+            <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-600">
+              <input
+                type="checkbox"
+                className="mt-0.5 h-4 w-4 shrink-0 accent-red-500 rounded border-slate-300 focus:ring-red-500/20"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                required
+              />
+              <span>
+                Согласен на{' '}
+                <Link
+                  to="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-red-500 hover:text-red-600 hover:underline"
+                >
+                  обработку персональных данных
+                </Link>
+              </span>
+            </label>
+            {submitted && !consent && (
+              <p className="text-sm text-red-500" role="alert">
+                Подтвердите согласие
+              </p>
+            )}
+
+            {authError && (
+              <p
+                className="rounded-lg bg-red-50 px-3 py-2 text-center text-sm text-red-600"
+                role="alert"
+              >
+                {authError}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className={primaryBtnClass}
+              disabled={isLoading}
+              data-testid="auth-submit"
+            >
+              {isLoading ? 'Проверка…' : 'Войти'}
+            </button>
+
+            <button
+              type="button"
+              className="w-full text-center text-sm text-slate-400 transition-colors hover:text-red-500"
+              onClick={resetToIdentifier}
+            >
+              ← Другой телефон или email
+            </button>
+          </div>
         </form>
       )}
     </div>
