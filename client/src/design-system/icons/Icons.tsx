@@ -57,6 +57,20 @@ export function IconClose(props: IconProps) {
   );
 }
 
+export function IconTrash(props: IconProps) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <path
+        d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m2 0v12a2 2 0 01-2 2H7a2 2 0 01-2-2V7h14zM10 11v5M14 11v5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function IconUser(props: IconProps) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>

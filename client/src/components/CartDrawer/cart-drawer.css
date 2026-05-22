@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+
+@keyframes cartDrawerFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes cartDrawerSlideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.cart-drawer-overlay {
+  animation: cartDrawerFadeIn 0.2s ease;
+}
+
+.cart-drawer-panel {
+  animation: cartDrawerSlideIn 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
