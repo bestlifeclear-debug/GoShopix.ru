@@ -110,14 +110,14 @@ export function CartDrawer() {
                   >
                     <button
                       type="button"
-                      className="absolute top-0 right-0 z-10 cursor-pointer border-0 bg-transparent p-1 text-slate-300 transition-colors hover:text-red-500"
+                      className="absolute top-0.5 right-1.5 z-10 cursor-pointer rounded-md border-0 bg-transparent p-1.5 text-slate-400 transition-colors hover:bg-slate-50 hover:text-red-500"
                       aria-label="Удалить товар"
                       onClick={() => void removeItem(item.id)}
                     >
                       <IconTrash />
                     </button>
 
-                    <div className="grid grid-cols-[56px_1fr] gap-3 pr-6">
+                    <div className="grid grid-cols-[56px_1fr] gap-3 pr-9">
                       <Link
                         to={`/product/${item.product.id}`}
                         className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-slate-50"
@@ -148,7 +148,7 @@ export function CartDrawer() {
                               </p>
                             )}
                           </div>
-                          <span className="shrink-0 text-sm font-semibold whitespace-nowrap text-slate-800">
+                          <span className="mr-1 shrink-0 text-sm font-semibold whitespace-nowrap text-slate-800">
                             {formatPrice(item.lineTotal)}
                           </span>
                         </div>
