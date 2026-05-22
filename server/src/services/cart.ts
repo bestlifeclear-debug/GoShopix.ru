@@ -34,6 +34,49 @@ export async function getOrCreateCart(userId: string) {
   return cart;
 }
 
+export async function mergeGuestCartItems(
+  userId: string,
+  lines: { variantId: string; quantity: number }[],
+) {
+  if (lines.length === 0) {
+    return getOrCreateCart(userId);
+  }
+
+  const cart = await getOrCreateCart(userId);
+
+  for (const { variantId, quantity } of lines) {
+    const variant = await prisma.productVariant.findUnique({
+      where: { id: variantId },
+      include: { product: { select: { isPublished: true } } },
+    });
+
+    if (!variant || !variant.product.isPublished) {
+      continue;
+    }
+
+    const existing = await prisma.cartItem.findUnique({
+      where: { cartId_variantId: { cartId: cart.id, variantId } },
+    });
+
+    if (existing) {
+      const newQty = Math.min(existing.quantity + quantity, variant.stock);
+      if (newQty < 1) continue;
+      await prisma.cartItem.update({
+        where: { id: existing.id },
+        data: { quantity: newQty },
+      });
+    } else {
+      const newQty = Math.min(quantity, variant.stock);
+      if (newQty < 1) continue;
+      await prisma.cartItem.create({
+        data: { cartId: cart.id, variantId, quantity: newQty },
+      });
+    }
+  }
+
+  return getOrCreateCart(userId);
+}
+
 export function mapCart(cart: Awaited<ReturnType<typeof getOrCreateCart>>) {
   const items = cart.items.map((item) => {
     const unitPrice = item.variant.price.toNumber();

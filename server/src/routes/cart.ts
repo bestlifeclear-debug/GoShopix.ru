@@ -4,8 +4,13 @@ import { prisma } from '../lib/prisma.js';
 import { ok } from '../lib/response.js';
 import { requireCustomer } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
-import { addCartItemSchema, cartItemParamsSchema, updateCartItemSchema } from '../schemas/cart.js';
-import { getOrCreateCart, mapCart } from '../services/cart.js';
+import {
+  addCartItemSchema,
+  cartItemParamsSchema,
+  mergeCartSchema,
+  updateCartItemSchema,
+} from '../schemas/cart.js';
+import { getOrCreateCart, mapCart, mergeGuestCartItems } from '../services/cart.js';
 import { paramString } from '../utils/params.js';
 
 export const cartRouter = Router();
@@ -16,6 +21,16 @@ cartRouter.get('/', async (req, res, next) => {
   try {
     const cart = await getOrCreateCart(req.user!.sub);
     ok(res, mapCart(cart));
+  } catch (error) {
+    next(error);
+  }
+});
+
+cartRouter.post('/merge', validate({ body: mergeCartSchema }), async (req, res, next) => {
+  try {
+    const userId = req.user!.sub;
+    const updated = await mergeGuestCartItems(userId, req.body.items);
+    ok(res, mapCart(updated));
   } catch (error) {
     next(error);
   }

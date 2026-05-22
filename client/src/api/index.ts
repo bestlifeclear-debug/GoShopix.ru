@@ -88,6 +88,12 @@ export const categoriesApi = {
 
 export const cartApi = {
   get: () => apiFetch<Cart>('/api/cart', { auth: true }),
+  merge: (items: { variantId: string; quantity: number }[]) =>
+    apiFetch<Cart>('/api/cart/merge', {
+      method: 'POST',
+      auth: true,
+      body: JSON.stringify({ items }),
+    }),
   addItem: (variantId: string, quantity = 1) =>
     apiFetch<Cart>('/api/cart/items', {
       method: 'POST',

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { cartApi } from '../api/index.js';
 import type { Cart } from '../api/types.js';
 import { ApiClientError } from '../api/client.js';
@@ -47,7 +48,9 @@ function isAuthenticated() {
   return Boolean(useAuthStore.getState().token);
 }
 
-export const useCartStore = create<CartState>((set, get) => ({
+export const useCartStore = create<CartState>()(
+  persist(
+    (set, get) => ({
   cart: null,
   guestItems: [],
   drawerOpen: false,
@@ -57,7 +60,9 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   initGuestCart: () => {
     if (isAuthenticated()) return;
-    const guestItems = loadGuestCart();
+    const stored = get().guestItems;
+    const guestItems = stored.length > 0 ? stored : loadGuestCart();
+    if (guestItems.length > 0) saveGuestCart(guestItems);
     set({ guestItems });
   },
 
@@ -78,7 +83,9 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   fetchCart: async () => {
     if (!isAuthenticated()) {
-      const guestItems = loadGuestCart();
+      const guestItems =
+        get().guestItems.length > 0 ? get().guestItems : loadGuestCart();
+      if (guestItems.length > 0) saveGuestCart(guestItems);
       set({ cart: null, guestItems, isLoading: false });
       return;
     }
@@ -112,16 +119,29 @@ export const useCartStore = create<CartState>((set, get) => ({
     const { guestItems } = get();
     if (!isAuthenticated() || guestItems.length === 0) return;
 
-    for (const line of guestItems) {
-      try {
-        await cartApi.addItem(line.variantId, line.quantity);
-      } catch {
-        /* skip failed lines */
+    set({ pendingCartOps: get().pendingCartOps + 1 });
+    try {
+      const items = guestItems.map((line) => ({
+        variantId: line.variantId,
+        quantity: line.quantity,
+      }));
+      const cart = await cartApi.merge(items);
+      clearGuestCart();
+      set({ guestItems: [], cart, error: null });
+    } catch {
+      for (const line of guestItems) {
+        try {
+          await cartApi.addItem(line.variantId, line.quantity);
+        } catch {
+          /* skip failed lines */
+        }
       }
+      clearGuestCart();
+      set({ guestItems: [] });
+      await get().fetchCart();
+    } finally {
+      set({ pendingCartOps: Math.max(0, get().pendingCartOps - 1) });
     }
-    clearGuestCart();
-    set({ guestItems: [] });
-    await get().fetchCart();
   },
 
   addToCart: async (variantId, quantity = 1, snapshot) => {
@@ -208,7 +228,25 @@ export const useCartStore = create<CartState>((set, get) => ({
     saveGuestCart(guestItems);
     set({ guestItems });
   },
-}));
+}),
+    {
+      name: 'goshopix-cart-guest',
+      partialize: (state) => ({ guestItems: state.guestItems }),
+      merge: (persisted, current) => {
+        const p = persisted as Partial<CartState> | undefined;
+        const fromStorage = loadGuestCart();
+        const guestItems =
+          p?.guestItems && p.guestItems.length > 0
+            ? p.guestItems
+            : fromStorage.length > 0
+              ? fromStorage
+              : current.guestItems;
+        if (guestItems.length > 0) saveGuestCart(guestItems);
+        return { ...current, guestItems };
+      },
+    },
+  ),
+);
 
 /** Селектор для мгновенного бейджа корзины в шапке */
 export function selectCartItemCount(state: CartState, isLoggedIn: boolean): number {

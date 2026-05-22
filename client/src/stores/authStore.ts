@@ -56,6 +56,8 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         localStorage.removeItem('goshopix_token');
         useCartStore.getState().closeDrawer();
+        useCartStore.setState({ cart: null, error: null });
+        useCartStore.getState().initGuestCart();
         set({ user: null, token: null, error: null });
       },
 

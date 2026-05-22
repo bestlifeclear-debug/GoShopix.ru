@@ -78,6 +78,23 @@ export const openApiSpec = {
           quantity: { type: 'integer', minimum: 1 },
         },
       },
+      MergeCartBody: {
+        type: 'object',
+        required: ['items'],
+        properties: {
+          items: {
+            type: 'array',
+            items: {
+              type: 'object',
+              required: ['variantId', 'quantity'],
+              properties: {
+                variantId: { type: 'string' },
+                quantity: { type: 'integer', minimum: 1 },
+              },
+            },
+          },
+        },
+      },
       CreateOrderBody: {
         type: 'object',
         required: ['shippingName', 'shippingPhone', 'shippingAddress'],
@@ -174,6 +191,18 @@ export const openApiSpec = {
         summary: 'Получить корзину',
         security: [{ bearerAuth: [] }],
         responses: { '200': { description: 'Корзина с позициями' } },
+      },
+    },
+    '/api/cart/merge': {
+      post: {
+        tags: ['Cart'],
+        summary: 'Слить гостевую корзину с корзиной пользователя',
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/MergeCartBody' } } },
+        },
+        responses: { '200': { description: 'Обновлённая корзина' } },
       },
     },
     '/api/cart/items': {

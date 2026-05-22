@@ -50,7 +50,7 @@ export function CartDrawer() {
 
   const handleCheckout = () => {
     closeDrawer();
-    navigate('/auth?returnUrl=/cart');
+    navigate('/auth?returnUrl=/checkout');
   };
 
   const content = (
@@ -140,9 +140,8 @@ export function CartDrawer() {
               <strong>{formatPrice(cart.subtotal)}</strong>
             </div>
             <Button type="button" fullWidth size="lg" onClick={handleCheckout} loading={isLoading}>
-              Оплатить
+              Оформить заказ
             </Button>
-            <p className={styles.hint}>Для оформления заказа войдите или зарегистрируйтесь</p>
           </footer>
         )}
       </aside>
