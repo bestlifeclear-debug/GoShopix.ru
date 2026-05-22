@@ -51,6 +51,7 @@ export function AccountProfile({
   const [notifSaving, setNotifSaving] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileSuccess, setProfileSuccess] = useState(false);
+  const [profileSuccessFade, setProfileSuccessFade] = useState(false);
 
   const [changeField, setChangeField] = useState<ContactField | null>(null);
   const [changeStep, setChangeStep] = useState<ChangeStep>('value');
@@ -76,9 +77,14 @@ export function AccountProfile({
     try {
       await authApi.updateProfile({ name: name.trim() });
       await onProfileSaved();
+      setProfileSuccessFade(false);
       setProfileSuccess(true);
       showInfoToast('Данные сохранены');
-      setTimeout(() => setProfileSuccess(false), 3000);
+      window.setTimeout(() => setProfileSuccessFade(true), 2500);
+      window.setTimeout(() => {
+        setProfileSuccess(false);
+        setProfileSuccessFade(false);
+      }, 3000);
     } catch (e) {
       setProfileError(mapApiError(e, 'Не удалось сохранить'));
     } finally {
@@ -190,7 +196,7 @@ export function AccountProfile({
         >
           <div className="mb-8">
             <label htmlFor="profile-name" className={labelClass}>
-              Имя
+              Имя (необязательно)
             </label>
             <input
               id="profile-name"
@@ -202,7 +208,6 @@ export function AccountProfile({
               placeholder="Как к вам обращаться"
               autoComplete="name"
             />
-            <p className="mt-1.5 text-xs text-slate-400">Необязательно</p>
             <button
               type="submit"
               className={`${saveBtnClass} mt-4`}
@@ -216,7 +221,26 @@ export function AccountProfile({
               </p>
             )}
             {profileSuccess && !profileError && (
-              <p className="mt-3 text-sm text-emerald-600">Изменения сохранены</p>
+              <p
+                className={`mt-3 flex items-center gap-1.5 text-sm text-emerald-600 transition-opacity duration-500 ${
+                  profileSuccessFade ? 'opacity-0' : 'opacity-100'
+                }`}
+                role="status"
+              >
+                <svg
+                  className="h-4 w-4 shrink-0"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Изменения сохранены
+              </p>
             )}
           </div>
 

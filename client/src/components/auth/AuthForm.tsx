@@ -18,8 +18,7 @@ const DEMO_PHONE = '9001112233';
 const inputClass =
   'w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-800 placeholder-slate-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 focus:outline-none transition-all disabled:opacity-60';
 
-const labelClass =
-  'mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500';
+const labelClass = 'mb-2 block text-xs font-medium text-slate-500';
 
 const primaryBtnClass =
   'w-full bg-red-500 hover:bg-red-600 text-white font-medium py-3.5 px-4 rounded-xl transition-colors active:scale-[0.99] text-base mt-2 disabled:pointer-events-none disabled:opacity-60';
@@ -120,7 +119,7 @@ export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
                 id="auth-identifier"
                 type="text"
                 className={`${inputClass}${identifierError ? ' border-red-400 focus:border-red-500 focus:ring-red-500/10' : ''}`}
-                placeholder="customer@goshopix.ru или +7..."
+                placeholder="example@mail.ru или +7 (999) 000-00-00"
                 autoComplete="username tel email"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
