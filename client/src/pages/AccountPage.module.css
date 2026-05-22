@@ -920,69 +920,6 @@
   font-size: 0.875rem;
 }
 
-/* Notifications */
-.notifications {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.notifToolbar {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.notifList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.notifItem {
-  display: block;
-  width: 100%;
-  padding: 16px 20px;
-  border: none;
-  border-radius: var(--lk-radius);
-  background: var(--lk-surface);
-  text-align: left;
-  cursor: pointer;
-  font-family: var(--font-family);
-  box-shadow: var(--shadow-sm);
-  transition:
-    background var(--lk-transition),
-    box-shadow var(--lk-transition),
-    transform var(--lk-transition);
-}
-
-.notifItem:hover {
-  background: var(--lk-nav-fill);
-  box-shadow: var(--lk-nav-shadow);
-  transform: var(--lk-lift);
-}
-
-.notifUnread .notifItem {
-  border-left: 3px solid var(--lk-accent);
-}
-
-.notifUnread .notifItem:hover {
-  border-left-color: var(--lk-accent);
-}
-
-.notifItem p {
-  margin: 6px 0;
-  color: var(--lk-text-muted);
-  font-size: 0.875rem;
-}
-
-.notifItem time {
-  font-size: 0.8125rem;
-  color: var(--lk-text-muted);
-}
-
 /* Profile */
 .profileGrid {
   display: flex;

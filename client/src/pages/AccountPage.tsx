@@ -202,6 +202,7 @@ export function AccountPage() {
               notifications={notifications}
               onRefresh={refreshNotifications}
               onOpenOrder={openOrder}
+              onGoOrders={() => navigateSection('orders')}
             />
           )}
 
