@@ -284,3 +284,87 @@
 .cartBtnSuccess:hover:not(:disabled) {
   background: var(--color-success);
 }
+
+@media (max-width: 767px) {
+  .card {
+    border: 1px solid #f3f4f6;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.06);
+  }
+
+  .card:hover {
+    transform: none;
+    border-color: #f3f4f6;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.06);
+  }
+
+  .media {
+    flex: none;
+    aspect-ratio: auto;
+    min-height: 132px;
+    max-height: 60%;
+    background: #f9fafb;
+  }
+
+  .image {
+    padding: 10px;
+  }
+
+  .body {
+    gap: 4px;
+    padding: 8px;
+  }
+
+  .brand {
+    display: none;
+  }
+
+  .title {
+    font-size: 12px;
+    font-weight: var(--font-weight-medium);
+    order: 2;
+  }
+
+  .rowTitle {
+    order: 2;
+  }
+
+  .rowPrice {
+    order: 1;
+  }
+
+  .price {
+    font-size: 16px;
+  }
+
+  .oldPrice {
+    font-size: 12px;
+    color: #9ca3af;
+  }
+
+  .rowRating,
+  .specs {
+    display: none;
+  }
+
+  .cartBtn {
+    min-height: 36px;
+    font-size: 12px;
+    border-radius: var(--radius-full);
+    background: var(--gradient-primary-horizontal);
+  }
+
+  .discountBadge {
+    background: #ffffff;
+    border: 1px solid #f3f4f6;
+    color: var(--color-primary);
+    font-size: 10px;
+  }
+
+  .favBtn {
+    width: 36px;
+    height: 36px;
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -149,6 +149,7 @@
     --header-height: auto;
     --radius-search: var(--radius-full);
     --search-height: 44px;
+    --radius-search: var(--radius-full);
     --mobile-bottom-nav-height: calc(56px + env(safe-area-inset-bottom, 0px));
     --container-padding: 12px;
   }

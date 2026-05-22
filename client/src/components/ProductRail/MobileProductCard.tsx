@@ -1,7 +1,7 @@
 import { formatPrice } from '@goshopix/shared';
 import { Link } from 'react-router-dom';
 import type { ProductListItem } from '../../api/types';
-import { StarRating } from '../../design-system';
+import { IconPlus } from '../../design-system/icons/Icons';
 import styles from './MobileProductCard.module.css';
 
 interface MobileProductCardProps {
@@ -16,30 +16,40 @@ export function MobileProductCard({ product, highlightPrice, onAddToCart }: Mobi
 
   return (
     <article className={styles.card}>
-      <Link to={`/product/${product.id}`} className={styles.mediaLink}>
-        {product.discountPercent != null && product.discountPercent > 0 && (
-          <span className={styles.badge}>−{product.discountPercent}%</span>
-        )}
-        {image ? (
-          <img src={image} alt={product.name} className={styles.image} loading="lazy" />
-        ) : (
-          <span className={styles.placeholder}>GoShopix</span>
-        )}
-      </Link>
-      <div className={styles.body}>
-        <Link to={`/product/${product.id}`} className={styles.title}>
-          {product.name}
+      <div className={styles.media}>
+        <Link to={`/product/${product.id}`} className={styles.mediaLink} aria-label={product.name}>
+          {product.discountPercent != null && product.discountPercent > 0 && (
+            <span className={styles.badge}>−{product.discountPercent}%</span>
+          )}
+          {image ? (
+            <img src={image} alt="" className={styles.image} loading="lazy" />
+          ) : (
+            <span className={styles.placeholder} aria-hidden />
+          )}
         </Link>
-        <StarRating value={product.rating} reviewCount={product.reviewCount} size="sm" />
+        <button
+          type="button"
+          className={styles.addBtn}
+          onClick={(e) => {
+            e.preventDefault();
+            onAddToCart?.();
+          }}
+          aria-label={`Добавить ${product.name} в корзину`}
+        >
+          <IconPlus className={styles.addIcon} />
+        </button>
+      </div>
+
+      <div className={styles.body}>
         <div className={`${styles.prices} ${highlightPrice ? styles.pricesSale : ''}`}>
           <span className={styles.price}>{formatPrice(product.price)}</span>
           {hasDiscount && (
             <span className={styles.oldPrice}>{formatPrice(product.compareAtPrice!)}</span>
           )}
         </div>
-        <button type="button" className={styles.cartBtn} onClick={onAddToCart}>
-          В корзину
-        </button>
+        <Link to={`/product/${product.id}`} className={styles.title}>
+          {product.name}
+        </Link>
       </div>
     </article>
   );
