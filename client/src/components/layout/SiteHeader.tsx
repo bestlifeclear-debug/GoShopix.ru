@@ -5,7 +5,7 @@ import type { CategoryNode } from '../../api/types';
 import { Header, type HeaderNavLink } from '../../design-system';
 import { IconClose } from '../../design-system/icons/Icons';
 import { CatalogMenu } from '../CatalogMenu/CatalogMenu';
-import { HeaderDeliveryCitySlots } from '../HeaderDeliveryCity/HeaderDeliveryCity';
+import { HeaderDeliveryCity } from '../HeaderDeliveryCity/HeaderDeliveryCity';
 import { SearchBox, type SearchSuggestion } from '../SearchBox/SearchBox';
 import { useAuthStore } from '../../stores/authStore';
 import { selectCartItemCount, useCartStore } from '../../stores/cartStore';
@@ -137,7 +137,7 @@ export function SiteHeader() {
   return (
     <div ref={wrapRef} className={styles.wrap}>
       <Header
-        deliverySlot={<HeaderDeliveryCitySlots />}
+        deliverySlot={<HeaderDeliveryCity />}
         searchSlot={
           <SearchBox
             value={search}
