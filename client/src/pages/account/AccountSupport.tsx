@@ -325,7 +325,7 @@ export function AccountSupport({
       </div>
 
       <div className={styles.ticketsZone}>
-        <div className={styles.ticketsDivider} aria-hidden>
+        <div className={styles.ticketsDivider}>
           <span className={styles.ticketsDividerLine} />
           <span className={styles.ticketsDividerLabel}>Мои обращения</span>
           <span className={styles.ticketsDividerLine} />

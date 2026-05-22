@@ -327,8 +327,8 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--lk-accent) 15%,
-    var(--lk-accent) 85%,
+    var(--color-primary, #e53935) 15%,
+    var(--color-primary, #e53935) 85%,
     transparent 100%
   );
 }
@@ -337,12 +337,13 @@
   flex-shrink: 0;
   padding: 6px 14px;
   border-radius: 999px;
-  background: var(--lk-accent);
-  color: var(--lk-nav-on-primary, #fff);
+  background-color: var(--color-button-primary, #e53935);
+  color: #ffffff;
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+  box-shadow: 0 2px 8px rgb(var(--color-primary-rgb, 229 57 53) / 0.35);
 }
 
 .ticketsSection {
