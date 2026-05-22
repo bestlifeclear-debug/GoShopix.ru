@@ -66,6 +66,18 @@ export const authApi = {
     }),
 
   me: () => apiFetch<User>('/api/auth/me', { auth: true }),
+
+  updateProfile: (body: {
+    username?: string;
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+  }) =>
+    apiFetch<User>('/api/auth/profile', {
+      method: 'PATCH',
+      auth: true,
+      body: JSON.stringify(body),
+    }),
 };
 
 export const productsApi = {

@@ -37,3 +37,10 @@ export const resetPasswordSchema = z.object({
   token: z.string().min(16).max(128),
   password: z.string().min(8).max(128),
 });
+
+export const updateProfileSchema = z.object({
+  username: usernameSchema.optional(),
+  firstName: z.string().max(100).optional(),
+  lastName: z.string().max(100).optional(),
+  phone: z.string().min(10).max(30).optional(),
+});

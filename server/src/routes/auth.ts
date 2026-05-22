@@ -2,6 +2,7 @@ import { UserRole } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
 import { Router } from 'express';
+import { z } from 'zod';
 import { AppError } from '../lib/errors.js';
 import { signToken } from '../lib/jwt.js';
 import { prisma } from '../lib/prisma.js';
@@ -15,8 +16,9 @@ import {
   loginSchema,
   registerSchema,
   resetPasswordSchema,
+  updateProfileSchema,
 } from '../schemas/auth.js';
-import { findUserById, mapUser } from '../services/user.js';
+import { findUserById, mapUser, updateUserProfile } from '../services/user.js';
 import {
   findUserByLogin,
   findUserByPhone,
@@ -197,6 +199,22 @@ authRouter.get('/me', authenticate, requireRole('CUSTOMER', 'SELLER', 'ADMIN'), 
     next(error);
   }
 });
+
+authRouter.patch(
+  '/profile',
+  authenticate,
+  requireRole('CUSTOMER', 'SELLER', 'ADMIN'),
+  validate({ body: updateProfileSchema }),
+  async (req, res, next) => {
+    try {
+      const body = req.body as z.infer<typeof updateProfileSchema>;
+      const updated = await updateUserProfile(req.user!.sub, body);
+      ok(res, mapUser(updated));
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 function maskEmail(email: string): string {
   const [local, domain] = email.split('@');

@@ -1,0 +1,152 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 720px;
+}
+
+.card {
+  padding: 24px;
+  background: var(--lk-surface);
+  border: 1px solid var(--lk-border);
+  border-radius: var(--lk-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.cardTitle {
+  margin: 0 0 6px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--lk-text);
+}
+
+.cardHint {
+  margin: 0 0 20px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--lk-text-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.nameRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.readonlyField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.readonlyLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--lk-text-muted);
+}
+
+.readonlyValue {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--lk-bg-muted);
+  border: 1px solid var(--lk-border);
+  font-size: 0.9375rem;
+  color: var(--lk-text);
+}
+
+.readonlyNote {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--lk-text-muted);
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.formError {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-error, #dc2626);
+}
+
+.formSuccess {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #047857;
+}
+
+.notifList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notifOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--lk-border);
+  border-radius: 12px;
+  background: var(--lk-bg-muted);
+  cursor: pointer;
+  transition:
+    background var(--lk-transition),
+    border-color var(--lk-transition);
+}
+
+.notifOption:hover {
+  background: var(--lk-nav-fill);
+  border-color: var(--lk-hover-border);
+}
+
+.notifOption input {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary, #ff3d2e);
+  flex-shrink: 0;
+}
+
+.notifOptionText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.notifOptionTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--lk-text);
+}
+
+.notifOptionDesc {
+  font-size: 0.8125rem;
+  color: var(--lk-text-muted);
+}
+
+@media (max-width: 600px) {
+  .nameRow {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 18px 16px;
+  }
+}

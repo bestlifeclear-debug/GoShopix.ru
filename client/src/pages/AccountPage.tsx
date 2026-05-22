@@ -211,6 +211,7 @@ export function AccountPage() {
               user={user}
               notifSettings={notifSettings}
               onSettingsChange={setNotifSettings}
+              onProfileSaved={fetchMe}
             />
           )}
 
