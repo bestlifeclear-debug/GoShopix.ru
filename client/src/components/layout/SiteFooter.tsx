@@ -75,6 +75,11 @@ export function SiteFooter() {
             <h3 className={styles.colTitle}>Контакты</h3>
             <ul className={styles.contactList}>
               <li>
+                <Link to="/account?section=support" className={styles.contactLink}>
+                  Поддержка
+                </Link>
+              </li>
+              <li>
                 <a href="mailto:support@goshopix.ru" className={styles.contactLink}>
                   support@goshopix.ru
                 </a>

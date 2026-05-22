@@ -17,7 +17,7 @@ interface AccountOrdersProps {
   orders: Order[];
   onOrderUpdated: (order: Order) => void;
   onRepeat: (order: Order) => void;
-  onSupport: () => void;
+  onSupport: (orderId: string) => void;
   initialExpandedId?: string | null;
 }
 

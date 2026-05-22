@@ -7,6 +7,8 @@ import type {
   Order,
   NotificationItem,
   NotificationSettings,
+  SupportTicket,
+  SupportTicketTopic,
   ProductDetail,
   ProductFacets,
   ProductsListResponse,
@@ -160,6 +162,35 @@ export const orderStatusesApi = {
 
 export const cityDetectApi = {
   detect: () => apiFetch<{ city: string | null }>('/api/city-detect'),
+};
+
+export const supportApi = {
+  listTickets: (page = 1, limit = 20) =>
+    apiFetch<{ items: SupportTicket[]; meta: { page: number; limit: number; total: number; totalPages: number } }>(
+      `/api/support/tickets${buildQuery({ page, limit })}`,
+      { auth: true },
+    ),
+
+  getTicket: (id: string) => apiFetch<SupportTicket>(`/api/support/tickets/${id}`, { auth: true }),
+
+  createTicket: (body: {
+    topic: SupportTicketTopic;
+    message: string;
+    orderId?: string;
+    subject?: string;
+  }) =>
+    apiFetch<SupportTicket>('/api/support/tickets', {
+      method: 'POST',
+      auth: true,
+      body: JSON.stringify(body),
+    }),
+
+  reply: (ticketId: string, message: string) =>
+    apiFetch<SupportTicket>(`/api/support/tickets/${ticketId}/messages`, {
+      method: 'POST',
+      auth: true,
+      body: JSON.stringify({ message }),
+    }),
 };
 
 export const favoritesApi = {

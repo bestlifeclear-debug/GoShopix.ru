@@ -10,6 +10,7 @@ import { AccountNotifications } from './account/AccountNotifications';
 import { AccountOrders } from './account/AccountOrders';
 import { AccountPlaceholder } from './account/AccountPlaceholder';
 import { AccountProfile } from './account/AccountProfile';
+import { AccountSupport } from './account/AccountSupport';
 import { AccountLayout } from '../components/layout/AccountLayout';
 import { AccountSidebar } from './account/AccountSidebar';
 import { SECTION_TITLES } from './account/constants';
@@ -79,10 +80,15 @@ export function AccountPage() {
     setMobileNavOpen(false);
   }, [section]);
 
-  const navigateSection = (id: AccountSection) => {
+  const navigateSection = (id: AccountSection, extra?: { orderId?: string }) => {
     const next = new URLSearchParams();
     next.set('section', id);
+    if (extra?.orderId) next.set('orderId', extra.orderId);
     setParams(next);
+  };
+
+  const openSupport = (orderId?: string) => {
+    navigateSection('support', orderId ? { orderId } : undefined);
   };
 
   const openOrder = (id: string) => {
@@ -184,7 +190,7 @@ export function AccountPage() {
               orders={orders}
               onOrderUpdated={updateOrderInState}
               onRepeat={handleRepeatOrder}
-              onSupport={() => navigateSection('support')}
+              onSupport={openSupport}
               initialExpandedId={orderIdParam}
             />
           )}
@@ -243,25 +249,13 @@ export function AccountPage() {
           )}
 
           {section === 'support' && (
-            <div className={styles.supportCard}>
-              <h2 className={styles.supportTitle}>Служба поддержки GoShopix</h2>
-              <p>Мы на связи ежедневно с 9:00 до 21:00 (МСК).</p>
-              <ul className={styles.supportList}>
-                <li>
-                  <a href="mailto:support@goshopix.ru">support@goshopix.ru</a>
-                </li>
-                <li>
-                  <button type="button" className={styles.textLink} onClick={() => navigateSection('orders')}>
-                    Статус заказа
-                  </button>
-                </li>
-                <li>
-                  <button type="button" className={styles.textLink} onClick={() => navigateSection('returns')}>
-                    Возврат товара
-                  </button>
-                </li>
-              </ul>
-            </div>
+            <AccountSupport
+              orders={orders}
+              contextOrderId={orderIdParam}
+              isSeller={user?.role === 'SELLER'}
+              onNavigateSection={(id) => navigateSection(id)}
+              onOpenOrder={openOrder}
+            />
           )}
         </div>
       </div>

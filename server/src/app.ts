@@ -20,6 +20,7 @@ import { productsRouter } from './routes/products.js';
 import { sellerRouter } from './routes/seller/index.js';
 import { orderStatusesRouter } from './routes/order-statuses.js';
 import { notificationsRouter } from './routes/notifications.js';
+import { supportRouter } from './routes/support.js';
 import { webhooksRouter } from './routes/webhooks.js';
 import { isAllowedRequestOrigin } from './lib/allowed-origins.js';
 
@@ -74,6 +75,7 @@ export function createApp() {
   app.use('/api/favorites', favoritesRouter);
   app.use('/api/order-statuses', orderStatusesRouter);
   app.use('/api/notifications', notificationsRouter);
+  app.use('/api/support', supportRouter);
   app.use('/api/webhooks', webhooksRouter);
   app.use('/api/seller', sellerRouter);
 

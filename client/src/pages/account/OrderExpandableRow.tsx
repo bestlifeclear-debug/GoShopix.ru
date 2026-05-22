@@ -12,7 +12,7 @@ interface OrderExpandableRowProps {
   onToggle: () => void;
   onUpdated: (order: Order) => void;
   onRepeat: (order: Order) => void;
-  onSupport: () => void;
+  onSupport: (orderId: string) => void;
 }
 
 export function OrderExpandableRow({
@@ -91,7 +91,7 @@ export function OrderExpandableRow({
             <Button variant="secondary" size="sm" onClick={onToggle}>
               Подробнее
             </Button>
-            <Button variant="outline" size="sm" onClick={onSupport}>
+            <Button variant="outline" size="sm" onClick={() => onSupport(order.id)}>
               Связаться с поддержкой
             </Button>
             {order.status === 'pending' && (

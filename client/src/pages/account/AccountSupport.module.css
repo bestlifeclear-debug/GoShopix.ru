@@ -1,0 +1,464 @@
+.support {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 920px;
+}
+
+.hero {
+  padding: 24px;
+  background: var(--lk-surface);
+  border: 1px solid var(--lk-border);
+  border-radius: var(--lk-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.heroTitle {
+  margin: 0 0 6px;
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--lk-text);
+}
+
+.heroText {
+  margin: 0 0 20px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--lk-text-muted);
+}
+
+.searchWrap {
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--lk-text-muted);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 48px;
+  padding: 12px 16px 12px 44px;
+  border: 1px solid var(--lk-border);
+  border-radius: 12px;
+  background: var(--lk-bg-muted);
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--lk-text);
+  transition:
+    border-color var(--lk-transition),
+    box-shadow var(--lk-transition);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--lk-accent);
+  box-shadow: 0 0 0 2px rgb(var(--color-primary-rgb) / 0.15);
+}
+
+.searchInput::placeholder {
+  color: var(--lk-text-muted);
+}
+
+.orderBanner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--lk-accent-soft);
+  border: 1px solid var(--lk-hover-border);
+  border-radius: var(--lk-radius);
+}
+
+.orderBannerText {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--lk-text);
+}
+
+.orderBannerActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sectionBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--lk-text);
+}
+
+.quickGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.quickTile {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-height: 72px;
+  padding: 14px 16px;
+  border: 1px solid var(--lk-border);
+  border-radius: 14px;
+  background: var(--lk-surface);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--lk-transition),
+    border-color var(--lk-transition),
+    box-shadow var(--lk-transition);
+}
+
+.quickTile:hover {
+  border-color: var(--lk-hover-border);
+  background: var(--lk-nav-fill);
+  box-shadow: var(--lk-nav-shadow);
+}
+
+.quickIcon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--lk-accent-soft);
+  color: var(--lk-accent);
+}
+
+.quickBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.quickTitle {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--lk-text);
+}
+
+.quickSubtitle {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  color: var(--lk-text-muted);
+}
+
+.quickChevron {
+  flex-shrink: 0;
+  margin-top: 4px;
+  color: var(--lk-text-muted);
+}
+
+.faqList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.faqItem {
+  border: 1px solid var(--lk-border);
+  border-radius: 14px;
+  background: var(--lk-surface);
+  overflow: hidden;
+}
+
+.faqTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: left;
+  color: var(--lk-text);
+  cursor: pointer;
+}
+
+.faqTrigger:hover {
+  background: var(--lk-bg-muted);
+}
+
+.faqAnswer {
+  margin: 0;
+  padding: 0 18px 16px;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--lk-text-muted);
+}
+
+.faqEmpty {
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+  color: var(--lk-text-muted);
+  background: var(--lk-bg-muted);
+  border-radius: var(--lk-radius);
+}
+
+.contactCard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px;
+  background: var(--lk-surface);
+  border: 1px solid var(--lk-border);
+  border-radius: var(--lk-radius);
+}
+
+.contactText {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--lk-text-muted);
+}
+
+.contactEmailRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.contactEmail {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--lk-accent);
+  text-decoration: none;
+}
+
+.contactEmail:hover {
+  text-decoration: underline;
+}
+
+.copyBtn {
+  padding: 6px 12px;
+  border: 1px solid var(--lk-border);
+  border-radius: 8px;
+  background: var(--lk-bg-muted);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  color: var(--lk-text);
+  cursor: pointer;
+}
+
+.copyBtn:hover {
+  background: var(--lk-nav-fill);
+}
+
+.ticketsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ticketRow {
+  border: 1px solid var(--lk-border);
+  border-radius: 14px;
+  background: var(--lk-surface);
+  overflow: hidden;
+}
+
+.ticketHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ticketHead:hover {
+  background: var(--lk-bg-muted);
+}
+
+.ticketSubject {
+  flex: 1;
+  min-width: 140px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--lk-text);
+}
+
+.ticketMeta {
+  font-size: 0.8125rem;
+  color: var(--lk-text-muted);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status_open {
+  background: var(--lk-accent-soft);
+  color: var(--lk-accent);
+}
+
+.status_in_progress {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.status_answered {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.status_closed {
+  background: var(--lk-bg-muted);
+  color: var(--lk-text-muted);
+}
+
+.ticketDetail {
+  padding: 0 18px 18px;
+  border-top: 1px solid var(--lk-border);
+}
+
+.messages {
+  list-style: none;
+  margin: 16px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message {
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.messageCustomer {
+  background: var(--lk-bg-muted);
+  color: var(--lk-text);
+}
+
+.messageStaff {
+  background: var(--lk-accent-soft);
+  color: var(--lk-text);
+  border: 1px solid var(--lk-hover-border);
+}
+
+.messageMeta {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--lk-text-muted);
+}
+
+.replyForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.replyInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid var(--lk-border);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  resize: vertical;
+  min-height: 72px;
+  color: var(--lk-text);
+  background: var(--lk-bg-muted);
+}
+
+.replyInput:focus {
+  outline: none;
+  border-color: var(--lk-accent);
+}
+
+.ticketsEmpty {
+  margin: 0;
+  padding: 24px;
+  text-align: center;
+  color: var(--lk-text-muted);
+  background: var(--lk-bg-muted);
+  border-radius: var(--lk-radius);
+  border: 1px dashed var(--lk-empty-border);
+}
+
+.stickyCta {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .quickGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .contactCard {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stickyCta {
+    display: block;
+    position: sticky;
+    bottom: 12px;
+    z-index: 5;
+    padding-top: 8px;
+  }
+
+  .stickyCta button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .quickGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

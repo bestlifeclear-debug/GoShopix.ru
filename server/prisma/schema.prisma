@@ -59,6 +59,29 @@ enum AttributeType {
   SELECT
 }
 
+enum SupportTicketTopic {
+  order
+  return
+  payment
+  cancel
+  product
+  seller
+  bonuses
+  other
+}
+
+enum SupportTicketStatus {
+  open
+  in_progress
+  answered
+  closed
+}
+
+enum SupportMessageAuthorRole {
+  CUSTOMER
+  STAFF
+}
+
 // ─── Users & auth ────────────────────────────────────────────────────────────
 
 model User {
@@ -80,6 +103,7 @@ model User {
   notificationSettings   UserNotificationSettings?
   orderStatusChanges     OrderStatusHistory[] @relation("StatusChangedBy")
   backgroundJobs         BackgroundJob[]    @relation("JobCreatedBy")
+  supportTickets         SupportTicket[]
 
   @@map("users")
 }
@@ -333,9 +357,10 @@ model Order {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
-  user    User                 @relation(fields: [userId], references: [id], onDelete: Restrict)
-  items   OrderItem[]
-  history OrderStatusHistory[]
+  user           User            @relation(fields: [userId], references: [id], onDelete: Restrict)
+  items          OrderItem[]
+  history        OrderStatusHistory[]
+  supportTickets SupportTicket[]
 
   @@index([userId])
   @@index([status])
@@ -487,4 +512,38 @@ model Favorite {
   @@unique([userId, productId])
   @@index([userId])
   @@map("favorites")
+}
+
+// ─── Support ─────────────────────────────────────────────────────────────────
+
+model SupportTicket {
+  id        String              @id @default(cuid())
+  userId    String
+  orderId   String?
+  topic     SupportTicketTopic
+  subject   String
+  status    SupportTicketStatus @default(open)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  user     User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order    Order?                @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  messages SupportTicketMessage[]
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([orderId])
+  @@map("support_tickets")
+}
+
+model SupportTicketMessage {
+  id         String                   @id @default(cuid())
+  ticketId   String
+  authorRole SupportMessageAuthorRole
+  body       String
+  createdAt  DateTime                 @default(now())
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId, createdAt])
+  @@map("support_ticket_messages")
 }

@@ -221,3 +221,35 @@ export interface FavoriteItem {
   addedAt: string;
   product: ProductListItem;
 }
+
+export type SupportTicketTopic =
+  | 'order'
+  | 'return'
+  | 'payment'
+  | 'cancel'
+  | 'product'
+  | 'seller'
+  | 'bonuses'
+  | 'other';
+
+export type SupportTicketStatus = 'open' | 'in_progress' | 'answered' | 'closed';
+
+export interface SupportTicketMessage {
+  id: string;
+  authorRole: 'CUSTOMER' | 'STAFF';
+  body: string;
+  createdAt: string;
+}
+
+export interface SupportTicket {
+  id: string;
+  topic: SupportTicketTopic;
+  topicLabel: string;
+  subject: string;
+  status: SupportTicketStatus;
+  orderId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  lastMessagePreview: string | null;
+  messages?: SupportTicketMessage[];
+}
