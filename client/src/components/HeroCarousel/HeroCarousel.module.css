@@ -305,7 +305,15 @@
 
 @media (max-width: 767px) {
   .carousel {
-    --hero-arrow-safe: var(--space-4);
+    --hero-arrow-safe: var(--space-3);
+    border-radius: var(--radius-lg);
+    height: clamp(180px, 42vw, 220px);
+  }
+
+  .viewport,
+  .track,
+  .slide {
+    height: 100%;
   }
 
   .arrowPrev,
@@ -313,21 +321,114 @@
     display: none;
   }
 
-  .slide,
-  .slideInner {
-    min-height: 240px;
+  .slide {
+    min-height: 0;
+    height: 100%;
   }
 
   .slideInner {
-    padding-left: var(--space-4);
-    padding-right: var(--space-4);
+    grid-template-columns: 1fr 0.75fr;
+    align-items: center;
+    gap: 8px;
+    min-height: 0;
+    height: 100%;
+    padding: 12px var(--space-3) 28px;
+    text-align: left;
+  }
+
+  .copy {
+    align-items: flex-start;
+    gap: 6px;
+    max-width: none;
+  }
+
+  .visual {
+    order: 0;
   }
 
   .promoRibbon {
-    font-size: var(--font-size-lg);
+    padding: 4px 10px;
+    font-size: var(--font-size-sm);
+  }
+
+  .eyebrow {
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
   }
 
   .title {
-    font-size: 1.5rem;
+    font-size: 1.125rem;
+    line-height: 1.25;
+  }
+
+  .text {
+    display: none;
+  }
+
+  .countdown {
+    display: none;
+  }
+
+  .btnCta {
+    align-self: flex-start;
+    width: auto;
+    max-width: none;
+    min-height: 42px;
+    height: 42px;
+    padding: 0 16px;
+    font-size: var(--font-size-sm);
+    margin-top: 2px;
+  }
+
+  .floatBadge {
+    top: 2px;
+    right: 2px;
+    padding: 4px 8px;
+    font-size: 0.625rem;
+  }
+
+  .imageFrame {
+    padding: 8px;
+    border-radius: var(--radius-md);
+  }
+
+  .productImage {
+    max-width: 88px;
+    max-height: 72px;
+  }
+
+  .dots {
+    bottom: 8px;
+    gap: 5px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .dotActive {
+    width: 18px;
+  }
+}
+
+@media (max-width: 430px) {
+  .carousel {
+    height: clamp(168px, 48vw, 200px);
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+
+  .eyebrow {
+    font-size: 0.5625rem;
+  }
+
+  .btnCta {
+    min-height: 40px;
+    height: 40px;
+    padding: 0 14px;
+    font-size: 0.75rem;
   }
 }

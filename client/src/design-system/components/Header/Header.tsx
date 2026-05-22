@@ -87,6 +87,7 @@ export function Header({
             </Link>
             {deliverySlot ? <div className={styles.topDeliveryMobile}>{deliverySlot}</div> : null}
           </div>
+          {deliverySlot ? <div className={styles.mobileDeliveryRow}>{deliverySlot}</div> : null}
           <div className={styles.searchGroup}>{searchSlot}</div>
         </div>
       </div>

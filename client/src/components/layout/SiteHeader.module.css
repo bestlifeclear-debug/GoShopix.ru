@@ -4,6 +4,12 @@
   z-index: 200;
 }
 
+@media (max-width: 768px) {
+  .wrap {
+    background: var(--color-header-bg);
+  }
+}
+
 .catalogMegaAnchor {
   position: absolute;
   top: 100%;

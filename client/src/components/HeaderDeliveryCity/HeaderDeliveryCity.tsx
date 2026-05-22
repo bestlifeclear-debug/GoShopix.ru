@@ -3,7 +3,12 @@ import { cityDetectApi } from '../../api';
 import { DEFAULT_DELIVERY_CITY, readDeliveryCity, writeDeliveryCity } from '../../lib/deliveryCity';
 import styles from './HeaderDeliveryCity.module.css';
 
-export function HeaderDeliveryCity() {
+interface HeaderDeliveryCityProps {
+  /** Компактная строка над поиском на мобилке (без иконки, 12px) */
+  variant?: 'default' | 'compact';
+}
+
+export function HeaderDeliveryCity({ variant = 'default' }: HeaderDeliveryCityProps) {
   const [city, setCity] = useState(() => readDeliveryCity() ?? DEFAULT_DELIVERY_CITY);
 
   useEffect(() => {
@@ -20,6 +25,17 @@ export function HeaderDeliveryCity() {
       setCity(detected);
     });
   }, []);
+
+  if (variant === 'compact') {
+    return (
+      <div className={`${styles.root} ${styles.compact}`} aria-label={`Город доставки: ${city}`} title={city}>
+        <span className={styles.text}>
+          <span className={styles.compactPrefix}>Доставка в</span>
+          <span className={styles.city}>{city}</span>
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.root} aria-label={`Город доставки: ${city}`} title={city}>
@@ -39,5 +55,15 @@ export function HeaderDeliveryCity() {
         <span className={styles.city}>{city}</span>
       </span>
     </div>
+  );
+}
+
+/** Десктоп + мобильная строка над поиском */
+export function HeaderDeliveryCitySlots() {
+  return (
+    <>
+      <HeaderDeliveryCity />
+      <HeaderDeliveryCity variant="compact" />
+    </>
   );
 }

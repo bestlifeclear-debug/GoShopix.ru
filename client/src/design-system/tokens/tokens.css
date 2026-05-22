@@ -41,7 +41,8 @@
   --color-actions-tray-bg: #f8fafc;
 
   --color-bg: #ffffff;
-  --color-bg-subtle: #fafafa;
+  --color-app-bg: #f8f9fa;
+  --color-bg-subtle: #f8f9fa;
   --color-bg-elevated: #ffffff;
   --color-surface-card: #ffffff;
 
@@ -67,9 +68,10 @@
 
   --color-focus-glow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.22);
 
-  /* Кнопки: плоский залив, без вертикального градиента (без «тиснения») */
+  /* Кнопки: фирменный градиент */
   --color-button-primary: var(--color-primary);
   --color-button-primary-hover: var(--color-primary-hover);
+  --color-button-primary-gradient: var(--gradient-primary-horizontal);
 
   --shadow-sm: 0 2px 8px rgb(26 26 26 / 0.06);
   --shadow-md: 0 6px 24px rgb(26 26 26 / 0.08);
@@ -139,6 +141,17 @@
 
   --bp-sm: 768px;
   --bp-md: 1024px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-top-height: auto;
+    --header-height: auto;
+    --radius-search: var(--radius-full);
+    --search-height: 44px;
+    --mobile-bottom-nav-height: calc(56px + env(safe-area-inset-bottom, 0px));
+    --container-padding: 12px;
+  }
 }
 
 @media (min-width: 768px) {

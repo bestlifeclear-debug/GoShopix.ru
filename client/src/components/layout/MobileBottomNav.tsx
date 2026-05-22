@@ -91,6 +91,14 @@ export function MobileBottomNav() {
 
   return (
     <nav className={styles.bar} aria-label="Основная навигация">
+      <svg width="0" height="0" aria-hidden className={styles.gradientDefs}>
+        <defs>
+          <linearGradient id="goshopix-nav-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#FF7062" />
+            <stop offset="100%" stopColor="#FF3D2E" />
+          </linearGradient>
+        </defs>
+      </svg>
       {items.map((item) => {
         const active = isActive(location.pathname, location.search, item.key);
         const className = `${styles.item} ${active ? styles.itemActive : ''}`;
