@@ -27,7 +27,7 @@ const SLIDES = [
     image: '/product-images/gophone-x-1.svg',
     imageAlt: 'Смартфон',
     countdownEndsAt: endOfCurrentWeek(),
-    cta: { to: '/catalog?categorySlug=electronics', label: 'Купить со скидкой' },
+    cta: { to: '/catalog?categorySlug=electronics', label: 'В каталог' },
   },
   {
     id: 'clothing',
@@ -38,7 +38,7 @@ const SLIDES = [
     text: 'Куртки, кроссовки и базовый гардероб от топ-продавцов.',
     image: '/product-images/urban-wind-jacket-1.svg',
     imageAlt: 'Куртка',
-    cta: { to: '/catalog?categorySlug=clothing', label: 'Купить со скидкой' },
+    cta: { to: '/catalog?categorySlug=clothing', label: 'В каталог' },
   },
   {
     id: 'audio',
@@ -49,7 +49,7 @@ const SLIDES = [
     text: 'Проверенные модели с тысячами отзывов.',
     image: '/product-images/soundwave-pro-1.svg',
     imageAlt: 'Наушники',
-    cta: { to: '/catalog?sort=popular', label: 'Купить со скидкой' },
+    cta: { to: '/catalog?sort=popular', label: 'Смотреть' },
   },
   {
     id: 'laptops',
@@ -60,7 +60,7 @@ const SLIDES = [
     text: 'Мощные конфигурации с быстрой доставкой.',
     image: '/product-images/probook-15-1.svg',
     imageAlt: 'Ноутбук',
-    cta: { to: '/catalog?sort=newest', label: 'Смотреть новинки' },
+    cta: { to: '/catalog?sort=newest', label: 'Новинки' },
   },
   {
     id: 'delivery',
