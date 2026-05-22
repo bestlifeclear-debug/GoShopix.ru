@@ -79,6 +79,7 @@
   --shadow-focus: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.25);
 
   --font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
+  --font-family-logo: 'Unbounded', 'Inter', system-ui, sans-serif;
   --font-size-caption: 0.75rem;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
