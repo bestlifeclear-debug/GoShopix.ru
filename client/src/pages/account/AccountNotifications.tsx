@@ -110,13 +110,15 @@ export function AccountNotifications({
     return (
       <div className={styles.wrapEmpty}>
         <div className={styles.emptyPanel}>
-          <span className={styles.emptyIcon} aria-hidden>
-            <Bell size={28} strokeWidth={1.75} />
-          </span>
-          <h2 className={styles.emptyTitle}>Уведомлений пока нет</h2>
-          <p className={styles.emptyText}>
-            Здесь появятся изменения статуса заказов и важные сообщения от GoShopix.
-          </p>
+          <div className={styles.emptyHead}>
+            <span className={styles.emptyIcon} aria-hidden>
+              <Bell size={28} strokeWidth={1.75} />
+            </span>
+            <h2 className={styles.emptyTitle}>Уведомлений пока нет</h2>
+            <p className={styles.emptyText}>
+              Здесь появятся изменения статуса заказов и важные сообщения от GoShopix.
+            </p>
+          </div>
 
           <div className={styles.demoBlock}>
             <span id="notif-demo-label" className={styles.demoLabel}>
@@ -133,9 +135,11 @@ export function AccountNotifications({
           </div>
 
           {onGoOrders && (
-            <Button variant="outline" size="sm" onClick={onGoOrders}>
-              Перейти к заказам
-            </Button>
+            <div className={styles.emptyAction}>
+              <Button variant="outline" size="sm" onClick={onGoOrders}>
+                Перейти к заказам
+              </Button>
+            </div>
           )}
         </div>
       </div>
