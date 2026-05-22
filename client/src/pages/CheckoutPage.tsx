@@ -123,7 +123,7 @@ export function CheckoutPage() {
   useEffect(() => {
     if (user?.profile) {
       const p = user.profile;
-      setName([p.firstName, p.lastName].filter(Boolean).join(' '));
+      if (p.name) setName(p.name);
       const rawPhone = p.phone ?? '';
       setPhone(rawPhone ? formatRuPhoneDisplay(rawPhone) : '');
       setEmail(user.email ?? '');

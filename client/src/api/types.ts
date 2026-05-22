@@ -17,9 +17,7 @@ export interface PaginatedMeta {
 }
 
 export interface UserProfile {
-  username: string | null;
-  firstName: string | null;
-  lastName: string | null;
+  name: string | null;
   phone: string | null;
   avatarUrl: string | null;
   bio: string | null;
@@ -27,7 +25,7 @@ export interface UserProfile {
 
 export interface User {
   id: string;
-  email: string;
+  email: string | null;
   role: string;
   profile: UserProfile | null;
   createdAt: string;

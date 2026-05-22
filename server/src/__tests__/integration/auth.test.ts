@@ -1,60 +1,75 @@
 import { prisma } from '../../lib/prisma.js';
 import { api } from '../helpers/test-app.js';
-import { registerPayload, TEST_PASSWORD } from '../fixtures/users.js';
+import { uniqueEmail, uniquePhone } from '../fixtures/users.js';
 
 const describeIfDb =
   process.env.CI === 'true' || process.env.RUN_INTEGRATION_TESTS === 'true'
     ? describe
     : describe.skip;
 
-describeIfDb('Auth API', () => {
+describeIfDb('Auth API (passwordless)', () => {
   afterAll(async () => {
     await prisma.$disconnect();
   });
 
-  it('registers a new customer', async () => {
-    const body = registerPayload();
-    const res = await api().post('/api/auth/register').send(body).expect(201);
+  it('registers via OTP when email is new', async () => {
+    const email = uniqueEmail('otp-register');
+    const send = await api().post('/api/auth/otp/send').send({ identifier: email }).expect(200);
+    const devCode = send.body.data.devCode as string;
+    expect(devCode).toBeDefined();
 
-    expect(res.body.success).toBe(true);
-    expect(res.body.data.user.email).toBe(body.email);
-    expect(res.body.data.token).toBeDefined();
+    const verify = await api()
+      .post('/api/auth/otp/verify')
+      .send({ identifier: email, code: devCode })
+      .expect(200);
 
-    await prisma.user.delete({ where: { email: body.email } }).catch(() => {});
+    expect(verify.body.data.user.email).toBe(email);
+    expect(verify.body.data.token).toBeDefined();
+
+    await prisma.user.delete({ where: { email } }).catch(() => {});
   });
 
-  it('rejects duplicate email', async () => {
-    const body = registerPayload();
-    await api().post('/api/auth/register').send(body).expect(201);
-    const dup = await api().post('/api/auth/register').send(body).expect(409);
-    expect(dup.body.success).toBe(false);
+  it('logs in existing user via OTP', async () => {
+    const email = uniqueEmail('otp-login');
+    const send1 = await api().post('/api/auth/otp/send').send({ identifier: email }).expect(200);
+    await api()
+      .post('/api/auth/otp/verify')
+      .send({ identifier: email, code: send1.body.data.devCode })
+      .expect(200);
 
-    await prisma.user.delete({ where: { email: body.email } }).catch(() => {});
-  });
-
-  it('logs in with valid credentials', async () => {
-    const body = registerPayload();
-    await api().post('/api/auth/register').send(body).expect(201);
-
+    const send2 = await api().post('/api/auth/otp/send').send({ identifier: email }).expect(200);
     const login = await api()
-      .post('/api/auth/login')
-      .send({ login: body.email, password: TEST_PASSWORD })
+      .post('/api/auth/otp/verify')
+      .send({ identifier: email, code: send2.body.data.devCode })
       .expect(200);
 
     expect(login.body.data.token).toBeDefined();
 
-    await prisma.user.delete({ where: { email: body.email } }).catch(() => {});
+    await prisma.user.delete({ where: { email } }).catch(() => {});
   });
 
-  it('rejects invalid password', async () => {
-    const body = registerPayload();
-    await api().post('/api/auth/register').send(body).expect(201);
+  it('rejects invalid OTP', async () => {
+    const email = uniqueEmail('otp-bad');
+    await api().post('/api/auth/otp/send').send({ identifier: email }).expect(200);
 
     await api()
-      .post('/api/auth/login')
-      .send({ login: body.email, password: 'wrong-password' })
-      .expect(401);
+      .post('/api/auth/otp/verify')
+      .send({ identifier: email, code: '000000' })
+      .expect(400);
 
-    await prisma.user.delete({ where: { email: body.email } }).catch(() => {});
+    await prisma.user.delete({ where: { email } }).catch(() => {});
+  });
+
+  it('registers via phone OTP', async () => {
+    const phone = uniquePhone();
+    const send = await api().post('/api/auth/otp/send').send({ identifier: phone }).expect(200);
+    const verify = await api()
+      .post('/api/auth/otp/verify')
+      .send({ identifier: phone, code: send.body.data.devCode })
+      .expect(200);
+
+    expect(verify.body.data.user.profile?.phone).toBeTruthy();
+
+    await prisma.user.delete({ where: { id: verify.body.data.user.id } }).catch(() => {});
   });
 });

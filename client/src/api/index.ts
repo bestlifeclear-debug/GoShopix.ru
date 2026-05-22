@@ -15,68 +15,60 @@ import type {
   User,
 } from './types.js';
 
-export interface CheckPhoneResponse {
-  exists: boolean;
-  maskedEmail?: string;
-}
-
-export interface ForgotPasswordResponse {
+export interface SendOtpResponse {
   message: string;
-  devToken?: string;
+  maskedDestination: string;
+  devCode?: string;
 }
 
 export const authApi = {
-  checkPhone: (phone: string) =>
-    apiFetch<CheckPhoneResponse>('/api/auth/check-phone', {
+  sendOtp: (identifier: string) =>
+    apiFetch<SendOtpResponse>('/api/auth/otp/send', {
       method: 'POST',
-      body: JSON.stringify({ phone }),
+      body: JSON.stringify({ identifier }),
     }),
 
-  register: (body: {
-    email: string;
-    password: string;
-    username: string;
-    firstName?: string;
-    lastName?: string;
-    phone: string;
-  }) => apiFetch<AuthResponse>('/api/auth/register', { method: 'POST', body: JSON.stringify(body) }),
-
-  login: (login: string, password: string) =>
-    apiFetch<AuthResponse>('/api/auth/login', {
+  verifyOtp: (identifier: string, code: string) =>
+    apiFetch<AuthResponse>('/api/auth/otp/verify', {
       method: 'POST',
-      body: JSON.stringify({ login, password }),
-    }),
-
-  loginByPhone: (phone: string, password: string) =>
-    apiFetch<AuthResponse>('/api/auth/login-phone', {
-      method: 'POST',
-      body: JSON.stringify({ phone, password }),
-    }),
-
-  forgotPassword: (email: string) =>
-    apiFetch<ForgotPasswordResponse>('/api/auth/forgot-password', {
-      method: 'POST',
-      body: JSON.stringify({ email }),
-    }),
-
-  resetPassword: (token: string, password: string) =>
-    apiFetch<AuthResponse>('/api/auth/reset-password', {
-      method: 'POST',
-      body: JSON.stringify({ token, password }),
+      body: JSON.stringify({ identifier, code }),
     }),
 
   me: () => apiFetch<User>('/api/auth/me', { auth: true }),
 
-  updateProfile: (body: {
-    username?: string;
-    firstName?: string;
-    lastName?: string;
-    phone?: string;
-  }) =>
+  updateProfile: (body: { name?: string }) =>
     apiFetch<User>('/api/auth/profile', {
       method: 'PATCH',
       auth: true,
       body: JSON.stringify(body),
+    }),
+
+  sendPhoneChangeOtp: (phone: string) =>
+    apiFetch<SendOtpResponse>('/api/auth/profile/phone/send-otp', {
+      method: 'POST',
+      auth: true,
+      body: JSON.stringify({ phone }),
+    }),
+
+  verifyPhoneChange: (phone: string, code: string) =>
+    apiFetch<User>('/api/auth/profile/phone/verify', {
+      method: 'POST',
+      auth: true,
+      body: JSON.stringify({ phone, code }),
+    }),
+
+  sendEmailChangeOtp: (email: string) =>
+    apiFetch<SendOtpResponse>('/api/auth/profile/email/send-otp', {
+      method: 'POST',
+      auth: true,
+      body: JSON.stringify({ email }),
+    }),
+
+  verifyEmailChange: (email: string, code: string) =>
+    apiFetch<User>('/api/auth/profile/email/verify', {
+      method: 'POST',
+      auth: true,
+      body: JSON.stringify({ email, code }),
     }),
 };
 

@@ -37,7 +37,7 @@ export async function changeOrderStatus(input: ChangeOrderStatusInput) {
   const order = await prisma.order.findUnique({
     where: { id: input.orderId },
     include: {
-      user: { select: { id: true, email: true, profile: { select: { firstName: true } } } },
+      user: { select: { id: true, email: true, profile: { select: { name: true } } } },
       items: { include: { variant: true } },
     },
   });

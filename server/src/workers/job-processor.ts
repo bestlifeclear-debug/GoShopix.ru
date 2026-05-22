@@ -16,15 +16,17 @@ async function processJob(job: { id: string; type: JobType; payload: unknown }) 
         include: { user: { include: { profile: true } } },
       });
       if (!order) return;
-      await sendOrderStatusEmail({
-        orderId: order.id,
-        userId: order.userId,
-        status: (payload.status as string) ?? order.status,
-        customerEmail: order.user.email,
-        customerName: order.user.profile?.firstName ?? null,
-        orderTotal: order.totalAmount.toNumber(),
-        trackingNumber: order.trackingNumber,
-      });
+      if (order.user.email) {
+        await sendOrderStatusEmail({
+          orderId: order.id,
+          userId: order.userId,
+          status: (payload.status as string) ?? order.status,
+          customerEmail: order.user.email,
+          customerName: order.user.profile?.name ?? null,
+          orderTotal: order.totalAmount.toNumber(),
+          trackingNumber: order.trackingNumber,
+        });
+      }
       break;
     }
     case JobType.SEND_WEBHOOK: {

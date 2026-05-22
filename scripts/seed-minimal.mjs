@@ -21,7 +21,7 @@ let u = await prisma.user.create({
 console.log('flat create ok', u.id);
 u = await prisma.user.update({
   where: { id: u.id },
-  data: { profile: { create: { firstName: 'Test' } } },
+  data: { profile: { create: { name: 'Test' } } },
 });
 console.log('created', u.email);
 await prisma.$disconnect();

@@ -4,6 +4,7 @@ import { authApi, notificationsApi } from '../../api/index';
 import { Button, Input } from '../../design-system';
 import { mapApiError } from '../../api/mapApiError';
 import { showInfoToast } from '../../stores/toastStore';
+import { validateEmail, validateIdentifier, validateOtpCode } from '../../utils/authValidation';
 import styles from './AccountProfile.module.css';
 
 interface AccountProfileProps {
@@ -13,21 +14,9 @@ interface AccountProfileProps {
   onProfileSaved: () => void;
 }
 
-interface ProfileForm {
-  username: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-}
+type ContactField = 'phone' | 'email';
 
-function toForm(user: User | null): ProfileForm {
-  return {
-    username: user?.profile?.username ?? '',
-    firstName: user?.profile?.firstName ?? '',
-    lastName: user?.profile?.lastName ?? '',
-    phone: user?.profile?.phone ?? '',
-  };
-}
+type ChangeStep = 'value' | 'otp';
 
 export function AccountProfile({
   user,
@@ -35,47 +24,35 @@ export function AccountProfile({
   onSettingsChange,
   onProfileSaved,
 }: AccountProfileProps) {
-  const [form, setForm] = useState<ProfileForm>(() => toForm(user));
+  const [name, setName] = useState('');
   const [profileSaving, setProfileSaving] = useState(false);
   const [notifSaving, setNotifSaving] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileSuccess, setProfileSuccess] = useState(false);
 
+  const [changeField, setChangeField] = useState<ContactField | null>(null);
+  const [changeStep, setChangeStep] = useState<ChangeStep>('value');
+  const [changeValue, setChangeValue] = useState('');
+  const [changeCode, setChangeCode] = useState('');
+  const [changeMasked, setChangeMasked] = useState('');
+  const [changeDevCode, setChangeDevCode] = useState<string | null>(null);
+  const [changeLoading, setChangeLoading] = useState(false);
+  const [changeError, setChangeError] = useState<string | null>(null);
+  const [changeSubmitted, setChangeSubmitted] = useState(false);
+
   useEffect(() => {
-    setForm(toForm(user));
+    setName(user?.profile?.name ?? '');
   }, [user]);
 
-  const initialForm = useMemo(() => toForm(user), [user]);
-
-  const profileDirty = useMemo(
-    () =>
-      form.username !== initialForm.username ||
-      form.firstName !== initialForm.firstName ||
-      form.lastName !== initialForm.lastName ||
-      form.phone !== initialForm.phone,
-    [form, initialForm],
-  );
-
-  const needsUsername = !user?.profile?.username;
+  const initialName = user?.profile?.name ?? '';
+  const nameDirty = name.trim() !== initialName.trim();
 
   const saveProfile = async () => {
     setProfileError(null);
     setProfileSuccess(false);
-
-    const username = form.username.trim();
-    if (needsUsername && username.length < 3) {
-      setProfileError('Укажите логин — от 3 символов, латиница, цифры и _');
-      return;
-    }
-
     setProfileSaving(true);
     try {
-      await authApi.updateProfile({
-        ...(username ? { username } : {}),
-        firstName: form.firstName.trim(),
-        lastName: form.lastName.trim(),
-        ...(form.phone.trim() ? { phone: form.phone.trim() } : {}),
-      });
+      await authApi.updateProfile({ name: name.trim() });
       await onProfileSaved();
       setProfileSuccess(true);
       showInfoToast('Данные сохранены');
@@ -101,14 +78,86 @@ export function AccountProfile({
     }
   };
 
+  const openChange = (field: ContactField) => {
+    setChangeField(field);
+    setChangeStep('value');
+    setChangeValue('');
+    setChangeCode('');
+    setChangeMasked('');
+    setChangeDevCode(null);
+    setChangeError(null);
+    setChangeSubmitted(false);
+  };
+
+  const closeChange = () => {
+    setChangeField(null);
+    setChangeError(null);
+  };
+
+  const sendChangeOtp = async () => {
+    setChangeSubmitted(true);
+    setChangeError(null);
+    const err =
+      changeField === 'email' ? validateEmail(changeValue) : validateIdentifier(changeValue);
+    if (err) return;
+
+    setChangeLoading(true);
+    try {
+      const res =
+        changeField === 'phone'
+          ? await authApi.sendPhoneChangeOtp(changeValue.trim())
+          : await authApi.sendEmailChangeOtp(changeValue.trim());
+      setChangeMasked(res.maskedDestination);
+      if (res.devCode) setChangeDevCode(res.devCode);
+      setChangeStep('otp');
+      setChangeSubmitted(false);
+    } catch (e) {
+      setChangeError(mapApiError(e, 'Не удалось отправить код'));
+    } finally {
+      setChangeLoading(false);
+    }
+  };
+
+  const confirmChange = async () => {
+    setChangeSubmitted(true);
+    setChangeError(null);
+    if (validateOtpCode(changeCode)) return;
+
+    setChangeLoading(true);
+    try {
+      if (changeField === 'phone') {
+        await authApi.verifyPhoneChange(changeValue.trim(), changeCode.trim());
+      } else {
+        await authApi.verifyEmailChange(changeValue.trim(), changeCode.trim());
+      }
+      await onProfileSaved();
+      showInfoToast(changeField === 'phone' ? 'Телефон обновлён' : 'Email обновлён');
+      closeChange();
+    } catch (e) {
+      setChangeError(mapApiError(e, 'Не удалось подтвердить'));
+    } finally {
+      setChangeLoading(false);
+    }
+  };
+
+  const changeValueError = useMemo(() => {
+    if (!changeSubmitted || changeStep !== 'value') return undefined;
+    return changeField === 'email'
+      ? validateEmail(changeValue)
+      : validateIdentifier(changeValue);
+  }, [changeSubmitted, changeStep, changeField, changeValue]);
+
+  const changeCodeError =
+    changeSubmitted && changeStep === 'otp' ? validateOtpCode(changeCode) : undefined;
+
   return (
     <div className={styles.wrap}>
       <section className={styles.card} aria-labelledby="profile-contact-title">
         <h2 id="profile-contact-title" className={styles.cardTitle}>
-          Контактные данные
+          Личные данные
         </h2>
         <p className={styles.cardHint}>
-          Используются при оформлении заказа и для связи с вами. Email изменить можно через поддержку.
+          Имя, телефон и email используются при оформлении заказа и для входа на сайт.
         </p>
 
         <form
@@ -118,55 +167,39 @@ export function AccountProfile({
             void saveProfile();
           }}
         >
-          <div className={styles.readonlyField}>
-            <span className={styles.readonlyLabel}>Email</span>
-            <p className={styles.readonlyValue}>{user?.email ?? '—'}</p>
-            <p className={styles.readonlyNote}>Привязан к аккаунту, не редактируется здесь</p>
-          </div>
-
           <Input
-            label="Логин"
-            name="username"
-            value={form.username}
-            onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
-            placeholder="ivan_shop"
-            hint="Латиница, цифры и подчёркивание. Для входа на сайт."
-            autoComplete="username"
+            label="Имя"
+            name="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Как к вам обращаться"
+            autoComplete="name"
+            hint="Необязательно"
           />
 
-          <div className={styles.nameRow}>
-            <Input
-              label="Имя"
-              name="firstName"
-              value={form.firstName}
-              onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))}
-              placeholder="Алексей"
-              autoComplete="given-name"
-            />
-            <Input
-              label="Фамилия"
-              name="lastName"
-              value={form.lastName}
-              onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
-              placeholder="Иванов"
-              autoComplete="family-name"
-            />
+          <div className={styles.contactRow}>
+            <div className={styles.readonlyField}>
+              <span className={styles.readonlyLabel}>Телефон</span>
+              <p className={styles.readonlyValue}>{user?.profile?.phone ?? '—'}</p>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={() => openChange('phone')}>
+              Изменить
+            </Button>
           </div>
 
-          <Input
-            label="Телефон"
-            name="phone"
-            type="tel"
-            value={form.phone}
-            onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-            placeholder="+7 (900) 000-00-00"
-            hint="Для SMS о заказе и входа по номеру"
-            autoComplete="tel"
-          />
+          <div className={styles.contactRow}>
+            <div className={styles.readonlyField}>
+              <span className={styles.readonlyLabel}>Email</span>
+              <p className={styles.readonlyValue}>{user?.email ?? '—'}</p>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={() => openChange('email')}>
+              Изменить
+            </Button>
+          </div>
 
           <div className={styles.formActions}>
-            <Button type="submit" disabled={profileSaving || !profileDirty}>
-              {profileSaving ? 'Сохранение…' : 'Сохранить'}
+            <Button type="submit" disabled={profileSaving || !nameDirty}>
+              {profileSaving ? 'Сохранение…' : 'Сохранить имя'}
             </Button>
             {profileError && (
               <p className={styles.formError} role="alert">
@@ -179,6 +212,69 @@ export function AccountProfile({
           </div>
         </form>
       </section>
+
+      {changeField && (
+        <div className={styles.modalBackdrop} role="presentation" onClick={closeChange}>
+          <div
+            className={styles.modal}
+            role="dialog"
+            aria-labelledby="change-contact-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 id="change-contact-title" className={styles.cardTitle}>
+              {changeField === 'phone' ? 'Новый телефон' : 'Новый email'}
+            </h3>
+            {changeStep === 'value' ? (
+              <>
+                <Input
+                  label={changeField === 'phone' ? 'Телефон' : 'Email'}
+                  value={changeValue}
+                  onChange={(e) => setChangeValue(e.target.value)}
+                  error={changeValueError}
+                  autoComplete={changeField === 'phone' ? 'tel' : 'email'}
+                  compact
+                />
+                {changeError && <p className={styles.formError}>{changeError}</p>}
+                <div className={styles.modalActions}>
+                  <Button variant="outline" onClick={closeChange}>
+                    Отмена
+                  </Button>
+                  <Button loading={changeLoading} onClick={() => void sendChangeOtp()}>
+                    Отправить код
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className={styles.cardHint}>Код отправлен на {changeMasked}</p>
+                {changeDevCode && (
+                  <p className={styles.cardHint}>
+                    Код (dev): <code>{changeDevCode}</code>
+                  </p>
+                )}
+                <Input
+                  label="Код подтверждения"
+                  inputMode="numeric"
+                  value={changeCode}
+                  onChange={(e) => setChangeCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  error={changeCodeError}
+                  autoComplete="one-time-code"
+                  compact
+                />
+                {changeError && <p className={styles.formError}>{changeError}</p>}
+                <div className={styles.modalActions}>
+                  <Button variant="outline" onClick={() => setChangeStep('value')}>
+                    Назад
+                  </Button>
+                  <Button loading={changeLoading} onClick={() => void confirmChange()}>
+                    Подтвердить
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {notifSettings && (
         <section className={styles.card} aria-labelledby="profile-notif-title">

@@ -10,18 +10,8 @@ interface AuthState {
   token: string | null;
   isLoading: boolean;
   error: string | null;
-  login: (login: string, password: string) => Promise<void>;
-  loginByPhone: (phone: string, password: string) => Promise<void>;
-  register: (data: {
-    email: string;
-    password: string;
-    username: string;
-    firstName?: string;
-    lastName?: string;
-    phone: string;
-  }) => Promise<void>;
-  forgotPassword: (email: string) => Promise<{ devToken?: string }>;
-  resetPassword: (token: string, password: string) => Promise<void>;
+  sendOtp: (identifier: string) => Promise<{ maskedDestination: string; devCode?: string }>;
+  verifyOtp: (identifier: string, code: string) => Promise<void>;
   logout: () => void;
   fetchMe: () => Promise<void>;
   clearError: () => void;
@@ -35,74 +25,29 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       error: null,
 
-      login: async (login, password) => {
+      sendOtp: async (identifier) => {
         set({ isLoading: true, error: null });
         try {
-          const { user, token } = await authApi.login(login, password);
-          localStorage.setItem('goshopix_token', token);
-          set({ user, token, isLoading: false });
-          useCartStore.getState().closeDrawer();
-          await useCartStore.getState().mergeGuestCart();
-        } catch (e) {
-          const msg = mapApiError(e, 'Ошибка входа');
-          set({ error: msg, isLoading: false });
-          throw e;
-        }
-      },
-
-      loginByPhone: async (phone, password) => {
-        set({ isLoading: true, error: null });
-        try {
-          const { user, token } = await authApi.loginByPhone(phone, password);
-          localStorage.setItem('goshopix_token', token);
-          set({ user, token, isLoading: false });
-          useCartStore.getState().closeDrawer();
-          await useCartStore.getState().mergeGuestCart();
-        } catch (e) {
-          const msg = mapApiError(e, 'Ошибка входа');
-          set({ error: msg, isLoading: false });
-          throw e;
-        }
-      },
-
-      register: async (data) => {
-        set({ isLoading: true, error: null });
-        try {
-          const { user, token } = await authApi.register(data);
-          localStorage.setItem('goshopix_token', token);
-          set({ user, token, isLoading: false });
-          useCartStore.getState().closeDrawer();
-          await useCartStore.getState().mergeGuestCart();
-        } catch (e) {
-          const msg = mapApiError(e, 'Ошибка регистрации');
-          set({ error: msg, isLoading: false });
-          throw e;
-        }
-      },
-
-      forgotPassword: async (email) => {
-        set({ isLoading: true, error: null });
-        try {
-          const res = await authApi.forgotPassword(email);
+          const res = await authApi.sendOtp(identifier);
           set({ isLoading: false });
-          return { devToken: res.devToken };
+          return res;
         } catch (e) {
-          const msg = mapApiError(e, 'Не удалось отправить запрос');
+          const msg = mapApiError(e, 'Не удалось отправить код');
           set({ error: msg, isLoading: false });
           throw e;
         }
       },
 
-      resetPassword: async (token, password) => {
+      verifyOtp: async (identifier, code) => {
         set({ isLoading: true, error: null });
         try {
-          const { user, token: jwt } = await authApi.resetPassword(token, password);
-          localStorage.setItem('goshopix_token', jwt);
-          set({ user, token: jwt, isLoading: false });
+          const { user, token } = await authApi.verifyOtp(identifier, code);
+          localStorage.setItem('goshopix_token', token);
+          set({ user, token, isLoading: false });
           useCartStore.getState().closeDrawer();
           await useCartStore.getState().mergeGuestCart();
         } catch (e) {
-          const msg = mapApiError(e, 'Не удалось сменить пароль');
+          const msg = mapApiError(e, 'Неверный код или ошибка входа');
           set({ error: msg, isLoading: false });
           throw e;
         }

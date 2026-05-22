@@ -52,7 +52,7 @@ async function createUser(data: {
   email: string;
   passwordHash: string;
   role: UserRole;
-  profile?: { firstName: string; lastName?: string; phone?: string };
+  profile?: { name?: string; phone?: string };
   withCart?: boolean;
 }) {
   const id = `u_${crypto.randomUUID().replace(/-/g, '').slice(0, 20)}`;
@@ -65,16 +65,9 @@ async function createUser(data: {
     );
     if (data.profile) {
       await client.query(
-        `INSERT INTO profiles (id, "userId", "firstName", "lastName", phone, "createdAt", "updatedAt")
-         VALUES ($1, $2, $3, $4, $5, $6, $6)`,
-        [
-          `p_${id}`,
-          id,
-          data.profile.firstName,
-          data.profile.lastName ?? null,
-          data.profile.phone ?? null,
-          now,
-        ],
+        `INSERT INTO profiles (id, "userId", name, phone, "createdAt", "updatedAt")
+         VALUES ($1, $2, $3, $4, $5, $5)`,
+        [`p_${id}`, id, data.profile.name ?? null, data.profile.phone ?? null, now],
       );
     }
     if (data.withCart) {
@@ -179,14 +172,14 @@ async function main() {
     email: 'admin@goshopix.ru',
     passwordHash,
     role: UserRole.ADMIN,
-    profile: { firstName: 'Админ', lastName: 'GoShopix' },
+    profile: { name: 'Админ GoShopix' },
   });
 
   customer1 = await createUser({
     email: 'customer@goshopix.ru',
     passwordHash,
     role: UserRole.CUSTOMER,
-    profile: { firstName: 'Иван', lastName: 'Петров', phone: '+7 900 111-22-33' },
+    profile: { name: 'Иван Петров', phone: '+79001112233' },
     withCart: true,
   });
 
@@ -194,21 +187,21 @@ async function main() {
     email: 'maria@goshopix.ru',
     passwordHash,
     role: UserRole.CUSTOMER,
-    profile: { firstName: 'Мария', lastName: 'Сидорова', phone: '+7 900 444-55-66' },
+    profile: { name: 'Мария Сидорова', phone: '+79004445566' },
   });
 
   sellerUser1 = await createUser({
     email: 'seller1@goshopix.ru',
     passwordHash,
     role: UserRole.SELLER,
-    profile: { firstName: 'Алексей', lastName: 'Техно' },
+    profile: { name: 'Алексей Техно' },
   });
 
   sellerUser2 = await createUser({
     email: 'seller2@goshopix.ru',
     passwordHash,
     role: UserRole.SELLER,
-    profile: { firstName: 'Ольга', lastName: 'Стиль' },
+    profile: { name: 'Ольга Стиль' },
   });
 
   seller1 = await db((p) =>

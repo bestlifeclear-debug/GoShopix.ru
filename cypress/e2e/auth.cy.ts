@@ -8,6 +8,6 @@ describe('Аутентификация', () => {
     cy.loginDemo();
     cy.contains('button', 'Выйти').click();
     cy.url().should('include', '/auth');
-    cy.get('[data-testid="auth-phone"]').should('be.visible');
+    cy.get('[data-testid="auth-identifier"]').should('be.visible');
   });
 });

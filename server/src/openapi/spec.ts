@@ -7,7 +7,7 @@ export const openApiSpec = {
   },
   servers: [{ url: 'http://127.0.0.1:3000', description: 'Local' }],
   tags: [
-    { name: 'Auth', description: 'Регистрация и аутентификация (JWT)' },
+    { name: 'Auth', description: 'Passwordless OTP и профиль (JWT)' },
     { name: 'Products', description: 'Каталог товаров' },
     { name: 'Categories', description: 'Категории' },
     { name: 'Cart', description: 'Корзина' },
@@ -42,23 +42,25 @@ export const openApiSpec = {
           details: {},
         },
       },
-      RegisterBody: {
+      SendOtpBody: {
         type: 'object',
-        required: ['email', 'password'],
+        required: ['identifier'],
         properties: {
-          email: { type: 'string', format: 'email' },
-          password: { type: 'string', minLength: 8 },
-          firstName: { type: 'string' },
-          lastName: { type: 'string' },
-          phone: { type: 'string' },
+          identifier: { type: 'string', description: 'Телефон или email' },
         },
       },
-      LoginBody: {
+      VerifyOtpBody: {
         type: 'object',
-        required: ['email', 'password'],
+        required: ['identifier', 'code'],
         properties: {
-          email: { type: 'string', format: 'email' },
-          password: { type: 'string' },
+          identifier: { type: 'string' },
+          code: { type: 'string', pattern: '^\\d{6}$' },
+        },
+      },
+      UpdateProfileBody: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
         },
       },
       AddCartItemBody: {

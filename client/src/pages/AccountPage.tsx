@@ -119,8 +119,7 @@ export function AccountPage() {
   };
 
   const displayName =
-    [user?.profile?.firstName, user?.profile?.lastName].filter(Boolean).join(' ') ||
-    user?.profile?.username ||
+    user?.profile?.name?.trim() ||
     user?.email?.split('@')[0] ||
     'Покупатель';
 
@@ -139,7 +138,7 @@ export function AccountPage() {
         <AccountSidebar
           section={section}
           unreadCount={unreadCount}
-          userEmail={user?.email}
+          userEmail={user?.email ?? undefined}
           isSeller={user?.role === 'SELLER'}
           onNavigate={navigateSection}
           onLogout={logout}

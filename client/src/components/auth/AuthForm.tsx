@@ -1,318 +1,113 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { authApi } from '../../api/index';
 import { mapApiError } from '../../api/mapApiError';
 import { Button, Input, StatusBadge } from '../../design-system';
-import { IconEye, IconEyeOff } from '../../design-system/icons/Icons';
 import { useAuthStore } from '../../stores/authStore';
-import {
-  getPasswordStrength,
-  validateEmail,
-  validateLogin,
-  validatePassword,
-  validatePhone,
-  validateUsername,
-} from '../../utils/authValidation';
-import { buildFullPhone, DEFAULT_COUNTRY, type CountryOption } from './countries';
-import { PhoneField } from './PhoneField';
+import { validateIdentifier, validateOtpCode } from '../../utils/authValidation';
 import styles from './AuthForm.module.css';
-
-export type AuthMode = 'login' | 'register';
 
 export interface AuthFormProps {
   onSuccess?: () => void;
   showDemoHint?: boolean;
 }
 
-type Step = 'phone' | 'login-password' | 'login-ident' | 'register';
-
-type FieldKey = 'username' | 'email' | 'password' | 'phone' | 'login';
+type Step = 'identifier' | 'otp';
 
 export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
-  const login = useAuthStore((s) => s.login);
-  const loginByPhone = useAuthStore((s) => s.loginByPhone);
-  const register = useAuthStore((s) => s.register);
+  const sendOtp = useAuthStore((s) => s.sendOtp);
+  const verifyOtp = useAuthStore((s) => s.verifyOtp);
   const authError = useAuthStore((s) => s.error);
   const isLoading = useAuthStore((s) => s.isLoading);
   const clearError = useAuthStore((s) => s.clearError);
 
-  const [step, setStep] = useState<Step>('phone');
-  const [phoneDigits, setPhoneDigits] = useState('');
-  const [country, setCountry] = useState<CountryOption>(DEFAULT_COUNTRY);
-  const [maskedEmail, setMaskedEmail] = useState<string | undefined>();
-  const [storedPhone, setStoredPhone] = useState('');
-
-  const [loginIdent, setLoginIdent] = useState('');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [step, setStep] = useState<Step>('identifier');
+  const [identifier, setIdentifier] = useState('');
+  const [storedIdentifier, setStoredIdentifier] = useState('');
+  const [maskedDestination, setMaskedDestination] = useState('');
+  const [code, setCode] = useState('');
+  const [devCode, setDevCode] = useState<string | null>(null);
   const [consent, setConsent] = useState(false);
-  const [touched, setTouched] = useState<Partial<Record<FieldKey, boolean>>>({});
+  const [touched, setTouched] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [checkingPhone, setCheckingPhone] = useState(false);
-  const [phoneCheckError, setPhoneCheckError] = useState<string | null>(null);
+  const [sendError, setSendError] = useState<string | null>(null);
 
-  const markTouched = (field: FieldKey) => {
-    setTouched((t) => ({ ...t, [field]: true }));
-  };
+  const identifierError = (touched || submitted) && step === 'identifier' ? validateIdentifier(identifier) : undefined;
+  const codeError = (touched || submitted) && step === 'otp' ? validateOtpCode(code) : undefined;
 
-  const fullPhone = buildFullPhone(country, phoneDigits);
-
-  const phoneError =
-    (touched.phone || submitted) && step === 'phone'
-      ? validatePhone(phoneDigits, country.minDigits)
-      : undefined;
-
-  const errors: Partial<Record<FieldKey, string>> = {};
-  if (step === 'login-ident' && (touched.login || submitted)) {
-    errors.login = validateLogin(loginIdent);
-  }
-  if (step === 'login-password' && (touched.password || submitted)) {
-    errors.password = validatePassword(password);
-  }
-  if (step === 'login-ident' && (touched.password || submitted)) {
-    errors.password = validatePassword(password);
-  }
-  if (step === 'register') {
-    if (touched.username || submitted) errors.username = validateUsername(username);
-    if (touched.email || submitted) errors.email = validateEmail(email);
-    if (touched.password || submitted) errors.password = validatePassword(password, true);
-  }
-
-  const passwordStrength = step === 'register' ? getPasswordStrength(password) : null;
-
-  const resetToPhone = () => {
-    setStep('phone');
-    setSubmitted(false);
-    setTouched({});
-    clearError();
-  };
-
-  const handleCheckPhone = async (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
     clearError();
-    const err = validatePhone(phoneDigits, country.minDigits);
+    setSendError(null);
+    const err = validateIdentifier(identifier);
     if (err) return;
 
-    setCheckingPhone(true);
-    setPhoneCheckError(null);
     try {
-      const { exists, maskedEmail: masked } = await authApi.checkPhone(fullPhone);
-      setStoredPhone(fullPhone);
-      setMaskedEmail(masked);
+      const res = await sendOtp(identifier.trim());
+      setStoredIdentifier(identifier.trim());
+      setMaskedDestination(res.maskedDestination);
+      if (res.devCode) setDevCode(res.devCode);
+      setStep('otp');
       setSubmitted(false);
-      setTouched({});
-      setStep(exists ? 'login-password' : 'register');
+      setTouched(false);
+      setCode('');
     } catch (e) {
-      setPhoneCheckError(mapApiError(e, 'Не удалось проверить номер'));
-    } finally {
-      setCheckingPhone(false);
+      setSendError(mapApiError(e, 'Не удалось отправить код'));
     }
   };
 
-  const handleLoginPhone = async (e: React.FormEvent) => {
+  const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
     clearError();
-    if (validatePassword(password)) return;
-    try {
-      await loginByPhone(storedPhone, password);
-      onSuccess?.();
-    } catch {
-      /* store */
-    }
-  };
-
-  const handleLoginIdent = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
-    clearError();
-    if (validateLogin(loginIdent) || validatePassword(password)) return;
-    try {
-      await login(loginIdent.trim(), password);
-      onSuccess?.();
-    } catch {
-      /* store */
-    }
-  };
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
-    clearError();
-    const fieldErrors = {
-      username: validateUsername(username),
-      email: validateEmail(email),
-      password: validatePassword(password, true),
-    };
-    if (Object.values(fieldErrors).some(Boolean)) return;
+    if (validateOtpCode(code)) return;
     if (!consent) return;
 
     try {
-      await register({
-        email: email.trim(),
-        password,
-        username: username.trim(),
-        phone: storedPhone,
-      });
+      await verifyOtp(storedIdentifier, code.trim());
       onSuccess?.();
     } catch {
       /* store */
     }
   };
 
-  const strengthClass =
-    passwordStrength === 'weak'
-      ? styles.strengthWeak
-      : passwordStrength === 'medium'
-        ? styles.strengthMedium
-        : passwordStrength === 'strong'
-          ? styles.strengthStrong
-          : '';
+  const resetToIdentifier = () => {
+    setStep('identifier');
+    setSubmitted(false);
+    setTouched(false);
+    setCode('');
+    setDevCode(null);
+    clearError();
+  };
 
-  const passwordToggle = (
-    <button
-      type="button"
-      className={styles.passwordToggle}
-      onClick={() => setShowPassword((v) => !v)}
-      aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}
-    >
-      {showPassword ? <IconEyeOff /> : <IconEye />}
-    </button>
-  );
-
-  if (step === 'phone') {
+  if (step === 'identifier') {
     return (
-      <form className={styles.form} onSubmit={handleCheckPhone} noValidate>
-        <p className={styles.stepHint}>Введите номер — мы определим, есть ли у вас аккаунт</p>
-        <PhoneField
-          value={phoneDigits}
-          country={country}
-          onValueChange={setPhoneDigits}
-          onCountryChange={setCountry}
-          error={phoneError}
-          onBlur={() => markTouched('phone')}
-          compact
-          required
-          data-testid="auth-phone"
-        />
-        {(phoneCheckError || authError) && (
-          <div className={styles.globalError}>
-            <StatusBadge variant="error" label={phoneCheckError ?? authError!} dot={false} />
-          </div>
-        )}
-        <Button type="submit" fullWidth loading={checkingPhone || isLoading} data-testid="auth-submit">
-          Продолжить
-        </Button>
-        <p className={styles.footerRow}>
-          <button
-            type="button"
-            className={styles.switchMode}
-            onClick={() => {
-              clearError();
-              setSubmitted(false);
-              setStep('login-ident');
-            }}
-          >
-            Войти по логину или email
-          </button>
-        </p>
-      </form>
-    );
-  }
-
-  if (step === 'login-ident') {
-    return (
-      <form className={styles.form} onSubmit={handleLoginIdent} noValidate>
-        <Input
-          label="Логин или email"
-          autoComplete="username"
-          value={loginIdent}
-          onChange={(e) => setLoginIdent(e.target.value)}
-          onBlur={() => markTouched('login')}
-          error={errors.login}
-          compact
-          required
-          data-testid="auth-login"
-        />
-        <Input
-          label="Пароль"
-          type={showPassword ? 'text' : 'password'}
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onBlur={() => markTouched('password')}
-          error={errors.password}
-          compact
-          required
-          data-testid="auth-password"
-          rightSlot={passwordToggle}
-        />
-        {authError && (
-          <div className={styles.globalError}>
-            <StatusBadge variant="error" label={authError} dot={false} />
-          </div>
-        )}
-        <Button type="submit" fullWidth loading={isLoading} data-testid="auth-submit">
-          Войти
-        </Button>
-        <p className={styles.footerRow}>
-          <Link to="/auth?mode=reset" className={styles.link}>
-            Забыли пароль?
-          </Link>
-          <button type="button" className={styles.switchMode} onClick={resetToPhone}>
-            ← По номеру телефона
-          </button>
-        </p>
-        {showDemoHint && (
-          <p className={styles.demoHint}>
-            Демо: <code>customer@goshopix.ru</code> / <code>password123</code>
-          </p>
-        )}
-      </form>
-    );
-  }
-
-  if (step === 'login-password') {
-    return (
-      <form className={styles.form} onSubmit={handleLoginPhone} noValidate>
+      <form className={styles.form} onSubmit={handleSendOtp} noValidate>
         <p className={styles.stepHint}>
-          Аккаунт найден{maskedEmail ? ` (${maskedEmail})` : ''}. Введите пароль
+          Введите телефон или email — мы отправим код для входа или регистрации
         </p>
         <Input
-          label="Пароль"
-          type={showPassword ? 'text' : 'password'}
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onBlur={() => markTouched('password')}
-          error={errors.password}
+          label="Телефон или Email"
+          autoComplete="username tel email"
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
+          onBlur={() => setTouched(true)}
+          error={identifierError}
           compact
           required
-          data-testid="auth-password"
-          rightSlot={passwordToggle}
+          data-testid="auth-identifier"
         />
-        {authError && (
+        {(sendError || authError) && (
           <div className={styles.globalError}>
-            <StatusBadge variant="error" label={authError} dot={false} />
+            <StatusBadge variant="error" label={sendError ?? authError!} dot={false} />
           </div>
         )}
         <Button type="submit" fullWidth loading={isLoading} data-testid="auth-submit">
-          Войти
+          Получить код
         </Button>
-        <p className={styles.footerRow}>
-          <Link to="/auth?mode=reset" className={styles.link}>
-            Забыли пароль?
-          </Link>
-          <button type="button" className={styles.switchMode} onClick={resetToPhone}>
-            ← Другой номер
-          </button>
-        </p>
         {showDemoHint && (
           <p className={styles.demoHint}>
-            Демо-телефон: <code>9001112233</code> / пароль <code>password123</code>
+            Демо: <code>customer@goshopix.ru</code> или телефон <code>9001112233</code>
           </p>
         )}
       </form>
@@ -320,53 +115,27 @@ export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
   }
 
   return (
-    <form className={styles.form} onSubmit={handleRegister} noValidate>
-      <p className={styles.stepHint}>Новый аккаунт. Заполните данные</p>
-      <Input
-        label="Логин"
-        autoComplete="username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        onBlur={() => markTouched('username')}
-        error={errors.username}
-        compact
-        required
-        data-testid="auth-username"
-      />
-      <Input
-        label="Email"
-        type="email"
-        autoComplete="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        onBlur={() => markTouched('email')}
-        error={errors.email}
-        compact
-        required
-        data-testid="auth-email"
-      />
-      <Input
-        label="Пароль"
-        type={showPassword ? 'text' : 'password'}
-        autoComplete="new-password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        onBlur={() => markTouched('password')}
-        error={errors.password}
-        compact
-        required
-        data-testid="auth-password"
-        rightSlot={passwordToggle}
-      />
-      {password && passwordStrength && (
-        <div className={styles.strengthWrap} aria-live="polite">
-          <div className={styles.strength}>
-            <span className={`${styles.strengthBar} ${strengthClass}`} />
-            <span className={`${styles.strengthBar} ${passwordStrength !== 'weak' ? strengthClass : ''}`} />
-            <span className={`${styles.strengthBar} ${passwordStrength === 'strong' ? strengthClass : ''}`} />
-          </div>
-        </div>
+    <form className={styles.form} onSubmit={handleVerify} noValidate>
+      <p className={styles.stepHint}>
+        Код отправлен на {maskedDestination || 'указанный контакт'}
+      </p>
+      {devCode && (
+        <p className={styles.demoHint}>
+          Код для разработки: <code>{devCode}</code>
+        </p>
       )}
+      <Input
+        label="Код подтверждения"
+        inputMode="numeric"
+        autoComplete="one-time-code"
+        value={code}
+        onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+        onBlur={() => setTouched(true)}
+        error={codeError}
+        compact
+        required
+        data-testid="auth-otp"
+      />
       <label className={styles.consent}>
         <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} required />
         <span>
@@ -387,11 +156,11 @@ export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
         </div>
       )}
       <Button type="submit" fullWidth loading={isLoading} data-testid="auth-submit">
-        Зарегистрироваться
+        Войти
       </Button>
       <p className={styles.footerRow}>
-        <button type="button" className={styles.switchMode} onClick={resetToPhone}>
-          ← Другой номер
+        <button type="button" className={styles.switchMode} onClick={resetToIdentifier}>
+          ← Другой телефон или email
         </button>
       </p>
     </form>

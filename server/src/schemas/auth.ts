@@ -1,46 +1,36 @@
 import { z } from 'zod';
+import { identifierSchema } from '../lib/identifier.js';
+import { formatPhoneForStorage } from '../lib/phone.js';
 
-const usernameSchema = z
-  .string()
-  .min(3)
-  .max(30)
-  .regex(/^[a-zA-Z0-9_]+$/, 'Username may only contain letters, numbers, and underscores');
-
-export const registerSchema = z.object({
-  email: z.string().email().max(255),
-  password: z.string().min(8).max(128),
-  username: usernameSchema,
-  firstName: z.string().min(1).max(100).optional(),
-  lastName: z.string().min(1).max(100).optional(),
-  phone: z.string().min(10).max(30),
+export const sendOtpSchema = z.object({
+  identifier: z.string().min(1).max(255),
 });
 
-export const checkPhoneSchema = z.object({
-  phone: z.string().min(10).max(30),
-});
-
-export const loginSchema = z.object({
-  login: z.string().min(1).max(255),
-  password: z.string().min(1),
-});
-
-export const loginByPhoneSchema = z.object({
-  phone: z.string().min(10).max(30),
-  password: z.string().min(1),
-});
-
-export const forgotPasswordSchema = z.object({
-  email: z.string().email().max(255),
-});
-
-export const resetPasswordSchema = z.object({
-  token: z.string().min(16).max(128),
-  password: z.string().min(8).max(128),
+export const verifyOtpSchema = z.object({
+  identifier: z.string().min(1).max(255),
+  code: z.string().regex(/^\d{6}$/, 'Код должен содержать 6 цифр'),
 });
 
 export const updateProfileSchema = z.object({
-  username: usernameSchema.optional(),
-  firstName: z.string().max(100).optional(),
-  lastName: z.string().max(100).optional(),
-  phone: z.string().min(10).max(30).optional(),
+  name: z.string().max(200).optional(),
 });
+
+export const changePhoneSendSchema = z.object({
+  phone: z.string().min(10).max(30).transform(formatPhoneForStorage),
+});
+
+export const changePhoneVerifySchema = z.object({
+  phone: z.string().min(10).max(30).transform(formatPhoneForStorage),
+  code: z.string().regex(/^\d{6}$/, 'Код должен содержать 6 цифр'),
+});
+
+export const changeEmailSendSchema = z.object({
+  email: z.string().email().max(255).transform((v) => v.trim().toLowerCase()),
+});
+
+export const changeEmailVerifySchema = z.object({
+  email: z.string().email().max(255).transform((v) => v.trim().toLowerCase()),
+  code: z.string().regex(/^\d{6}$/, 'Код должен содержать 6 цифр'),
+});
+
+export { identifierSchema };

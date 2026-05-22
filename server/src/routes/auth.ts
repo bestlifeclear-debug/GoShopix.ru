@@ -1,189 +1,59 @@
-import { UserRole } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-import crypto from 'node:crypto';
 import { Router } from 'express';
 import { z } from 'zod';
 import { AppError } from '../lib/errors.js';
-import { signToken } from '../lib/jwt.js';
-import { prisma } from '../lib/prisma.js';
+import { parseIdentifier } from '../lib/identifier.js';
 import { ok } from '../lib/response.js';
 import { authenticate, requireRole } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import {
-  checkPhoneSchema,
-  forgotPasswordSchema,
-  loginByPhoneSchema,
-  loginSchema,
-  registerSchema,
-  resetPasswordSchema,
+  changeEmailSendSchema,
+  changeEmailVerifySchema,
+  changePhoneSendSchema,
+  changePhoneVerifySchema,
+  sendOtpSchema,
   updateProfileSchema,
+  verifyOtpSchema,
 } from '../schemas/auth.js';
-import { findUserById, mapUser, updateUserProfile } from '../services/user.js';
 import {
-  findUserByLogin,
-  findUserByPhone,
-  formatPhoneForStorage,
-  phoneExists,
-} from '../services/authLookup.js';
+  confirmChangeEmail,
+  confirmChangePhone,
+  sendChangeEmailOtp,
+  sendChangePhoneOtp,
+  sendLoginOtp,
+  verifyLoginOtp,
+} from '../services/passwordlessAuth.js';
+import { findUserById, mapUser, updateUserProfile } from '../services/user.js';
 
 export const authRouter = Router();
 
-const RESET_TTL_MS = 60 * 60 * 1000;
-
-function issueAuthResponse(user: Awaited<ReturnType<typeof findUserByLogin>>) {
-  if (!user) throw new AppError(401, 'Invalid credentials');
-  const token = signToken({ sub: user.id, email: user.email, role: user.role });
-  return { user: mapUser(user), token };
-}
-
-async function verifyPassword(user: { passwordHash: string }, password: string) {
-  if (!(await bcrypt.compare(password, user.passwordHash))) {
-    throw new AppError(401, 'Invalid credentials');
-  }
-}
-
-authRouter.post('/check-phone', validate({ body: checkPhoneSchema }), async (req, res, next) => {
+authRouter.post('/otp/send', validate({ body: sendOtpSchema }), async (req, res, next) => {
   try {
-    const exists = await phoneExists(req.body.phone);
-    const user = exists ? await findUserByPhone(req.body.phone) : null;
+    const parsed = parseIdentifier(req.body.identifier);
+    const result = await sendLoginOtp(req.body.identifier, parsed);
     ok(res, {
-      exists,
-      maskedEmail: user?.email ? maskEmail(user.email) : undefined,
+      message: 'Код отправлен',
+      maskedDestination: result.maskedDestination,
+      ...(result.devCode ? { devCode: result.devCode } : {}),
     });
   } catch (error) {
+    if (error instanceof Error && ['EMPTY', 'INVALID', 'INVALID_EMAIL'].includes(error.message)) {
+      next(new AppError(400, 'Введите корректный телефон или email'));
+      return;
+    }
     next(error);
   }
 });
 
-authRouter.post('/register', validate({ body: registerSchema }), async (req, res, next) => {
+authRouter.post('/otp/verify', validate({ body: verifyOtpSchema }), async (req, res, next) => {
   try {
-    const { email, password, username, firstName, lastName, phone } = req.body;
-    const storedPhone = formatPhoneForStorage(phone);
-
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      throw new AppError(409, 'Email already registered');
-    }
-
-    const usernameTaken = await prisma.profile.findUnique({ where: { username } });
-    if (usernameTaken) {
-      throw new AppError(409, 'Username already taken');
-    }
-
-    if (await phoneExists(storedPhone)) {
-      throw new AppError(409, 'Phone already registered');
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    const user = await prisma.user.create({
-      data: {
-        email,
-        passwordHash,
-        role: UserRole.CUSTOMER,
-        profile: {
-          create: { username, firstName, lastName, phone: storedPhone },
-        },
-        cart: { create: {} },
-      },
-      include: { profile: true },
-    });
-
-    const token = signToken({ sub: user.id, email: user.email, role: user.role });
-
-    ok(
-      res,
-      {
-        user: mapUser(user),
-        token,
-      },
-      201,
-    );
+    const parsed = parseIdentifier(req.body.identifier);
+    const result = await verifyLoginOtp(req.body.identifier, parsed, req.body.code);
+    ok(res, result);
   } catch (error) {
-    next(error);
-  }
-});
-
-authRouter.post('/login', validate({ body: loginSchema }), async (req, res, next) => {
-  try {
-    const { login, password } = req.body;
-    const user = await findUserByLogin(login);
-    if (!user) {
-      throw new AppError(401, 'Invalid credentials');
+    if (error instanceof Error && ['EMPTY', 'INVALID', 'INVALID_EMAIL'].includes(error.message)) {
+      next(new AppError(400, 'Введите корректный телефон или email'));
+      return;
     }
-    await verifyPassword(user, password);
-    ok(res, issueAuthResponse(user));
-  } catch (error) {
-    next(error);
-  }
-});
-
-authRouter.post('/login-phone', validate({ body: loginByPhoneSchema }), async (req, res, next) => {
-  try {
-    const { phone, password } = req.body;
-    const user = await findUserByPhone(phone);
-    if (!user) {
-      throw new AppError(401, 'Invalid credentials');
-    }
-    await verifyPassword(user, password);
-    ok(res, issueAuthResponse(user));
-  } catch (error) {
-    next(error);
-  }
-});
-
-authRouter.post('/forgot-password', validate({ body: forgotPasswordSchema }), async (req, res, next) => {
-  try {
-    const email = req.body.email.trim().toLowerCase();
-    const user = await prisma.user.findUnique({ where: { email } });
-
-    let devToken: string | undefined;
-    if (user) {
-      const rawToken = crypto.randomBytes(32).toString('hex');
-      const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
-      await prisma.passwordResetToken.deleteMany({ where: { userId: user.id } });
-      await prisma.passwordResetToken.create({
-        data: {
-          userId: user.id,
-          tokenHash,
-          expiresAt: new Date(Date.now() + RESET_TTL_MS),
-        },
-      });
-      if (process.env.NODE_ENV !== 'production') {
-        devToken = rawToken;
-      }
-    }
-
-    ok(res, {
-      message: 'If the email exists, reset instructions were sent',
-      ...(devToken ? { devToken } : {}),
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-authRouter.post('/reset-password', validate({ body: resetPasswordSchema }), async (req, res, next) => {
-  try {
-    const { token, password } = req.body;
-    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
-    const record = await prisma.passwordResetToken.findUnique({
-      where: { tokenHash },
-      include: { user: { include: { profile: true } } },
-    });
-
-    if (!record || record.expiresAt < new Date()) {
-      throw new AppError(400, 'Invalid or expired reset token');
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-    await prisma.$transaction([
-      prisma.user.update({ where: { id: record.userId }, data: { passwordHash } }),
-      prisma.passwordResetToken.delete({ where: { id: record.id } }),
-    ]);
-
-    ok(res, issueAuthResponse(record.user));
-  } catch (error) {
     next(error);
   }
 });
@@ -216,9 +86,70 @@ authRouter.patch(
   },
 );
 
-function maskEmail(email: string): string {
-  const [local, domain] = email.split('@');
-  if (!domain) return email;
-  const visible = local.length <= 2 ? '*' : local.slice(0, 2);
-  return `${visible}***@${domain}`;
-}
+authRouter.post(
+  '/profile/phone/send-otp',
+  authenticate,
+  requireRole('CUSTOMER', 'SELLER', 'ADMIN'),
+  validate({ body: changePhoneSendSchema }),
+  async (req, res, next) => {
+    try {
+      const result = await sendChangePhoneOtp(req.user!.sub, req.body.phone);
+      ok(res, {
+        message: 'Код отправлен',
+        maskedDestination: result.maskedDestination,
+        ...(result.devCode ? { devCode: result.devCode } : {}),
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+authRouter.post(
+  '/profile/phone/verify',
+  authenticate,
+  requireRole('CUSTOMER', 'SELLER', 'ADMIN'),
+  validate({ body: changePhoneVerifySchema }),
+  async (req, res, next) => {
+    try {
+      const updated = await confirmChangePhone(req.user!.sub, req.body.phone, req.body.code);
+      ok(res, mapUser(updated));
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+authRouter.post(
+  '/profile/email/send-otp',
+  authenticate,
+  requireRole('CUSTOMER', 'SELLER', 'ADMIN'),
+  validate({ body: changeEmailSendSchema }),
+  async (req, res, next) => {
+    try {
+      const result = await sendChangeEmailOtp(req.user!.sub, req.body.email);
+      ok(res, {
+        message: 'Код отправлен',
+        maskedDestination: result.maskedDestination,
+        ...(result.devCode ? { devCode: result.devCode } : {}),
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+authRouter.post(
+  '/profile/email/verify',
+  authenticate,
+  requireRole('CUSTOMER', 'SELLER', 'ADMIN'),
+  validate({ body: changeEmailVerifySchema }),
+  async (req, res, next) => {
+    try {
+      const updated = await confirmChangeEmail(req.user!.sub, req.body.email, req.body.code);
+      ok(res, mapUser(updated));
+    } catch (error) {
+      next(error);
+    }
+  },
+);

@@ -12,3 +12,11 @@ export function normalizePhone(phone: string): string {
 export function phonesMatch(a: string, b: string): boolean {
   return normalizePhone(a) === normalizePhone(b);
 }
+
+export function formatPhoneForStorage(phone: string): string {
+  const n = normalizePhone(phone);
+  if (n.length === 11 && n.startsWith('7')) {
+    return `+${n}`;
+  }
+  return phone.trim();
+}

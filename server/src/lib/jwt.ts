@@ -4,6 +4,7 @@ import { AppError } from './errors.js';
 
 export interface JwtPayload {
   sub: string;
+  /** Empty string when the account has no email (phone-only). */
   email: string;
   role: UserRole;
 }
@@ -26,7 +27,7 @@ export function signToken(payload: JwtPayload): string {
 export function verifyToken(token: string): JwtPayload {
   try {
     const decoded = jwt.verify(token, getSecret()) as JwtPayload;
-    if (!decoded.sub || !decoded.email || !decoded.role) {
+    if (!decoded.sub || decoded.email === undefined || decoded.email === null || !decoded.role) {
       throw new AppError(401, 'Invalid token payload');
     }
     return decoded;
