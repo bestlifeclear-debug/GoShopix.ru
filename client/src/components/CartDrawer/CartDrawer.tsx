@@ -67,12 +67,12 @@ export function CartDrawer() {
   const content = (
     <>
       <div
-        className="cart-drawer-overlay fixed inset-0 z-[200] bg-black/45"
+        className="cart-drawer-overlay fixed inset-0 z-[1100] bg-black/45"
         role="presentation"
         onClick={closeDrawer}
       />
       <aside
-        className="cart-drawer-panel fixed top-0 right-0 z-[201] flex h-full w-full max-w-[420px] flex-col bg-white shadow-[-8px_0_32px_rgb(0_0_0/0.15)]"
+        className="cart-drawer-panel fixed top-0 right-0 z-[1101] flex h-full w-full max-w-[420px] flex-col bg-white shadow-[-8px_0_32px_rgb(0_0_0/0.15)]"
         role="dialog"
         aria-modal="true"
         aria-label="Корзина"

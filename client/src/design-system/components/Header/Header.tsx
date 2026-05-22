@@ -69,21 +69,24 @@ export function Header({
     <header className={styles.header}>
       <div className={styles.topBar}>
         <div className={`container ${styles.inner}`}>
-          {onMenuToggle && (
-            <button
-              type="button"
-              className={styles.menuBtn}
-              onClick={onMenuToggle}
-              aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
-              aria-expanded={menuOpen}
-            >
-              {menuOpen ? <IconClose /> : <IconMenu />}
-            </button>
-          )}
-          <Link to="/" className={styles.logo} aria-label="GoShopix — на главную">
-            <span className={styles.logoMark}>G</span>
-            <span className={styles.logoText}>GoShopix</span>
-          </Link>
+          <div className={styles.topRow}>
+            {onMenuToggle && (
+              <button
+                type="button"
+                className={styles.menuBtn}
+                onClick={onMenuToggle}
+                aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
+                aria-expanded={menuOpen}
+              >
+                {menuOpen ? <IconClose /> : <IconMenu />}
+              </button>
+            )}
+            <Link to="/" className={styles.logo} aria-label="GoShopix — на главную">
+              <span className={styles.logoMark}>G</span>
+              <span className={styles.logoText}>GoShopix</span>
+            </Link>
+            {deliverySlot ? <div className={styles.topDeliveryMobile}>{deliverySlot}</div> : null}
+          </div>
           <div className={styles.searchGroup}>{searchSlot}</div>
         </div>
       </div>

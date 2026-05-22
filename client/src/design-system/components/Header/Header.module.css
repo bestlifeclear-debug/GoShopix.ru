@@ -22,6 +22,14 @@
   box-sizing: border-box;
 }
 
+.topRow {
+  display: contents;
+}
+
+.topDeliveryMobile {
+  display: none;
+}
+
 .menuBtn {
   display: none;
   align-items: center;
@@ -300,29 +308,34 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .header {
-    --header-mobile-top-height: 64px;
+    --header-mobile-top-height: auto;
   }
 
   .inner {
-    display: grid;
-    grid-template-columns: var(--touch-min) auto minmax(0, 1fr);
-    grid-template-areas: 'menu logo search';
-    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    min-height: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .topRow {
+    display: flex;
     align-items: center;
-    min-height: var(--header-mobile-top-height);
-    padding-top: 8px;
-    padding-bottom: 8px;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
   }
 
   .menuBtn {
-    display: inline-flex;
-    grid-area: menu;
+    display: none !important;
   }
 
   .logo {
-    grid-area: logo;
+    flex-shrink: 0;
   }
 
   .logoMark {
@@ -335,47 +348,24 @@
     display: none;
   }
 
+  .topDeliveryMobile {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+    min-width: 0;
+  }
+
   .searchGroup {
-    grid-area: search;
     width: 100%;
+    flex: none;
   }
 
-  .navActions {
-    min-height: 38px;
-    padding: 0 2px;
-  }
-
-  .navIconBtn {
-    width: 36px;
-    height: 36px;
-  }
-
-  .actionIcon {
-    width: 20px;
-    height: 20px;
-  }
-
-  .navInner {
-    gap: 8px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-  }
-
-  .navLinksGroup {
+  .navBar {
     display: none;
   }
 
-  .catalogLabel {
-    display: none;
-  }
-
-  .catalogBtn {
-    min-width: 40px;
-    padding: 0 12px;
-  }
-
-  .navDeliverySlot {
-    padding-right: 8px;
-    max-width: min(42vw, 200px);
+  .topBar {
+    border-bottom: 1px solid var(--color-border);
   }
 }

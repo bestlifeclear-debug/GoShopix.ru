@@ -40,12 +40,17 @@
   text-overflow: ellipsis;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .root {
-    max-width: 100%;
+    max-width: min(52vw, 180px);
+    min-height: 36px;
   }
 
   .text {
     font-size: var(--font-size-xs);
+  }
+
+  .label {
+    display: none;
   }
 }
