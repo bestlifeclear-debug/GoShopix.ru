@@ -1,16 +1,14 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
 import type { Order, ProductListItem } from '../../api/types';
 import { Button } from '../../design-system';
 import styles from '../AccountPage.module.css';
-import { AccountMobileSettingsSheet } from './AccountMobileSettingsSheet';
 import {
   IconAddress,
-  IconFavorites,
+  IconBell,
   IconOrders,
-  IconRecommend,
-  IconSettings,
+  IconProfile,
+  IconSupport,
 } from './AccountIcons';
 import type { AccountSection } from './types';
 import { useAccountMobileLayout } from './useAccountMobileLayout';
@@ -26,15 +24,16 @@ interface AccountDashboardProps {
   onLogout: () => void;
 }
 
-const MOBILE_QUICK_TILES: {
-  id: AccountSection | 'reco';
+const MOBILE_MENU_ITEMS: {
+  id: AccountSection;
   label: string;
   icon: typeof IconOrders;
 }[] = [
   { id: 'orders', label: 'Мои заказы', icon: IconOrders },
-  { id: 'favorites', label: 'Избранное', icon: IconFavorites },
+  { id: 'profile', label: 'Личные данные', icon: IconProfile },
   { id: 'addresses', label: 'Адреса доставки', icon: IconAddress },
-  { id: 'reco', label: 'Персональные рекомендации', icon: IconRecommend },
+  { id: 'notifications', label: 'Уведомления', icon: IconBell },
+  { id: 'support', label: 'Поддержка', icon: IconSupport },
 ];
 
 export function AccountDashboard({
@@ -47,20 +46,7 @@ export function AccountDashboard({
   onLogout,
 }: AccountDashboardProps) {
   const isCompactMobile = useAccountMobileLayout();
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const activeOrders = orders.filter(isActiveOrder).slice(0, 3);
-
-  const scrollToRecommendations = () => {
-    document.getElementById('account-reco')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const handleQuickTile = (id: AccountSection | 'reco') => {
-    if (id === 'reco') {
-      scrollToRecommendations();
-      return;
-    }
-    onNavigateSection(id);
-  };
 
   return (
     <div className={styles.dashboard}>
@@ -68,26 +54,12 @@ export function AccountDashboard({
         className={`${styles.welcomeBlock} ${isCompactMobile ? styles.welcomeBlockMobile : ''}`}
         aria-labelledby="welcome-title"
       >
-        {isCompactMobile ? (
-          <div className={styles.welcomeHead}>
-            <h1 id="welcome-title" className={styles.welcomeTitleMobile}>
-              Добро пожаловать, {displayName}
-            </h1>
-            <button
-              type="button"
-              className={styles.settingsBtn}
-              aria-label="Настройки личного кабинета"
-              aria-expanded={settingsOpen}
-              onClick={() => setSettingsOpen((open) => !open)}
-            >
-              <IconSettings />
-            </button>
-          </div>
-        ) : (
-          <h1 id="welcome-title" className={styles.welcomeTitle}>
-            Добро пожаловать, {displayName}
-          </h1>
-        )}
+        <h1
+          id="welcome-title"
+          className={isCompactMobile ? styles.welcomeTitleMobile : styles.welcomeTitle}
+        >
+          Добро пожаловать, {displayName}
+        </h1>
 
         <div className={isCompactMobile ? styles.ordersBlockMobile : styles.ordersBlock}>
           <h2 className={styles.blockSubtitle}>Активные заказы</h2>
@@ -134,25 +106,33 @@ export function AccountDashboard({
         </div>
 
         {isCompactMobile && (
-          <nav className={styles.mobileQuickGrid} aria-label="Разделы личного кабинета">
-            <ul className={styles.mobileQuickGridList}>
-              {MOBILE_QUICK_TILES.map((tile) => {
-                const Icon = tile.icon;
+          <nav className={styles.mobileMenuCard} aria-label="Меню личного кабинета">
+            <ul className={styles.mobileMenuList}>
+              {MOBILE_MENU_ITEMS.map((item) => {
+                const Icon = item.icon;
                 return (
-                  <li key={tile.id}>
+                  <li key={item.id}>
                     <button
                       type="button"
-                      className={styles.mobileQuickTile}
-                      onClick={() => handleQuickTile(tile.id)}
+                      className={styles.mobileMenuRow}
+                      onClick={() => onNavigateSection(item.id)}
                     >
-                      <span className={styles.mobileQuickTileIcon} aria-hidden>
+                      <span className={styles.mobileMenuIcon} aria-hidden>
                         <Icon />
                       </span>
-                      <span className={styles.mobileQuickTileLabel}>{tile.label}</span>
+                      <span className={styles.mobileMenuLabel}>{item.label}</span>
+                      <span className={styles.mobileMenuChevron} aria-hidden>
+                        ›
+                      </span>
                     </button>
                   </li>
                 );
               })}
+              <li>
+                <button type="button" className={styles.mobileMenuRowLogout} onClick={onLogout}>
+                  Выйти
+                </button>
+              </li>
             </ul>
           </nav>
         )}
@@ -193,13 +173,6 @@ export function AccountDashboard({
           </ul>
         )}
       </section>
-
-      <AccountMobileSettingsSheet
-        open={isCompactMobile && settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        onNavigate={onNavigateSection}
-        onLogout={onLogout}
-      />
     </div>
   );
 }
