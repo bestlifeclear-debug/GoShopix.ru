@@ -13,14 +13,9 @@
   --gradient-primary: linear-gradient(180deg, #ff7062 0%, #ff3d2e 100%);
   --gradient-primary-hover: linear-gradient(180deg, #ff8578 0%, #ff4f40 100%);
   --gradient-primary-horizontal: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
-  /* Баннер главной: живой коралл бренда, без тёмного «затемнения» */
+  /* Баннер главной: fallback-градиент (слайды задают свой через data-theme) */
   --hero-banner-gradient: linear-gradient(118deg, #ff8a7d 0%, #ff7062 42%, #ff4f42 100%);
-  --hero-banner-overlay: linear-gradient(
-    165deg,
-    rgb(255 255 255 / 0.14) 0%,
-    transparent 45%,
-    rgb(255 61 46 / 0.08) 100%
-  );
+  --hero-banner-shine: radial-gradient(ellipse 70% 80% at 12% 18%, rgb(255 255 255 / 0.16), transparent 55%);
   --hero-banner-text: #ffffff;
   --hero-banner-text-muted: rgb(255 255 255 / 0.94);
   --hero-banner-cta-bg: #ffffff;
