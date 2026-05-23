@@ -1,8 +1,26 @@
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import type { AccountSection } from './types';
 import { SIDEBAR_NAV_MAIN } from './constants';
 import { IconStore } from './AccountIcons';
 import styles from '../AccountPage.module.css';
+
+function useLkDrawerMode() {
+  const [isDrawer, setIsDrawer] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 1024px)').matches,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1024px)');
+    const sync = () => setIsDrawer(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  return isDrawer;
+}
 
 interface AccountSidebarProps {
   section: AccountSection;
@@ -25,8 +43,10 @@ export function AccountSidebar({
   mobileOpen,
   onCloseMobile,
 }: AccountSidebarProps) {
-  return (
-    <>
+  const isDrawer = useLkDrawerMode();
+
+  const panel = (
+  <>
       <button
         type="button"
         className={`${styles.sidebarBackdrop} ${mobileOpen ? styles.sidebarBackdropVisible : ''}`}
@@ -37,6 +57,7 @@ export function AccountSidebar({
       <aside
         className={`${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ''}`}
         aria-label="Меню личного кабинета"
+        aria-hidden={isDrawer && !mobileOpen}
       >
         <div className={styles.sidebarHead}>
           <p className={styles.sidebarTitle}>Личный кабинет</p>
@@ -105,6 +126,12 @@ export function AccountSidebar({
           </button>
         </footer>
       </aside>
-    </>
+  </>
   );
+
+  if (isDrawer) {
+    return createPortal(panel, document.body);
+  }
+
+  return <div className={styles.sidebarHost}>{panel}</div>;
 }

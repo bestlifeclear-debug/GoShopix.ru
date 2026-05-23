@@ -64,6 +64,10 @@
 }
 
 /* —— Sidebar —— */
+.sidebarHost {
+  display: contents;
+}
+
 .sidebar {
   position: sticky;
   top: var(--sticky-top);
@@ -74,7 +78,7 @@
   border: none;
   border-radius: var(--lk-radius);
   box-shadow: var(--shadow-sm);
-  overflow: visible;
+  overflow: hidden;
 }
 
 .sidebarHead {
@@ -377,35 +381,88 @@
   text-decoration: none;
 }
 
-.mobileMenuBar {
+.mobileMenuTrigger {
   display: none;
   align-items: center;
   gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--lk-border);
+  border-radius: 14px;
+  background: var(--lk-surface);
+  font-family: var(--font-family);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
+  transition:
+    background var(--lk-transition),
+    border-color var(--lk-transition),
+    box-shadow var(--lk-transition);
 }
 
-.mobileMenuBarLabel {
+.mobileMenuTrigger:active {
+  background: var(--lk-nav-fill);
+  border-color: var(--lk-hover-border);
+}
+
+.mobileMenuTriggerIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--lk-nav-icon-bg);
+  color: var(--lk-nav-icon-color);
+}
+
+.mobileMenuTriggerIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mobileMenuTriggerText {
+  flex: 1;
+  min-width: 0;
   font-size: 0.9375rem;
   font-weight: 600;
+  color: var(--lk-text);
+  text-align: left;
+}
+
+.mobileMenuTriggerChevron {
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  line-height: 1;
   color: var(--lk-text-muted);
 }
 
 .menuBtn {
   display: none;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 5px;
+  flex-shrink: 0;
   width: 44px;
   height: 44px;
-  padding: 10px;
-  border: none;
+  padding: 0;
+  border: 1px solid var(--lk-border);
   border-radius: 10px;
   background: var(--lk-surface);
+  color: var(--lk-text);
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition:
     background var(--lk-transition),
     box-shadow var(--lk-transition),
     transform var(--lk-transition);
+}
+
+.menuBtn svg {
+  width: 22px;
+  height: 22px;
 }
 
 .menuBtn:hover {
@@ -416,13 +473,6 @@
 
 .menuBtn:active {
   transform: scale(0.96);
-}
-
-.menuBtn span {
-  display: block;
-  height: 2px;
-  background: var(--lk-text);
-  border-radius: 1px;
 }
 
 .view {
@@ -1184,14 +1234,23 @@
 @media (max-width: 1024px) {
   .sidebar {
     position: fixed;
-    z-index: 210;
+    z-index: 1200;
     top: 0;
     left: 0;
     bottom: 0;
     width: min(300px, 88vw);
+    max-width: 100%;
     border-radius: 0;
+    border-right: 1px solid var(--lk-border);
+    background: var(--lk-surface);
+    box-shadow: 8px 0 32px rgb(0 0 0 / 0.18);
     transform: translateX(-100%);
-    transition: transform var(--lk-transition);
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0.28s;
+    overflow-x: hidden;
     overflow-y: auto;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -1203,6 +1262,8 @@
 
   .sidebarOpen {
     transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .sidebarClose {
@@ -1215,12 +1276,12 @@
     display: block;
     position: fixed;
     inset: 0;
-    z-index: 209;
+    z-index: 1199;
     border: none;
-    background: rgb(0 0 0 / 0.45);
+    background: rgb(0 0 0 / 0.5);
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--lk-transition);
+    transition: opacity 0.28s ease;
     cursor: pointer;
   }
 
@@ -1233,14 +1294,12 @@
     display: flex;
   }
 
-  .mobileMenuBar {
+  .mobileMenuTrigger {
     display: flex;
-    margin-bottom: 4px;
   }
 
   .menuBtn {
-    display: flex;
-    flex-shrink: 0;
+    display: inline-flex;
   }
 
   .recoGrid {

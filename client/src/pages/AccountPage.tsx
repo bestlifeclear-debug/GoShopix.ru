@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { IconMenu } from '../design-system/icons/Icons';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { favoritesApi, notificationsApi, ordersApi, productsApi } from '../api/index';
 import type { FavoriteItem, NotificationItem, NotificationSettings, Order, ProductListItem } from '../api/types';
@@ -80,6 +81,15 @@ export function AccountPage() {
     setMobileNavOpen(false);
   }, [section]);
 
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileNavOpen]);
+
   const navigateSection = (id: AccountSection, extra?: { orderId?: string }) => {
     const next = new URLSearchParams();
     next.set('section', id);
@@ -157,9 +167,7 @@ export function AccountPage() {
               aria-expanded={mobileNavOpen}
               onClick={() => setMobileNavOpen(true)}
             >
-              <span />
-              <span />
-              <span />
+              <IconMenu />
             </button>
             <h1 className={styles.sectionTitle}>{sectionTitle}</h1>
           </header>
@@ -168,20 +176,21 @@ export function AccountPage() {
         <div className={styles.view} key={section}>
           {section === 'dashboard' && (
             <>
-              <div className={styles.mobileMenuBar}>
-                <button
-                  type="button"
-                  className={styles.menuBtn}
-                  aria-label="Открыть меню личного кабинета"
-                  aria-expanded={mobileNavOpen}
-                  onClick={() => setMobileNavOpen(true)}
-                >
-                  <span />
-                  <span />
-                  <span />
-                </button>
-                <span className={styles.mobileMenuBarLabel}>Разделы кабинета</span>
-              </div>
+              <button
+                type="button"
+                className={styles.mobileMenuTrigger}
+                aria-label="Открыть меню личного кабинета"
+                aria-expanded={mobileNavOpen}
+                onClick={() => setMobileNavOpen(true)}
+              >
+                <span className={styles.mobileMenuTriggerIcon} aria-hidden>
+                  <IconMenu />
+                </span>
+                <span className={styles.mobileMenuTriggerText}>Меню кабинета</span>
+                <span className={styles.mobileMenuTriggerChevron} aria-hidden>
+                  ›
+                </span>
+              </button>
               <AccountDashboard
                 displayName={displayName}
                 orders={orders}
