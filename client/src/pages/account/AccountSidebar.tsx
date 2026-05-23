@@ -4,15 +4,17 @@ import { Link } from 'react-router-dom';
 import type { AccountSection } from './types';
 import { SIDEBAR_NAV_MAIN } from './constants';
 import { IconStore } from './AccountIcons';
+import { useAccountMobileLayout } from './useAccountMobileLayout';
 import styles from '../AccountPage.module.css';
 
 function useLkDrawerMode() {
-  const [isDrawer, setIsDrawer] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 1024px)').matches,
-  );
+  const [isDrawer, setIsDrawer] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(min-width: 481px) and (max-width: 1024px)').matches;
+  });
 
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 1024px)');
+    const mq = window.matchMedia('(min-width: 481px) and (max-width: 1024px)');
     const sync = () => setIsDrawer(mq.matches);
     sync();
     mq.addEventListener('change', sync);
@@ -43,10 +45,15 @@ export function AccountSidebar({
   mobileOpen,
   onCloseMobile,
 }: AccountSidebarProps) {
+  const isCompactMobile = useAccountMobileLayout();
   const isDrawer = useLkDrawerMode();
 
+  if (isCompactMobile) {
+    return null;
+  }
+
   const panel = (
-  <>
+    <>
       <button
         type="button"
         className={`${styles.sidebarBackdrop} ${mobileOpen ? styles.sidebarBackdropVisible : ''}`}
@@ -126,7 +133,7 @@ export function AccountSidebar({
           </button>
         </footer>
       </aside>
-  </>
+    </>
   );
 
   if (isDrawer) {

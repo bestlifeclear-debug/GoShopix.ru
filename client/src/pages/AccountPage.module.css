@@ -475,6 +475,29 @@
   transform: scale(0.96);
 }
 
+.backBtn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--lk-border);
+  border-radius: 10px;
+  background: var(--lk-surface);
+  font-family: var(--font-family);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--lk-text);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.backBtn:active {
+  background: var(--lk-nav-fill);
+}
+
 .view {
   animation: fade-in-up 0.3s ease;
 }
@@ -728,6 +751,267 @@
   font-size: 1rem;
   font-weight: 700;
   color: var(--lk-accent);
+}
+
+/* —— Mobile LK (≤480px) —— */
+.welcomeHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.welcomeTitleMobile {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--lk-text);
+}
+
+.settingsBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--lk-border);
+  border-radius: 10px;
+  background: var(--lk-bg-muted);
+  color: var(--lk-text-muted);
+  cursor: pointer;
+  transition:
+    background var(--lk-transition),
+    color var(--lk-transition),
+    border-color var(--lk-transition);
+}
+
+.settingsBtn:hover {
+  background: var(--lk-nav-fill);
+  color: var(--lk-accent);
+  border-color: var(--lk-hover-border);
+}
+
+.settingsBtn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.welcomeBlockMobile {
+  padding: 16px 0 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.ordersBlockMobile {
+  padding-top: 0;
+  border-top: none;
+}
+
+.emptyOrdersMobile {
+  align-items: stretch;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.catalogLinkFull {
+  display: block;
+  width: 100%;
+}
+
+.mobileQuickGrid {
+  margin: 0;
+}
+
+.mobileQuickGridList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mobileQuickTile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 108px;
+  padding: 14px 10px;
+  border: 1px solid var(--lk-border);
+  border-radius: 12px;
+  background: #f5f5f7;
+  font-family: var(--font-family);
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition:
+    background var(--lk-transition),
+    border-color var(--lk-transition),
+    box-shadow var(--lk-transition);
+}
+
+[data-account-lk].theme-dark .mobileQuickTile {
+  background: var(--lk-surface);
+}
+
+.mobileQuickTile:active {
+  background: var(--lk-nav-fill);
+  border-color: var(--lk-hover-border);
+}
+
+.mobileQuickTileIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--lk-surface);
+  color: var(--lk-accent);
+}
+
+[data-account-lk].theme-dark .mobileQuickTileIcon {
+  background: var(--lk-bg-muted);
+}
+
+.mobileQuickTileIcon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.mobileQuickTileLabel {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--lk-text);
+}
+
+.recoBlockMobile {
+  padding: 20px 0 8px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.mobileSheetRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.mobileSheetBackdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgb(0 0 0 / 0.5);
+  pointer-events: auto;
+  cursor: pointer;
+  animation: mobile-sheet-fade-in 0.25s ease;
+}
+
+.mobileSheetPanel {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 8px 0 calc(16px + env(safe-area-inset-bottom, 0px));
+  border-radius: 16px 16px 0 0;
+  background: var(--lk-surface);
+  box-shadow: 0 -8px 32px rgb(0 0 0 / 0.12);
+  pointer-events: auto;
+  box-sizing: border-box;
+  animation: mobile-sheet-slide-up 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobileSheetHandle {
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: var(--lk-border);
+}
+
+.mobileSheetList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mobileSheetRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 20px;
+  border: none;
+  border-bottom: 1px solid var(--lk-border);
+  background: transparent;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--lk-text);
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.mobileSheetList li:last-child .mobileSheetRow {
+  border-bottom: none;
+}
+
+.mobileSheetRow:active {
+  background: var(--lk-bg-muted);
+}
+
+.mobileSheetRowDanger {
+  color: #c62828;
+}
+
+[data-account-lk].theme-dark .mobileSheetRowDanger {
+  color: #ef9a9a;
+}
+
+.mobileSheetChevron {
+  flex-shrink: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--lk-text-muted);
+}
+
+@keyframes mobile-sheet-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mobile-sheet-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 /* Status */
@@ -1230,8 +1514,8 @@
   display: inline;
 }
 
-/* Tablet / mobile */
-@media (max-width: 1024px) {
+/* Tablet drawer (481px–1024px) */
+@media (max-width: 1024px) and (min-width: 481px) {
   .sidebar {
     position: fixed;
     z-index: 1200;
@@ -1314,6 +1598,48 @@
 
   .welcomeTitle {
     font-size: 1.375rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    overflow-x: hidden;
+  }
+
+  .dashboard {
+    gap: 20px;
+  }
+
+  .sectionHead {
+    display: flex;
+    margin-bottom: 16px;
+  }
+
+  .backBtn {
+    display: inline-flex;
+  }
+
+  .menuBtn,
+  .mobileMenuTrigger {
+    display: none !important;
+  }
+
+  .sectionTitle {
+    font-size: 1.125rem;
+  }
+
+  .blockSubtitle {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  .recoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .recoCard {
+    padding: 8px 4px;
   }
 }
 
