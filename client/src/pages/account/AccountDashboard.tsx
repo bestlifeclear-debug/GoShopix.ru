@@ -148,30 +148,33 @@ export function AccountDashboard({
     return (
       <div className={`${styles.dashboard} ${styles.dashboardMobile}`}>
         <div className={styles.mobileDash}>
-          <header className={styles.mobileProfileHeader}>
-            <div className={styles.mobileAvatar} aria-hidden>
-              <span className={styles.mobileAvatarInner}>
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt="" />
-                ) : (
-                  profileInitial(displayName)
-                )}
-              </span>
-              <span className={styles.mobileAvatarAdd} aria-hidden>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </span>
-            </div>
-            <div className={styles.mobileProfileMeta}>
-              <p className={styles.mobileProfileName}>{displayName}</p>
-              <p className={styles.mobileLocationBadge}>
-                <IconLocation />
-                <span>{deliveryCity}</span>
-              </p>
-            </div>
-          </header>
+          <div className={styles.mobileDashTop}>
+            <header className={styles.mobileProfileHeader}>
+              <div className={styles.mobileAvatar} aria-hidden>
+                <span className={styles.mobileAvatarInner}>
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="" />
+                  ) : (
+                    profileInitial(displayName)
+                  )}
+                </span>
+                <span className={styles.mobileAvatarAdd} aria-hidden>
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                </span>
+              </div>
+              <div className={styles.mobileProfileMeta}>
+                <p className={styles.mobileProfileName}>{displayName}</p>
+                <p className={styles.mobileLocationBadge}>
+                  <IconLocation />
+                  <span>{deliveryCity}</span>
+                </p>
+              </div>
+            </header>
+          </div>
 
+          <div className={styles.mobileDashMain}>
           <section className={styles.mobileOrdersCard} aria-labelledby="mobile-orders-title">
             <h2 id="mobile-orders-title" className={styles.mobileOrdersTitle}>
               Активные заказы
@@ -277,6 +280,7 @@ export function AccountDashboard({
           </button>
 
           {recommendationsSection}
+          </div>
         </div>
       </div>
     );

@@ -311,18 +311,37 @@
 @media (max-width: 768px) {
   .header {
     --header-mobile-top-height: auto;
-    --header-mobile-gradient: linear-gradient(180deg, #ffd6c1 0%, #ffb199 45%, #ff8878 100%);
     position: sticky;
     top: 0;
     padding-top: env(safe-area-inset-top, 0px);
     background: var(--header-mobile-gradient);
     border-bottom: none;
     box-shadow: none;
+    filter: none;
+  }
+
+  .header::before,
+  .header::after {
+    display: none;
+    content: none;
   }
 
   .topBar {
     background: none;
     border-bottom: none;
+    box-shadow: none;
+  }
+
+  .headerMobileCompact {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+  }
+
+  .headerMobileCompact .topBar,
+  .headerMobileCompact .topBar .inner {
+    background: transparent;
+    box-shadow: none;
   }
 
   .topBar .inner {
@@ -405,11 +424,8 @@
 }
 
 @media (max-width: 768px) {
-  .headerHideMobileSearch .searchGroup {
-    display: none;
-  }
-
-  .headerHideMobileSearch .topBar .inner {
-    padding-bottom: 10px;
+  .headerHideMobileSearch .topBar .inner,
+  .headerMobileCompact .topBar .inner {
+    padding-bottom: 8px;
   }
 }

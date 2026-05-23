@@ -763,10 +763,26 @@
   .mobileDash {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 0;
     margin: 0 calc(-1 * var(--container-padding, 16px));
-    padding: 8px var(--container-padding, 16px) 0;
+    padding: 0;
+    background: transparent;
+    box-sizing: border-box;
+  }
+
+  .mobileDashTop {
+    padding: 4px var(--container-padding, 16px) 18px;
+    background: var(--header-mobile-gradient);
+    box-shadow: none;
+  }
+
+  .mobileDashMain {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px var(--container-padding, 16px) 0;
     background: #f9fafb;
+    border-radius: 20px 20px 0 0;
     box-sizing: border-box;
   }
 
@@ -818,7 +834,7 @@
     justify-content: center;
     width: 22px;
     height: 22px;
-    border: 2px solid #f9fafb;
+    border: 2px solid #ffb199;
     border-radius: 50%;
     background: linear-gradient(145deg, #ff7062 0%, #ff3d2e 100%);
     color: #ffffff;
@@ -842,7 +858,7 @@
     font-size: 1.25rem;
     font-weight: 700;
     line-height: 1.25;
-    color: #1a1a1a;
+    color: #ffffff;
   }
 
   .mobileLocationBadge {
@@ -852,17 +868,19 @@
     margin: 0;
     padding: 6px 12px;
     border-radius: 999px;
-    background: #f3f4f6;
+    background: rgb(255 255 255 / 0.22);
     font-size: 0.8125rem;
     font-weight: 500;
     line-height: 1.2;
-    color: #6b7280;
+    color: #ffffff;
   }
 
   .mobileLocationBadge svg {
     width: 16px;
     height: 16px;
     flex-shrink: 0;
+    stroke: #ffffff;
+    color: #ffffff;
   }
 
   .mobileOrdersCard {
@@ -1147,8 +1165,12 @@
     color: var(--lk-text);
   }
 
-  [data-account-lk].theme-dark .mobileDash {
+  [data-account-lk].theme-dark .mobileDashMain {
     background: var(--lk-bg-muted);
+  }
+
+  [data-account-lk].theme-dark .mobileProfileName {
+    color: #ffffff;
   }
 
   [data-account-lk].theme-dark .mobileLogoutBtn {

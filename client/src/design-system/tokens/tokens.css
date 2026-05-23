@@ -140,6 +140,7 @@
 
 @media (max-width: 768px) {
   :root {
+    --header-mobile-gradient: linear-gradient(180deg, #ffd6c1 0%, #ffb199 45%, #ff8878 100%);
     --header-top-height: auto;
     --header-height: auto;
     --radius-search: var(--radius-full);

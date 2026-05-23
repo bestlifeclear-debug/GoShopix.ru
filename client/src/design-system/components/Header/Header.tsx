@@ -1,7 +1,24 @@
 import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { IconCart, IconCatalog, IconClose, IconHeart, IconMenu, IconUser } from '../../icons/Icons';
 import styles from './Header.module.css';
+
+function useMaxWidth(query: string) {
+  const [matches, setMatches] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(query).matches,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = () => setMatches(mq.matches);
+    mq.addEventListener('change', onChange);
+    setMatches(mq.matches);
+    return () => mq.removeEventListener('change', onChange);
+  }, [query]);
+
+  return matches;
+}
 
 export interface HeaderNavLink {
   label: string;
@@ -25,8 +42,10 @@ export interface HeaderProps {
   menuOpen?: boolean;
   onMenuToggle?: () => void;
   extraActions?: ReactNode;
-  /** Скрыть строку поиска на мобилке (≤480px), напр. в ЛК */
+  /** Скрыть строку поиска на мобилке (≤768px), напр. в ЛК */
   hideMobileSearch?: boolean;
+  /** Компактный мобильный хедер (ЛК): без поиска, без тени, прозрачный фон под wrap */
+  mobileHeaderCompact?: boolean;
   /** Правая часть верхнего бара на мобилке (локация, колокольчик) */
   mobileTopTrailing?: ReactNode;
 }
@@ -49,8 +68,11 @@ export function Header({
   onMenuToggle,
   extraActions,
   hideMobileSearch = false,
+  mobileHeaderCompact = false,
   mobileTopTrailing,
 }: HeaderProps) {
+  const isMobile = useMaxWidth('(max-width: 768px)');
+  const hideSearchOnMobile = hideMobileSearch && isMobile;
   const location = useLocation();
   const currentPath = `${location.pathname}${location.search}`;
 
@@ -73,7 +95,7 @@ export function Header({
 
   return (
     <header
-      className={`${styles.header} ${hideMobileSearch ? styles.headerHideMobileSearch : ''}`}
+      className={`${styles.header} ${hideMobileSearch ? styles.headerHideMobileSearch : ''} ${mobileHeaderCompact ? styles.headerMobileCompact : ''}`}
     >
       <div className={styles.topBar}>
         <div className={`container ${styles.inner}`}>
@@ -97,7 +119,9 @@ export function Header({
               <div className={styles.mobileTopTrailing}>{mobileTopTrailing}</div>
             ) : null}
           </div>
-          <div className={styles.searchGroup}>{searchSlot}</div>
+          {!hideSearchOnMobile && searchSlot ? (
+            <div className={styles.searchGroup}>{searchSlot}</div>
+          ) : null}
         </div>
       </div>
 

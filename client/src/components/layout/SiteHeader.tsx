@@ -156,9 +156,10 @@ export function SiteHeader() {
   );
 
   return (
-    <div ref={wrapRef} className={styles.wrap}>
+    <div ref={wrapRef} className={`${styles.wrap} ${isAccountRoute ? styles.wrapAccount : ''}`}>
       <Header
         hideMobileSearch={hideMobileSearch}
+        mobileHeaderCompact={isAccountRoute}
         mobileTopTrailing={mobileTopTrailing}
         deliverySlot={<HeaderDeliveryCity />}
         searchSlot={
