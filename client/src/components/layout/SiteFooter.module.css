@@ -260,13 +260,24 @@ a.socialLink:hover .socialIcon {
   }
 
   .columns {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-3) var(--space-4);
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
-  .brandCol,
-  .contactsCol {
-    grid-column: 1 / -1;
+  .brandCol {
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .accordion {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .accordion summary.colTitle {
+    min-height: 44px;
+    padding: var(--space-2) 0;
+    font-size: var(--font-size-sm);
   }
 
   .tagline {
@@ -287,41 +298,43 @@ a.socialLink:hover .socialIcon {
   .accordion .links,
   .accordion .contactList,
   .accordion .socialList {
-    margin-top: var(--space-2);
+    margin-top: 0;
+    padding-bottom: var(--space-3);
   }
 
   .links {
-    gap: 6px;
+    gap: 8px;
   }
 
   .links a,
   .contactLink,
   .emailLink,
   .socialLink {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
   }
 
   .bottom {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-3);
-    margin-top: var(--space-5);
+    gap: var(--space-2);
+    margin-top: var(--space-4);
     padding-top: var(--space-3);
   }
 
   .payments {
-    gap: var(--space-2);
+    gap: var(--space-2) var(--space-3);
     width: 100%;
+    justify-content: flex-start;
   }
 
   .paymentIcon {
-    height: 30px;
-    max-width: 80px;
+    height: 28px;
+    max-width: 76px;
   }
 
   .paymentIconMir {
-    height: 34px;
-    max-width: 88px;
+    height: 32px;
+    max-width: 84px;
   }
 }
 
