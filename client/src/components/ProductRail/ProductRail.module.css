@@ -55,6 +55,7 @@
 .skeletonSlot {
   flex: 0 0 148px;
   width: 148px;
+  min-height: 248px;
 }
 
 @media (max-width: 767px) {

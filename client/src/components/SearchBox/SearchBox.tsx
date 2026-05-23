@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { IconSearch } from '../../design-system/icons/Icons';
+import { IconHistory, IconSearch } from '../../design-system/icons/Icons';
 import styles from './SearchBox.module.css';
 
 export interface SearchSuggestion {
@@ -16,6 +16,8 @@ interface SearchBoxProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit: () => void;
+  /** Сразу перейти к поиску по подсказке (обходит задержку setState) */
+  onHintPick?: (hint: string) => void;
   suggestions?: SearchSuggestion[];
   placeholder?: string;
   className?: string;
@@ -46,6 +48,7 @@ export function SearchBox({
   value,
   onChange,
   onSubmit,
+  onHintPick,
   suggestions = [],
   placeholder = 'Искать товары, бренды, категории',
   className,
@@ -76,6 +79,23 @@ export function SearchBox({
     }
     setOpen(false);
     onSubmit();
+  };
+
+  const pickHint = (hint: string) => {
+    saveRecent(hint);
+    setRecent(loadRecent());
+    onChange(hint);
+    setOpen(false);
+    if (onHintPick) {
+      onHintPick(hint);
+    } else {
+      onSubmit();
+    }
+  };
+
+  const clearRecent = () => {
+    localStorage.removeItem(RECENT_KEY);
+    setRecent([]);
   };
 
   return (
@@ -115,10 +135,15 @@ export function SearchBox({
       {showPanel && (
         <div id={listId} className={styles.panel} role="listbox">
           {showHints && (
-            <>
+            <div className={styles.hintsBody}>
               {recent.length > 0 && (
-                <>
-                  <p className={styles.panelTitle}>Недавние</p>
+                <section className={styles.panelSection}>
+                  <div className={styles.panelSectionHead}>
+                    <p className={styles.panelTitle}>Недавние</p>
+                    <button type="button" className={styles.clearRecent} onClick={clearRecent}>
+                      Очистить
+                    </button>
+                  </div>
                   <ul className={styles.hintList}>
                     {recent.map((hint) => (
                       <li key={`recent-${hint}`}>
@@ -126,38 +151,39 @@ export function SearchBox({
                           type="button"
                           className={styles.hintBtn}
                           role="option"
-                          onClick={() => {
-                            onChange(hint);
-                            setOpen(false);
-                          }}
+                          onClick={() => pickHint(hint)}
                         >
-                          {hint}
+                          <span className={`${styles.hintIcon} ${styles.hintIconMuted}`}>
+                            <IconHistory />
+                          </span>
+                          <span className={styles.hintLabel}>{hint}</span>
                         </button>
                       </li>
                     ))}
                   </ul>
-                </>
+                </section>
               )}
-              <p className={styles.panelTitle}>Популярные запросы</p>
-              <ul className={styles.hintList}>
-                {DEFAULT_HINTS.map((hint) => (
-                  <li key={hint}>
-                    <button
-                      type="button"
-                      className={styles.hintBtn}
-                      role="option"
-                      onClick={() => {
-                        onChange(hint);
-                        setOpen(false);
-                      }}
-                    >
-                      <IconSearch />
-                      {hint}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </>
+              <section className={styles.panelSection}>
+                <p className={styles.panelTitle}>Популярные запросы</p>
+                <ul className={styles.hintList}>
+                  {DEFAULT_HINTS.map((hint) => (
+                    <li key={hint}>
+                      <button
+                        type="button"
+                        className={styles.hintBtn}
+                        role="option"
+                        onClick={() => pickHint(hint)}
+                      >
+                        <span className={styles.hintIcon}>
+                          <IconSearch />
+                        </span>
+                        <span className={styles.hintLabel}>{hint}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </div>
           )}
           {showResults && (
             <>

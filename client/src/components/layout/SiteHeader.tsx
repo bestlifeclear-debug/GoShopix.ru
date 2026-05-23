@@ -120,8 +120,9 @@ export function SiteHeader() {
     return [...fromCategories, ...STATIC_NAV].slice(0, 6);
   }, [categories]);
 
-  const goSearch = () => {
-    const q = search.trim();
+  const goSearch = (query?: string) => {
+    const q = (query ?? search).trim();
+    if (query != null) setSearch(query);
     navigate(q ? `/catalog?q=${encodeURIComponent(q)}` : '/catalog');
     setMenuOpen(false);
     setCatalogOpen(false);
@@ -142,7 +143,8 @@ export function SiteHeader() {
           <SearchBox
             value={search}
             onChange={setSearch}
-            onSubmit={goSearch}
+            onSubmit={() => goSearch()}
+            onHintPick={(hint) => goSearch(hint)}
             suggestions={suggestions}
           />
         }

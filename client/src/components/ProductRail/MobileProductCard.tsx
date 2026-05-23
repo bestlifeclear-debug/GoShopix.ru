@@ -13,11 +13,12 @@ interface MobileProductCardProps {
 export function MobileProductCard({ product, highlightPrice, onAddToCart }: MobileProductCardProps) {
   const image = product.images?.[0]?.url ?? product.imageUrl ?? undefined;
   const hasDiscount = product.compareAtPrice != null && product.compareAtPrice > product.price;
+  const productUrl = `/product/${product.id}`;
 
   return (
     <article className={styles.card}>
       <div className={styles.media}>
-        <Link to={`/product/${product.id}`} className={styles.mediaLink} aria-label={product.name}>
+        <Link to={productUrl} className={styles.mediaLink} aria-label={product.name}>
           {product.discountPercent != null && product.discountPercent > 0 && (
             <span className={styles.badge}>−{product.discountPercent}%</span>
           )}
@@ -32,6 +33,7 @@ export function MobileProductCard({ product, highlightPrice, onAddToCart }: Mobi
           className={styles.addBtn}
           onClick={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             onAddToCart?.();
           }}
           aria-label={`Добавить ${product.name} в корзину`}
@@ -47,9 +49,14 @@ export function MobileProductCard({ product, highlightPrice, onAddToCart }: Mobi
             <span className={styles.oldPrice}>{formatPrice(product.compareAtPrice!)}</span>
           )}
         </div>
-        <Link to={`/product/${product.id}`} className={styles.title}>
+        <Link to={productUrl} className={styles.title}>
           {product.name}
         </Link>
+        <div className={styles.actions}>
+          <Link to={productUrl} className={styles.detailsBtn}>
+            Подробнее
+          </Link>
+        </div>
       </div>
     </article>
   );
