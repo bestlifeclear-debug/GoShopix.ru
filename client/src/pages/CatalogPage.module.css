@@ -151,7 +151,40 @@
   display: none;
 }
 
+.sheetGrab {
+  display: none;
+}
+
 .sheetHead {
+  display: none;
+}
+
+.sheetHeadActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.sheetReset {
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sheetBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sheetFooter {
   display: none;
 }
 
@@ -160,6 +193,20 @@
 }
 
 .sheetApply {
+  display: none;
+}
+
+.filterSection {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.filterSectionTitle {
+  list-style: none;
+}
+
+.filterSectionTitle::-webkit-details-marker {
   display: none;
 }
 
@@ -495,11 +542,19 @@
     color: var(--color-primary);
   }
 
-  .filterDot {
-    width: 8px;
-    height: 8px;
+  .filterBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
     border-radius: var(--radius-full);
     background: var(--color-primary);
+    color: var(--color-text-inverse);
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
   }
 
   .mobileSort {
@@ -578,27 +633,28 @@
     position: fixed;
     inset: 0;
     z-index: 350;
-    background: rgb(0 0 0 / 0.45);
+    background: rgb(15 23 42 / 0.42);
     animation: fade-in 0.2s both;
   }
 
   .sidebar {
     display: flex;
+    flex-direction: column;
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     z-index: 400;
-    max-height: min(96dvh, calc(100dvh - var(--header-height)));
+    max-height: min(78dvh, calc(100dvh - var(--header-height) - 48px));
     margin: 0;
-    padding: var(--space-4) var(--space-4) var(--space-6);
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: 0;
+    border-radius: 20px 20px 0 0;
     border-bottom: none;
-    box-shadow: var(--shadow-lg);
+    background: var(--color-bg-elevated);
+    box-shadow: 0 -12px 40px rgb(15 23 42 / 0.18);
     transform: translateY(100%);
-    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: visible;
-    overflow-x: hidden;
+    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+    overflow: hidden;
     top: auto;
     pointer-events: none;
     visibility: hidden;
@@ -608,8 +664,16 @@
     transform: translateY(0);
     pointer-events: auto;
     visibility: visible;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+  }
+
+  .sheetGrab {
+    display: block;
+    flex-shrink: 0;
+    width: 40px;
+    height: 4px;
+    margin: 10px auto 4px;
+    border-radius: var(--radius-full);
+    background: var(--color-border);
   }
 
   .sheetHead {
@@ -617,34 +681,128 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--space-2);
-    margin: calc(-1 * var(--space-2)) 0 var(--space-2);
-    padding-bottom: var(--space-2);
+    flex-shrink: 0;
+    margin: 0;
+    padding: 8px var(--space-4) 12px;
     border-bottom: 1px solid var(--color-border);
   }
 
   .sheetHead .sidebarTitle {
     border-bottom: none;
     padding-bottom: 0;
+    font-size: var(--font-size-lg);
   }
 
   .sheetClose {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--touch-min);
-    height: var(--touch-min);
+    width: 40px;
+    height: 40px;
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-full);
     background: var(--color-bg-subtle);
     color: var(--color-text);
     cursor: pointer;
   }
 
+  .sheetBody {
+    flex: 1;
+    min-height: 0;
+    gap: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0;
+  }
+
+  .sheetBody .filterGroup {
+    gap: var(--space-2);
+  }
+
+  .filterSection {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .filterSectionTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: 0 var(--space-4);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .filterSectionTitle::after {
+    content: '';
+    flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    margin-left: var(--space-2);
+    border-right: 2px solid var(--color-text-muted);
+    border-bottom: 2px solid var(--color-text-muted);
+    transform: rotate(45deg);
+    transition: transform var(--transition-fast);
+  }
+
+  .filterSection[open] .filterSectionTitle::after {
+    transform: rotate(-135deg);
+  }
+
+  .filterSectionBody {
+    padding: 0 var(--space-4) var(--space-3);
+  }
+
+  .sheetBody .checkListGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sheetBody .checkItem {
+    min-height: 42px;
+    font-size: var(--font-size-sm);
+  }
+
+  .sheetBody .filterControl {
+    min-height: 42px;
+    font-size: var(--font-size-sm);
+  }
+
+  .sheetFooter {
+    display: block;
+    flex-shrink: 0;
+    padding: 12px var(--space-4) calc(12px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--color-border);
+    background: var(--color-bg-elevated);
+    box-shadow: 0 -8px 24px rgb(15 23 42 / 0.06);
+  }
+
   .sheetApply {
     display: flex;
     width: 100%;
-    margin-top: var(--space-4);
-    min-height: var(--touch-min);
+    margin: 0;
+    min-height: 48px;
+    font-size: var(--font-size-md);
+  }
+}
+
+@media (min-width: 768px) {
+  .sheetGrab,
+  .sheetHead,
+  .sheetFooter {
+    display: none !important;
+  }
+
+  .sheetBody {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    overflow: visible;
+    flex: none;
+    padding: 0;
   }
 }
 

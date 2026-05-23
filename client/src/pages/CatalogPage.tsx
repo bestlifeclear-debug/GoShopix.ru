@@ -40,6 +40,54 @@ function getAttrFilters(params: URLSearchParams): Record<string, string> {
 
 const ELECTRONICS_SLUGS = new Set(['electronics', 'smartphones', 'laptops']);
 
+function useMinWidth(query: string) {
+  const [matches, setMatches] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(query).matches,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = () => setMatches(mq.matches);
+    mq.addEventListener('change', onChange);
+    setMatches(mq.matches);
+    return () => mq.removeEventListener('change', onChange);
+  }, [query]);
+
+  return matches;
+}
+
+function FilterSection({
+  id,
+  title,
+  collapsible,
+  defaultOpen = true,
+  children,
+}: {
+  id: string;
+  title: string;
+  collapsible: boolean;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  if (collapsible) {
+    return (
+      <details className={styles.filterSection} open={defaultOpen}>
+        <summary className={styles.filterSectionTitle}>{title}</summary>
+        <div className={styles.filterSectionBody}>{children}</div>
+      </details>
+    );
+  }
+
+  return (
+    <fieldset className={styles.filterGroup} aria-labelledby={id}>
+      <div id={id} className={styles.filterLegend}>
+        {title}
+      </div>
+      {children}
+    </fieldset>
+  );
+}
+
 function FilterCheck({
   active,
   type,
@@ -83,6 +131,8 @@ export function CatalogPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const isDesktop = useMinWidth('(min-width: 768px)');
+  const filtersCollapsible = !isDesktop;
   const token = useAuthStore((s) => s.token);
   const addToCart = useCartStore((s) => s.addToCart);
   const openDrawer = useCartStore((s) => s.openDrawer);
@@ -155,11 +205,17 @@ export function CatalogPage() {
   }, [loadProducts]);
 
   useEffect(() => {
-    document.body.style.overflow = filtersOpen ? 'hidden' : '';
+    if (!filtersOpen || isDesktop) return;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setFiltersOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = '';
+      window.removeEventListener('keydown', onKey);
     };
-  }, [filtersOpen]);
+  }, [filtersOpen, isDesktop]);
 
   const setFilter = (key: string, value: string) => {
     const next = new URLSearchParams(params);
@@ -263,10 +319,12 @@ export function CatalogPage() {
 
   const sidebarContent = (
     <>
-      <fieldset className={styles.filterGroup} aria-labelledby="catalog-filter-category">
-        <div id="catalog-filter-category" className={styles.filterLegend}>
-          Категория
-        </div>
+      <FilterSection
+        id="catalog-filter-category"
+        title="Категория"
+        collapsible={filtersCollapsible}
+        defaultOpen
+      >
         <ul className={styles.checkList}>
           <li>
             <FilterCheck
@@ -311,12 +369,14 @@ export function CatalogPage() {
             </li>
           ))}
         </ul>
-      </fieldset>
+      </FilterSection>
 
-      <fieldset className={styles.filterGroup} aria-labelledby="catalog-filter-price">
-        <div id="catalog-filter-price" className={styles.filterLegend}>
-          Цена, ₽
-        </div>
+      <FilterSection
+        id="catalog-filter-price"
+        title="Цена, ₽"
+        collapsible={filtersCollapsible}
+        defaultOpen
+      >
         <div className={styles.priceRow}>
           <input
             type="number"
@@ -342,13 +402,15 @@ export function CatalogPage() {
             aria-label="Цена до"
           />
         </div>
-      </fieldset>
+      </FilterSection>
 
       {facets.brands.length > 0 && (
-        <fieldset className={styles.filterGroup} aria-labelledby="catalog-filter-brand">
-          <div id="catalog-filter-brand" className={styles.filterLegend}>
-            Бренд
-          </div>
+        <FilterSection
+          id="catalog-filter-brand"
+          title="Бренд"
+          collapsible={filtersCollapsible}
+          defaultOpen={selectedBrands.length > 0}
+        >
           <ul className={`${styles.checkList} ${styles.checkListGrid}`}>
             {facets.brands.map((brand) => (
               <li key={brand}>
@@ -363,13 +425,15 @@ export function CatalogPage() {
               </li>
             ))}
           </ul>
-        </fieldset>
+        </FilterSection>
       )}
 
-      <fieldset className={styles.filterGroup} aria-labelledby="catalog-filter-stock">
-        <div id="catalog-filter-stock" className={styles.filterLegend}>
-          Наличие
-        </div>
+      <FilterSection
+        id="catalog-filter-stock"
+        title="Наличие"
+        collapsible={filtersCollapsible}
+        defaultOpen={inStock}
+      >
         <FilterCheck
           active={inStock}
           type="checkbox"
@@ -378,14 +442,17 @@ export function CatalogPage() {
         >
           В наличии
         </FilterCheck>
-      </fieldset>
+      </FilterSection>
 
       {showAttributeFilters &&
         facets.attributes.map((attr) => (
-          <fieldset key={attr.slug} className={styles.filterGroup} aria-labelledby={`catalog-filter-attr-${attr.slug}`}>
-            <div id={`catalog-filter-attr-${attr.slug}`} className={styles.filterLegend}>
-              {attr.name}
-            </div>
+          <FilterSection
+            key={attr.slug}
+            id={`catalog-filter-attr-${attr.slug}`}
+            title={attr.name}
+            collapsible={filtersCollapsible}
+            defaultOpen={Boolean(attrFilters[attr.slug])}
+          >
             <ul className={`${styles.checkList} ${styles.checkListGrid}`}>
               {attr.values.map((value) => (
                 <li key={value}>
@@ -412,7 +479,7 @@ export function CatalogPage() {
                 </li>
               )}
             </ul>
-          </fieldset>
+          </FilterSection>
         ))}
 
       {q && <StatusBadge variant="neutral" label={`Поиск: ${q}`} />}
@@ -437,7 +504,9 @@ export function CatalogPage() {
         <button type="button" className={styles.mobileFilterBtn} onClick={() => setFiltersOpen(true)}>
           <IconFilter />
           <span>Фильтры</span>
-          {hasActiveFilters && <span className={styles.filterDot} aria-hidden />}
+          {activeFilterChips.length > 0 && (
+            <span className={styles.filterBadge}>{activeFilterChips.length}</span>
+          )}
         </button>
         <div className={styles.mobileSort} role="tablist" aria-label="Сортировка">
           {SORT_OPTIONS.map((o) => (
@@ -490,30 +559,45 @@ export function CatalogPage() {
         </div>
       )}
 
-      {filtersOpen && (
+      {filtersOpen && !isDesktop && (
         <div className={styles.filterOverlay} role="presentation" onClick={() => setFiltersOpen(false)} />
       )}
 
       <div className={styles.layout}>
         <aside
-          className={`gsp-panel ${styles.sidebar} ${filtersOpen ? styles.sidebarOpen : ''}`}
+          className={`${styles.sidebar} ${isDesktop ? 'gsp-panel' : ''} ${filtersOpen ? styles.sidebarOpen : ''}`}
           aria-label="Фильтры"
+          role={!isDesktop ? 'dialog' : undefined}
+          aria-modal={!isDesktop && filtersOpen ? true : undefined}
+          aria-hidden={!isDesktop && !filtersOpen ? true : undefined}
         >
+          {!isDesktop && <div className={styles.sheetGrab} aria-hidden />}
           <div className={styles.sheetHead}>
             <h2 className={styles.sidebarTitle}>Фильтры</h2>
-            <button
-              type="button"
-              className={styles.sheetClose}
-              onClick={() => setFiltersOpen(false)}
-              aria-label="Закрыть фильтры"
-            >
-              <IconClose />
-            </button>
+            <div className={styles.sheetHeadActions}>
+              {hasActiveFilters && (
+                <button type="button" className={styles.sheetReset} onClick={resetFilters}>
+                  Сбросить
+                </button>
+              )}
+              <button
+                type="button"
+                className={styles.sheetClose}
+                onClick={() => setFiltersOpen(false)}
+                aria-label="Закрыть фильтры"
+              >
+                <IconClose />
+              </button>
+            </div>
           </div>
-          {sidebarContent}
-          <Button className={styles.sheetApply} onClick={() => setFiltersOpen(false)}>
-            Показать товары
-          </Button>
+          <div className={styles.sheetBody}>{sidebarContent}</div>
+          <div className={styles.sheetFooter}>
+            <Button className={styles.sheetApply} onClick={() => setFiltersOpen(false)}>
+              {loading
+                ? 'Загрузка…'
+                : `Показать ${totalCount} ${productCountLabel(totalCount)}`}
+            </Button>
+          </div>
         </aside>
 
         <div className={styles.content}>
