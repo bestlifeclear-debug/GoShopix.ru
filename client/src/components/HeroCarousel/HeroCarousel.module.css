@@ -363,10 +363,7 @@
   }
 
   .slide::after {
-    width: 45%;
-    height: 70%;
-    right: -12%;
-    opacity: 0.7;
+    display: none;
   }
 
   .slideInner {
@@ -386,19 +383,18 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    flex: 1 1 58%;
-    max-width: 62%;
+    flex: 1 1 100%;
+    max-width: 100%;
+    width: 100%;
     min-width: 0;
     min-height: 0;
-    gap: 5px;
+    gap: 6px;
     overflow: hidden;
+    padding-right: 4px;
   }
 
   .visual {
-    flex: 0 0 38%;
-    max-width: 40%;
-    min-height: 0;
-    align-self: center;
+    display: none;
   }
 
   .promoRibbon {
@@ -420,8 +416,8 @@
   .title {
     flex: 0 1 auto;
     margin: 0;
-    font-size: 15px;
-    line-height: 1.22;
+    font-size: 16px;
+    line-height: 1.25;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -431,10 +427,10 @@
   .text {
     display: -webkit-box !important;
     margin: 0;
-    font-size: 11px;
-    line-height: 1.3;
-    opacity: 0.92;
-    -webkit-line-clamp: 1;
+    font-size: 12px;
+    line-height: 1.35;
+    opacity: 0.94;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -507,90 +503,57 @@
 
 @media (max-width: 430px) {
   .carousel {
-    --hero-mobile-height: min(196px, calc(100vw * 10 / 21));
-    max-height: 196px;
+    --hero-mobile-height: min(188px, calc(100vw * 10 / 21));
+    max-height: 188px;
   }
 
   .slideInner {
-    padding: 10px 10px 20px;
-    align-items: center;
-  }
-
-  .copy {
-    max-width: 64%;
-    gap: 4px;
+    padding: 12px 14px 22px;
+    align-items: stretch;
   }
 
   .title {
-    font-size: 13px;
-    line-height: 1.18;
-    -webkit-line-clamp: 3;
+    font-size: 15px;
   }
 
   .text {
-    display: none !important;
+    font-size: 11px;
+    -webkit-line-clamp: 2;
   }
 
   .eyebrow {
-    font-size: 8px;
-  }
-
-  .productImage {
-    max-width: 80px;
-    max-height: 72px;
-  }
-
-  .deliveryVisual {
-    max-width: 76px;
-    max-height: 70px;
+    font-size: 9px;
   }
 }
 
 @media (max-width: 360px) {
   .carousel {
-    --hero-mobile-height: min(192px, calc(100vw * 10 / 21));
-    max-height: 192px;
+    --hero-mobile-height: min(180px, calc(100vw * 10 / 21));
+    max-height: 180px;
   }
 
   .slideInner {
-    padding: 8px 8px 18px;
-    gap: 6px;
-  }
-
-  .copy {
-    flex: 1 1 60%;
-    max-width: 66%;
-  }
-
-  .visual {
-    flex: 0 0 34%;
-    max-width: 36%;
+    padding: 10px 12px 20px;
   }
 
   .promoRibbon {
-    padding: 2px 6px;
+    padding: 2px 7px;
     font-size: 10px;
   }
 
   .title {
-    font-size: 12px;
-    -webkit-line-clamp: 2;
+    font-size: 14px;
+  }
+
+  .text {
+    font-size: 10px;
+    -webkit-line-clamp: 1;
   }
 
   .btnCta {
     height: 26px;
     min-height: 26px;
-    padding: 4px 8px;
-    font-size: 9px;
-  }
-
-  .productImage {
-    max-width: 72px;
-    max-height: 64px;
-  }
-
-  .deliveryVisual {
-    max-width: 68px;
-    max-height: 62px;
+    padding: 4px 10px;
+    font-size: 10px;
   }
 }
