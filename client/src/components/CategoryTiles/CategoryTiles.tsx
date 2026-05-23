@@ -11,7 +11,7 @@ interface CategoryTilesProps {
 export function CategoryTiles({ categories, variant = 'default' }: CategoryTilesProps) {
   const roots = categories.filter((c) => !c.parentId);
   const children = categories.flatMap((c) => c.children);
-  const tiles = variant === 'mobile' ? roots.slice(0, 8) : [...roots, ...children];
+  const tiles = variant === 'mobile' ? roots.slice(0, 10) : [...roots, ...children];
 
   if (tiles.length === 0) return null;
 
@@ -39,5 +39,32 @@ export function CategoryTiles({ categories, variant = 'default' }: CategoryTiles
         </Link>
       ))}
     </div>
+  );
+}
+
+interface CategorySectionProps {
+  categories: CategoryNode[];
+  catalogLink?: string;
+}
+
+/** Секция категорий на главной (мобилка): заголовок + горизонтальный скролл */
+export function CategorySection({ categories, catalogLink = '/catalog' }: CategorySectionProps) {
+  const roots = categories.filter((c) => !c.parentId);
+  if (roots.length === 0) return null;
+
+  return (
+    <section className={styles.section} aria-labelledby="home-categories-title">
+      <div className={styles.sectionHead}>
+        <h2 id="home-categories-title" className={styles.sectionTitle}>
+          Категории
+        </h2>
+        <Link to={catalogLink} className={styles.sectionLink}>
+          Все →
+        </Link>
+      </div>
+      <div className={styles.trackWrap}>
+        <CategoryTiles categories={categories} variant="mobile" />
+      </div>
+    </section>
   );
 }

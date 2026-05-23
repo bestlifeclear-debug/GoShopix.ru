@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { categoriesApi, productsApi } from '../api/index';
 import type { CategoryNode, ProductListItem } from '../api/types';
 import { CategoryTabs } from '../components/CategoryTabs/CategoryTabs';
-import { CategoryTiles } from '../components/CategoryTiles/CategoryTiles';
+import { CategorySection, CategoryTiles } from '../components/CategoryTiles/CategoryTiles';
 import { HeroCarousel } from '../components/HeroCarousel/HeroCarousel';
 import { HomeProductSection } from '../components/HomeProductSection/HomeProductSection';
 import { HomeQuickFilters } from '../components/HomeQuickFilters/HomeQuickFilters';
@@ -75,10 +75,7 @@ export function HomePage() {
       <div className="container">
         <HeroCarousel />
         <div className={styles.mobileOnly}>
-        <section className={styles.block}>
-          <h2 className={styles.blockTitle}>Категории</h2>
-          <CategoryTiles categories={categories} variant="mobile" />
-        </section>
+        <CategorySection categories={categories} />
 
         <ProductRail
           title="Бестселлеры"
