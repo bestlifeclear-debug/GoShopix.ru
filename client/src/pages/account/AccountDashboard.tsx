@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
 import type { Order, ProductListItem } from '../../api/types';
 import { cityDetectApi } from '../../api';
+import { ProductGrid } from '../../components/ProductGrid';
 import { Button } from '../../design-system';
 import { DEFAULT_DELIVERY_CITY, readDeliveryCity, writeDeliveryCity } from '../../lib/deliveryCity';
 import styles from '../AccountPage.module.css';
 import {
   IconAddress,
-  IconBell,
   IconFavorites,
   IconLocation,
   IconOrders,
@@ -28,6 +28,7 @@ interface AccountDashboardProps {
   onAllOrders: () => void;
   onNavigateSection: (id: AccountSection) => void;
   onLogout: () => void;
+  onAddToCart?: (product: ProductListItem) => void | Promise<void>;
 }
 
 const MOBILE_QUICK_ACCESS: {
@@ -46,7 +47,6 @@ const MOBILE_SETTINGS_ITEMS: {
 }[] = [
   { id: 'profile', label: 'Личные данные', icon: IconProfile },
   { id: 'addresses', label: 'Адреса доставки', icon: IconAddress },
-  { id: 'notifications', label: 'Уведомления', icon: IconBell },
   { id: 'support', label: 'Поддержка', icon: IconSupport },
 ];
 
@@ -65,6 +65,7 @@ export function AccountDashboard({
   onAllOrders,
   onNavigateSection,
   onLogout,
+  onAddToCart,
 }: AccountDashboardProps) {
   const isCompactMobile = useAccountMobileLayout();
   const [deliveryCity, setDeliveryCity] = useState(() => readDeliveryCity() ?? DEFAULT_DELIVERY_CITY);
@@ -85,12 +86,34 @@ export function AccountDashboard({
     });
   }, [isCompactMobile]);
 
-  const recommendationsSection = (
+  const recommendationsSection = isCompactMobile ? (
     <section
       id="account-reco"
-      className={`${styles.recoBlock} ${isCompactMobile ? styles.recoBlockMobile : ''}`}
+      className={styles.mobileRecoSection}
       aria-labelledby="reco-title"
     >
+      <div className={styles.mobileRecoHead}>
+        <h2 id="reco-title" className={styles.mobileSectionTitle}>
+          Персональные рекомендации
+        </h2>
+        <Link to="/catalog" className={styles.textLink}>
+          Весь каталог
+        </Link>
+      </div>
+      {recommendations.length === 0 ? (
+        <p className={styles.recoEmpty}>Рекомендации появятся после просмотра каталога.</p>
+      ) : (
+        <div className={styles.mobileRecoGrid}>
+          <ProductGrid
+            products={recommendations}
+            variant="compact"
+            onAddToCart={onAddToCart}
+          />
+        </div>
+      )}
+    </section>
+  ) : (
+    <section id="account-reco" className={styles.recoBlock} aria-labelledby="reco-title">
       <div className={styles.recoHead}>
         <h2 id="reco-title" className={styles.blockSubtitle}>
           Персональные рекомендации
@@ -125,7 +148,7 @@ export function AccountDashboard({
 
   if (isCompactMobile) {
     return (
-      <div className={styles.dashboard}>
+      <div className={`${styles.dashboard} ${styles.dashboardMobile}`}>
         <div className={styles.mobileDash}>
           <header className={styles.mobileProfileHeader}>
             <div className={styles.mobileAvatar} aria-hidden>
@@ -191,7 +214,7 @@ export function AccountDashboard({
           </section>
 
           <section className={styles.mobileQuickSection} aria-labelledby="mobile-quick-title">
-            <h2 id="mobile-quick-title" className={styles.mobileSectionLabel}>
+            <h2 id="mobile-quick-title" className={styles.mobileSectionTitle}>
               Быстрый доступ
             </h2>
             <div className={styles.mobileQuickGrid}>
@@ -215,7 +238,7 @@ export function AccountDashboard({
           </section>
 
           <section className={styles.mobileSettingsSection} aria-labelledby="mobile-settings-title">
-            <h2 id="mobile-settings-title" className={styles.mobileSectionLabel}>
+            <h2 id="mobile-settings-title" className={styles.mobileSectionTitle}>
               Настройки
             </h2>
             <nav className={styles.mobileSettingsCard} aria-label="Настройки профиля">

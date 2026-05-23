@@ -3,6 +3,7 @@ import { IconMenu } from '../design-system/icons/Icons';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAccountMobileLayout } from './account/useAccountMobileLayout';
 import { favoritesApi, notificationsApi, ordersApi, productsApi } from '../api/index';
+import { snapshotFromDetail } from '../lib/cartSnapshot';
 import type { FavoriteItem, NotificationItem, NotificationSettings, Order, ProductListItem } from '../api/types';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
@@ -34,6 +35,7 @@ export function AccountPage() {
   const logout = useAuthStore((s) => s.logout);
   const fetchMe = useAuthStore((s) => s.fetchMe);
   const addToCart = useCartStore((s) => s.addToCart);
+  const openDrawer = useCartStore((s) => s.openDrawer);
 
   const isCompactMobile = useAccountMobileLayout();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -112,6 +114,18 @@ export function AccountPage() {
 
   const updateOrderInState = (updated: Order) => {
     setOrders((list) => list.map((o) => (o.id === updated.id ? updated : o)));
+  };
+
+  const handleAddProductToCart = async (product: ProductListItem) => {
+    try {
+      const detail = await productsApi.get(product.id);
+      const variant = detail.variants.find((v) => v.isDefault) ?? detail.variants[0];
+      if (!variant) return;
+      await addToCart(variant.id, 1, snapshotFromDetail(detail, variant));
+      if (!token) openDrawer();
+    } catch {
+      /* ignore */
+    }
   };
 
   const handleRepeatOrder = async (order: Order) => {
@@ -215,6 +229,7 @@ export function AccountPage() {
                 onAllOrders={() => navigateSection('orders')}
                 onNavigateSection={navigateSection}
                 onLogout={logout}
+                onAddToCart={handleAddProductToCart}
               />
             </>
           )}

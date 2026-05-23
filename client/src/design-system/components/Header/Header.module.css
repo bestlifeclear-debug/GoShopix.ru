@@ -26,7 +26,7 @@
   display: contents;
 }
 
-.topDeliveryMobile {
+.mobileTopTrailing {
   display: none;
 }
 
@@ -339,6 +339,10 @@
     box-sizing: border-box;
   }
 
+  .topRow .logo {
+    flex-shrink: 0;
+  }
+
   .menuBtn {
     display: none !important;
   }
@@ -362,13 +366,14 @@
     display: none;
   }
 
-  .topDeliveryMobile {
+  .mobileTopTrailing {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    gap: 16px;
     flex: 1;
     min-width: 0;
-    max-width: calc(100% - 40px);
+    margin-left: auto;
   }
 
   .searchGroup {
@@ -395,7 +400,4 @@
     padding-bottom: 6px;
   }
 
-  .headerHideMobileSearch .topDeliveryMobile {
-    display: none;
-  }
 }

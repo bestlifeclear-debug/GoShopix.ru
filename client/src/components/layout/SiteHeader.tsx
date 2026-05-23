@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { categoriesApi, productsApi } from '../../api/index';
+import { categoriesApi, notificationsApi, productsApi } from '../../api/index';
 import type { CategoryNode } from '../../api/types';
 import { Header, type HeaderNavLink } from '../../design-system';
 import { IconClose } from '../../design-system/icons/Icons';
 import { CatalogMenu } from '../CatalogMenu/CatalogMenu';
 import { HeaderDeliveryCity } from '../HeaderDeliveryCity/HeaderDeliveryCity';
+import { HeaderNotificationBell } from './HeaderNotificationBell';
 import { SearchBox, type SearchSuggestion } from '../SearchBox/SearchBox';
 import { useAuthStore } from '../../stores/authStore';
 import { selectCartItemCount, useCartStore } from '../../stores/cartStore';
@@ -27,7 +28,9 @@ const STATIC_NAV: HeaderNavLink[] = [
 export function SiteHeader() {
   const navigate = useNavigate();
   const location = useLocation();
-  const hideMobileSearch = location.pathname === '/account';
+  const isAccountRoute = location.pathname === '/account';
+  const hideMobileSearch = isAccountRoute;
+  const [headerUnreadCount, setHeaderUnreadCount] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
   const catalogCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [search, setSearch] = useState('');
@@ -58,6 +61,14 @@ export function SiteHeader() {
   useEffect(() => {
     void categoriesApi.tree().then(setCategories);
   }, []);
+
+  useEffect(() => {
+    if (!token) {
+      setHeaderUnreadCount(0);
+      return;
+    }
+    void notificationsApi.unreadCount().then((r) => setHeaderUnreadCount(r.count));
+  }, [token, location.pathname, location.search]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
@@ -137,10 +148,18 @@ export function SiteHeader() {
       </Link>
     ) : null;
 
+  const mobileTopTrailing = (
+    <>
+      {!isAccountRoute && <HeaderDeliveryCity />}
+      <HeaderNotificationBell unreadCount={headerUnreadCount} />
+    </>
+  );
+
   return (
     <div ref={wrapRef} className={styles.wrap}>
       <Header
         hideMobileSearch={hideMobileSearch}
+        mobileTopTrailing={mobileTopTrailing}
         deliverySlot={<HeaderDeliveryCity />}
         searchSlot={
           <SearchBox

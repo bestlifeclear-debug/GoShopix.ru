@@ -27,6 +27,8 @@ export interface HeaderProps {
   extraActions?: ReactNode;
   /** Скрыть строку поиска на мобилке (≤480px), напр. в ЛК */
   hideMobileSearch?: boolean;
+  /** Правая часть верхнего бара на мобилке (локация, колокольчик) */
+  mobileTopTrailing?: ReactNode;
 }
 
 export function Header({
@@ -47,6 +49,7 @@ export function Header({
   onMenuToggle,
   extraActions,
   hideMobileSearch = false,
+  mobileTopTrailing,
 }: HeaderProps) {
   const location = useLocation();
   const currentPath = `${location.pathname}${location.search}`;
@@ -90,7 +93,9 @@ export function Header({
               <span className={styles.logoMark}>G</span>
               <span className={styles.logoText}>GoShopix</span>
             </Link>
-            {deliverySlot ? <div className={styles.topDeliveryMobile}>{deliverySlot}</div> : null}
+            {mobileTopTrailing ? (
+              <div className={styles.mobileTopTrailing}>{mobileTopTrailing}</div>
+            ) : null}
           </div>
           <div className={styles.searchGroup}>{searchSlot}</div>
         </div>
