@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { categoriesApi, productsApi } from '../api/index';
 import type { CategoryNode, ProductFacets, ProductListItem } from '../api/types';
@@ -9,7 +9,6 @@ import { Button } from '../design-system';
 import { IconClose, IconFilter } from '../design-system/icons/Icons';
 import {
   buildProductsListQuery,
-  catalogFiltersEqual,
   hasAnyCatalogFilter,
   parseCatalogFiltersFromSearchParams,
   shouldShowAttributeFilters,
@@ -29,7 +28,8 @@ const SORT_OPTIONS = [
   { value: 'newest', label: 'По новизне', short: 'Новинки' },
 ] as const;
 
-const FILTER_PREVIEW_DEBOUNCE_MS = 300;
+/** Задержка перед применением цены в URL — не фильтруем по «2», пока вводят «2000». */
+const PRICE_APPLY_DEBOUNCE_MS = 400;
 
 function productCountLabel(count: number): string {
   const mod10 = count % 10;
@@ -64,9 +64,8 @@ export function CatalogPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [previewCount, setPreviewCount] = useState(0);
-  const [previewLoading, setPreviewLoading] = useState(false);
-  const previewRequestRef = useRef(0);
+  const [priceInputMin, setPriceInputMin] = useState('');
+  const [priceInputMax, setPriceInputMax] = useState('');
   const isDesktop = useMinWidth('(min-width: 768px)');
   const token = useAuthStore((s) => s.token);
   const addToCart = useCartStore((s) => s.addToCart);
@@ -76,9 +75,7 @@ export function CatalogPage() {
   const sort = params.get('sort') ?? 'popular';
   const q = params.get('q') ?? '';
 
-  const appliedFilters = useMemo(() => parseCatalogFiltersFromSearchParams(params), [params]);
-
-  const [draftFilters, setDraftFilters] = useState<CatalogFiltersState>(appliedFilters);
+  const filters = useMemo(() => parseCatalogFiltersFromSearchParams(params), [params]);
 
   const categoryRoots = useMemo(() => categories.filter((c) => !c.parentId), [categories]);
 
@@ -87,41 +84,41 @@ export function CatalogPage() {
     [categories],
   );
 
-  const filtersPending = !catalogFiltersEqual(draftFilters, appliedFilters);
+  const showAttributeFilters = shouldShowAttributeFilters(filters.categorySlugs, flatCategories);
 
-  const showAttributeFilters = shouldShowAttributeFilters(
-    draftFilters.categorySlugs,
-    flatCategories,
+  const applyFilters = useCallback(
+    (next: CatalogFiltersState) => {
+      setParams(writeCatalogFiltersToSearchParams(params, next, { sort }));
+    },
+    [params, sort, setParams],
   );
 
   const loadProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await productsApi.list(
-        buildProductsListQuery(appliedFilters, { page, sort, q }),
-      );
+      const res = await productsApi.list(buildProductsListQuery(filters, { page, sort, q }));
       setProducts(res.items);
       setTotalPages(res.meta.totalPages);
       setTotalCount(res.meta.total);
     } finally {
       setLoading(false);
     }
-  }, [appliedFilters, page, sort, q]);
+  }, [filters, page, sort, q]);
 
   useEffect(() => {
     void categoriesApi.tree().then(setCategories);
   }, []);
 
-  const draftCategoryKey = draftFilters.categorySlugs.join(',');
+  const categoryKey = filters.categorySlugs.join(',');
   useEffect(() => {
     void productsApi
       .facets(
-        draftFilters.categorySlugs.length > 0
-          ? { categorySlugs: draftFilters.categorySlugs.join(',') }
+        filters.categorySlugs.length > 0
+          ? { categorySlugs: filters.categorySlugs.join(',') }
           : undefined,
       )
       .then(setFacets);
-  }, [draftCategoryKey]);
+  }, [categoryKey]);
 
   useEffect(() => {
     void loadProducts();
@@ -132,57 +129,34 @@ export function CatalogPage() {
   }, [isDesktop, filtersOpen]);
 
   useEffect(() => {
-    if (!filtersPending) {
-      setDraftFilters(appliedFilters);
-    }
-  }, [appliedFilters, filtersPending]);
+    setPriceInputMin(filters.minPrice);
+    setPriceInputMax(filters.maxPrice);
+  }, [filters.minPrice, filters.maxPrice]);
 
   useEffect(() => {
-    if (filtersOpen && !isDesktop) {
-      setDraftFilters(appliedFilters);
-    }
-  }, [filtersOpen, isDesktop, appliedFilters]);
+    if (priceInputMin === filters.minPrice && priceInputMax === filters.maxPrice) return;
 
-  useEffect(() => {
-    if (!filtersPending) {
-      setPreviewCount(totalCount);
-      setPreviewLoading(false);
-      return;
-    }
-
-    const requestId = ++previewRequestRef.current;
     const timer = window.setTimeout(() => {
-      void (async () => {
-        setPreviewLoading(true);
-        try {
-          const res = await productsApi.list(
-            buildProductsListQuery(draftFilters, { page: 1, sort, q, limit: 1 }),
-          );
-          if (previewRequestRef.current === requestId) {
-            setPreviewCount(res.meta.total);
-          }
-        } finally {
-          if (previewRequestRef.current === requestId) {
-            setPreviewLoading(false);
-          }
+      setParams((prev) => {
+        const current = parseCatalogFiltersFromSearchParams(prev);
+        if (priceInputMin === current.minPrice && priceInputMax === current.maxPrice) {
+          return prev;
         }
-      })();
-    }, FILTER_PREVIEW_DEBOUNCE_MS);
+        return writeCatalogFiltersToSearchParams(
+          prev,
+          { ...current, minPrice: priceInputMin, maxPrice: priceInputMax },
+          { sort },
+        );
+      });
+    }, PRICE_APPLY_DEBOUNCE_MS);
 
     return () => window.clearTimeout(timer);
-  }, [filtersPending, draftFilters, sort, q, totalCount]);
-
-  const commitDraftFilters = useCallback(() => {
-    if (!filtersPending) return;
-    const next = writeCatalogFiltersToSearchParams(params, draftFilters, { sort });
-    setParams(next);
-  }, [filtersPending, params, draftFilters, sort, setParams]);
+  }, [priceInputMin, priceInputMax, filters.minPrice, filters.maxPrice, sort, setParams]);
 
   const resetFilters = () => {
     const next = new URLSearchParams();
     if (sort) next.set('sort', sort);
     setParams(next);
-    setDraftFilters(parseCatalogFiltersFromSearchParams(next));
   };
 
   const handleAddSafe = async (product: ProductListItem) => {
@@ -210,157 +184,122 @@ export function CatalogPage() {
     setParams(next);
   };
 
-  const removeAppliedCategory = (slug: string) => {
-    const nextFilters: CatalogFiltersState = {
-      ...appliedFilters,
-      categorySlugs: appliedFilters.categorySlugs.filter((s) => s !== slug),
-    };
-    setParams(writeCatalogFiltersToSearchParams(params, nextFilters, { sort }));
+  const toggleCategory = (slug: string) => {
+    const categorySlugs = filters.categorySlugs.includes(slug)
+      ? filters.categorySlugs.filter((s) => s !== slug)
+      : [...filters.categorySlugs, slug];
+    applyFilters({ ...filters, categorySlugs });
   };
 
-  const removeAppliedBrand = (brand: string) => {
-    const nextFilters: CatalogFiltersState = {
-      ...appliedFilters,
-      brands: appliedFilters.brands.filter((b) => b !== brand),
-    };
-    setParams(writeCatalogFiltersToSearchParams(params, nextFilters, { sort }));
+  const clearCategories = () => {
+    applyFilters({ ...filters, categorySlugs: [] });
   };
 
-  const clearAppliedPrice = () => {
-    const nextFilters: CatalogFiltersState = {
-      ...appliedFilters,
-      minPrice: '',
-      maxPrice: '',
-    };
-    setParams(writeCatalogFiltersToSearchParams(params, nextFilters, { sort }));
+  const toggleBrand = (brand: string) => {
+    const brands = filters.brands.includes(brand)
+      ? filters.brands.filter((b) => b !== brand)
+      : [...filters.brands, brand];
+    applyFilters({ ...filters, brands });
   };
 
-  const clearAppliedInStock = () => {
-    const nextFilters: CatalogFiltersState = { ...appliedFilters, inStock: false };
-    setParams(writeCatalogFiltersToSearchParams(params, nextFilters, { sort }));
+  const setInStock = (checked: boolean) => {
+    applyFilters({ ...filters, inStock: checked });
   };
 
-  const clearAppliedAttr = (slug: string) => {
-    const nextAttr = { ...appliedFilters.attrFilters };
-    delete nextAttr[slug];
-    const nextFilters: CatalogFiltersState = { ...appliedFilters, attrFilters: nextAttr };
-    setParams(writeCatalogFiltersToSearchParams(params, nextFilters, { sort }));
+  const setAttr = (slug: string, value: string) => {
+    const attrFilters = { ...filters.attrFilters };
+    if (value) attrFilters[slug] = value;
+    else delete attrFilters[slug];
+    applyFilters({ ...filters, attrFilters });
   };
 
-  const applyMobileFilters = () => {
-    commitDraftFilters();
-    setFiltersOpen(false);
+  const removeCategory = (slug: string) => {
+    applyFilters({
+      ...filters,
+      categorySlugs: filters.categorySlugs.filter((s) => s !== slug),
+    });
   };
 
-  const closeMobileFilters = () => {
-    setDraftFilters(appliedFilters);
-    setFiltersOpen(false);
+  const removeBrand = (brand: string) => {
+    applyFilters({ ...filters, brands: filters.brands.filter((b) => b !== brand) });
   };
 
-  const hasActiveFilters = hasAnyCatalogFilter(appliedFilters, q);
+  const clearPrice = () => {
+    setPriceInputMin('');
+    setPriceInputMax('');
+    applyFilters({ ...filters, minPrice: '', maxPrice: '' });
+  };
+
+  const clearInStock = () => {
+    applyFilters({ ...filters, inStock: false });
+  };
+
+  const clearAttr = (slug: string) => {
+    const attrFilters = { ...filters.attrFilters };
+    delete attrFilters[slug];
+    applyFilters({ ...filters, attrFilters });
+  };
+
+  const hasActiveFilters = hasAnyCatalogFilter(filters, q);
+  const countLabel = productCountLabel(totalCount);
+  const priceApplying =
+    priceInputMin !== filters.minPrice || priceInputMax !== filters.maxPrice;
 
   const activeFilterChips = useMemo(() => {
     const chips: { id: string; label: string; onRemove: () => void }[] = [];
-    for (const slug of appliedFilters.categorySlugs) {
+    for (const slug of filters.categorySlugs) {
       const label = flatCategories.find((c) => c.slug === slug)?.name ?? slug;
-      chips.push({
-        id: `category-${slug}`,
-        label,
-        onRemove: () => removeAppliedCategory(slug),
-      });
+      chips.push({ id: `category-${slug}`, label, onRemove: () => removeCategory(slug) });
     }
-    for (const brand of appliedFilters.brands) {
-      chips.push({
-        id: `brand-${brand}`,
-        label: brand,
-        onRemove: () => removeAppliedBrand(brand),
-      });
+    for (const brand of filters.brands) {
+      chips.push({ id: `brand-${brand}`, label: brand, onRemove: () => removeBrand(brand) });
     }
-    if (appliedFilters.minPrice || appliedFilters.maxPrice) {
+    if (filters.minPrice || filters.maxPrice) {
       const priceLabel =
-        appliedFilters.minPrice && appliedFilters.maxPrice
-          ? `${appliedFilters.minPrice}–${appliedFilters.maxPrice} ₽`
-          : appliedFilters.minPrice
-            ? `от ${appliedFilters.minPrice} ₽`
-            : `до ${appliedFilters.maxPrice} ₽`;
-      chips.push({ id: 'price', label: `Цена: ${priceLabel}`, onRemove: clearAppliedPrice });
+        filters.minPrice && filters.maxPrice
+          ? `${filters.minPrice}–${filters.maxPrice} ₽`
+          : filters.minPrice
+            ? `от ${filters.minPrice} ₽`
+            : `до ${filters.maxPrice} ₽`;
+      chips.push({ id: 'price', label: `Цена: ${priceLabel}`, onRemove: clearPrice });
     }
-    if (appliedFilters.inStock) {
-      chips.push({ id: 'inStock', label: 'В наличии', onRemove: clearAppliedInStock });
+    if (filters.inStock) {
+      chips.push({ id: 'inStock', label: 'В наличии', onRemove: clearInStock });
     }
-    for (const [slug, value] of Object.entries(appliedFilters.attrFilters)) {
-      chips.push({
-        id: `attr-${slug}`,
-        label: value,
-        onRemove: () => clearAppliedAttr(slug),
-      });
+    for (const [slug, value] of Object.entries(filters.attrFilters)) {
+      chips.push({ id: `attr-${slug}`, label: value, onRemove: () => clearAttr(slug) });
     }
     return chips;
-  }, [appliedFilters, flatCategories]);
+  }, [filters, flatCategories]);
 
   const pageTitle = useMemo(() => {
     if (q) return `Поиск: ${q}`;
-    if (appliedFilters.categorySlugs.length === 1) {
-      return flatCategories.find((c) => c.slug === appliedFilters.categorySlugs[0])?.name ?? 'Каталог';
+    if (filters.categorySlugs.length === 1) {
+      return flatCategories.find((c) => c.slug === filters.categorySlugs[0])?.name ?? 'Каталог';
     }
     return 'Каталог';
-  }, [q, appliedFilters.categorySlugs, flatCategories]);
-
-  const displayCount = filtersPending ? previewCount : totalCount;
-  const displayCountLoading = filtersPending ? previewLoading : loading;
-  const countLabel = productCountLabel(displayCount);
-
-  const updateDraft = (patch: Partial<CatalogFiltersState>) => {
-    setDraftFilters((prev) => ({ ...prev, ...patch }));
-  };
-
-  const toggleDraftCategory = (slug: string) => {
-    setDraftFilters((prev) => ({
-      ...prev,
-      categorySlugs: prev.categorySlugs.includes(slug)
-        ? prev.categorySlugs.filter((s) => s !== slug)
-        : [...prev.categorySlugs, slug],
-    }));
-  };
-
-  const toggleDraftBrand = (brand: string) => {
-    setDraftFilters((prev) => ({
-      ...prev,
-      brands: prev.brands.includes(brand)
-        ? prev.brands.filter((b) => b !== brand)
-        : [...prev.brands, brand],
-    }));
-  };
-
-  const setDraftAttr = (slug: string, value: string) => {
-    setDraftFilters((prev) => {
-      const nextAttr = { ...prev.attrFilters };
-      if (value) nextAttr[slug] = value;
-      else delete nextAttr[slug];
-      return { ...prev, attrFilters: nextAttr };
-    });
-  };
+  }, [q, filters.categorySlugs, flatCategories]);
 
   const filterPanels = (
     <CatalogFilterPanels
       collapsible={!isDesktop}
-      selectedCategorySlugs={draftFilters.categorySlugs}
+      selectedCategorySlugs={filters.categorySlugs}
       categoryRoots={categoryRoots}
-      minPrice={draftFilters.minPrice}
-      maxPrice={draftFilters.maxPrice}
-      selectedBrands={draftFilters.brands}
-      inStock={draftFilters.inStock}
-      attrFilters={draftFilters.attrFilters}
+      minPrice={priceInputMin}
+      maxPrice={priceInputMax}
+      selectedBrands={filters.brands}
+      inStock={filters.inStock}
+      attrFilters={filters.attrFilters}
       facets={facets}
       showAttributeFilters={showAttributeFilters}
       q={q}
-      onToggleCategory={toggleDraftCategory}
-      onClearCategories={() => updateDraft({ categorySlugs: [] })}
-      onMinPriceChange={(value) => updateDraft({ minPrice: value })}
-      onMaxPriceChange={(value) => updateDraft({ maxPrice: value })}
-      onToggleBrand={toggleDraftBrand}
-      onInStockChange={(checked) => updateDraft({ inStock: checked })}
-      onAttrChange={setDraftAttr}
+      onToggleCategory={toggleCategory}
+      onClearCategories={clearCategories}
+      onMinPriceChange={setPriceInputMin}
+      onMaxPriceChange={setPriceInputMax}
+      onToggleBrand={toggleBrand}
+      onInStockChange={setInStock}
+      onAttrChange={setAttr}
     />
   );
 
@@ -370,9 +309,9 @@ export function CatalogPage() {
         <div className={styles.toolbar}>
           <div className={styles.titleBlock}>
             <h1 className={styles.title}>{pageTitle}</h1>
-            {!displayCountLoading && (
+            {!loading && (
               <p className={styles.titleMeta}>
-                {displayCount} {productCountLabel(displayCount)}
+                {totalCount} {productCountLabel(totalCount)}
               </p>
             )}
           </div>
@@ -439,12 +378,12 @@ export function CatalogPage() {
 
         <CatalogMobileFilters
           open={!isDesktop && filtersOpen}
-          onClose={closeMobileFilters}
-          onApply={applyMobileFilters}
+          onClose={() => setFiltersOpen(false)}
+          onApply={() => setFiltersOpen(false)}
           onReset={hasActiveFilters ? resetFilters : undefined}
           hasActiveFilters={hasActiveFilters}
-          totalCount={displayCount}
-          loading={displayCountLoading}
+          totalCount={totalCount}
+          loading={loading || priceApplying}
           resultsLabel={countLabel}
         >
           {filterPanels}
@@ -454,26 +393,14 @@ export function CatalogPage() {
           {isDesktop && (
             <aside className={`gsp-panel ${styles.sidebar}`} aria-label="Фильтры">
               <h2 className={styles.sidebarTitle}>Фильтры</h2>
-              <div className={styles.sidebarFilters}>{filterPanels}</div>
-              <div className={styles.sidebarFooter}>
-                <Button
-                  type="button"
-                  className={styles.sidebarApplyBtn}
-                  onClick={commitDraftFilters}
-                  disabled={!filtersPending}
-                >
-                  {displayCountLoading
-                    ? 'Загрузка…'
-                    : `Показать ${displayCount} ${countLabel}`}
-                </Button>
-              </div>
+              {filterPanels}
             </aside>
           )}
 
           <div className={styles.content}>
-            {!displayCountLoading && (
+            {!loading && (
               <p className={styles.resultsCount}>
-                Найдено {displayCount} {productCountLabel(displayCount)}
+                Найдено {totalCount} {productCountLabel(totalCount)}
               </p>
             )}
             <ProductGrid
