@@ -22,3 +22,10 @@
     padding-bottom: 32px;
   }
 }
+
+@media (max-width: 480px) {
+  .shell {
+    margin-top: 0;
+    padding-top: 0;
+  }
+}

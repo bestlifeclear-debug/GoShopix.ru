@@ -764,7 +764,7 @@
     flex-direction: column;
     gap: 16px;
     margin: 0 calc(-1 * var(--container-padding, 16px));
-    padding: 8px var(--container-padding, 16px) 0;
+    padding: 0 var(--container-padding, 16px);
     background: #f9fafb;
     box-sizing: border-box;
   }
@@ -1018,21 +1018,23 @@
     display: block;
     width: 100%;
     margin: 4px 0 0;
-    padding: 12px 16px;
-    border: none;
+    padding: 14px 16px;
+    border: 1px solid #d1d5db;
     border-radius: 16px;
-    background: #f3f4f6;
+    background: #ffffff;
     font-family: var(--font-family);
-    font-size: 0.9375rem;
-    font-weight: 500;
-    color: #374151;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
     text-align: center;
     cursor: pointer;
     box-sizing: border-box;
+    box-shadow: 0 2px 8px rgb(15 23 42 / 0.08);
   }
 
   .mobileLogoutBtn:active {
-    background: #e5e7eb;
+    background: #f3f4f6;
+    border-color: #9ca3af;
   }
 
   .mobileRecoSection {
@@ -1070,7 +1072,9 @@
 
   [data-account-lk].theme-dark .mobileLogoutBtn {
     background: var(--lk-surface);
-    color: var(--lk-text-muted);
+    border-color: var(--lk-border);
+    color: var(--lk-text);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.2);
   }
 
   [data-account-lk].theme-dark .mobileOrdersCard,
@@ -1684,7 +1688,11 @@
   }
 
   .dashboard {
-    gap: 20px;
+    gap: 16px;
+  }
+
+  .dashboardMobile {
+    margin-top: 0;
   }
 
   .sectionHead {

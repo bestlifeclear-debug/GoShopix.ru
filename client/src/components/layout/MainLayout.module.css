@@ -21,6 +21,10 @@
   .main {
     padding: var(--space-2) 0 var(--space-3);
   }
+
+  .main:has([data-account-lk]) {
+    padding-top: 0;
+  }
 }
 
 @media (min-width: 769px) {
