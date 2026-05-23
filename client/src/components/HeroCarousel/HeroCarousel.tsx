@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { CountdownTimer } from '../CountdownTimer/CountdownTimer';
 import { IconChevronLeft, IconChevronRight } from '../../design-system/icons/Icons';
 import { HeroSlideVisual } from './HeroSlideVisual';
-import { HeroTrustStrip } from './HeroTrustStrip';
 import { HERO_SLIDES } from './heroSlides';
 import visualStyles from './HeroSlideVisual.module.css';
 import styles from './HeroCarousel.module.css';
@@ -119,8 +118,6 @@ export function HeroCarousel() {
           ))}
         </div>
       </section>
-
-      <HeroTrustStrip />
     </div>
   );
 }

@@ -1080,6 +1080,7 @@
     flex-direction: column;
     gap: 12px;
     margin-top: 32px;
+    margin-bottom: 32px;
     padding: 0;
     background: transparent;
     border: none;
@@ -1091,6 +1092,43 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+  }
+
+  .mobileCatalogLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    padding: 4px 0;
+    margin: -4px 0;
+    border: none;
+    background: none;
+    font-family: var(--font-family);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobileCatalogLink span {
+    background: var(--gradient-primary-horizontal);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .mobileCatalogLink svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    stroke: #ff7062;
+  }
+
+  .mobileCatalogLink:active {
+    opacity: 0.85;
   }
 
   .mobileRecoGrid {

@@ -28,6 +28,8 @@ const STATIC_NAV: HeaderNavLink[] = [
 export function SiteHeader() {
   const navigate = useNavigate();
   const location = useLocation();
+  const isAccountRoute = location.pathname === '/account';
+  const hideMobileSearch = isAccountRoute;
   const [headerUnreadCount, setHeaderUnreadCount] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
   const catalogCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -148,7 +150,7 @@ export function SiteHeader() {
 
   const mobileTopTrailing = (
     <>
-      <HeaderDeliveryCity />
+      {!isAccountRoute && <HeaderDeliveryCity />}
       <HeaderNotificationBell unreadCount={headerUnreadCount} />
     </>
   );
@@ -156,6 +158,7 @@ export function SiteHeader() {
   return (
     <div ref={wrapRef} className={styles.wrap}>
       <Header
+        hideMobileSearch={hideMobileSearch}
         mobileTopTrailing={mobileTopTrailing}
         deliverySlot={<HeaderDeliveryCity />}
         searchSlot={

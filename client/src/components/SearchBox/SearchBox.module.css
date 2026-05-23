@@ -302,12 +302,12 @@
     border: none;
     border-radius: var(--radius-full);
     background: #ffffff;
-    box-shadow: 0 2px 12px rgb(0 0 0 / 0.06);
+    box-shadow: none;
   }
 
   .wrap:focus-within .field {
     background: #ffffff;
-    box-shadow: 0 2px 16px rgb(0 0 0 / 0.1);
+    box-shadow: none;
     border: none;
   }
 

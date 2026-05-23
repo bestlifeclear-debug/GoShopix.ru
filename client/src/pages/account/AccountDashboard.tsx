@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
+import { IconChevronRight } from '../../design-system/icons/Icons';
 import type { Order, ProductListItem } from '../../api/types';
 import { cityDetectApi } from '../../api';
 import { ProductGrid } from '../../components/ProductGrid';
@@ -96,8 +97,9 @@ export function AccountDashboard({
         <h2 id="reco-title" className={styles.mobileSectionTitle}>
           Персональные рекомендации
         </h2>
-        <Link to="/catalog" className={styles.textLink}>
-          Весь каталог
+        <Link to="/catalog" className={styles.mobileCatalogLink}>
+          <span>Весь каталог</span>
+          <IconChevronRight aria-hidden strokeWidth={2} />
         </Link>
       </div>
       {recommendations.length === 0 ? (
