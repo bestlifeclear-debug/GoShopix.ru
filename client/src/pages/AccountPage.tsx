@@ -208,6 +208,7 @@ export function AccountPage() {
               )}
               <AccountDashboard
                 displayName={displayName}
+                avatarUrl={user?.profile?.avatarUrl}
                 orders={orders}
                 recommendations={recommendations}
                 onOpenOrder={openOrder}

@@ -385,3 +385,17 @@
     border-bottom: none;
   }
 }
+
+@media (max-width: 480px) {
+  .headerHideMobileSearch .searchGroup {
+    display: none;
+  }
+
+  .headerHideMobileSearch .topBar .inner {
+    padding-bottom: 6px;
+  }
+
+  .headerHideMobileSearch .topDeliveryMobile {
+    display: none;
+  }
+}

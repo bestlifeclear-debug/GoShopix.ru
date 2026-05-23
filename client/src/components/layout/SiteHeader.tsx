@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { categoriesApi, productsApi } from '../../api/index';
 import type { CategoryNode } from '../../api/types';
 import { Header, type HeaderNavLink } from '../../design-system';
@@ -26,6 +26,8 @@ const STATIC_NAV: HeaderNavLink[] = [
 
 export function SiteHeader() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const hideMobileSearch = location.pathname === '/account';
   const wrapRef = useRef<HTMLDivElement>(null);
   const catalogCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [search, setSearch] = useState('');
@@ -138,6 +140,7 @@ export function SiteHeader() {
   return (
     <div ref={wrapRef} className={styles.wrap}>
       <Header
+        hideMobileSearch={hideMobileSearch}
         deliverySlot={<HeaderDeliveryCity />}
         searchSlot={
           <SearchBox

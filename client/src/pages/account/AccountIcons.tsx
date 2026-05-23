@@ -71,6 +71,19 @@ export function IconProfile(props: P) {
   );
 }
 
+export function IconLocation(props: P) {
+  return (
+    <svg {...base} {...props}>
+      <path
+        d="M12 21s-6-5.2-6-10a6 6 0 1112 0c0 4.8-6 10-6 10z"
+        stroke="currentColor"
+        strokeWidth="1.75"
+      />
+      <circle cx="12" cy="11" r="2" stroke="currentColor" strokeWidth="1.75" />
+    </svg>
+  );
+}
+
 export function IconAddress(props: P) {
   return (
     <svg {...base} {...props}>

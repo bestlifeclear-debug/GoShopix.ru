@@ -25,6 +25,8 @@ export interface HeaderProps {
   menuOpen?: boolean;
   onMenuToggle?: () => void;
   extraActions?: ReactNode;
+  /** Скрыть строку поиска на мобилке (≤480px), напр. в ЛК */
+  hideMobileSearch?: boolean;
 }
 
 export function Header({
@@ -44,6 +46,7 @@ export function Header({
   menuOpen = false,
   onMenuToggle,
   extraActions,
+  hideMobileSearch = false,
 }: HeaderProps) {
   const location = useLocation();
   const currentPath = `${location.pathname}${location.search}`;
@@ -66,7 +69,9 @@ export function Header({
   const showCatalog = Boolean(onCatalogToggle);
 
   return (
-    <header className={styles.header}>
+    <header
+      className={`${styles.header} ${hideMobileSearch ? styles.headerHideMobileSearch : ''}`}
+    >
       <div className={styles.topBar}>
         <div className={`container ${styles.inner}`}>
           <div className={styles.topRow}>
