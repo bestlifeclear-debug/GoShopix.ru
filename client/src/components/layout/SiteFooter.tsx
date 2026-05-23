@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './SiteFooter.module.css';
 
@@ -22,22 +23,42 @@ const SOCIAL_LINKS = [
   },
 ] as const;
 
+function useMinWidth(query: string) {
+  const [matches, setMatches] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(query).matches,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = () => setMatches(mq.matches);
+    mq.addEventListener('change', onChange);
+    setMatches(mq.matches);
+    return () => mq.removeEventListener('change', onChange);
+  }, [query]);
+
+  return matches;
+}
+
 export function SiteFooter() {
   const year = new Date().getFullYear();
+  const isDesktop = useMinWidth('(min-width: 768px)');
 
   return (
     <footer className={styles.footer}>
       <div className={`container ${styles.inner}`}>
         <div className={styles.columns}>
-          <div className={styles.col}>
-            <p className={styles.brand}>GoShopix</p>
+          <div className={`${styles.col} ${styles.brandCol}`}>
+            <Link to="/" className={styles.logo} aria-label="GoShopix — на главную">
+              <span className={styles.logoMark}>G</span>
+              <span className={styles.logoText}>GoShopix</span>
+            </Link>
             <p className={styles.tagline}>
               Маркетплейс с тысячами товаров, быстрой доставкой и защитой покупателя.
             </p>
           </div>
 
-          <div className={styles.col}>
-            <h3 className={styles.colTitle}>Покупателям</h3>
+          <details className={`${styles.col} ${styles.accordion}`} open={isDesktop || undefined}>
+            <summary className={styles.colTitle}>Покупателям</summary>
             <ul className={styles.links}>
               <li>
                 <Link to="/catalog">Каталог</Link>
@@ -54,25 +75,28 @@ export function SiteFooter() {
                 </a>
               </li>
             </ul>
-          </div>
+          </details>
 
-          <div className={styles.col}>
-            <h3 className={styles.colTitle}>О компании</h3>
+          <details className={`${styles.col} ${styles.accordion}`} open={isDesktop || undefined}>
+            <summary className={styles.colTitle}>О компании</summary>
             <ul className={styles.links}>
               <li>
                 <Link to="/auth?returnUrl=/seller/dashboard">Стать продавцом</Link>
               </li>
               <li>
-                <Link to="/privacy">Политика конфиденциальности</Link>
+                <Link to="/privacy">Конфиденциальность</Link>
               </li>
               <li>
                 <Link to="/about">О нас</Link>
               </li>
             </ul>
-          </div>
+          </details>
 
-          <div className={styles.col}>
-            <h3 className={styles.colTitle}>Контакты</h3>
+          <details
+            className={`${styles.col} ${styles.accordion} ${styles.contactsCol}`}
+            open={isDesktop || undefined}
+          >
+            <summary className={styles.colTitle}>Контакты</summary>
             <ul className={styles.contactList}>
               <li>
                 <Link to="/account?section=support" className={styles.contactLink}>
@@ -80,7 +104,7 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <a href="mailto:support@goshopix.ru" className={styles.contactLink}>
+                <a href="mailto:support@goshopix.ru" className={styles.emailLink}>
                   support@goshopix.ru
                 </a>
               </li>
@@ -101,11 +125,11 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </details>
         </div>
 
         <div className={styles.bottom}>
-          <small>© {year} GoShopix</small>
+          <small className={styles.copy}>© {year} GoShopix</small>
           <ul className={styles.payments} aria-label="Способы оплаты">
             {PAYMENT_ICONS.map((method) => (
               <li key={method.id}>
