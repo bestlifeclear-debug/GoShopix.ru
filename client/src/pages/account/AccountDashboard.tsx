@@ -104,11 +104,7 @@ export function AccountDashboard({
         <p className={styles.recoEmpty}>Рекомендации появятся после просмотра каталога.</p>
       ) : (
         <div className={styles.mobileRecoGrid}>
-          <ProductGrid
-            products={recommendations}
-            variant="compact"
-            onAddToCart={onAddToCart}
-          />
+          <ProductGrid products={recommendations} variant="compact" onAddToCart={onAddToCart} />
         </div>
       )}
     </section>
@@ -152,11 +148,18 @@ export function AccountDashboard({
         <div className={styles.mobileDash}>
           <header className={styles.mobileProfileHeader}>
             <div className={styles.mobileAvatar} aria-hidden>
-              {avatarUrl ? (
-                <img src={avatarUrl} alt="" />
-              ) : (
-                <span>{profileInitial(displayName)}</span>
-              )}
+              <span className={styles.mobileAvatarInner}>
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="" />
+                ) : (
+                  profileInitial(displayName)
+                )}
+              </span>
+              <span className={styles.mobileAvatarAdd} aria-hidden>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </span>
             </div>
             <div className={styles.mobileProfileMeta}>
               <p className={styles.mobileProfileName}>{displayName}</p>
@@ -270,9 +273,9 @@ export function AccountDashboard({
           <button type="button" className={styles.mobileLogoutBtn} onClick={onLogout}>
             Выйти
           </button>
-        </div>
 
-        {recommendationsSection}
+          {recommendationsSection}
+        </div>
       </div>
     );
   }

@@ -51,20 +51,20 @@
   }
 
   .icon {
-    color: #6b7280;
+    color: #ffffff;
   }
 
   .icon svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
 
   .text {
     align-items: center;
     gap: 0;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.2;
-    color: #6b7280;
+    color: #ffffff;
   }
 
   .label {
@@ -72,9 +72,9 @@
   }
 
   .city {
-    font-size: 12px;
-    font-weight: var(--font-weight-medium);
-    color: #6b7280;
+    font-size: 13px;
+    font-weight: var(--font-weight-semibold);
+    color: #ffffff;
     line-height: 1.2;
   }
 }

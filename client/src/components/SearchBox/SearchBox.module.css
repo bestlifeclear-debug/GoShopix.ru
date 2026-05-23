@@ -301,13 +301,13 @@
     height: 44px;
     border: none;
     border-radius: var(--radius-full);
-    background: #f3f4f6;
-    box-shadow: none;
+    background: #ffffff;
+    box-shadow: 0 2px 12px rgb(0 0 0 / 0.06);
   }
 
   .wrap:focus-within .field {
-    background: #f9fafb;
-    box-shadow: none;
+    background: #ffffff;
+    box-shadow: 0 2px 16px rgb(0 0 0 / 0.1);
     border: none;
   }
 

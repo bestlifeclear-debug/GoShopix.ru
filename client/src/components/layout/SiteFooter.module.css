@@ -263,8 +263,14 @@ a.socialLink:hover .socialIcon {
 }
 
 @media (max-width: 767px) {
+  .footer {
+    margin-top: 0;
+    background: #ffffff;
+    border-top: 1px solid var(--color-border);
+  }
+
   .inner {
-    padding-top: var(--space-5);
+    padding-top: var(--space-4);
     padding-bottom: var(--space-4);
   }
 

@@ -12,6 +12,16 @@
   color: #374151;
 }
 
+@media (max-width: 768px) {
+  .iconWrap {
+    color: #ffffff;
+  }
+
+  .dot {
+    border-color: #ff8878;
+  }
+}
+
 .icon {
   width: 24px;
   height: 24px;

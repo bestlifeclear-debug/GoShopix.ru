@@ -29,7 +29,8 @@
 
 @media (max-width: 480px) {
   .main:has([data-account-lk]) {
-    padding-top: 8px;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 }
 

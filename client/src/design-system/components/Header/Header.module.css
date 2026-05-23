@@ -311,11 +311,18 @@
 @media (max-width: 768px) {
   .header {
     --header-mobile-top-height: auto;
+    --header-mobile-gradient: linear-gradient(165deg, #ffd6c1 0%, #ffc4b0 38%, #ff9a88 72%, #ff8878 100%);
     position: sticky;
     top: 0;
     padding-top: env(safe-area-inset-top, 0px);
-    background: var(--color-header-bg);
-    box-shadow: 0 1px 0 var(--color-header-border);
+    background: var(--header-mobile-gradient);
+    border-bottom: none;
+    box-shadow: none;
+  }
+
+  .topBar {
+    background: transparent;
+    border-bottom: none;
   }
 
   .topBar .inner {
@@ -325,7 +332,7 @@
     min-height: 0;
     max-width: none;
     margin: 0;
-    padding: 6px var(--container-padding) 8px;
+    padding: 8px 16px 10px;
     box-sizing: border-box;
   }
 
@@ -355,22 +362,28 @@
   }
 
   .logoMark {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-    font-size: 0.875rem;
-    line-height: 1;
+    display: none;
+  }
+
+  .logo {
+    color: #ffffff;
   }
 
   .logoText {
-    display: none;
+    display: inline;
+    font-family: var(--font-family-logo);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: #ffffff;
   }
 
   .mobileTopTrailing {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 16px;
+    gap: 14px;
     flex: 1;
     min-width: 0;
     margin-left: auto;
