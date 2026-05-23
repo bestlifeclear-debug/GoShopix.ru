@@ -92,59 +92,60 @@ export function SiteFooter() {
             </ul>
           </details>
 
-          <details
-            className={`${styles.col} ${styles.accordion} ${styles.contactsCol}`}
-            open={isDesktop || undefined}
-          >
-            <summary className={styles.colTitle}>Контакты</summary>
-            <ul className={styles.contactList}>
-              <li>
-                <Link to="/account?section=support" className={styles.contactLink}>
-                  Поддержка
-                </Link>
-              </li>
-              <li>
-                <a href="mailto:support@goshopix.ru" className={styles.emailLink}>
-                  support@goshopix.ru
-                </a>
-              </li>
-            </ul>
-            <ul className={styles.socialList} aria-label="Социальные сети">
-              {SOCIAL_LINKS.map((social) => (
-                <li key={social.id}>
-                  <a
-                    href={social.href}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className={styles.socialLink}
-                    aria-label={social.label}
-                  >
-                    <img src={social.icon} alt="" className={styles.socialIcon} width={28} height={28} />
-                    <span>{social.label}</span>
+          <div className={`${styles.col} ${styles.contactsCol}`}>
+            <details className={styles.accordion} open={isDesktop || undefined}>
+              <summary className={styles.colTitle}>Контакты</summary>
+              <ul className={styles.contactList}>
+                <li>
+                  <Link to="/account?section=support" className={styles.contactLink}>
+                    Поддержка
+                  </Link>
+                </li>
+                <li>
+                  <a href="mailto:support@goshopix.ru" className={styles.emailLink}>
+                    support@goshopix.ru
                   </a>
                 </li>
-              ))}
-            </ul>
-          </details>
+              </ul>
+              <ul className={styles.socialList} aria-label="Социальные сети">
+                {SOCIAL_LINKS.map((social) => (
+                  <li key={social.id}>
+                    <a
+                      href={social.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className={styles.socialLink}
+                      aria-label={social.label}
+                    >
+                      <img src={social.icon} alt="" className={styles.socialIcon} width={28} height={28} />
+                      <span>{social.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+            <div className={styles.paymentsWrap}>
+              <ul className={styles.payments} aria-label="Способы оплаты">
+                {PAYMENT_ICONS.map((method) => (
+                  <li key={method.id}>
+                    <img
+                      src={method.src}
+                      alt={method.label}
+                      className={`${styles.paymentIcon} ${method.id === 'mir' ? styles.paymentIconMir : ''}`}
+                      width={method.id === 'mir' ? 96 : 88}
+                      height={method.id === 'mir' ? 40 : 38}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
 
         <div className={styles.bottom}>
           <small className={styles.copy}>© {year} GoShopix</small>
-          <ul className={styles.payments} aria-label="Способы оплаты">
-            {PAYMENT_ICONS.map((method) => (
-              <li key={method.id}>
-                <img
-                  src={method.src}
-                  alt={method.label}
-                  className={`${styles.paymentIcon} ${method.id === 'mir' ? styles.paymentIconMir : ''}`}
-                  width={method.id === 'mir' ? 96 : 88}
-                  height={method.id === 'mir' ? 40 : 38}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </footer>
