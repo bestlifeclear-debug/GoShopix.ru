@@ -19,8 +19,8 @@
 
 ## База данных
 
-- [ ] `prisma migrate deploy` выполнен на production
-- [ ] Seed **не** запускался на production (только migrate)
+- [ ] `prisma migrate deploy` выполнен на production (в т.ч. `20250523120000_home_page_categories`)
+- [ ] Полный seed (`db:seed`) на production **не** запускать; категории для главной — через migrate и/или `db:seed:categories`
 - [ ] Резервная копия БД перед деплоем
 
 ## Инфраструктура
