@@ -14,6 +14,8 @@ export interface HeroSlide {
   text: string;
   image: string;
   imageAlt: string;
+  /** Встроенный SVG вместо внешнего файла (слайд доставки) */
+  useDeliveryVisual?: boolean;
   cta: { to: string; label: string };
   countdownEndsAt?: Date;
 }
@@ -80,9 +82,10 @@ export const HERO_SLIDES: HeroSlide[] = [
     eyebrow: 'Бесплатная доставка',
     title: 'Заказ от 2 000 ₽ — доставка бесплатно',
     text: 'Соберите корзину и получите доставку в ПВЗ за 0 ₽.',
-    image: '/hero/hero-delivery.svg',
+    image: '/product-images/city-pack-25-1.svg',
     imageAlt: 'Доставка заказа бесплатно',
-    cta: { to: '/catalog', label: 'Перейти в каталог' },
+    useDeliveryVisual: true,
+    cta: { to: '/catalog', label: 'В каталог' },
   },
 ];
 

@@ -2,8 +2,10 @@ import { useCallback, useEffect, useRef, useState, type TouchEvent } from 'react
 import { Link } from 'react-router-dom';
 import { CountdownTimer } from '../CountdownTimer/CountdownTimer';
 import { IconChevronLeft, IconChevronRight } from '../../design-system/icons/Icons';
+import { HeroDeliveryVisual } from './HeroDeliveryVisual';
 import { HeroTrustStrip } from './HeroTrustStrip';
 import { HERO_SLIDES } from './heroSlides';
+import deliveryVisualStyles from './HeroDeliveryVisual.module.css';
 import styles from './HeroCarousel.module.css';
 
 const AUTOPLAY_MS = 5000;
@@ -83,13 +85,19 @@ export function HeroCarousel() {
                   </div>
                   <div className={styles.visual}>
                     <div className={styles.imageFrame}>
-                      <img
-                        src={slide.image}
-                        alt={slide.imageAlt}
-                        className={styles.productImage}
-                        loading={slide.id === slides[0].id ? 'eager' : 'lazy'}
-                        decoding="async"
-                      />
+                      {slide.useDeliveryVisual ? (
+                        <HeroDeliveryVisual
+                          className={`${styles.productImage} ${styles.deliveryVisual} ${deliveryVisualStyles.root}`}
+                        />
+                      ) : (
+                        <img
+                          src={slide.image}
+                          alt={slide.imageAlt}
+                          className={styles.productImage}
+                          loading={slide.id === slides[0].id ? 'eager' : 'lazy'}
+                          decoding="async"
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
