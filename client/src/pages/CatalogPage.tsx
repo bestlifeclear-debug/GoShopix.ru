@@ -12,10 +12,10 @@ import { PageContainer } from '../components/layout/PageContainer';
 import styles from './CatalogPage.module.css';
 
 const SORT_OPTIONS = [
-  { value: 'popular', label: 'По популярности' },
-  { value: 'price_asc', label: 'Сначала дешевле' },
-  { value: 'rating_desc', label: 'По рейтингу' },
-  { value: 'newest', label: 'По новизне' },
+  { value: 'popular', label: 'По популярности', short: 'Популярные' },
+  { value: 'price_asc', label: 'Сначала дешевле', short: 'Дешевле' },
+  { value: 'rating_desc', label: 'По рейтингу', short: 'Рейтинг' },
+  { value: 'newest', label: 'По новизне', short: 'Новинки' },
 ] as const;
 
 const ATTR_PREFIX = 'attr_';
@@ -420,33 +420,39 @@ export function CatalogPage() {
   );
 
   return (
-    <PageContainer>
+    <PageContainer className={styles.pageWrap}>
       <div className={styles.page}>
       <div className={styles.toolbar}>
-        <h1 className={styles.title}>{pageTitle}</h1>
+        <div className={styles.titleBlock}>
+          <h1 className={styles.title}>{pageTitle}</h1>
+          {!loading && (
+            <p className={styles.titleMeta}>
+              {totalCount} {productCountLabel(totalCount)}
+            </p>
+          )}
+        </div>
       </div>
 
       <div className={styles.mobileBar}>
         <button type="button" className={styles.mobileFilterBtn} onClick={() => setFiltersOpen(true)}>
           <IconFilter />
-          Фильтры
+          <span>Фильтры</span>
           {hasActiveFilters && <span className={styles.filterDot} aria-hidden />}
         </button>
-        <label className={styles.sortSelectWrap}>
-          <span className={styles.sortSelectLabel}>Сортировка</span>
-          <select
-            className={styles.sortSelect}
-            value={sort}
-            onChange={(e) => setFilter('sort', e.target.value)}
-            aria-label="Сортировка"
-          >
-            {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className={styles.mobileSort} role="tablist" aria-label="Сортировка">
+          {SORT_OPTIONS.map((o) => (
+            <button
+              key={o.value}
+              type="button"
+              role="tab"
+              aria-selected={sort === o.value}
+              className={`${styles.mobileSortChip} ${sort === o.value ? styles.mobileSortChipActive : ''}`}
+              onClick={() => setFilter('sort', o.value)}
+            >
+              {o.short}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className={styles.sortBar} role="group" aria-label="Сортировка товаров">
@@ -521,6 +527,7 @@ export function CatalogPage() {
             onAddToCart={handleAddSafe}
             loading={loading}
             skeletonCount={16}
+            variant="compact"
           />
 
           {totalPages > 1 && (
