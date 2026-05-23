@@ -31,7 +31,8 @@ async function parseJsonSafe(res: Response): Promise<ApiSuccess<unknown> | ApiEr
   }
 }
 
-const REQUEST_TIMEOUT_MS = 25_000;
+/** Vercel cold start + Supabase connect can exceed 20s on first homepage load. */
+const REQUEST_TIMEOUT_MS = 40_000;
 
 export async function apiFetch<T>(
   path: string,

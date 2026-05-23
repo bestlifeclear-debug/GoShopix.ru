@@ -12,6 +12,12 @@ export const EXTRA_ROOT_CATEGORIES = [
 ] as const;
 
 export async function ensureExtraCategories(): Promise<number> {
+  const slugs = EXTRA_ROOT_CATEGORIES.map((c) => c.slug);
+  const existing = await prisma.category.count({ where: { slug: { in: slugs } } });
+  if (existing >= EXTRA_ROOT_CATEGORIES.length) {
+    return 0;
+  }
+
   let upserted = 0;
   for (const cat of EXTRA_ROOT_CATEGORIES) {
     await prisma.category.upsert({

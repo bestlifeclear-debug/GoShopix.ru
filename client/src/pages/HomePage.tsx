@@ -38,22 +38,30 @@ export function HomePage() {
 
   useEffect(() => {
     async function load() {
-      try {
-        const [cats, catalog, newest, popular] = await Promise.all([
-          categoriesApi.tree(),
-          productsApi.list({ page: 1, limit: 32 }),
-          productsApi.list({ page: 1, limit: 12, sort: 'newest' }),
-          productsApi.list({ page: 1, limit: 12, sort: 'popular' }),
-        ]);
-        const items = catalog.items;
-        setCategories(cats);
+      const [catsR, catalogR, newestR, popularR] = await Promise.allSettled([
+        categoriesApi.tree(),
+        productsApi.list({ page: 1, limit: 32 }),
+        productsApi.list({ page: 1, limit: 12, sort: 'newest' }),
+        productsApi.list({ page: 1, limit: 12, sort: 'popular' }),
+      ]);
+
+      const catalog = catalogR.status === 'fulfilled' ? catalogR.value : null;
+      const newest = newestR.status === 'fulfilled' ? newestR.value : null;
+      const popular = popularR.status === 'fulfilled' ? popularR.value : null;
+
+      if (catsR.status === 'fulfilled') setCategories(catsR.value);
+
+      const items = catalog?.items ?? [];
+      if (items.length > 0) {
         setCatalogPreview(items.slice(0, 12));
-        setHits(popular.items.length > 0 ? popular.items : pickTopRated(items, 12));
+        setHits(
+          popular && popular.items.length > 0 ? popular.items : pickTopRated(items, 12),
+        );
         setDiscounted(pickDiscounted(items, 12));
-        setNewItems(newest.items);
-      } finally {
-        setLoading(false);
       }
+      if (newest && newest.items.length > 0) setNewItems(newest.items);
+
+      setLoading(false);
     }
     void load();
   }, []);
