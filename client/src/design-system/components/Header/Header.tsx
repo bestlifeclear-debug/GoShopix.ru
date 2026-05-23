@@ -1,24 +1,12 @@
-import type { ReactNode } from 'react';
-import { useEffect, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useMaxWidth } from '../../../hooks/useMaxWidth';
+import {
+  MOBILE_HEADER_MEDIA,
+  MOBILE_HEADER_TRANSPARENT_STYLE,
+} from '../../../lib/mobileHeader';
 import { IconCart, IconCatalog, IconClose, IconHeart, IconMenu, IconUser } from '../../icons/Icons';
 import styles from './Header.module.css';
-
-function useMaxWidth(query: string) {
-  const [matches, setMatches] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia(query).matches,
-  );
-
-  useEffect(() => {
-    const mq = window.matchMedia(query);
-    const onChange = () => setMatches(mq.matches);
-    mq.addEventListener('change', onChange);
-    setMatches(mq.matches);
-    return () => mq.removeEventListener('change', onChange);
-  }, [query]);
-
-  return matches;
-}
 
 export interface HeaderNavLink {
   label: string;
@@ -71,8 +59,11 @@ export function Header({
   mobileHeaderCompact = false,
   mobileTopTrailing,
 }: HeaderProps) {
-  const isMobile = useMaxWidth('(max-width: 767px)');
+  const isMobile = useMaxWidth(MOBILE_HEADER_MEDIA);
   const hideSearchOnMobile = hideMobileSearch && isMobile;
+  const mobileBarStyle: CSSProperties | undefined = isMobile
+    ? MOBILE_HEADER_TRANSPARENT_STYLE
+    : undefined;
   const location = useLocation();
   const currentPath = `${location.pathname}${location.search}`;
 
@@ -96,9 +87,10 @@ export function Header({
   return (
     <header
       className={`${styles.header} ${hideMobileSearch ? styles.headerHideMobileSearch : ''} ${mobileHeaderCompact ? styles.headerMobileCompact : ''}`}
+      style={mobileBarStyle}
     >
-      <div className={styles.topBar}>
-        <div className={`container ${styles.inner}`}>
+      <div className={styles.topBar} style={mobileBarStyle}>
+        <div className={`container ${styles.inner}`} style={mobileBarStyle}>
           <div className={styles.topRow}>
             {onMenuToggle && (
               <button

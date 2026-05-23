@@ -8,6 +8,11 @@ import { CatalogMenu } from '../CatalogMenu/CatalogMenu';
 import { HeaderDeliveryCity } from '../HeaderDeliveryCity/HeaderDeliveryCity';
 import { HeaderNotificationBell } from './HeaderNotificationBell';
 import { SearchBox, type SearchSuggestion } from '../SearchBox/SearchBox';
+import { useMaxWidth } from '../../hooks/useMaxWidth';
+import {
+  MOBILE_HEADER_MEDIA,
+  MOBILE_HEADER_SURFACE_STYLE,
+} from '../../lib/mobileHeader';
 import { useAuthStore } from '../../stores/authStore';
 import { selectCartItemCount, useCartStore } from '../../stores/cartStore';
 import styles from './SiteHeader.module.css';
@@ -28,6 +33,7 @@ const STATIC_NAV: HeaderNavLink[] = [
 export function SiteHeader() {
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useMaxWidth(MOBILE_HEADER_MEDIA);
   const isAccountRoute = location.pathname === '/account';
   const hideMobileSearch = isAccountRoute;
   const [headerUnreadCount, setHeaderUnreadCount] = useState(0);
@@ -156,7 +162,13 @@ export function SiteHeader() {
   );
 
   return (
-    <div ref={wrapRef} data-site-header className={styles.wrap}>
+    <div
+      ref={wrapRef}
+      data-site-header
+      data-mobile-header={isMobile ? 'gradient' : undefined}
+      className={styles.wrap}
+      style={isMobile ? MOBILE_HEADER_SURFACE_STYLE : undefined}
+    >
       <Header
         hideMobileSearch={hideMobileSearch}
         mobileHeaderCompact={isAccountRoute}
