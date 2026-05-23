@@ -27,6 +27,12 @@
   }
 }
 
+@media (max-width: 480px) {
+  .main:has([data-account-lk]) {
+    padding-top: 8px;
+  }
+}
+
 @media (min-width: 769px) {
   .main {
     padding: var(--space-3) 0 var(--space-6);
