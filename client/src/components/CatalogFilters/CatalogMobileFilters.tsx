@@ -7,6 +7,7 @@ import styles from './CatalogMobileFilters.module.css';
 interface CatalogMobileFiltersProps {
   open: boolean;
   onClose: () => void;
+  onApply?: () => void;
   onReset?: () => void;
   hasActiveFilters: boolean;
   totalCount: number;
@@ -18,6 +19,7 @@ interface CatalogMobileFiltersProps {
 export function CatalogMobileFilters({
   open,
   onClose,
+  onApply,
   onReset,
   hasActiveFilters,
   totalCount,
@@ -62,7 +64,7 @@ export function CatalogMobileFilters({
       <div className={styles.body}>{children}</div>
 
       <footer className={styles.footer}>
-        <Button type="button" className={styles.applyBtn} onClick={onClose}>
+        <Button type="button" className={styles.applyBtn} onClick={onApply ?? onClose}>
           {loading ? 'Загрузка…' : `Показать ${totalCount} ${resultsLabel}`}
         </Button>
       </footer>

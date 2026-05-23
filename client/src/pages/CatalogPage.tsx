@@ -65,6 +65,8 @@ export function CatalogPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [draftMinPrice, setDraftMinPrice] = useState('');
+  const [draftMaxPrice, setDraftMaxPrice] = useState('');
   const isDesktop = useMinWidth('(min-width: 768px)');
   const token = useAuthStore((s) => s.token);
   const addToCart = useCartStore((s) => s.addToCart);
@@ -141,6 +143,13 @@ export function CatalogPage() {
     if (isDesktop && filtersOpen) setFiltersOpen(false);
   }, [isDesktop, filtersOpen]);
 
+  useEffect(() => {
+    if (filtersOpen && !isDesktop) {
+      setDraftMinPrice(minPrice);
+      setDraftMaxPrice(maxPrice);
+    }
+  }, [filtersOpen, minPrice, maxPrice, isDesktop]);
+
   const setFilter = (key: string, value: string) => {
     const next = new URLSearchParams(params);
     if (value) next.set(key, value);
@@ -199,6 +208,21 @@ export function CatalogPage() {
     setParams(next);
   };
 
+  const setPriceRange = (min: string, max: string) => {
+    const next = new URLSearchParams(params);
+    if (min) next.set('minPrice', min);
+    else next.delete('minPrice');
+    if (max) next.set('maxPrice', max);
+    else next.delete('maxPrice');
+    next.set('page', '1');
+    setParams(next);
+  };
+
+  const applyMobileFilters = () => {
+    setPriceRange(draftMinPrice, draftMaxPrice);
+    setFiltersOpen(false);
+  };
+
   const activeFilterChips = useMemo(() => {
     const chips: { id: string; label: string; onRemove: () => void }[] = [];
     if (categorySlug) {
@@ -242,13 +266,13 @@ export function CatalogPage() {
   const pageTitle = activeCategory?.name ?? (q ? `Поиск: ${q}` : 'Каталог');
   const countLabel = productCountLabel(totalCount);
 
-  const filterPanels = (
+  const renderFilterPanels = (mobile: boolean) => (
     <CatalogFilterPanels
       collapsible={!isDesktop}
       categorySlug={categorySlug}
       categoryRoots={categoryRoots}
-      minPrice={minPrice}
-      maxPrice={maxPrice}
+      minPrice={mobile ? draftMinPrice : minPrice}
+      maxPrice={mobile ? draftMaxPrice : maxPrice}
       selectedBrands={selectedBrands}
       inStock={inStock}
       attrFilters={attrFilters}
@@ -256,8 +280,8 @@ export function CatalogPage() {
       showAttributeFilters={Boolean(showAttributeFilters)}
       q={q}
       onCategoryChange={(slug) => setFilter('categorySlug', slug)}
-      onMinPriceChange={(value) => setFilter('minPrice', value)}
-      onMaxPriceChange={(value) => setFilter('maxPrice', value)}
+      onMinPriceChange={mobile ? setDraftMinPrice : (value) => setFilter('minPrice', value)}
+      onMaxPriceChange={mobile ? setDraftMaxPrice : (value) => setFilter('maxPrice', value)}
       onToggleBrand={toggleBrand}
       onInStockChange={(checked) => setFilter('inStock', checked ? 'true' : '')}
       onAttrChange={setAttrFilter}
@@ -340,20 +364,21 @@ export function CatalogPage() {
       <CatalogMobileFilters
         open={!isDesktop && filtersOpen}
         onClose={() => setFiltersOpen(false)}
+        onApply={applyMobileFilters}
         onReset={hasActiveFilters ? resetFilters : undefined}
         hasActiveFilters={hasActiveFilters}
         totalCount={totalCount}
         loading={loading}
         resultsLabel={countLabel}
       >
-        {filterPanels}
+        {renderFilterPanels(true)}
       </CatalogMobileFilters>
 
       <div className={styles.layout}>
         {isDesktop && (
           <aside className={`gsp-panel ${styles.sidebar}`} aria-label="Фильтры">
             <h2 className={styles.sidebarTitle}>Фильтры</h2>
-            {filterPanels}
+            {renderFilterPanels(false)}
           </aside>
         )}
 
