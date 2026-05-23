@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import type { CategoryNode, ProductFacets } from '../../api/types';
 import { StatusBadge } from '../../design-system';
 import { IconCheck } from '../../design-system/icons/Icons';
@@ -88,6 +89,7 @@ export interface CatalogFilterPanelsProps {
   onCategoryChange: (slug: string) => void;
   onMinPriceChange: (value: string) => void;
   onMaxPriceChange: (value: string) => void;
+  onPriceBlur?: () => void;
   onToggleBrand: (brand: string) => void;
   onInStockChange: (checked: boolean) => void;
   onAttrChange: (slug: string, value: string) => void;
@@ -108,10 +110,20 @@ export function CatalogFilterPanels({
   onCategoryChange,
   onMinPriceChange,
   onMaxPriceChange,
+  onPriceBlur,
   onToggleBrand,
   onInStockChange,
   onAttrChange,
 }: CatalogFilterPanelsProps) {
+  const priceRowRef = useRef<HTMLDivElement>(null);
+
+  const handlePriceRowBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+    if (!onPriceBlur) return;
+    const next = e.relatedTarget;
+    if (next instanceof Node && priceRowRef.current?.contains(next)) return;
+    onPriceBlur();
+  };
+
   return (
     <>
       <FilterSection id="catalog-filter-category" title="Категория" collapsible={collapsible} defaultOpen>
@@ -162,7 +174,7 @@ export function CatalogFilterPanels({
       </FilterSection>
 
       <FilterSection id="catalog-filter-price" title="Цена, ₽" collapsible={collapsible} defaultOpen>
-        <div className={panelStyles.priceRow}>
+        <div ref={priceRowRef} className={panelStyles.priceRow} onBlur={handlePriceRowBlur}>
           <input
             type="number"
             inputMode="numeric"

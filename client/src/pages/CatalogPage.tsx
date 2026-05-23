@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { categoriesApi, productsApi } from '../api/index';
 import type { CategoryNode, ProductFacets, ProductListItem } from '../api/types';
@@ -21,6 +21,7 @@ const SORT_OPTIONS = [
 ] as const;
 
 const ATTR_PREFIX = 'attr_';
+const PRICE_PREVIEW_DEBOUNCE_MS = 300;
 
 function productCountLabel(count: number): string {
   const mod10 = count % 10;
@@ -67,6 +68,9 @@ export function CatalogPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [draftMinPrice, setDraftMinPrice] = useState('');
   const [draftMaxPrice, setDraftMaxPrice] = useState('');
+  const [previewCount, setPreviewCount] = useState(0);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const previewRequestRef = useRef(0);
   const isDesktop = useMinWidth('(min-width: 768px)');
   const token = useAuthStore((s) => s.token);
   const addToCart = useCartStore((s) => s.addToCart);
@@ -101,31 +105,42 @@ export function CatalogPage() {
         (c) => c.id === activeCategory.parentId && ELECTRONICS_SLUGS.has(c.slug),
       ));
 
-  const loadProducts = useCallback(async () => {
-    setLoading(true);
-    try {
+  const buildListQuery = useCallback(
+    (
+      priceMin: string,
+      priceMax: string,
+      opts: { page?: number; limit?: number } = {},
+    ): Record<string, string | number | boolean | undefined> => {
       const query: Record<string, string | number | boolean | undefined> = {
-        page,
-        limit: 16,
+        page: opts.page ?? page,
+        limit: opts.limit ?? 16,
         sort,
         q: q || undefined,
         categorySlug: categorySlug || undefined,
-        minPrice: minPrice ? Number(minPrice) : undefined,
-        maxPrice: maxPrice ? Number(maxPrice) : undefined,
+        minPrice: priceMin ? Number(priceMin) : undefined,
+        maxPrice: priceMax ? Number(priceMax) : undefined,
         brands: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
         inStock: inStock ? 'true' : undefined,
       };
       for (const [slug, value] of Object.entries(attrFilters)) {
         query[`attr_${slug}`] = value;
       }
-      const res = await productsApi.list(query);
+      return query;
+    },
+    [page, sort, q, categorySlug, selectedBrands, inStock, attrFilters],
+  );
+
+  const loadProducts = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await productsApi.list(buildListQuery(minPrice, maxPrice));
       setProducts(res.items);
       setTotalPages(res.meta.totalPages);
       setTotalCount(res.meta.total);
     } finally {
       setLoading(false);
     }
-  }, [page, sort, q, categorySlug, minPrice, maxPrice, selectedBrands, inStock, attrFilters]);
+  }, [buildListQuery, minPrice, maxPrice]);
 
   useEffect(() => {
     void categoriesApi.tree().then(setCategories);
@@ -144,11 +159,47 @@ export function CatalogPage() {
   }, [isDesktop, filtersOpen]);
 
   useEffect(() => {
-    if (filtersOpen && !isDesktop) {
-      setDraftMinPrice(minPrice);
-      setDraftMaxPrice(maxPrice);
+    setDraftMinPrice(minPrice);
+    setDraftMaxPrice(maxPrice);
+  }, [minPrice, maxPrice]);
+
+  const pricePending =
+    draftMinPrice !== minPrice || draftMaxPrice !== maxPrice;
+
+  useEffect(() => {
+    if (!pricePending) {
+      setPreviewCount(totalCount);
+      setPreviewLoading(false);
+      return;
     }
-  }, [filtersOpen, minPrice, maxPrice, isDesktop]);
+
+    const requestId = ++previewRequestRef.current;
+    const timer = window.setTimeout(() => {
+      void (async () => {
+        setPreviewLoading(true);
+        try {
+          const res = await productsApi.list(
+            buildListQuery(draftMinPrice, draftMaxPrice, { page: 1, limit: 1 }),
+          );
+          if (previewRequestRef.current === requestId) {
+            setPreviewCount(res.meta.total);
+          }
+        } finally {
+          if (previewRequestRef.current === requestId) {
+            setPreviewLoading(false);
+          }
+        }
+      })();
+    }, PRICE_PREVIEW_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [
+    pricePending,
+    draftMinPrice,
+    draftMaxPrice,
+    buildListQuery,
+    totalCount,
+  ]);
 
   const setFilter = (key: string, value: string) => {
     const next = new URLSearchParams(params);
@@ -218,6 +269,11 @@ export function CatalogPage() {
     setParams(next);
   };
 
+  const commitDraftPrice = useCallback(() => {
+    if (draftMinPrice === minPrice && draftMaxPrice === maxPrice) return;
+    setPriceRange(draftMinPrice, draftMaxPrice);
+  }, [draftMinPrice, draftMaxPrice, minPrice, maxPrice]);
+
   const applyMobileFilters = () => {
     setPriceRange(draftMinPrice, draftMaxPrice);
     setFiltersOpen(false);
@@ -264,15 +320,17 @@ export function CatalogPage() {
   ]);
 
   const pageTitle = activeCategory?.name ?? (q ? `Поиск: ${q}` : 'Каталог');
-  const countLabel = productCountLabel(totalCount);
+  const displayCount = pricePending ? previewCount : totalCount;
+  const displayCountLoading = pricePending ? previewLoading : loading;
+  const countLabel = productCountLabel(displayCount);
 
-  const renderFilterPanels = (mobile: boolean) => (
+  const renderFilterPanels = (onPriceBlur?: () => void) => (
     <CatalogFilterPanels
       collapsible={!isDesktop}
       categorySlug={categorySlug}
       categoryRoots={categoryRoots}
-      minPrice={mobile ? draftMinPrice : minPrice}
-      maxPrice={mobile ? draftMaxPrice : maxPrice}
+      minPrice={draftMinPrice}
+      maxPrice={draftMaxPrice}
       selectedBrands={selectedBrands}
       inStock={inStock}
       attrFilters={attrFilters}
@@ -280,8 +338,9 @@ export function CatalogPage() {
       showAttributeFilters={Boolean(showAttributeFilters)}
       q={q}
       onCategoryChange={(slug) => setFilter('categorySlug', slug)}
-      onMinPriceChange={mobile ? setDraftMinPrice : (value) => setFilter('minPrice', value)}
-      onMaxPriceChange={mobile ? setDraftMaxPrice : (value) => setFilter('maxPrice', value)}
+      onMinPriceChange={setDraftMinPrice}
+      onMaxPriceChange={setDraftMaxPrice}
+      onPriceBlur={onPriceBlur}
       onToggleBrand={toggleBrand}
       onInStockChange={(checked) => setFilter('inStock', checked ? 'true' : '')}
       onAttrChange={setAttrFilter}
@@ -294,9 +353,9 @@ export function CatalogPage() {
       <div className={styles.toolbar}>
         <div className={styles.titleBlock}>
           <h1 className={styles.title}>{pageTitle}</h1>
-          {!loading && (
+          {!displayCountLoading && (
             <p className={styles.titleMeta}>
-              {totalCount} {productCountLabel(totalCount)}
+              {displayCount} {productCountLabel(displayCount)}
             </p>
           )}
         </div>
@@ -367,25 +426,25 @@ export function CatalogPage() {
         onApply={applyMobileFilters}
         onReset={hasActiveFilters ? resetFilters : undefined}
         hasActiveFilters={hasActiveFilters}
-        totalCount={totalCount}
-        loading={loading}
+        totalCount={displayCount}
+        loading={displayCountLoading}
         resultsLabel={countLabel}
       >
-        {renderFilterPanels(true)}
+        {renderFilterPanels()}
       </CatalogMobileFilters>
 
       <div className={styles.layout}>
         {isDesktop && (
           <aside className={`gsp-panel ${styles.sidebar}`} aria-label="Фильтры">
             <h2 className={styles.sidebarTitle}>Фильтры</h2>
-            {renderFilterPanels(false)}
+            {renderFilterPanels(commitDraftPrice)}
           </aside>
         )}
 
         <div className={styles.content}>
-          {!loading && (
+          {!displayCountLoading && (
             <p className={styles.resultsCount}>
-              Найдено {totalCount} {productCountLabel(totalCount)}
+              Найдено {displayCount} {productCountLabel(displayCount)}
             </p>
           )}
           <ProductGrid
