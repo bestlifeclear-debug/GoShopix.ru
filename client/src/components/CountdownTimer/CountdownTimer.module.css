@@ -52,3 +52,25 @@
 .light .label {
   color: var(--color-text-muted);
 }
+
+.compact {
+  gap: 8px;
+  padding: 0;
+}
+
+.compact .cell {
+  min-width: 44px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  background: rgb(255 255 255 / 0.14);
+  border: 1px solid rgb(255 255 255 / 0.22);
+}
+
+.compact .value {
+  font-size: var(--font-size-lg);
+}
+
+.compact .label {
+  font-size: 9px;
+  opacity: 0.85;
+}

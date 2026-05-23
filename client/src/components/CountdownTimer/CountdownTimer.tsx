@@ -6,6 +6,8 @@ interface CountdownTimerProps {
   className?: string;
   /** light — для светлых слайдов hero, dark — для тёмного фона */
   tone?: 'light' | 'dark';
+  /** Компактный вид для hero-баннера на десктопе */
+  compact?: boolean;
 }
 
 interface TimeLeft {
@@ -37,7 +39,7 @@ const UNITS: { key: keyof TimeLeft; label: string }[] = [
   { key: 'seconds', label: 'сек' },
 ];
 
-export function CountdownTimer({ endsAt, className, tone = 'dark' }: CountdownTimerProps) {
+export function CountdownTimer({ endsAt, className, tone = 'dark', compact = false }: CountdownTimerProps) {
   const target = typeof endsAt === 'string' ? new Date(endsAt) : endsAt;
   const [left, setLeft] = useState<TimeLeft | null>(() => calcTimeLeft(target));
 
@@ -52,13 +54,18 @@ export function CountdownTimer({ endsAt, className, tone = 'dark' }: CountdownTi
     return null;
   }
 
+  const rootClass = [
+    styles.timer,
+    styles[tone],
+    compact ? styles.compact : '',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <div
-      className={
-        className
-          ? `${styles.timer} ${styles[tone]} ${className}`
-          : `${styles.timer} ${styles[tone]}`
-      }
+      className={rootClass}
       role="timer"
       aria-live="polite"
       aria-label={`До конца акции: ${left.days} дней, ${left.hours} часов, ${left.minutes} минут`}

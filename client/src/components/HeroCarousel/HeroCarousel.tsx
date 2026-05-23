@@ -77,6 +77,7 @@ export function HeroCarousel() {
                         endsAt={slide.countdownEndsAt}
                         className={styles.countdown}
                         tone="dark"
+                        compact
                       />
                     )}
                     <Link to={slide.cta.to} className={styles.btnCta}>
