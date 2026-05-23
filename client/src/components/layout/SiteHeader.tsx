@@ -156,7 +156,7 @@ export function SiteHeader() {
   );
 
   return (
-    <div ref={wrapRef} className={`${styles.wrap} ${isAccountRoute ? styles.wrapAccount : ''}`}>
+    <div ref={wrapRef} data-site-header className={styles.wrap}>
       <Header
         hideMobileSearch={hideMobileSearch}
         mobileHeaderCompact={isAccountRoute}

@@ -1,20 +1,7 @@
 .wrap {
   position: relative;
-  background: var(--color-bg);
   z-index: 200;
-}
-
-@media (max-width: 768px) {
-  .wrap {
-    background: var(--header-mobile-gradient);
-    box-shadow: none;
-    filter: none;
-  }
-
-  .wrapAccount {
-    background: var(--header-mobile-gradient);
-    box-shadow: none;
-  }
+  background: var(--color-bg);
 }
 
 .catalogMegaAnchor {

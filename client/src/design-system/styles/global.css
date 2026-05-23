@@ -101,4 +101,25 @@ html.modal-open {
   body {
     font-size: max(var(--font-size-sm), 14px);
   }
+
+  /* Мобильная шапка: чистый градиент без белого topBar и без тени (обходит CSS-modules) */
+  [data-site-header] {
+    background: var(--header-mobile-gradient) !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  [data-site-header] > header {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  [data-site-header] > header > div,
+  [data-site-header] > header .container {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
 }

@@ -71,7 +71,7 @@ export function Header({
   mobileHeaderCompact = false,
   mobileTopTrailing,
 }: HeaderProps) {
-  const isMobile = useMaxWidth('(max-width: 768px)');
+  const isMobile = useMaxWidth('(max-width: 767px)');
   const hideSearchOnMobile = hideMobileSearch && isMobile;
   const location = useLocation();
   const currentPath = `${location.pathname}${location.search}`;
