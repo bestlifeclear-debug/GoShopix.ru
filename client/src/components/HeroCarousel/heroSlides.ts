@@ -11,11 +11,8 @@ export interface HeroSlide {
   promo: string;
   eyebrow: string;
   title: string;
+  /** Подзаголовок — только десктоп; на мобилке скрыт */
   text: string;
-  image: string;
-  imageAlt: string;
-  /** Встроенный SVG вместо внешнего файла (слайд доставки) */
-  useDeliveryVisual?: boolean;
   cta: { to: string; label: string };
   countdownEndsAt?: Date;
 }
@@ -37,8 +34,6 @@ export const HERO_SLIDES: HeroSlide[] = [
     eyebrow: 'Мега-распродажа',
     title: 'Техника со скидкой до 30%',
     text: 'Смартфоны, ноутбуки и гаджеты до конца недели.',
-    image: '/product-images/gophone-x-1.svg',
-    imageAlt: 'Смартфон GoPhone X',
     countdownEndsAt: endOfCurrentWeek(),
     cta: { to: '/catalog?categorySlug=electronics', label: 'В каталог' },
   },
@@ -49,8 +44,6 @@ export const HERO_SLIDES: HeroSlide[] = [
     eyebrow: 'Мода и стиль',
     title: 'Одежда и обувь — сезонные цены',
     text: 'Куртки, кроссовки и гардероб от топ-продавцов.',
-    image: '/product-images/urban-wind-jacket-1.svg',
-    imageAlt: 'Куртка Urban Wind',
     cta: { to: '/catalog?categorySlug=clothing', label: 'В каталог' },
   },
   {
@@ -60,8 +53,6 @@ export const HERO_SLIDES: HeroSlide[] = [
     eyebrow: 'Бестселлер',
     title: 'Наушники и аудио — топ недели',
     text: 'Проверенные модели с тысячами отзывов.',
-    image: '/product-images/soundwave-pro-1.svg',
-    imageAlt: 'Наушники SoundWave Pro',
     cta: { to: '/catalog?sort=popular', label: 'Смотреть хиты' },
   },
   {
@@ -71,8 +62,6 @@ export const HERO_SLIDES: HeroSlide[] = [
     eyebrow: 'Новинки',
     title: 'Ноутбуки для работы и учёбы',
     text: 'Мощные конфигурации с быстрой доставкой.',
-    image: '/product-images/probook-15-1.svg',
-    imageAlt: 'Ноутбук ProBook 15',
     cta: { to: '/catalog?sort=newest', label: 'Новинки' },
   },
   {
@@ -82,9 +71,6 @@ export const HERO_SLIDES: HeroSlide[] = [
     eyebrow: 'Бесплатная доставка',
     title: 'От 2 000 ₽ — доставка 0 ₽',
     text: 'Соберите корзину — доставка в ПВЗ бесплатно.',
-    image: '/product-images/city-pack-25-1.svg',
-    imageAlt: 'Доставка заказа бесплатно',
-    useDeliveryVisual: true,
     cta: { to: '/catalog', label: 'В каталог' },
   },
 ];

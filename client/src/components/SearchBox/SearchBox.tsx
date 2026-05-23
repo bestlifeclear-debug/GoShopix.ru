@@ -59,6 +59,17 @@ export function SearchBox({
   const wrapRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [recent, setRecent] = useState<string[]>(() => loadRecent());
+  const [resolvedPlaceholder, setResolvedPlaceholder] = useState(placeholder);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const sync = () => {
+      setResolvedPlaceholder(mq.matches ? 'Поиск товаров и брендов' : placeholder);
+    };
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, [placeholder]);
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -110,7 +121,7 @@ export function SearchBox({
         <input
           type="search"
           className={styles.input}
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setOpen(true)}

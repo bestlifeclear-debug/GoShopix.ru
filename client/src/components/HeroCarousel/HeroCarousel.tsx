@@ -2,10 +2,10 @@ import { useCallback, useEffect, useRef, useState, type TouchEvent } from 'react
 import { Link } from 'react-router-dom';
 import { CountdownTimer } from '../CountdownTimer/CountdownTimer';
 import { IconChevronLeft, IconChevronRight } from '../../design-system/icons/Icons';
-import { HeroDeliveryVisual } from './HeroDeliveryVisual';
+import { HeroSlideVisual } from './HeroSlideVisual';
 import { HeroTrustStrip } from './HeroTrustStrip';
 import { HERO_SLIDES } from './heroSlides';
-import deliveryVisualStyles from './HeroDeliveryVisual.module.css';
+import visualStyles from './HeroSlideVisual.module.css';
 import styles from './HeroCarousel.module.css';
 
 const AUTOPLAY_MS = 5000;
@@ -84,21 +84,12 @@ export function HeroCarousel() {
                       {slide.cta.label}
                     </Link>
                   </div>
-                  <div className={styles.visual}>
+                  <div className={styles.visual} aria-hidden>
                     <div className={styles.imageFrame}>
-                      {slide.useDeliveryVisual ? (
-                        <HeroDeliveryVisual
-                          className={`${styles.productImage} ${styles.deliveryVisual} ${deliveryVisualStyles.root}`}
-                        />
-                      ) : (
-                        <img
-                          src={slide.image}
-                          alt={slide.imageAlt}
-                          className={styles.productImage}
-                          loading={slide.id === slides[0].id ? 'eager' : 'lazy'}
-                          decoding="async"
-                        />
-                      )}
+                      <HeroSlideVisual
+                        theme={slide.theme}
+                        className={`${styles.illustration} ${visualStyles.root}`}
+                      />
                     </div>
                   </div>
                 </div>
