@@ -78,7 +78,7 @@ export function AccountDashboard({
               className={styles.settingsBtn}
               aria-label="Настройки личного кабинета"
               aria-expanded={settingsOpen}
-              onClick={() => setSettingsOpen(true)}
+              onClick={() => setSettingsOpen((open) => !open)}
             >
               <IconSettings />
             </button>
@@ -132,31 +132,31 @@ export function AccountDashboard({
             </>
           )}
         </div>
-      </section>
 
-      {isCompactMobile && (
-        <nav className={styles.mobileQuickGrid} aria-label="Разделы личного кабинета">
-          <ul className={styles.mobileQuickGridList}>
-            {MOBILE_QUICK_TILES.map((tile) => {
-              const Icon = tile.icon;
-              return (
-                <li key={tile.id}>
-                  <button
-                    type="button"
-                    className={styles.mobileQuickTile}
-                    onClick={() => handleQuickTile(tile.id)}
-                  >
-                    <span className={styles.mobileQuickTileIcon} aria-hidden>
-                      <Icon />
-                    </span>
-                    <span className={styles.mobileQuickTileLabel}>{tile.label}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-      )}
+        {isCompactMobile && (
+          <nav className={styles.mobileQuickGrid} aria-label="Разделы личного кабинета">
+            <ul className={styles.mobileQuickGridList}>
+              {MOBILE_QUICK_TILES.map((tile) => {
+                const Icon = tile.icon;
+                return (
+                  <li key={tile.id}>
+                    <button
+                      type="button"
+                      className={styles.mobileQuickTile}
+                      onClick={() => handleQuickTile(tile.id)}
+                    >
+                      <span className={styles.mobileQuickTileIcon} aria-hidden>
+                        <Icon />
+                      </span>
+                      <span className={styles.mobileQuickTileLabel}>{tile.label}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+        )}
+      </section>
 
       <section
         id="account-reco"
@@ -194,14 +194,12 @@ export function AccountDashboard({
         )}
       </section>
 
-      {isCompactMobile && (
-        <AccountMobileSettingsSheet
-          open={settingsOpen}
-          onClose={() => setSettingsOpen(false)}
-          onNavigate={onNavigateSection}
-          onLogout={onLogout}
-        />
-      )}
+      <AccountMobileSettingsSheet
+        open={isCompactMobile && settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        onNavigate={onNavigateSection}
+        onLogout={onLogout}
+      />
     </div>
   );
 }

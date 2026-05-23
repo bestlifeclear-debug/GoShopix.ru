@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { AccountSection } from './types';
-import styles from '../AccountPage.module.css';
+import styles from './AccountMobileSettingsSheet.module.css';
 
 interface AccountMobileSettingsSheetProps {
   open: boolean;
@@ -10,7 +10,7 @@ interface AccountMobileSettingsSheetProps {
   onLogout: () => void;
 }
 
-const SETTINGS_ITEMS: { id: AccountSection; label: string; danger?: boolean }[] = [
+const SETTINGS_ITEMS: { id: AccountSection; label: string }[] = [
   { id: 'profile', label: 'Личные данные' },
   { id: 'notifications', label: 'Уведомления' },
   { id: 'support', label: 'Поддержка' },
@@ -53,30 +53,26 @@ export function AccountMobileSettingsSheet({
   };
 
   return createPortal(
-    <div className={styles.mobileSheetRoot} role="presentation">
+    <>
       <button
         type="button"
-        className={styles.mobileSheetBackdrop}
+        className={styles.backdrop}
         aria-label="Закрыть настройки"
         onClick={onClose}
       />
       <div
-        className={styles.mobileSheetPanel}
+        className={styles.panel}
         role="dialog"
         aria-modal="true"
         aria-label="Настройки личного кабинета"
       >
-        <div className={styles.mobileSheetHandle} aria-hidden />
-        <ul className={styles.mobileSheetList}>
+        <div className={styles.handle} aria-hidden />
+        <ul className={styles.list}>
           {SETTINGS_ITEMS.map((item) => (
             <li key={item.id}>
-              <button
-                type="button"
-                className={styles.mobileSheetRow}
-                onClick={() => handleNavigate(item.id)}
-              >
+              <button type="button" className={styles.row} onClick={() => handleNavigate(item.id)}>
                 <span>{item.label}</span>
-                <span className={styles.mobileSheetChevron} aria-hidden>
+                <span className={styles.chevron} aria-hidden>
                   ›
                 </span>
               </button>
@@ -85,18 +81,18 @@ export function AccountMobileSettingsSheet({
           <li>
             <button
               type="button"
-              className={`${styles.mobileSheetRow} ${styles.mobileSheetRowDanger}`}
+              className={`${styles.row} ${styles.rowDanger}`}
               onClick={handleLogout}
             >
               <span>Выйти</span>
-              <span className={styles.mobileSheetChevron} aria-hidden>
+              <span className={styles.chevron} aria-hidden>
                 ›
               </span>
             </button>
           </li>
         </ul>
       </div>
-    </div>,
+    </>,
     document.body,
   );
 }
