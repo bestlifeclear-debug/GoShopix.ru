@@ -29,6 +29,7 @@
     "db:check-schema": "node scripts/check-db-schema.mjs",
     "db:apply-auth-migrations": "node scripts/apply-pending-auth-migrations.mjs",
     "db:apply-passwordless": "node scripts/apply-passwordless-migration.mjs",
+    "db:apply-home-categories": "node scripts/apply-home-categories.mjs",
     "otp:code": "npm run build -w server && node scripts/get-otp-code.mjs",
     "db:reset": "npm run db:reset -w server",
     "test": "npm run test -w server",
