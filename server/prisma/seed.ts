@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import { PrismaClient, OrderStatus, UserRole, VerificationStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import pg from 'pg';
+import { ensureExtraCategories } from './extra-categories.js';
 import { seedCatalogProducts } from './seed-catalog.js';
 
 const pgUrl = (process.env.DATABASE_URL ?? '').replace(/\?.*$/, '');
@@ -89,7 +90,8 @@ async function main() {
   const resumeCatalog = existingUsers > 0 && productCount === 0;
 
   if (productCount > 0 && !shouldReset) {
-    console.log('Database already seeded (products exist).');
+    await ensureExtraCategories(db);
+    console.log('Database already seeded; extra categories ensured.');
     return;
   }
   if (shouldReset) {
@@ -284,6 +286,8 @@ async function main() {
   catClothing = await db((p) =>
     p.category.create({ data: { name: 'Одежда', slug: 'clothing', sortOrder: 2 } }),
   );
+
+  await ensureExtraCategories(db);
 
   attrBrand = await db((p) =>
     p.productAttribute.create({ data: { name: 'Бренд', slug: 'brand', type: 'SELECT' } }),

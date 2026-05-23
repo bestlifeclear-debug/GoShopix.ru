@@ -8,10 +8,14 @@ interface CategoryTilesProps {
   variant?: 'default' | 'mobile';
 }
 
+function sortByOrder(a: CategoryNode, b: CategoryNode) {
+  return a.sortOrder - b.sortOrder || a.name.localeCompare(b.name, 'ru');
+}
+
 export function CategoryTiles({ categories, variant = 'default' }: CategoryTilesProps) {
-  const roots = categories.filter((c) => !c.parentId);
-  const children = categories.flatMap((c) => c.children);
-  const tiles = variant === 'mobile' ? roots.slice(0, 10) : [...roots, ...children];
+  const roots = categories.filter((c) => !c.parentId).sort(sortByOrder);
+  const children = categories.flatMap((c) => c.children).sort(sortByOrder);
+  const tiles = variant === 'mobile' ? roots.slice(0, 12) : [...roots, ...children];
 
   if (tiles.length === 0) return null;
 
