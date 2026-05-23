@@ -168,12 +168,20 @@ export function AccountPage() {
         <div className={styles.view} key={section}>
           {section === 'dashboard' && (
             <>
-              <button
-                type="button"
-                className={styles.menuBtnDesktopHidden}
-                aria-label="Открыть меню"
-                onClick={() => setMobileNavOpen(true)}
-              />
+              <div className={styles.mobileMenuBar}>
+                <button
+                  type="button"
+                  className={styles.menuBtn}
+                  aria-label="Открыть меню личного кабинета"
+                  aria-expanded={mobileNavOpen}
+                  onClick={() => setMobileNavOpen(true)}
+                >
+                  <span />
+                  <span />
+                  <span />
+                </button>
+                <span className={styles.mobileMenuBarLabel}>Разделы кабинета</span>
+              </div>
               <AccountDashboard
                 displayName={displayName}
                 orders={orders}
