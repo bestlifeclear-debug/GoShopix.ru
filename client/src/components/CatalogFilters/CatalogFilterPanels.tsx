@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { CategoryNode, ProductFacets } from '../../api/types';
 import { StatusBadge } from '../../design-system';
 import { IconCheck } from '../../design-system/icons/Icons';
@@ -94,7 +95,7 @@ export interface CatalogFilterPanelsProps {
   onAttrChange: (slug: string, value: string) => void;
 }
 
-export function CatalogFilterPanels({
+function CatalogFilterPanelsInner({
   collapsible,
   selectedCategorySlugs,
   categoryRoots,
@@ -274,5 +275,7 @@ export function CatalogFilterPanels({
     </>
   );
 }
+
+export const CatalogFilterPanels = memo(CatalogFilterPanelsInner);
 
 export { ELECTRONICS_SLUGS };

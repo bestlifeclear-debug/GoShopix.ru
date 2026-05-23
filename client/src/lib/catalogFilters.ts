@@ -138,6 +138,21 @@ export function shouldShowAttributeFilters(
   });
 }
 
+export function withPriceInputs(
+  filters: CatalogFiltersState,
+  minPrice: string,
+  maxPrice: string,
+): CatalogFiltersState {
+  return { ...filters, minPrice, maxPrice };
+}
+
+export function filtersQueryKey(
+  filters: CatalogFiltersState,
+  ctx: { page: number; sort: string; q: string },
+): string {
+  return JSON.stringify({ ...filters, page: ctx.page, sort: ctx.sort, q: ctx.q });
+}
+
 export function hasAnyCatalogFilter(filters: CatalogFiltersState, q: string): boolean {
   return Boolean(
     filters.categorySlugs.length > 0 ||

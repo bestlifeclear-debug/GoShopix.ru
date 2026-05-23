@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { categoriesApi, productsApi } from '../api/index';
 import type { CategoryNode, ProductFacets, ProductListItem } from '../api/types';
@@ -9,9 +9,11 @@ import { Button } from '../design-system';
 import { IconClose, IconFilter } from '../design-system/icons/Icons';
 import {
   buildProductsListQuery,
+  filtersQueryKey,
   hasAnyCatalogFilter,
   parseCatalogFiltersFromSearchParams,
   shouldShowAttributeFilters,
+  withPriceInputs,
   writeCatalogFiltersToSearchParams,
   type CatalogFiltersState,
 } from '../lib/catalogFilters';
@@ -28,8 +30,8 @@ const SORT_OPTIONS = [
   { value: 'newest', label: 'По новизне', short: 'Новинки' },
 ] as const;
 
-/** Задержка перед применением цены в URL — не фильтруем по «2», пока вводят «2000». */
-const PRICE_APPLY_DEBOUNCE_MS = 400;
+/** Пауза после ввода цены: обновляем только карточки, URL — без «перезагрузки» страницы. */
+const PRICE_DEBOUNCE_MS = 700;
 
 function productCountLabel(count: number): string {
   const mod10 = count % 10;
@@ -62,10 +64,12 @@ export function CatalogPage() {
   const [products, setProducts] = useState<ProductListItem[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [gridLoading, setGridLoading] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [priceInputMin, setPriceInputMin] = useState('');
   const [priceInputMax, setPriceInputMax] = useState('');
+  const lastFetchKeyRef = useRef('');
+  const fetchGenRef = useRef(0);
   const isDesktop = useMinWidth('(min-width: 768px)');
   const token = useAuthStore((s) => s.token);
   const addToCart = useCartStore((s) => s.addToCart);
@@ -86,6 +90,8 @@ export function CatalogPage() {
 
   const showAttributeFilters = shouldShowAttributeFilters(filters.categorySlugs, flatCategories);
 
+  const listContext = useMemo(() => ({ page, sort, q }), [page, sort, q]);
+
   const applyFilters = useCallback(
     (next: CatalogFiltersState) => {
       setParams(writeCatalogFiltersToSearchParams(params, next, { sort }));
@@ -93,17 +99,49 @@ export function CatalogPage() {
     [params, sort, setParams],
   );
 
-  const loadProducts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await productsApi.list(buildProductsListQuery(filters, { page, sort, q }));
-      setProducts(res.items);
-      setTotalPages(res.meta.totalPages);
-      setTotalCount(res.meta.total);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters, page, sort, q]);
+  const fetchProducts = useCallback(
+    async (queryFilters: CatalogFiltersState, options?: { syncPriceToUrl?: boolean }) => {
+      const key = filtersQueryKey(queryFilters, listContext);
+      if (key === lastFetchKeyRef.current && !options?.syncPriceToUrl) return;
+
+      const gen = ++fetchGenRef.current;
+      setGridLoading(true);
+
+      try {
+        const res = await productsApi.list(buildProductsListQuery(queryFilters, listContext));
+        if (fetchGenRef.current !== gen) return;
+
+        lastFetchKeyRef.current = key;
+        setProducts(res.items);
+        setTotalPages(res.meta.totalPages);
+        setTotalCount(res.meta.total);
+
+        if (options?.syncPriceToUrl) {
+          setParams((prev) => {
+            const current = parseCatalogFiltersFromSearchParams(prev);
+            const merged = withPriceInputs(current, queryFilters.minPrice, queryFilters.maxPrice);
+            if (
+              merged.minPrice === current.minPrice &&
+              merged.maxPrice === current.maxPrice
+            ) {
+              return prev;
+            }
+            return writeCatalogFiltersToSearchParams(prev, merged, { sort });
+          });
+        }
+      } finally {
+        if (fetchGenRef.current === gen) {
+          setGridLoading(false);
+        }
+      }
+    },
+    [listContext, sort, setParams],
+  );
+
+  const queryWithPrice = useCallback(
+    (min: string, max: string) => withPriceInputs(filters, min, max),
+    [filters],
+  );
 
   useEffect(() => {
     void categoriesApi.tree().then(setCategories);
@@ -121,10 +159,6 @@ export function CatalogPage() {
   }, [categoryKey]);
 
   useEffect(() => {
-    void loadProducts();
-  }, [loadProducts]);
-
-  useEffect(() => {
     if (isDesktop && filtersOpen) setFiltersOpen(false);
   }, [isDesktop, filtersOpen]);
 
@@ -134,29 +168,38 @@ export function CatalogPage() {
   }, [filters.minPrice, filters.maxPrice]);
 
   useEffect(() => {
-    if (priceInputMin === filters.minPrice && priceInputMax === filters.maxPrice) return;
+    void fetchProducts(queryWithPrice(priceInputMin, priceInputMax));
+    // priceInput намеренно не в deps: цена подгружается отдельным debounce-эффектом
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- см. комментарий выше
+  }, [filters, page, sort, q, fetchProducts, queryWithPrice]);
+
+  useEffect(() => {
+    const priceDirty =
+      priceInputMin !== filters.minPrice || priceInputMax !== filters.maxPrice;
+    if (!priceDirty) return;
 
     const timer = window.setTimeout(() => {
-      setParams((prev) => {
-        const current = parseCatalogFiltersFromSearchParams(prev);
-        if (priceInputMin === current.minPrice && priceInputMax === current.maxPrice) {
-          return prev;
-        }
-        return writeCatalogFiltersToSearchParams(
-          prev,
-          { ...current, minPrice: priceInputMin, maxPrice: priceInputMax },
-          { sort },
-        );
-      });
-    }, PRICE_APPLY_DEBOUNCE_MS);
+      const queryFilters = queryWithPrice(priceInputMin, priceInputMax);
+      void fetchProducts(queryFilters, { syncPriceToUrl: true });
+    }, PRICE_DEBOUNCE_MS);
 
     return () => window.clearTimeout(timer);
-  }, [priceInputMin, priceInputMax, filters.minPrice, filters.maxPrice, sort, setParams]);
+  }, [
+    priceInputMin,
+    priceInputMax,
+    filters.minPrice,
+    filters.maxPrice,
+    fetchProducts,
+    queryWithPrice,
+  ]);
 
   const resetFilters = () => {
     const next = new URLSearchParams();
     if (sort) next.set('sort', sort);
     setParams(next);
+    setPriceInputMin('');
+    setPriceInputMax('');
+    lastFetchKeyRef.current = '';
   };
 
   const handleAddSafe = async (product: ProductListItem) => {
@@ -184,34 +227,46 @@ export function CatalogPage() {
     setParams(next);
   };
 
-  const toggleCategory = (slug: string) => {
-    const categorySlugs = filters.categorySlugs.includes(slug)
-      ? filters.categorySlugs.filter((s) => s !== slug)
-      : [...filters.categorySlugs, slug];
-    applyFilters({ ...filters, categorySlugs });
-  };
+  const toggleCategory = useCallback(
+    (slug: string) => {
+      const categorySlugs = filters.categorySlugs.includes(slug)
+        ? filters.categorySlugs.filter((s) => s !== slug)
+        : [...filters.categorySlugs, slug];
+      applyFilters({ ...filters, categorySlugs });
+    },
+    [filters, applyFilters],
+  );
 
-  const clearCategories = () => {
+  const clearCategories = useCallback(() => {
     applyFilters({ ...filters, categorySlugs: [] });
-  };
+  }, [filters, applyFilters]);
 
-  const toggleBrand = (brand: string) => {
-    const brands = filters.brands.includes(brand)
-      ? filters.brands.filter((b) => b !== brand)
-      : [...filters.brands, brand];
-    applyFilters({ ...filters, brands });
-  };
+  const toggleBrand = useCallback(
+    (brand: string) => {
+      const brands = filters.brands.includes(brand)
+        ? filters.brands.filter((b) => b !== brand)
+        : [...filters.brands, brand];
+      applyFilters({ ...filters, brands });
+    },
+    [filters, applyFilters],
+  );
 
-  const setInStock = (checked: boolean) => {
-    applyFilters({ ...filters, inStock: checked });
-  };
+  const setInStock = useCallback(
+    (checked: boolean) => {
+      applyFilters({ ...filters, inStock: checked });
+    },
+    [filters, applyFilters],
+  );
 
-  const setAttr = (slug: string, value: string) => {
-    const attrFilters = { ...filters.attrFilters };
-    if (value) attrFilters[slug] = value;
-    else delete attrFilters[slug];
-    applyFilters({ ...filters, attrFilters });
-  };
+  const setAttr = useCallback(
+    (slug: string, value: string) => {
+      const attrFilters = { ...filters.attrFilters };
+      if (value) attrFilters[slug] = value;
+      else delete attrFilters[slug];
+      applyFilters({ ...filters, attrFilters });
+    },
+    [filters, applyFilters],
+  );
 
   const removeCategory = (slug: string) => {
     applyFilters({
@@ -227,6 +282,7 @@ export function CatalogPage() {
   const clearPrice = () => {
     setPriceInputMin('');
     setPriceInputMax('');
+    lastFetchKeyRef.current = '';
     applyFilters({ ...filters, minPrice: '', maxPrice: '' });
   };
 
@@ -242,8 +298,6 @@ export function CatalogPage() {
 
   const hasActiveFilters = hasAnyCatalogFilter(filters, q);
   const countLabel = productCountLabel(totalCount);
-  const priceApplying =
-    priceInputMin !== filters.minPrice || priceInputMax !== filters.maxPrice;
 
   const activeFilterChips = useMemo(() => {
     const chips: { id: string; label: string; onRemove: () => void }[] = [];
@@ -309,11 +363,9 @@ export function CatalogPage() {
         <div className={styles.toolbar}>
           <div className={styles.titleBlock}>
             <h1 className={styles.title}>{pageTitle}</h1>
-            {!loading && (
-              <p className={styles.titleMeta}>
-                {totalCount} {productCountLabel(totalCount)}
-              </p>
-            )}
+            <p className={styles.titleMeta}>
+              {totalCount} {productCountLabel(totalCount)}
+            </p>
           </div>
         </div>
 
@@ -383,7 +435,7 @@ export function CatalogPage() {
           onReset={hasActiveFilters ? resetFilters : undefined}
           hasActiveFilters={hasActiveFilters}
           totalCount={totalCount}
-          loading={loading || priceApplying}
+          loading={gridLoading}
           resultsLabel={countLabel}
         >
           {filterPanels}
@@ -398,15 +450,13 @@ export function CatalogPage() {
           )}
 
           <div className={styles.content}>
-            {!loading && (
-              <p className={styles.resultsCount}>
-                Найдено {totalCount} {productCountLabel(totalCount)}
-              </p>
-            )}
+            <p className={styles.resultsCount} aria-live="polite">
+              Найдено {totalCount} {productCountLabel(totalCount)}
+            </p>
             <ProductGrid
               products={products}
               onAddToCart={handleAddSafe}
-              loading={loading}
+              loading={gridLoading}
               skeletonCount={16}
               variant="compact"
             />
