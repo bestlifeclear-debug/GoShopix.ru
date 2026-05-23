@@ -21,9 +21,20 @@ export const productsRouter = Router();
 
 const ELECTRONICS_FILTER_ATTRS = ['storage', 'screen-size'] as const;
 
+async function categoryIdsForSlug(slug: string): Promise<string[]> {
+  const cat = await prisma.category.findUnique({ where: { slug } });
+  if (!cat) return [];
+  const children = await prisma.category.findMany({
+    where: { OR: [{ id: cat.id }, { parentId: cat.id }] },
+    select: { id: true },
+  });
+  return children.map((c) => c.id);
+}
+
 async function resolveCategoryIds(
   categoryId?: string,
   categorySlug?: string,
+  categorySlugs?: string[],
 ): Promise<string[] | undefined> {
   if (categoryId) {
     const children = await prisma.category.findMany({
@@ -33,17 +44,18 @@ async function resolveCategoryIds(
     return children.map((c) => c.id);
   }
 
-  if (categorySlug) {
-    const cat = await prisma.category.findUnique({ where: { slug: categorySlug } });
-    if (!cat) return [];
-    const children = await prisma.category.findMany({
-      where: { OR: [{ id: cat.id }, { parentId: cat.id }] },
-      select: { id: true },
-    });
-    return children.map((c) => c.id);
-  }
+  const slugs = [
+    ...(categorySlugs ?? []),
+    ...(categorySlug && !categorySlugs?.includes(categorySlug) ? [categorySlug] : []),
+  ];
+  if (slugs.length === 0) return undefined;
 
-  return undefined;
+  const idSet = new Set<string>();
+  for (const slug of slugs) {
+    const ids = await categoryIdsForSlug(slug);
+    for (const id of ids) idSet.add(id);
+  }
+  return [...idSet];
 }
 
 async function productIdsMatchingAttributes(
@@ -87,7 +99,12 @@ productsRouter.get('/facets', async (req, res, next) => {
   try {
     const categorySlug =
       typeof req.query.categorySlug === 'string' ? req.query.categorySlug : undefined;
-    const categoryIds = await resolveCategoryIds(undefined, categorySlug);
+    const categorySlugsRaw =
+      typeof req.query.categorySlugs === 'string' ? req.query.categorySlugs : undefined;
+    const categorySlugs = categorySlugsRaw
+      ? categorySlugsRaw.split(',').map((s) => s.trim()).filter(Boolean)
+      : undefined;
+    const categoryIds = await resolveCategoryIds(undefined, categorySlug, categorySlugs);
     const where: Prisma.ProductWhereInput = { isPublished: true };
     if (categoryIds !== undefined) {
       if (categoryIds.length === 0) {
@@ -147,6 +164,7 @@ productsRouter.get('/', validate({ query: productsQuerySchema }), async (req, re
       limit,
       categoryId,
       categorySlug,
+      categorySlugs: categorySlugsRaw,
       minPrice,
       maxPrice,
       q,
@@ -159,6 +177,7 @@ productsRouter.get('/', validate({ query: productsQuerySchema }), async (req, re
       limit: number;
       categoryId?: string;
       categorySlug?: string;
+      categorySlugs?: string;
       minPrice?: number;
       maxPrice?: number;
       q?: string;
@@ -179,7 +198,10 @@ productsRouter.get('/', validate({ query: productsQuerySchema }), async (req, re
 
     const where: Prisma.ProductWhereInput = { isPublished: true };
 
-    const categoryIds = await resolveCategoryIds(categoryId, categorySlug);
+    const categorySlugsList = categorySlugsRaw
+      ? categorySlugsRaw.split(',').map((s) => s.trim()).filter(Boolean)
+      : undefined;
+    const categoryIds = await resolveCategoryIds(categoryId, categorySlug, categorySlugsList);
     if (categoryIds !== undefined) {
       if (categoryIds.length === 0) {
         ok(res, { items: [], meta: paginatedMeta(0, pagination) });

@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import type { CategoryNode, ProductFacets } from '../../api/types';
 import { StatusBadge } from '../../design-system';
 import { IconCheck } from '../../design-system/icons/Icons';
@@ -76,7 +75,7 @@ const ELECTRONICS_SLUGS = new Set(['electronics', 'smartphones', 'laptops']);
 
 export interface CatalogFilterPanelsProps {
   collapsible: boolean;
-  categorySlug: string;
+  selectedCategorySlugs: string[];
   categoryRoots: CategoryNode[];
   minPrice: string;
   maxPrice: string;
@@ -86,10 +85,10 @@ export interface CatalogFilterPanelsProps {
   facets: ProductFacets;
   showAttributeFilters: boolean;
   q: string;
-  onCategoryChange: (slug: string) => void;
+  onToggleCategory: (slug: string) => void;
+  onClearCategories?: () => void;
   onMinPriceChange: (value: string) => void;
   onMaxPriceChange: (value: string) => void;
-  onPriceBlur?: () => void;
   onToggleBrand: (brand: string) => void;
   onInStockChange: (checked: boolean) => void;
   onAttrChange: (slug: string, value: string) => void;
@@ -97,7 +96,7 @@ export interface CatalogFilterPanelsProps {
 
 export function CatalogFilterPanels({
   collapsible,
-  categorySlug,
+  selectedCategorySlugs,
   categoryRoots,
   minPrice,
   maxPrice,
@@ -107,46 +106,30 @@ export function CatalogFilterPanels({
   facets,
   showAttributeFilters,
   q,
-  onCategoryChange,
+  onToggleCategory,
+  onClearCategories,
   onMinPriceChange,
   onMaxPriceChange,
-  onPriceBlur,
   onToggleBrand,
   onInStockChange,
   onAttrChange,
 }: CatalogFilterPanelsProps) {
-  const priceRowRef = useRef<HTMLDivElement>(null);
-
-  const handlePriceRowBlur = (e: React.FocusEvent<HTMLDivElement>) => {
-    if (!onPriceBlur) return;
-    const next = e.relatedTarget;
-    if (next instanceof Node && priceRowRef.current?.contains(next)) return;
-    onPriceBlur();
-  };
-
   return (
     <>
-      <FilterSection id="catalog-filter-category" title="Категория" collapsible={collapsible} defaultOpen>
+      <FilterSection
+        id="catalog-filter-category"
+        title="Категория"
+        collapsible={collapsible}
+        defaultOpen={selectedCategorySlugs.length > 0}
+      >
         <ul className={panelStyles.checkList}>
-          <li>
-            <FilterCheck
-              active={!categorySlug}
-              type="radio"
-              name="category"
-              checked={!categorySlug}
-              onChange={() => onCategoryChange('')}
-            >
-              Все категории
-            </FilterCheck>
-          </li>
           {categoryRoots.map((root) => (
             <li key={root.id} className={panelStyles.treeGroup}>
               <FilterCheck
-                active={categorySlug === root.slug}
-                type="radio"
-                name="category"
-                checked={categorySlug === root.slug}
-                onChange={() => onCategoryChange(root.slug)}
+                active={selectedCategorySlugs.includes(root.slug)}
+                type="checkbox"
+                checked={selectedCategorySlugs.includes(root.slug)}
+                onChange={() => onToggleCategory(root.slug)}
               >
                 {root.name}
               </FilterCheck>
@@ -155,11 +138,10 @@ export function CatalogFilterPanels({
                   {root.children.map((child) => (
                     <li key={child.id}>
                       <FilterCheck
-                        active={categorySlug === child.slug}
-                        type="radio"
-                        name="category"
-                        checked={categorySlug === child.slug}
-                        onChange={() => onCategoryChange(child.slug)}
+                        active={selectedCategorySlugs.includes(child.slug)}
+                        type="checkbox"
+                        checked={selectedCategorySlugs.includes(child.slug)}
+                        onChange={() => onToggleCategory(child.slug)}
                         className={panelStyles.checkItemNested}
                       >
                         {child.name}
@@ -171,10 +153,15 @@ export function CatalogFilterPanels({
             </li>
           ))}
         </ul>
+        {selectedCategorySlugs.length > 0 && onClearCategories && (
+          <button type="button" className={panelStyles.clearAttr} onClick={onClearCategories}>
+            Сбросить категории
+          </button>
+        )}
       </FilterSection>
 
       <FilterSection id="catalog-filter-price" title="Цена, ₽" collapsible={collapsible} defaultOpen>
-        <div ref={priceRowRef} className={panelStyles.priceRow} onBlur={handlePriceRowBlur}>
+        <div className={panelStyles.priceRow}>
           <input
             type="number"
             inputMode="numeric"

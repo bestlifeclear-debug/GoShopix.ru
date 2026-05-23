@@ -4,6 +4,7 @@ import { paginationQuerySchema, sortEnum } from './common.js';
 export const productsQuerySchema = paginationQuerySchema.extend({
   categoryId: z.string().min(1).optional(),
   categorySlug: z.string().min(1).optional(),
+  categorySlugs: z.string().min(1).max(500).optional(),
   minPrice: z.coerce.number().nonnegative().optional(),
   maxPrice: z.coerce.number().nonnegative().optional(),
   q: z.string().min(1).max(200).optional(),

@@ -76,7 +76,7 @@ export const productsApi = {
   list: (params: Record<string, string | number | boolean | undefined>) =>
     apiFetch<ProductsListResponse>(`/api/products${buildQuery(params)}`),
 
-  facets: (params?: { categorySlug?: string }) =>
+  facets: (params?: { categorySlug?: string; categorySlugs?: string }) =>
     apiFetch<ProductFacets>(`/api/products/facets${buildQuery(params ?? {})}`),
 
   get: (id: string) => apiFetch<ProductDetail>(`/api/products/${id}`),
