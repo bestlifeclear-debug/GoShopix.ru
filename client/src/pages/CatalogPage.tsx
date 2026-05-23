@@ -2,9 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { categoriesApi, productsApi } from '../api/index';
 import type { CategoryNode, ProductFacets, ProductListItem } from '../api/types';
+import { CatalogFilterPanels, ELECTRONICS_SLUGS } from '../components/CatalogFilters/CatalogFilterPanels';
+import { CatalogMobileFilters } from '../components/CatalogFilters/CatalogMobileFilters';
 import { ProductGrid } from '../components/ProductGrid';
-import { Button, StatusBadge } from '../design-system';
-import { IconCheck, IconClose, IconFilter } from '../design-system/icons/Icons';
+import { Button } from '../design-system';
+import { IconClose, IconFilter } from '../design-system/icons/Icons';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
@@ -38,8 +40,6 @@ function getAttrFilters(params: URLSearchParams): Record<string, string> {
   return attrs;
 }
 
-const ELECTRONICS_SLUGS = new Set(['electronics', 'smartphones', 'laptops']);
-
 function useMinWidth(query: string) {
   const [matches, setMatches] = useState(
     () => typeof window !== 'undefined' && window.matchMedia(query).matches,
@@ -56,72 +56,6 @@ function useMinWidth(query: string) {
   return matches;
 }
 
-function FilterSection({
-  id,
-  title,
-  collapsible,
-  defaultOpen = true,
-  children,
-}: {
-  id: string;
-  title: string;
-  collapsible: boolean;
-  defaultOpen?: boolean;
-  children: React.ReactNode;
-}) {
-  if (collapsible) {
-    return (
-      <details className={styles.filterSection} open={defaultOpen}>
-        <summary className={styles.filterSectionTitle}>{title}</summary>
-        <div className={styles.filterSectionBody}>{children}</div>
-      </details>
-    );
-  }
-
-  return (
-    <fieldset className={styles.filterGroup} aria-labelledby={id}>
-      <div id={id} className={styles.filterLegend}>
-        {title}
-      </div>
-      {children}
-    </fieldset>
-  );
-}
-
-function FilterCheck({
-  active,
-  type,
-  name,
-  checked,
-  onChange,
-  children,
-  className,
-}: {
-  active: boolean;
-  type: 'checkbox' | 'radio';
-  name?: string;
-  checked: boolean;
-  onChange: () => void;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <label className={`${styles.checkItem} ${active ? styles.checkItemActive : ''} ${className ?? ''}`}>
-      <input
-        type={type}
-        name={name}
-        className={styles.checkInputNative}
-        checked={checked}
-        onChange={onChange}
-      />
-      <span className={styles.checkMark} aria-hidden>
-        {active ? <IconCheck width={16} height={16} /> : null}
-      </span>
-      <span className={styles.checkLabel}>{children}</span>
-    </label>
-  );
-}
-
 export function CatalogPage() {
   const [params, setParams] = useSearchParams();
   const [categories, setCategories] = useState<CategoryNode[]>([]);
@@ -132,7 +66,6 @@ export function CatalogPage() {
   const [loading, setLoading] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const isDesktop = useMinWidth('(min-width: 768px)');
-  const filtersCollapsible = !isDesktop;
   const token = useAuthStore((s) => s.token);
   const addToCart = useCartStore((s) => s.addToCart);
   const openDrawer = useCartStore((s) => s.openDrawer);
@@ -205,17 +138,8 @@ export function CatalogPage() {
   }, [loadProducts]);
 
   useEffect(() => {
-    if (!filtersOpen || isDesktop) return;
-    document.body.style.overflow = 'hidden';
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setFiltersOpen(false);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => {
-      document.body.style.overflow = '';
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [filtersOpen, isDesktop]);
+    if (isDesktop && filtersOpen) setFiltersOpen(false);
+  }, [isDesktop, filtersOpen]);
 
   const setFilter = (key: string, value: string) => {
     const next = new URLSearchParams(params);
@@ -316,174 +240,28 @@ export function CatalogPage() {
   ]);
 
   const pageTitle = activeCategory?.name ?? (q ? `Поиск: ${q}` : 'Каталог');
+  const countLabel = productCountLabel(totalCount);
 
-  const sidebarContent = (
-    <>
-      <FilterSection
-        id="catalog-filter-category"
-        title="Категория"
-        collapsible={filtersCollapsible}
-        defaultOpen
-      >
-        <ul className={styles.checkList}>
-          <li>
-            <FilterCheck
-              active={!categorySlug}
-              type="radio"
-              name="category"
-              checked={!categorySlug}
-              onChange={() => setFilter('categorySlug', '')}
-            >
-              Все категории
-            </FilterCheck>
-          </li>
-          {categoryRoots.map((root) => (
-            <li key={root.id} className={styles.treeGroup}>
-              <FilterCheck
-                active={categorySlug === root.slug}
-                type="radio"
-                name="category"
-                checked={categorySlug === root.slug}
-                onChange={() => setFilter('categorySlug', root.slug)}
-              >
-                {root.name}
-              </FilterCheck>
-              {root.children.length > 0 && (
-                <ul className={styles.treeChildren}>
-                  {root.children.map((child) => (
-                    <li key={child.id}>
-                      <FilterCheck
-                        active={categorySlug === child.slug}
-                        type="radio"
-                        name="category"
-                        checked={categorySlug === child.slug}
-                        onChange={() => setFilter('categorySlug', child.slug)}
-                        className={styles.checkItemNested}
-                      >
-                        {child.name}
-                      </FilterCheck>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-        </ul>
-      </FilterSection>
-
-      <FilterSection
-        id="catalog-filter-price"
-        title="Цена, ₽"
-        collapsible={filtersCollapsible}
-        defaultOpen
-      >
-        <div className={styles.priceRow}>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={0}
-            placeholder="от"
-            value={minPrice}
-            onChange={(e) => setFilter('minPrice', e.target.value)}
-            className={styles.filterControl}
-            aria-label="Цена от"
-          />
-          <span className={styles.priceDash} aria-hidden>
-            —
-          </span>
-          <input
-            type="number"
-            inputMode="numeric"
-            min={0}
-            placeholder="до"
-            value={maxPrice}
-            onChange={(e) => setFilter('maxPrice', e.target.value)}
-            className={styles.filterControl}
-            aria-label="Цена до"
-          />
-        </div>
-      </FilterSection>
-
-      {facets.brands.length > 0 && (
-        <FilterSection
-          id="catalog-filter-brand"
-          title="Бренд"
-          collapsible={filtersCollapsible}
-          defaultOpen={selectedBrands.length > 0}
-        >
-          <ul className={`${styles.checkList} ${styles.checkListGrid}`}>
-            {facets.brands.map((brand) => (
-              <li key={brand}>
-                <FilterCheck
-                  active={selectedBrands.includes(brand)}
-                  type="checkbox"
-                  checked={selectedBrands.includes(brand)}
-                  onChange={() => toggleBrand(brand)}
-                >
-                  {brand}
-                </FilterCheck>
-              </li>
-            ))}
-          </ul>
-        </FilterSection>
-      )}
-
-      <FilterSection
-        id="catalog-filter-stock"
-        title="Наличие"
-        collapsible={filtersCollapsible}
-        defaultOpen={inStock}
-      >
-        <FilterCheck
-          active={inStock}
-          type="checkbox"
-          checked={inStock}
-          onChange={() => setFilter('inStock', inStock ? '' : 'true')}
-        >
-          В наличии
-        </FilterCheck>
-      </FilterSection>
-
-      {showAttributeFilters &&
-        facets.attributes.map((attr) => (
-          <FilterSection
-            key={attr.slug}
-            id={`catalog-filter-attr-${attr.slug}`}
-            title={attr.name}
-            collapsible={filtersCollapsible}
-            defaultOpen={Boolean(attrFilters[attr.slug])}
-          >
-            <ul className={`${styles.checkList} ${styles.checkListGrid}`}>
-              {attr.values.map((value) => (
-                <li key={value}>
-                  <FilterCheck
-                    active={attrFilters[attr.slug] === value}
-                    type="radio"
-                    name={`attr-${attr.slug}`}
-                    checked={attrFilters[attr.slug] === value}
-                    onChange={() => setAttrFilter(attr.slug, value)}
-                  >
-                    {value}
-                  </FilterCheck>
-                </li>
-              ))}
-              {attrFilters[attr.slug] && (
-                <li className={styles.clearAttrRow}>
-                  <button
-                    type="button"
-                    className={styles.clearAttr}
-                    onClick={() => setAttrFilter(attr.slug, '')}
-                  >
-                    Сбросить
-                  </button>
-                </li>
-              )}
-            </ul>
-          </FilterSection>
-        ))}
-
-      {q && <StatusBadge variant="neutral" label={`Поиск: ${q}`} />}
-    </>
+  const filterPanels = (
+    <CatalogFilterPanels
+      collapsible={!isDesktop}
+      categorySlug={categorySlug}
+      categoryRoots={categoryRoots}
+      minPrice={minPrice}
+      maxPrice={maxPrice}
+      selectedBrands={selectedBrands}
+      inStock={inStock}
+      attrFilters={attrFilters}
+      facets={facets}
+      showAttributeFilters={Boolean(showAttributeFilters)}
+      q={q}
+      onCategoryChange={(slug) => setFilter('categorySlug', slug)}
+      onMinPriceChange={(value) => setFilter('minPrice', value)}
+      onMaxPriceChange={(value) => setFilter('maxPrice', value)}
+      onToggleBrand={toggleBrand}
+      onInStockChange={(checked) => setFilter('inStock', checked ? 'true' : '')}
+      onAttrChange={setAttrFilter}
+    />
   );
 
   return (
@@ -559,46 +337,25 @@ export function CatalogPage() {
         </div>
       )}
 
-      {filtersOpen && !isDesktop && (
-        <div className={styles.filterOverlay} role="presentation" onClick={() => setFiltersOpen(false)} />
-      )}
+      <CatalogMobileFilters
+        open={!isDesktop && filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        onReset={hasActiveFilters ? resetFilters : undefined}
+        hasActiveFilters={hasActiveFilters}
+        totalCount={totalCount}
+        loading={loading}
+        resultsLabel={countLabel}
+      >
+        {filterPanels}
+      </CatalogMobileFilters>
 
       <div className={styles.layout}>
-        <aside
-          className={`${styles.sidebar} ${isDesktop ? 'gsp-panel' : ''} ${filtersOpen ? styles.sidebarOpen : ''}`}
-          aria-label="Фильтры"
-          role={!isDesktop ? 'dialog' : undefined}
-          aria-modal={!isDesktop && filtersOpen ? true : undefined}
-          aria-hidden={!isDesktop && !filtersOpen ? true : undefined}
-        >
-          {!isDesktop && <div className={styles.sheetGrab} aria-hidden />}
-          <div className={styles.sheetHead}>
+        {isDesktop && (
+          <aside className={`gsp-panel ${styles.sidebar}`} aria-label="Фильтры">
             <h2 className={styles.sidebarTitle}>Фильтры</h2>
-            <div className={styles.sheetHeadActions}>
-              {hasActiveFilters && (
-                <button type="button" className={styles.sheetReset} onClick={resetFilters}>
-                  Сбросить
-                </button>
-              )}
-              <button
-                type="button"
-                className={styles.sheetClose}
-                onClick={() => setFiltersOpen(false)}
-                aria-label="Закрыть фильтры"
-              >
-                <IconClose />
-              </button>
-            </div>
-          </div>
-          <div className={styles.sheetBody}>{sidebarContent}</div>
-          <div className={styles.sheetFooter}>
-            <Button className={styles.sheetApply} onClick={() => setFiltersOpen(false)}>
-              {loading
-                ? 'Загрузка…'
-                : `Показать ${totalCount} ${productCountLabel(totalCount)}`}
-            </Button>
-          </div>
-        </aside>
+            {filterPanels}
+          </aside>
+        )}
 
         <div className={styles.content}>
           {!loading && (
