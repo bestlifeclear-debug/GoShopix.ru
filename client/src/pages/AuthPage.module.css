@@ -8,6 +8,8 @@
   --auth-focus-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.22);
 
   width: 100%;
+  min-height: 0;
+  height: auto;
   font-family: var(--font-family);
   background: var(--color-bg-subtle);
   color: var(--auth-color-primary-text);

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthForm } from '../components/auth/AuthForm';
 import { useAuthStore } from '../stores/authStore';
@@ -10,13 +10,20 @@ export function AuthPage() {
   const token = useAuthStore((s) => s.token);
   const returnUrl = params.get('returnUrl') ?? '/account';
 
+  useLayoutEffect(() => {
+    document.documentElement.classList.add('auth-route');
+    document.documentElement.dataset.authPage = 'true';
+    return () => {
+      document.documentElement.classList.remove('auth-route');
+      delete document.documentElement.dataset.authPage;
+    };
+  }, []);
+
   useEffect(() => {
     const prev = document.title;
     document.title = 'Вход — GoShopix';
-    document.documentElement.classList.add('auth-route');
     return () => {
       document.title = prev;
-      document.documentElement.classList.remove('auth-route');
     };
   }, []);
 

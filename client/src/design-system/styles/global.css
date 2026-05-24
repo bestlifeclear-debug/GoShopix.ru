@@ -27,10 +27,18 @@ body {
   min-height: 100vh;
 }
 
-/* Страница входа: без растягивания на весь экран */
+/* Страница входа: контент по высоте, без «хвоста» до низа экрана */
+html:has([data-auth-page]),
 html.auth-route,
+html:has([data-auth-page]) body,
 html.auth-route body,
+html:has([data-auth-page]) #root,
 html.auth-route #root {
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+[data-auth-page] {
   min-height: 0 !important;
   height: auto;
 }
