@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import type { CategoryNode } from '../../api/types';
+import { IconCatalog } from '../../design-system/icons/Icons';
 import { categoryImageUrl } from '../../lib/categoryImages';
 import styles from './CategoryTiles.module.css';
+
+const ALL_CATEGORIES_LABEL = 'Все категории';
 
 interface CategoryTilesProps {
   categories: CategoryNode[];
@@ -19,11 +22,21 @@ export function CategoryTiles({ categories, variant = 'default' }: CategoryTiles
 
   if (tiles.length === 0) return null;
 
+  const showAllCategoriesTile = variant === 'mobile';
+
   return (
     <div
       className={`${styles.scroll} ${variant === 'mobile' ? styles.scrollMobile : ''}`}
       role="list"
     >
+      {showAllCategoriesTile && (
+        <Link to="/catalog" className={`${styles.tile} ${styles.tileAll}`} role="listitem">
+          <span className={styles.imageBox}>
+            <IconCatalog className={styles.catalogIcon} aria-hidden />
+          </span>
+          <span className={styles.label}>{ALL_CATEGORIES_LABEL}</span>
+        </Link>
+      )}
       {tiles.map((cat) => (
         <Link
           key={cat.id}

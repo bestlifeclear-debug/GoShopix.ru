@@ -162,6 +162,29 @@
   background: #eceef1;
 }
 
+.scrollMobile .tileAll .imageBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gradient-primary-horizontal);
+}
+
+.scrollMobile .tileAll .catalogIcon {
+  width: 34px;
+  height: 34px;
+  color: #ffffff;
+}
+
+.scrollMobile .tileAll:hover .imageBox,
+.scrollMobile .tileAll:active .imageBox {
+  background: var(--gradient-primary-horizontal);
+}
+
+.scrollMobile .tileAll:active .imageBox {
+  transform: scale(0.96);
+  opacity: 0.92;
+}
+
 @media (max-width: 1024px) {
   .scroll {
     grid-template-columns: repeat(4, minmax(0, 1fr));
