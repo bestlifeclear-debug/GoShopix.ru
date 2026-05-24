@@ -8,8 +8,6 @@ import { CatalogMenu } from '../CatalogMenu/CatalogMenu';
 import { HeaderDeliveryCity } from '../HeaderDeliveryCity/HeaderDeliveryCity';
 import { HeaderNotificationBell } from './HeaderNotificationBell';
 import { SearchBox, type SearchSuggestion } from '../SearchBox/SearchBox';
-import { useMaxWidth } from '../../hooks/useMaxWidth';
-import { MOBILE_HEADER_MEDIA } from '../../lib/mobileHeader';
 import { useAuthStore } from '../../stores/authStore';
 import { selectCartItemCount, useCartStore } from '../../stores/cartStore';
 import styles from './SiteHeader.module.css';
@@ -30,7 +28,6 @@ const STATIC_NAV: HeaderNavLink[] = [
 export function SiteHeader() {
   const navigate = useNavigate();
   const location = useLocation();
-  const isMobile = useMaxWidth(MOBILE_HEADER_MEDIA);
   const isAccountRoute = location.pathname === '/account';
   const hideMobileSearch = isAccountRoute;
   const [headerUnreadCount, setHeaderUnreadCount] = useState(0);
