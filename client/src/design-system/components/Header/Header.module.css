@@ -314,7 +314,7 @@
     position: sticky;
     top: 0;
     padding-top: env(safe-area-inset-top, 0px);
-    background: var(--header-mobile-gradient) !important;
+    background: transparent !important;
     border-bottom: none !important;
     box-shadow: none !important;
     filter: none !important;
@@ -327,8 +327,11 @@
   }
 
   .topBar,
-  .topBar .inner {
+  .topBar .inner,
+  .topRow {
     background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
     border: none !important;
     box-shadow: none !important;
   }
@@ -405,6 +408,13 @@
 
   .navBar {
     display: none;
+    height: 0;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    border: none;
+    background: transparent !important;
   }
 
   .topBar {

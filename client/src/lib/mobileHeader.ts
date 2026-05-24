@@ -4,7 +4,7 @@ import type { CSSProperties } from 'react';
 export const MOBILE_HEADER_MEDIA = '(max-width: 767px)';
 
 export const MOBILE_HEADER_GRADIENT =
-  'linear-gradient(180deg, #ffd6c1 0%, #ffb199 50%, #ff8878 100%)';
+  'linear-gradient(180deg, #ffb89a 0%, #ff9078 52%, #ff6e62 100%)';
 
 export const MOBILE_HEADER_SURFACE_STYLE: CSSProperties = {
   background: MOBILE_HEADER_GRADIENT,

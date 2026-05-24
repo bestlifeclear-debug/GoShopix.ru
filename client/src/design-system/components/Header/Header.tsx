@@ -1,10 +1,7 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useMaxWidth } from '../../../hooks/useMaxWidth';
-import {
-  MOBILE_HEADER_MEDIA,
-  MOBILE_HEADER_TRANSPARENT_STYLE,
-} from '../../../lib/mobileHeader';
+import { MOBILE_HEADER_MEDIA } from '../../../lib/mobileHeader';
 import { IconCart, IconCatalog, IconClose, IconHeart, IconMenu, IconUser } from '../../icons/Icons';
 import styles from './Header.module.css';
 
@@ -61,9 +58,6 @@ export function Header({
 }: HeaderProps) {
   const isMobile = useMaxWidth(MOBILE_HEADER_MEDIA);
   const hideSearchOnMobile = hideMobileSearch && isMobile;
-  const mobileBarStyle: CSSProperties | undefined = isMobile
-    ? MOBILE_HEADER_TRANSPARENT_STYLE
-    : undefined;
   const location = useLocation();
   const currentPath = `${location.pathname}${location.search}`;
 
@@ -86,11 +80,11 @@ export function Header({
 
   return (
     <header
+      data-header-root
       className={`${styles.header} ${hideMobileSearch ? styles.headerHideMobileSearch : ''} ${mobileHeaderCompact ? styles.headerMobileCompact : ''}`}
-      style={mobileBarStyle}
     >
-      <div className={styles.topBar} style={mobileBarStyle}>
-        <div className={`container ${styles.inner}`} style={mobileBarStyle}>
+      <div className={styles.topBar} data-header-layer>
+        <div className={`container ${styles.inner}`} data-header-layer>
           <div className={styles.topRow}>
             {onMenuToggle && (
               <button
@@ -112,7 +106,9 @@ export function Header({
             ) : null}
           </div>
           {!hideSearchOnMobile && searchSlot ? (
-            <div className={styles.searchGroup}>{searchSlot}</div>
+            <div className={styles.searchGroup} data-header-search>
+              {searchSlot}
+            </div>
           ) : null}
         </div>
       </div>
