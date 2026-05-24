@@ -329,7 +329,7 @@
 /* Мобильная корзина: компактный app-like layout */
 @media (max-width: 768px) {
   .cartContainer {
-    margin-top: var(--space-1);
+    margin-top: 0;
     padding-bottom: var(--space-2);
   }
 

@@ -51,7 +51,7 @@ export function MobileCartList({
 
   return (
     <div className="hidden max-md:flex flex-col gap-2">
-      <div className="flex items-center gap-0 px-0 pb-1">
+      <div className="flex items-center gap-0 px-0 pb-1 pt-0.5">
         <CartItemCheckbox
           checked={allSelected}
           onChange={() => onToggleAll()}
