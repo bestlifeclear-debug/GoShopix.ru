@@ -1,3 +1,10 @@
+:global(html.auth-route),
+:global(html.auth-route body),
+:global(html.auth-route #root) {
+  min-height: 0;
+  height: auto;
+}
+
 .page {
   --auth-color-primary-bg: #ffffff;
   --auth-color-primary-text: #121212;
@@ -88,18 +95,6 @@
 
   .backLink {
     font-size: 0.8125rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .page {
-    min-height: 100vh;
-  }
-
-  .main {
-    flex: 1;
-    justify-content: center;
-    padding: var(--space-3) var(--space-2);
   }
 }
 

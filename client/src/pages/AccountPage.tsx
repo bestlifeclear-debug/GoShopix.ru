@@ -13,7 +13,9 @@ import { AccountPlaceholder } from './account/AccountPlaceholder';
 import { AccountProfile } from './account/AccountProfile';
 import { AccountSupport } from './account/AccountSupport';
 import { AccountLayout } from '../components/layout/AccountLayout';
+import { AccountProfileBar } from './account/AccountProfileBar';
 import { AccountSidebar } from './account/AccountSidebar';
+import { useAccountMobileLayout } from './account/useAccountMobileLayout';
 import { SECTION_TITLES } from './account/constants';
 import type { AccountSection } from './account/types';
 import { resolveSection } from './account/utils';
@@ -31,6 +33,8 @@ export function AccountPage() {
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
   const fetchMe = useAuthStore((s) => s.fetchMe);
+  const logout = useAuthStore((s) => s.logout);
+  const isCompactLk = useAccountMobileLayout();
   const addToCart = useCartStore((s) => s.addToCart);
   const openDrawer = useCartStore((s) => s.openDrawer);
 
@@ -149,10 +153,18 @@ export function AccountPage() {
           userEmail={user?.email ?? undefined}
           isSeller={user?.role === 'SELLER'}
           onNavigate={navigateSection}
+          onLogout={logout}
         />
       }
     >
       <div className={styles.content}>
+        {isCompactLk && (
+          <AccountProfileBar
+            displayName={displayName}
+            avatarUrl={user?.profile?.avatarUrl}
+            onLogout={logout}
+          />
+        )}
         {showSectionHeading && (
           <header className={styles.sectionHead}>
             <button
@@ -178,6 +190,7 @@ export function AccountPage() {
                 onOpenOrder={openOrder}
                 onAllOrders={() => navigateSection('orders')}
                 onNavigateSection={navigateSection}
+                onLogout={logout}
                 onAddToCart={handleAddProductToCart}
               />
             </>

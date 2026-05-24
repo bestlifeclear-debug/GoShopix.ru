@@ -3,6 +3,7 @@ import type { AccountSection } from './types';
 import { SIDEBAR_NAV_MAIN } from './constants';
 import { IconStore } from './AccountIcons';
 import { useAccountMobileLayout } from './useAccountMobileLayout';
+import { AccountLogoutButton } from './AccountLogoutButton';
 import styles from '../AccountPage.module.css';
 
 interface AccountSidebarProps {
@@ -11,6 +12,7 @@ interface AccountSidebarProps {
   userEmail?: string;
   isSeller?: boolean;
   onNavigate: (id: AccountSection) => void;
+  onLogout: () => void;
 }
 
 export function AccountSidebar({
@@ -19,6 +21,7 @@ export function AccountSidebar({
   userEmail,
   isSeller,
   onNavigate,
+  onLogout,
 }: AccountSidebarProps) {
   const isCompactMobile = useAccountMobileLayout();
 
@@ -78,6 +81,10 @@ export function AccountSidebar({
               {userEmail}
             </p>
           )}
+          <div className={styles.sidebarLogoutWrap}>
+            <AccountLogoutButton onLogout={onLogout} size="sm" />
+            <span className={styles.sidebarLogoutLabel}>Выйти</span>
+          </div>
         </footer>
       </aside>
     </div>

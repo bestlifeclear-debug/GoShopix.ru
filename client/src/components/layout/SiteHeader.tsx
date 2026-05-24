@@ -6,7 +6,6 @@ import { Header, type HeaderNavLink } from '../../design-system';
 import { IconClose } from '../../design-system/icons/Icons';
 import { CatalogMenu } from '../CatalogMenu/CatalogMenu';
 import { HeaderDeliveryCity } from '../HeaderDeliveryCity/HeaderDeliveryCity';
-import { HeaderLogoutButton } from './HeaderLogoutButton';
 import { HeaderNotificationBell } from './HeaderNotificationBell';
 import { SearchBox, type SearchSuggestion } from '../SearchBox/SearchBox';
 import { useAuthStore } from '../../stores/authStore';
@@ -41,7 +40,6 @@ export function SiteHeader() {
   const [categories, setCategories] = useState<CategoryNode[]>([]);
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
   const cartCount = useCartStore((s) => selectCartItemCount(s, Boolean(token)));
   const fetchCart = useCartStore((s) => s.fetchCart);
   const openDrawer = useCartStore((s) => s.openDrawer);
@@ -151,10 +149,7 @@ export function SiteHeader() {
     ) : null;
 
   const headerAccountActions = token ? (
-    <>
-      <HeaderNotificationBell unreadCount={headerUnreadCount} />
-      <HeaderLogoutButton onLogout={logout} />
-    </>
+    <HeaderNotificationBell unreadCount={headerUnreadCount} />
   ) : null;
 
   const mobileTopTrailing = (
@@ -165,10 +160,7 @@ export function SiteHeader() {
   );
 
   const desktopAccountActions = token ? (
-    <>
-      <HeaderNotificationBell unreadCount={headerUnreadCount} variant="nav" />
-      <HeaderLogoutButton onLogout={logout} variant="nav" />
-    </>
+    <HeaderNotificationBell unreadCount={headerUnreadCount} variant="nav" />
   ) : null;
 
   return (

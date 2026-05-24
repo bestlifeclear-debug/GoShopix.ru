@@ -13,8 +13,10 @@ export function AuthPage() {
   useEffect(() => {
     const prev = document.title;
     document.title = 'Вход — GoShopix';
+    document.documentElement.classList.add('auth-route');
     return () => {
       document.title = prev;
+      document.documentElement.classList.remove('auth-route');
     };
   }, []);
 
@@ -27,7 +29,7 @@ export function AuthPage() {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-auth-page>
       <header className={styles.header}>
         <Link to="/" className={styles.logo} aria-label="GoShopix — на главную">
           <span className={styles.logoMark} aria-hidden>

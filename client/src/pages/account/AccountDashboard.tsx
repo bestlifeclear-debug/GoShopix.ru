@@ -1,21 +1,18 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
 import { IconChevronRight } from '../../design-system/icons/Icons';
 import type { Order, ProductListItem } from '../../api/types';
-import { cityDetectApi } from '../../api';
 import { ProductGrid } from '../../components/ProductGrid';
 import { Button } from '../../design-system';
-import { DEFAULT_DELIVERY_CITY, readDeliveryCity, writeDeliveryCity } from '../../lib/deliveryCity';
 import styles from '../AccountPage.module.css';
 import {
   IconAddress,
   IconFavorites,
-  IconLocation,
   IconOrders,
   IconProfile,
   IconSupport,
 } from './AccountIcons';
+import { AccountLogoutIcon } from './AccountLogoutButton';
 import type { AccountSection } from './types';
 import { useAccountMobileLayout } from './useAccountMobileLayout';
 import { isActiveOrder, orderShortId, statusLabel, statusTone } from './utils';
@@ -28,6 +25,7 @@ interface AccountDashboardProps {
   onOpenOrder: (orderId: string) => void;
   onAllOrders: () => void;
   onNavigateSection: (id: AccountSection) => void;
+  onLogout: () => void;
   onAddToCart?: (product: ProductListItem) => void | Promise<void>;
 }
 
@@ -50,40 +48,18 @@ const MOBILE_SETTINGS_ITEMS: {
   { id: 'support', label: 'Поддержка', icon: IconSupport },
 ];
 
-function profileInitial(name: string): string {
-  const trimmed = name.trim();
-  if (!trimmed) return '?';
-  return trimmed.charAt(0).toUpperCase();
-}
-
 export function AccountDashboard({
   displayName,
-  avatarUrl,
   orders,
   recommendations,
   onOpenOrder,
   onAllOrders,
   onNavigateSection,
+  onLogout,
   onAddToCart,
 }: AccountDashboardProps) {
   const isCompactMobile = useAccountMobileLayout();
-  const [deliveryCity, setDeliveryCity] = useState(() => readDeliveryCity() ?? DEFAULT_DELIVERY_CITY);
   const activeOrders = orders.filter(isActiveOrder).slice(0, 3);
-
-  useEffect(() => {
-    if (!isCompactMobile) return;
-    const stored = readDeliveryCity();
-    if (stored) {
-      setDeliveryCity(stored);
-      return;
-    }
-    void cityDetectApi.detect().then((res) => {
-      const detected = res.city?.trim();
-      if (!detected) return;
-      writeDeliveryCity(detected);
-      setDeliveryCity(detected);
-    });
-  }, [isCompactMobile]);
 
   const recommendationsSection = isCompactMobile ? (
     <section
@@ -146,30 +122,6 @@ export function AccountDashboard({
     return (
       <div className={`${styles.dashboard} ${styles.dashboardMobile}`}>
         <div className={styles.mobileDash}>
-          <header className={styles.mobileProfileHeader}>
-            <div className={styles.mobileAvatar} aria-hidden>
-              <span className={styles.mobileAvatarInner}>
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt="" />
-                ) : (
-                  profileInitial(displayName)
-                )}
-              </span>
-              <span className={styles.mobileAvatarAdd} aria-hidden>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </span>
-            </div>
-            <div className={styles.mobileProfileMeta}>
-              <p className={styles.mobileProfileName}>{displayName}</p>
-              <p className={styles.mobileLocationBadge}>
-                <IconLocation />
-                <span>{deliveryCity}</span>
-              </p>
-            </div>
-          </header>
-
           <section className={styles.mobileOrdersCard} aria-labelledby="mobile-orders-title">
             <h2 id="mobile-orders-title" className={styles.mobileOrdersTitle}>
               Активные заказы
@@ -266,6 +218,19 @@ export function AccountDashboard({
                     </li>
                   );
                 })}
+                <li>
+                  <button
+                    type="button"
+                    className={`${styles.mobileSettingsRow} ${styles.mobileSettingsRowLogout}`}
+                    onClick={onLogout}
+                    data-lk-logout
+                  >
+                    <span className={styles.mobileSettingsIconLogout} aria-hidden>
+                      <AccountLogoutIcon />
+                    </span>
+                    <span className={styles.mobileSettingsLabel}>Выйти</span>
+                  </button>
+                </li>
               </ul>
             </nav>
           </section>

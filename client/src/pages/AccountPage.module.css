@@ -300,6 +300,23 @@
   white-space: nowrap;
 }
 
+.sidebarLogoutWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--lk-border);
+}
+
+.sidebarLogoutLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--lk-text-muted);
+}
+
 .logoutBtn {
   width: 100%;
   padding: 12px 14px;
@@ -1051,6 +1068,26 @@
     font-size: 1.25rem;
     line-height: 1;
     color: #9ca3af;
+  }
+
+  .mobileSettingsRowLogout {
+    margin-top: 4px;
+    border-top: 1px solid #f3f4f6;
+  }
+
+  .mobileSettingsIconLogout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgb(var(--color-primary-rgb) / 0.08);
+  }
+
+  .mobileSettingsIconLogout svg {
+    width: 20px;
+    height: 20px;
   }
 
   .mobileLogoutBtn {
