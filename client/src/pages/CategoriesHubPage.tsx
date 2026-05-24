@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { PageContainer } from '../components/layout/PageContainer';
-import { categoryHubThemeClass } from '../components/CategoryTiles/categoryHubTheme';
 import { CATEGORY_HUB_TILES, catalogLinkForHubTile } from '../lib/categoryHubTiles';
-import { categoryImageUrl } from '../lib/categoryImages';
+import { CategoryHubIcon } from '../lib/categoryHubIcons';
 import styles from './CategoriesHubPage.module.css';
 
 function useMinWidth(query: string) {
@@ -37,17 +36,7 @@ export function CategoriesHubPage() {
           {CATEGORY_HUB_TILES.map((tile) => (
             <li key={tile.slug} className={styles.gridItem}>
               <Link to={catalogLinkForHubTile(tile.slug)} className={styles.card}>
-                <span
-                  className={`${styles.visual} ${categoryHubThemeClass(tile.slug, styles)}`}
-                  aria-hidden
-                >
-                  <img
-                    src={categoryImageUrl(tile.slug)}
-                    alt=""
-                    className={styles.productImage}
-                    loading="lazy"
-                  />
-                </span>
+                <CategoryHubIcon slug={tile.slug} className={styles.cardIcon} />
                 <span className={styles.cardLabel}>{tile.name}</span>
               </Link>
             </li>

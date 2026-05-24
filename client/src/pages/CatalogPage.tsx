@@ -401,9 +401,17 @@ export function CatalogPage() {
         </div>
 
         <div className={styles.mobileBar}>
+          <button type="button" className={styles.mobileFilterBtn} onClick={() => setFiltersOpen(true)}>
+            <IconFilter />
+            <span>Фильтры</span>
+            {activeFilterChips.length > 0 && (
+              <span className={styles.filterBadge}>{activeFilterChips.length}</span>
+            )}
+          </button>
+
           {!isDesktop && subcategoryChips.length > 0 && (
             <div
-              className={styles.subcategoryScroll}
+              className={`${styles.subcategoryScroll} ${styles.hideScrollbar}`}
               role="tablist"
               aria-label="Подкатегории"
             >
@@ -425,15 +433,11 @@ export function CatalogPage() {
             </div>
           )}
 
-          <button type="button" className={styles.mobileFilterBtn} onClick={() => setFiltersOpen(true)}>
-            <IconFilter />
-            <span>Фильтры</span>
-            {activeFilterChips.length > 0 && (
-              <span className={styles.filterBadge}>{activeFilterChips.length}</span>
-            )}
-          </button>
-
-          <div className={styles.mobileSort} role="tablist" aria-label="Сортировка">
+          <div
+            className={`${styles.mobileSort} ${styles.hideScrollbar}`}
+            role="tablist"
+            aria-label="Сортировка"
+          >
             {SORT_OPTIONS.map((o) => (
               <button
                 key={o.value}
