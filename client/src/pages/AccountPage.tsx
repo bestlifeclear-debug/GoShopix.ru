@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { IconMenu } from '../design-system/icons/Icons';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
-import { useAccountMobileLayout } from './account/useAccountMobileLayout';
 import { favoritesApi, notificationsApi, ordersApi, productsApi } from '../api/index';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
 import type { FavoriteItem, NotificationItem, NotificationSettings, Order, ProductListItem } from '../api/types';
@@ -37,8 +35,6 @@ export function AccountPage() {
   const addToCart = useCartStore((s) => s.addToCart);
   const openDrawer = useCartStore((s) => s.openDrawer);
 
-  const isCompactMobile = useAccountMobileLayout();
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [recommendations, setRecommendations] = useState<ProductListItem[]>([]);
@@ -80,19 +76,6 @@ export function AccountPage() {
     if (section === 'notifications') refreshNotifications();
     if (section === 'profile') notificationsApi.getSettings().then(setNotifSettings);
   }, [token, section, refreshNotifications]);
-
-  useEffect(() => {
-    setMobileNavOpen(false);
-  }, [section]);
-
-  useEffect(() => {
-    if (!mobileNavOpen || isCompactMobile) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [mobileNavOpen, isCompactMobile]);
 
   const navigateSection = (id: AccountSection, extra?: { orderId?: string }) => {
     const next = new URLSearchParams();
@@ -168,34 +151,20 @@ export function AccountPage() {
           isSeller={user?.role === 'SELLER'}
           onNavigate={navigateSection}
           onLogout={logout}
-          mobileOpen={mobileNavOpen}
-          onCloseMobile={() => setMobileNavOpen(false)}
         />
       }
     >
       <div className={styles.content}>
         {showSectionHeading && (
           <header className={styles.sectionHead}>
-            {isCompactMobile ? (
-              <button
-                type="button"
-                className={styles.backBtn}
-                aria-label="На главную личного кабинета"
-                onClick={() => navigateSection('dashboard')}
-              >
-                ‹
-              </button>
-            ) : (
-              <button
-                type="button"
-                className={styles.menuBtn}
-                aria-label="Открыть меню"
-                aria-expanded={mobileNavOpen}
-                onClick={() => setMobileNavOpen(true)}
-              >
-                <IconMenu />
-              </button>
-            )}
+            <button
+              type="button"
+              className={styles.backBtn}
+              aria-label="На главную личного кабинета"
+              onClick={() => navigateSection('dashboard')}
+            >
+              ‹
+            </button>
             <h1 className={styles.sectionTitle}>{sectionTitle}</h1>
           </header>
         )}
@@ -203,23 +172,6 @@ export function AccountPage() {
         <div className={styles.view} key={section}>
           {section === 'dashboard' && (
             <>
-              {!isCompactMobile && (
-                <button
-                  type="button"
-                  className={styles.mobileMenuTrigger}
-                  aria-label="Открыть меню личного кабинета"
-                  aria-expanded={mobileNavOpen}
-                  onClick={() => setMobileNavOpen(true)}
-                >
-                  <span className={styles.mobileMenuTriggerIcon} aria-hidden>
-                    <IconMenu />
-                  </span>
-                  <span className={styles.mobileMenuTriggerText}>Меню кабинета</span>
-                  <span className={styles.mobileMenuTriggerChevron} aria-hidden>
-                    ›
-                  </span>
-                </button>
-              )}
               <AccountDashboard
                 displayName={displayName}
                 avatarUrl={user?.profile?.avatarUrl}

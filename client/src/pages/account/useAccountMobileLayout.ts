@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-const MOBILE_LK_QUERY = '(max-width: 480px)';
+const MOBILE_LK_QUERY = '(max-width: 1024px)';
 
-/** Компактная мобильная вёрстка ЛК (целевое разрешение ~320px). */
+/** Плиточная вёрстка ЛК на телефонах и планшетах (до десктопного сайдбара). */
 export function useAccountMobileLayout() {
   const [isCompact, setIsCompact] = useState(
     () => typeof window !== 'undefined' && window.matchMedia(MOBILE_LK_QUERY).matches,

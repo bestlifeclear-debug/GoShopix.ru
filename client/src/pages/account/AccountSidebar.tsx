@@ -1,28 +1,9 @@
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import type { AccountSection } from './types';
 import { SIDEBAR_NAV_MAIN } from './constants';
 import { IconStore } from './AccountIcons';
 import { useAccountMobileLayout } from './useAccountMobileLayout';
 import styles from '../AccountPage.module.css';
-
-function useLkDrawerMode() {
-  const [isDrawer, setIsDrawer] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return window.matchMedia('(min-width: 481px) and (max-width: 1024px)').matches;
-  });
-
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 481px) and (max-width: 1024px)');
-    const sync = () => setIsDrawer(mq.matches);
-    sync();
-    mq.addEventListener('change', sync);
-    return () => mq.removeEventListener('change', sync);
-  }, []);
-
-  return isDrawer;
-}
 
 interface AccountSidebarProps {
   section: AccountSection;
@@ -31,8 +12,6 @@ interface AccountSidebarProps {
   isSeller?: boolean;
   onNavigate: (id: AccountSection) => void;
   onLogout: () => void;
-  mobileOpen: boolean;
-  onCloseMobile: () => void;
 }
 
 export function AccountSidebar({
@@ -42,40 +21,18 @@ export function AccountSidebar({
   isSeller,
   onNavigate,
   onLogout,
-  mobileOpen,
-  onCloseMobile,
 }: AccountSidebarProps) {
   const isCompactMobile = useAccountMobileLayout();
-  const isDrawer = useLkDrawerMode();
 
   if (isCompactMobile) {
     return null;
   }
 
-  const panel = (
-    <>
-      <button
-        type="button"
-        className={`${styles.sidebarBackdrop} ${mobileOpen ? styles.sidebarBackdropVisible : ''}`}
-        aria-hidden={!mobileOpen}
-        tabIndex={mobileOpen ? 0 : -1}
-        onClick={onCloseMobile}
-      />
-      <aside
-        className={`${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ''}`}
-        aria-label="Меню личного кабинета"
-        aria-hidden={isDrawer && !mobileOpen}
-      >
+  return (
+    <div className={styles.sidebarHost}>
+      <aside className={styles.sidebar} aria-label="Меню личного кабинета">
         <div className={styles.sidebarHead}>
           <p className={styles.sidebarTitle}>Личный кабинет</p>
-          <button
-            type="button"
-            className={styles.sidebarClose}
-            aria-label="Закрыть меню"
-            onClick={onCloseMobile}
-          >
-            ×
-          </button>
         </div>
 
         <nav className={styles.sidebarNav}>
@@ -108,12 +65,7 @@ export function AccountSidebar({
 
         {isSeller && (
           <div className={styles.sellerCabinetBlock}>
-            <Link
-              to="/seller/dashboard"
-              className={styles.sellerCabinetLink}
-              data-lk-seller-cabinet
-              onClick={onCloseMobile}
-            >
+            <Link to="/seller/dashboard" className={styles.sellerCabinetLink} data-lk-seller-cabinet>
               <span className={styles.sellerCabinetIcon} aria-hidden>
                 <IconStore />
               </span>
@@ -133,12 +85,6 @@ export function AccountSidebar({
           </button>
         </footer>
       </aside>
-    </>
+    </div>
   );
-
-  if (isDrawer) {
-    return createPortal(panel, document.body);
-  }
-
-  return <div className={styles.sidebarHost}>{panel}</div>;
 }

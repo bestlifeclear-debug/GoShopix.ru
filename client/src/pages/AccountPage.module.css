@@ -753,8 +753,8 @@
   color: var(--lk-accent);
 }
 
-/* —— Mobile LK dashboard (≤480px, soft premium) —— */
-@media (max-width: 480px) {
+/* —— Mobile / tablet LK dashboard (≤1024px, плиточная вёрстка) —— */
+@media (max-width: 1024px) {
   .dashboardMobile {
     gap: 0;
     padding-bottom: 0;
@@ -1181,6 +1181,41 @@
 
   [data-account-lk].theme-dark .mobileSettingsList li:not(:last-child) .mobileSettingsRow {
     border-bottom-color: var(--lk-border);
+  }
+
+  .content {
+    overflow-x: hidden;
+  }
+
+  .dashboard {
+    gap: 16px;
+  }
+
+  .sectionHead {
+    display: flex;
+    margin-bottom: 16px;
+  }
+
+  .backBtn {
+    display: inline-flex;
+  }
+
+  .sectionTitle {
+    font-size: 1.125rem;
+  }
+
+  .blockSubtitle {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  .recoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .recoCard {
+    padding: 8px 4px;
   }
 }
 
@@ -1682,135 +1717,6 @@
 
 .emptyState .textLink {
   display: inline;
-}
-
-/* Tablet drawer (481px–1024px) */
-@media (max-width: 1024px) and (min-width: 481px) {
-  .sidebar {
-    position: fixed;
-    z-index: 1200;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: min(300px, 88vw);
-    max-width: 100%;
-    border-radius: 0;
-    border-right: 1px solid var(--lk-border);
-    background: var(--lk-surface);
-    box-shadow: 8px 0 32px rgb(0 0 0 / 0.18);
-    transform: translateX(-100%);
-    visibility: hidden;
-    pointer-events: none;
-    transition:
-      transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
-      visibility 0.28s;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .sidebar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .sidebarOpen {
-    transform: translateX(0);
-    visibility: visible;
-    pointer-events: auto;
-  }
-
-  .sidebarClose {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .sidebarBackdrop {
-    display: block;
-    position: fixed;
-    inset: 0;
-    z-index: 1199;
-    border: none;
-    background: rgb(0 0 0 / 0.5);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.28s ease;
-    cursor: pointer;
-  }
-
-  .sidebarBackdropVisible {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .sectionHead {
-    display: flex;
-  }
-
-  .mobileMenuTrigger {
-    display: flex;
-  }
-
-  .menuBtn {
-    display: inline-flex;
-  }
-
-  .recoGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .welcomeBlock,
-  .recoBlock {
-    padding: 20px 16px 24px;
-  }
-
-  .welcomeTitle {
-    font-size: 1.375rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .content {
-    overflow-x: hidden;
-  }
-
-  .dashboard {
-    gap: 16px;
-  }
-
-  .sectionHead {
-    display: flex;
-    margin-bottom: 16px;
-  }
-
-  .backBtn {
-    display: inline-flex;
-  }
-
-  .menuBtn,
-  .mobileMenuTrigger {
-    display: none !important;
-  }
-
-  .sectionTitle {
-    font-size: 1.125rem;
-  }
-
-  .blockSubtitle {
-    font-size: 1rem;
-    margin-bottom: 12px;
-  }
-
-  .recoGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .recoCard {
-    padding: 8px 4px;
-  }
 }
 
 @media (max-width: 640px) {
