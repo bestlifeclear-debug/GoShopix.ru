@@ -21,6 +21,12 @@ import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import { PageContainer } from '../components/layout/PageContainer';
+import {
+  getSubchipsForRoot,
+  isSubchipActive,
+  resolveRootCategorySlug,
+  type SubcategoryChip,
+} from '../lib/categorySubchips';
 import styles from './CatalogPage.module.css';
 
 const SORT_OPTIONS = [
@@ -78,6 +84,7 @@ export function CatalogPage() {
   const page = Number(params.get('page') ?? 1);
   const sort = params.get('sort') ?? 'popular';
   const q = params.get('q') ?? '';
+  const catalogSection = params.get('section') ?? '';
 
   const filters = useMemo(() => parseCatalogFiltersFromSearchParams(params), [params]);
 
@@ -326,13 +333,37 @@ export function CatalogPage() {
     return chips;
   }, [filters, flatCategories]);
 
+  const rootCategorySlug = useMemo(
+    () => resolveRootCategorySlug(filters.categorySlugs, flatCategories),
+    [filters.categorySlugs, flatCategories],
+  );
+
+  const subcategoryChips = useMemo(
+    () => getSubchipsForRoot(rootCategorySlug),
+    [rootCategorySlug],
+  );
+
+  const selectSubcategoryChip = useCallback(
+    (chip: SubcategoryChip) => {
+      const next = new URLSearchParams(params);
+      next.delete('categorySlugs');
+      next.set('categorySlug', chip.categorySlug);
+      if (chip.section) next.set('section', chip.section);
+      else next.delete('section');
+      next.set('page', '1');
+      setParams(next);
+    },
+    [params, setParams],
+  );
+
   const pageTitle = useMemo(() => {
     if (q) return `Поиск: ${q}`;
+    if (!isDesktop) return 'Каталог';
     if (filters.categorySlugs.length === 1) {
       return flatCategories.find((c) => c.slug === filters.categorySlugs[0])?.name ?? 'Каталог';
     }
     return 'Каталог';
-  }, [q, filters.categorySlugs, flatCategories]);
+  }, [q, filters.categorySlugs, flatCategories, isDesktop]);
 
   const filterPanels = (
     <CatalogFilterPanels
@@ -370,6 +401,30 @@ export function CatalogPage() {
         </div>
 
         <div className={styles.mobileBar}>
+          {!isDesktop && subcategoryChips.length > 0 && (
+            <div
+              className={styles.subcategoryScroll}
+              role="tablist"
+              aria-label="Подкатегории"
+            >
+              {subcategoryChips.map((chip) => {
+                const active = isSubchipActive(chip, filters.categorySlugs, catalogSection);
+                return (
+                  <button
+                    key={chip.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    className={`${styles.subcategoryChip} ${active ? styles.subcategoryChipActive : ''}`}
+                    onClick={() => selectSubcategoryChip(chip)}
+                  >
+                    {chip.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           <button type="button" className={styles.mobileFilterBtn} onClick={() => setFiltersOpen(true)}>
             <IconFilter />
             <span>Фильтры</span>
@@ -377,6 +432,7 @@ export function CatalogPage() {
               <span className={styles.filterBadge}>{activeFilterChips.length}</span>
             )}
           </button>
+
           <div className={styles.mobileSort} role="tablist" aria-label="Сортировка">
             {SORT_OPTIONS.map((o) => (
               <button

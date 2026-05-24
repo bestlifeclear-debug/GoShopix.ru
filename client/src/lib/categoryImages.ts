@@ -10,6 +10,7 @@ export const CATEGORY_IMAGES: Record<string, string> = {
   sport: '/product-images/fittrack-2-1.svg',
   home: '/product-images/brewmaster-1.svg',
   appliances: '/product-images/brewmaster-1.svg',
+  cosmetics: '/product-images/basic-cotton-tee-1.svg',
 };
 
 export function categoryImageUrl(slug: string): string {

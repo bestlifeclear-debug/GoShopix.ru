@@ -18,7 +18,11 @@ function isActive(pathname: string, search: string, key: NavKey): boolean {
     case 'home':
       return pathname === '/';
     case 'catalog':
-      return pathname === '/catalog' || pathname.startsWith('/product/');
+      return (
+        pathname === '/categories' ||
+        pathname === '/catalog' ||
+        pathname.startsWith('/product/')
+      );
     case 'cart':
       return pathname === '/cart' || pathname.startsWith('/checkout');
     case 'favorites': {
@@ -65,7 +69,7 @@ export function MobileBottomNav() {
     {
       key: 'catalog',
       label: 'Каталог',
-      to: '/catalog',
+      to: '/categories',
       icon: <IconCatalog className={styles.icon} />,
     },
     {

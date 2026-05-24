@@ -3,6 +3,7 @@ import { ScrollToTop } from './components/ScrollToTop';
 import { MainLayout } from './components/layout/MainLayout';
 import { HomePage } from './pages/HomePage';
 import { CatalogPage } from './pages/CatalogPage';
+import { CategoriesHubPage } from './pages/CategoriesHubPage';
 import { ProductPage } from './pages/ProductPage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
           { index: true, element: <HomePage /> },
+          { path: 'categories', element: <CategoriesHubPage /> },
           { path: 'catalog', element: <CatalogPage /> },
           { path: 'product/:id', element: <ProductPage /> },
           { path: 'cart', element: <CartPage /> },

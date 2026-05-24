@@ -6,9 +6,9 @@ describe('Главная страница', () => {
     cy.get('input[aria-label="Поиск"]').should('be.visible');
   });
 
-  it('переходит в каталог', () => {
+  it('переходит в хаб категорий из нижней навигации', () => {
     cy.visit('/');
-    cy.contains('a', 'Каталог').click();
-    cy.url().should('include', '/catalog');
+    cy.get('nav[aria-label="Основная навигация"]').contains('a', 'Каталог').click();
+    cy.url().should('include', '/categories');
   });
 });

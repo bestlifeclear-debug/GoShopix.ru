@@ -9,6 +9,7 @@ export const EXTRA_ROOT_CATEGORIES = [
   { name: 'Спорт', slug: 'sport', sortOrder: 6 },
   { name: 'Дом', slug: 'home', sortOrder: 7 },
   { name: 'Бытовая техника', slug: 'appliances', sortOrder: 8 },
+  { name: 'Косметика', slug: 'cosmetics', sortOrder: 9 },
 ] as const;
 
 export async function ensureExtraCategories(): Promise<number> {

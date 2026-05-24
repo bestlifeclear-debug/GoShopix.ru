@@ -10,13 +10,18 @@ const ALL_CATEGORIES_LABEL = 'Все категории';
 interface CategoryTilesProps {
   categories: CategoryNode[];
   variant?: 'default' | 'mobile';
+  allCategoriesTo?: string;
 }
 
 function sortByOrder(a: CategoryNode, b: CategoryNode) {
   return a.sortOrder - b.sortOrder || a.name.localeCompare(b.name, 'ru');
 }
 
-export function CategoryTiles({ categories, variant = 'default' }: CategoryTilesProps) {
+export function CategoryTiles({
+  categories,
+  variant = 'default',
+  allCategoriesTo = '/categories',
+}: CategoryTilesProps) {
   const roots = categories.filter((c) => !c.parentId).sort(sortByOrder);
   const children = categories.flatMap((c) => c.children).sort(sortByOrder);
   const tiles = variant === 'mobile' ? roots.slice(0, 12) : [...roots, ...children];
@@ -31,7 +36,7 @@ export function CategoryTiles({ categories, variant = 'default' }: CategoryTiles
       role="list"
     >
       {showAllCategoriesTile && (
-        <Link to="/catalog" className={`${styles.tile} ${styles.tileAll}`} role="listitem">
+        <Link to={allCategoriesTo} className={`${styles.tile} ${styles.tileAll}`} role="listitem">
           <span className={styles.imageBox}>
             <IconCatalog className={styles.catalogIcon} aria-hidden />
           </span>
@@ -74,7 +79,7 @@ interface CategorySectionProps {
 }
 
 /** Секция категорий на главной (мобилка): заголовок + горизонтальный скролл */
-export function CategorySection({ categories, catalogLink = '/catalog' }: CategorySectionProps) {
+export function CategorySection({ categories, catalogLink = '/categories' }: CategorySectionProps) {
   const roots = categories.filter((c) => !c.parentId);
   if (roots.length === 0) return null;
 
@@ -89,7 +94,7 @@ export function CategorySection({ categories, catalogLink = '/catalog' }: Catego
         </Link>
       </div>
       <div className={styles.trackWrap}>
-        <CategoryTiles categories={categories} variant="mobile" />
+        <CategoryTiles categories={categories} variant="mobile" allCategoriesTo={catalogLink} />
       </div>
     </section>
   );

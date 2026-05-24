@@ -101,6 +101,21 @@ function IconHome(props: IconProps) {
   );
 }
 
+function IconCosmetics(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <path
+        d="M8 4h8l1 14H7L8 4Z"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinejoin="round"
+      />
+      <path d="M9 8h6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+      <ellipse cx="12" cy="19" rx="4" ry="1.25" stroke="currentColor" strokeWidth="1.75" />
+    </svg>
+  );
+}
+
 function IconAppliance(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
@@ -131,6 +146,7 @@ const ICON_BY_SLUG: Record<string, ComponentType<IconProps>> = {
   sport: IconDumbbell,
   home: IconHome,
   appliances: IconAppliance,
+  cosmetics: IconCosmetics,
 };
 
 const THEME_BY_SLUG: Record<string, string> = {
@@ -144,6 +160,7 @@ const THEME_BY_SLUG: Record<string, string> = {
   sport: styles.catSport,
   home: styles.catHome,
   appliances: styles.catAppliances,
+  cosmetics: styles.catCosmetics,
 };
 
 interface CategoryTileIconProps {
