@@ -60,8 +60,11 @@ export function optimisticAddToCart(
 }
 
 export function optimisticUpdateQuantity(cart: Cart, itemId: string, quantity: number): Cart {
+  const variantId = itemId.startsWith('opt-') ? itemId.slice(4) : null;
   const items = cart.items.map((item) => {
-    if (item.id !== itemId) return item;
+    const matches =
+      item.id === itemId || (variantId != null && item.variant.id === variantId);
+    if (!matches) return item;
     return {
       ...item,
       quantity,
@@ -72,6 +75,26 @@ export function optimisticUpdateQuantity(cart: Cart, itemId: string, quantity: n
 }
 
 export function optimisticRemoveItem(cart: Cart, itemId: string): Cart {
-  const items = cart.items.filter((item) => item.id !== itemId);
+  const variantId = itemId.startsWith('opt-') ? itemId.slice(4) : null;
+  const items = cart.items.filter((item) => {
+    if (item.id === itemId) return false;
+    if (variantId && item.variant.id === variantId) return false;
+    return true;
+  });
   return recalcCart(items, cart.id);
+}
+
+/** Оптимистичный id `opt-{variantId}` → реальный id строки корзины с сервера. */
+export function resolveCartItemId(cart: Cart | null, itemId: string): string {
+  if (!itemId.startsWith('opt-')) return itemId;
+  const variantId = itemId.slice(4);
+  const match = cart?.items.find(
+    (item) => item.variant.id === variantId && !item.id.startsWith('opt-'),
+  );
+  return match?.id ?? itemId;
+}
+
+export function variantIdFromCartItemId(itemId: string, cart: Cart | null): string | null {
+  if (itemId.startsWith('opt-')) return itemId.slice(4);
+  return cart?.items.find((item) => item.id === itemId)?.variant.id ?? null;
 }

@@ -19,7 +19,12 @@ import {
   optimisticAddToCart,
   optimisticRemoveItem,
   optimisticUpdateQuantity,
+  resolveCartItemId,
+  variantIdFromCartItemId,
 } from '../lib/optimisticCart.js';
+
+/** Варианты, удалённые до завершения POST /cart/items — дочистить после add. */
+const variantsPendingRemove = new Set<string>();
 import { showCartAddedToast, showInfoToast } from './toastStore.js';
 import { track } from '../lib/analytics.js';
 import { useAuthStore } from './authStore.js';
@@ -156,6 +161,27 @@ export const useCartStore = create<CartState>()(
       }
       try {
         const cart = await cartApi.addItem(variantId, quantity);
+        if (variantsPendingRemove.has(variantId)) {
+          variantsPendingRemove.delete(variantId);
+          const line = cart.items.find((i) => i.variant.id === variantId);
+          if (line) {
+            const cleaned = await cartApi.removeItem(line.id);
+            set({ cart: cleaned, error: null });
+            return;
+          }
+          const items = cart.items.filter((i) => i.variant.id !== variantId);
+          const subtotal = items.reduce((sum, i) => sum + i.lineTotal, 0);
+          set({
+            cart: {
+              ...cart,
+              items,
+              itemCount: items.reduce((n, i) => n + i.quantity, 0),
+              subtotal,
+            },
+            error: null,
+          });
+          return;
+        }
         set({ cart, error: null });
         showCartAddedToast();
         track('add_to_cart', { variantId, quantity });
@@ -185,11 +211,12 @@ export const useCartStore = create<CartState>()(
     if (isAuthenticated()) {
       set({ pendingCartOps: get().pendingCartOps + 1 });
       const previousCart = get().cart;
+      const resolvedId = resolveCartItemId(previousCart, itemId);
       if (previousCart) {
         set({ cart: optimisticUpdateQuantity(previousCart, itemId, quantity) });
       }
       try {
-        const cart = await cartApi.updateItem(itemId, quantity);
+        const cart = await cartApi.updateItem(resolvedId, quantity);
         set({ cart });
       } catch (e) {
         set({ cart: previousCart });
@@ -207,15 +234,65 @@ export const useCartStore = create<CartState>()(
 
   removeItem: async (itemId) => {
     if (isAuthenticated()) {
-      set({ pendingCartOps: get().pendingCartOps + 1 });
       const previousCart = get().cart;
+      const resolvedId = resolveCartItemId(previousCart, itemId);
+      const variantId = variantIdFromCartItemId(itemId, previousCart);
+
+      if (resolvedId.startsWith('opt-') && variantId) {
+        variantsPendingRemove.add(variantId);
+        if (previousCart) {
+          set({ cart: optimisticRemoveItem(previousCart, itemId) });
+        }
+        if (get().pendingCartOps > 0) {
+          return;
+        }
+        set({ pendingCartOps: get().pendingCartOps + 1 });
+        try {
+          const fresh = await cartApi.get();
+          const line = fresh.items.find((i) => i.variant.id === variantId);
+          if (line) {
+            const cart = await cartApi.removeItem(line.id);
+            set({ cart });
+          } else {
+            set({ cart: fresh });
+          }
+        } catch (e) {
+          set({ cart: previousCart });
+          throw e;
+        } finally {
+          variantsPendingRemove.delete(variantId);
+          set({ pendingCartOps: Math.max(0, get().pendingCartOps - 1) });
+        }
+        return;
+      }
+
+      set({ pendingCartOps: get().pendingCartOps + 1 });
       if (previousCart) {
         set({ cart: optimisticRemoveItem(previousCart, itemId) });
       }
       try {
-        const cart = await cartApi.removeItem(itemId);
+        const cart = await cartApi.removeItem(resolvedId);
         set({ cart });
       } catch (e) {
+        if (
+          e instanceof ApiClientError &&
+          e.status === 404 &&
+          variantId
+        ) {
+          try {
+            const fresh = await cartApi.get();
+            const line = fresh.items.find((i) => i.variant.id === variantId);
+            if (line) {
+              const cart = await cartApi.removeItem(line.id);
+              set({ cart });
+              return;
+            }
+            set({ cart: fresh });
+            return;
+          } catch {
+            /* fall through to rollback */
+          }
+        }
         set({ cart: previousCart });
         throw e;
       } finally {
