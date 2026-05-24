@@ -13,6 +13,7 @@ export function MainLayout() {
   const { pathname, search } = useLocation();
   const routeKey = `${pathname}${search}`;
   const isCartRoute = pathname === '/cart';
+  const isCategoriesHubRoute = pathname === '/categories';
   const initGuestCart = useCartStore((s) => s.initGuestCart);
 
   useEffect(() => {
@@ -20,7 +21,9 @@ export function MainLayout() {
   }, [initGuestCart]);
 
   return (
-    <div className={`${styles.layout} ${isCartRoute ? styles.layoutCart : ''}`}>
+    <div
+      className={`${styles.layout} ${isCartRoute ? styles.layoutCart : ''} ${isCategoriesHubRoute ? styles.layoutCategoriesHub : ''}`}
+    >
       <SiteHeader />
       <main className={styles.main}>
         <div key={routeKey} className={pageTransitionStyles.wrap}>

@@ -13,7 +13,8 @@
 }
 
 @media (max-width: 768px) {
-  .layoutCart .footerWrap {
+  .layoutCart .footerWrap,
+  .layoutCategoriesHub .footerWrap {
     display: none;
   }
 

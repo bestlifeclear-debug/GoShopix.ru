@@ -28,11 +28,9 @@ export function CategoriesHubPage() {
   return (
     <PageContainer className={styles.pageWrap}>
       <div className={styles.page}>
-        <header className={styles.header}>
-          <h1 className={styles.title}>Все категории</h1>
-        </header>
+        <h1 className={styles.srOnly}>Все категории</h1>
 
-        <ul className={styles.grid} aria-label="Главные категории">
+        <ul className={styles.grid} aria-label="Все категории">
           {CATEGORY_HUB_TILES.map((tile) => (
             <li key={tile.slug} className={styles.gridItem}>
               <Link to={catalogLinkForHubTile(tile.slug)} className={styles.card}>
