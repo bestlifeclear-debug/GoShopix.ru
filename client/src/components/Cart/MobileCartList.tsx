@@ -6,6 +6,7 @@ import type { CartItem } from '../../api/types';
 import { CART_DELIVERY_ESTIMATE_FROM, type CartLineTotals } from '../../lib/checkoutSelection';
 import { formatEstimatedDeliveryDate } from '../../lib/cartDeliveryDate';
 import { CartItemCheckbox } from './CartItemCheckbox';
+import styles from './MobileCartList.module.css';
 
 interface MobileCartListProps {
   items: CartItem[];
@@ -65,7 +66,7 @@ export function MobileCartList({
         </button>
       </div>
 
-      <ul className="m-0 flex list-none flex-col gap-2 p-0 pb-[calc(11.5rem+env(safe-area-inset-bottom,0px))]">
+      <ul className="m-0 flex list-none flex-col gap-2 p-0 pb-[calc(14.5rem+env(safe-area-inset-bottom,0px))]">
         {items.map((item) => {
           const isSelected = selectedIds.has(item.id);
           const compareAt = compareAtByProduct[item.product.id];
@@ -115,7 +116,7 @@ export function MobileCartList({
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                   <Link
                     to={`/product/${item.product.id}`}
-                    className="line-clamp-2 text-sm font-semibold leading-snug text-gray-900 no-underline visited:text-gray-900"
+                    className={styles.productName}
                   >
                     {item.product.name}
                   </Link>
@@ -170,51 +171,66 @@ export function MobileCartList({
       </ul>
 
       <div
-        className="fixed left-0 right-0 z-40 flex flex-col gap-2 border-t border-gray-100 bg-white px-3 pt-2.5 pb-3 shadow-[0_-4px_15px_rgba(0,0,0,0.05)]"
+        className={styles.stickyPanel}
         style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}
       >
-        <div className="flex flex-col gap-1">
+        <div className={styles.summaryBlock}>
           {lineTotals.discount > 0 && hasSelection ? (
-            <div className="flex items-center justify-between gap-2 text-xs">
-              <span className="text-emerald-700">Экономия</span>
-              <span className="font-semibold text-emerald-700 tabular-nums">
-                −{formatPrice(lineTotals.discount)}
-              </span>
+            <div className={`${styles.summaryRow} ${styles.summaryRowSavings}`}>
+              <span>Экономия</span>
+              <strong>−{formatPrice(lineTotals.discount)}</strong>
             </div>
           ) : null}
-          <div className="flex items-center justify-between gap-2 text-xs text-gray-600">
+          <div className={styles.deliveryRow}>
             <span>{deliverySummaryLine}</span>
             {!lineTotals.freeDelivery && lineTotals.subtotal > 0 && hasSelection ? (
-              <span className="text-right text-[11px] leading-tight text-gray-500">
-                ещё {formatPrice(lineTotals.deliveryRemaining)} до бесплатной
+              <span className={styles.deliveryHint}>
+                Ещё {formatPrice(lineTotals.deliveryRemaining)} до бесплатной доставки
               </span>
             ) : null}
           </div>
-          <div className="flex items-baseline justify-between gap-2 border-t border-gray-100 pt-1.5">
-            <span className="text-sm font-medium text-gray-900">
+          <div className={styles.totalRow}>
+            <span className={styles.totalLabel}>
               К оплате{selectedCount > 0 ? ` · ${selectedCount} шт.` : ''}
             </span>
-            <strong className="text-xl font-bold leading-tight text-gray-900 tabular-nums">
-              {formatPrice(lineTotals.subtotal)}
-            </strong>
+            <strong className={styles.totalAmount}>{formatPrice(lineTotals.subtotal)}</strong>
           </div>
         </div>
+
+        <div className={styles.payBadges} aria-label="Способы оплаты: Мир, СБП">
+          <span className={styles.payBadge}>
+            <img
+              src="/payment-icons/mir.png"
+              alt="Мир"
+              className={styles.payMir}
+              width={56}
+              height={20}
+            />
+          </span>
+          <span className={styles.payBadge}>
+            <img
+              src="/payment-icons/sbp.png"
+              alt="СБП"
+              className={styles.paySbp}
+              width={22}
+              height={22}
+            />
+          </span>
+        </div>
+
         <button
           type="button"
-          className="w-full cursor-pointer rounded-xl border-0 bg-gradient-to-r from-[#FF7062] to-[#FF3D2E] py-3 text-sm font-semibold text-white transition-[filter,transform] duration-150 hover:brightness-[1.03] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+          className={styles.checkoutBtn}
           onClick={onCheckout}
           disabled={!hasSelection}
         >
           Перейти к оформлению
         </button>
-        <p className="m-0 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5 text-center text-[11px] leading-snug text-gray-500">
-          <span className="inline-flex items-center gap-1">
-            <img src="/payment-icons/mir.png" alt="" width={22} height={14} className="h-3.5 w-auto" />
-            <img src="/payment-icons/sbp.png" alt="" width={14} height={14} className="h-3.5 w-3.5" />
-          </span>
-          <span>Безопасная оплата</span>
-          <span aria-hidden>·</span>
-          <Link to="/privacy" className="text-gray-500 underline-offset-2 hover:underline">
+
+        <p className={styles.trustLine}>
+          Безопасная оплата
+          <span aria-hidden> · </span>
+          <Link to="/privacy" className={styles.trustLink}>
             Возврат 14 дней
           </Link>
         </p>
