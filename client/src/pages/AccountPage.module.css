@@ -1081,13 +1081,11 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    border-radius: 10px;
-    background: rgb(var(--color-primary-rgb) / 0.08);
   }
 
   .mobileSettingsIconLogout svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
   }
 
   .mobileLogoutBtn {

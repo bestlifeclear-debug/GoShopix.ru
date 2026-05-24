@@ -47,7 +47,7 @@ export function AccountLogoutButton({ onLogout, className = '', size = 'md' }: A
       className={`${styles.btn} ${size === 'sm' ? styles.btnSm : ''} ${className}`.trim()}
       onClick={onLogout}
       aria-label="Выйти из аккаунта"
-      data-lk-logout
+      data-account-logout-icon
       data-testid="account-logout"
     >
       <AccountLogoutIcon className={styles.icon} />

@@ -27,6 +27,14 @@ body {
   min-height: 100vh;
 }
 
+/* Страница входа: без растягивания на весь экран */
+html.auth-route,
+html.auth-route body,
+html.auth-route #root {
+  min-height: 0 !important;
+  height: auto;
+}
+
 /* Единая сетка контента (Ozon / Wildberries): 1400px + боковые отступы */
 .container {
   box-sizing: border-box;

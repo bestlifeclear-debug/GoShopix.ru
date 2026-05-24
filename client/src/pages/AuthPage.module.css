@@ -1,10 +1,3 @@
-:global(html.auth-route),
-:global(html.auth-route body),
-:global(html.auth-route #root) {
-  min-height: 0;
-  height: auto;
-}
-
 .page {
   --auth-color-primary-bg: #ffffff;
   --auth-color-primary-text: #121212;
@@ -14,8 +7,7 @@
   --auth-color-hint: #666666;
   --auth-focus-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.22);
 
-  display: flex;
-  flex-direction: column;
+  width: 100%;
   font-family: var(--font-family);
   background: var(--color-bg-subtle);
   color: var(--auth-color-primary-text);
@@ -79,12 +71,10 @@
 }
 
 .main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
   width: 100%;
-  padding: var(--space-2) var(--space-2);
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: var(--space-2) var(--space-2) var(--space-2);
   box-sizing: border-box;
 }
 
