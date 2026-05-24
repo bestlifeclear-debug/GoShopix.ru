@@ -300,21 +300,55 @@
   white-space: nowrap;
 }
 
-.sidebarLogoutWrap {
-  display: flex;
+.sidebarLogoutBtn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   width: 100%;
   margin-top: 4px;
-  padding-top: 12px;
-  border-top: 1px solid var(--lk-border);
+  padding: 12px 16px;
+  border: none;
+  border-radius: 10px;
+  background: var(--gradient-primary-horizontal);
+  font-family: var(--font-family);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.28);
+  transition:
+    filter var(--lk-transition),
+    transform var(--lk-transition),
+    box-shadow var(--lk-transition);
+}
+
+.sidebarLogoutBtn:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.35);
+  transform: translateY(-1px);
+}
+
+.sidebarLogoutBtn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.sidebarLogoutBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--color-focus-glow);
 }
 
 .sidebarLogoutLabel {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--lk-text-muted);
+  color: #ffffff;
+}
+
+.sidebarLogoutIcon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  color: #ffffff;
 }
 
 .logoutBtn {
@@ -1070,51 +1104,6 @@
     color: #9ca3af;
   }
 
-  .mobileSettingsRowLogout {
-    margin-top: 4px;
-    border-top: 1px solid #f3f4f6;
-  }
-
-  .mobileSettingsIconLogout {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-  }
-
-  .mobileSettingsIconLogout svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .mobileLogoutBtn {
-    display: block;
-    width: 100%;
-    margin: 4px 0 0;
-    padding: 14px 16px;
-    border: none;
-    border-radius: 16px;
-    background: var(--gradient-primary-horizontal);
-    font-family: var(--font-family);
-    font-size: 1rem;
-    font-weight: 600;
-    color: #ffffff;
-    text-align: center;
-    cursor: pointer;
-    box-sizing: border-box;
-    box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.28);
-    transition:
-      opacity var(--transition-fast),
-      transform var(--transition-fast),
-      box-shadow var(--transition-fast);
-  }
-
-  .mobileLogoutBtn:active {
-    opacity: 0.92;
-    transform: scale(0.99);
-  }
-
   .mobileRecoSection {
     display: flex;
     flex-direction: column;
@@ -1189,12 +1178,6 @@
 
   [data-account-lk].theme-dark .mobileDash {
     background: var(--lk-bg-muted);
-  }
-
-  [data-account-lk].theme-dark .mobileLogoutBtn {
-    background: var(--lk-nav-primary-bg);
-    color: var(--lk-nav-on-primary);
-    box-shadow: var(--lk-nav-shadow);
   }
 
   [data-account-lk].theme-dark .mobileAvatarAdd {

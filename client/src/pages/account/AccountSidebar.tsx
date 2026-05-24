@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 import type { AccountSection } from './types';
 import { SIDEBAR_NAV_MAIN } from './constants';
 import { IconStore } from './AccountIcons';
+import { AccountLogoutIcon } from './AccountLogoutButton';
 import { useAccountMobileLayout } from './useAccountMobileLayout';
-import { AccountLogoutButton } from './AccountLogoutButton';
 import styles from '../AccountPage.module.css';
 
 interface AccountSidebarProps {
@@ -81,10 +81,16 @@ export function AccountSidebar({
               {userEmail}
             </p>
           )}
-          <div className={styles.sidebarLogoutWrap}>
-            <AccountLogoutButton onLogout={onLogout} size="sm" />
+          <button
+            type="button"
+            className={styles.sidebarLogoutBtn}
+            onClick={onLogout}
+            data-lk-logout
+            data-testid="account-sidebar-logout"
+          >
             <span className={styles.sidebarLogoutLabel}>Выйти</span>
-          </div>
+            <AccountLogoutIcon className={styles.sidebarLogoutIcon} variant="white" />
+          </button>
         </footer>
       </aside>
     </div>

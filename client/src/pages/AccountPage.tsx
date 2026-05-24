@@ -190,7 +190,6 @@ export function AccountPage() {
                 onOpenOrder={openOrder}
                 onAllOrders={() => navigateSection('orders')}
                 onNavigateSection={navigateSection}
-                onLogout={logout}
                 onAddToCart={handleAddProductToCart}
               />
             </>

@@ -3,9 +3,10 @@ import styles from './AccountLogoutButton.module.css';
 
 interface AccountLogoutIconProps {
   className?: string;
+  variant?: 'gradient' | 'white';
 }
 
-export function AccountLogoutIcon({ className }: AccountLogoutIconProps) {
+export function AccountLogoutIcon({ className, variant = 'gradient' }: AccountLogoutIconProps) {
   const gradientId = useId().replace(/:/g, '');
 
   return (
@@ -17,15 +18,17 @@ export function AccountLogoutIcon({ className }: AccountLogoutIconProps) {
       fill="none"
       aria-hidden
     >
-      <defs>
-        <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#ff7062" />
-          <stop offset="100%" stopColor="#ff3d2e" />
-        </linearGradient>
-      </defs>
+      {variant === 'gradient' && (
+        <defs>
+          <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#ff7062" />
+            <stop offset="100%" stopColor="#ff3d2e" />
+          </linearGradient>
+        </defs>
+      )}
       <path
         d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5M15 12H3M10 7l5 5"
-        stroke={`url(#${gradientId})`}
+        stroke={variant === 'white' ? 'currentColor' : `url(#${gradientId})`}
         strokeWidth="1.75"
         strokeLinecap="round"
         strokeLinejoin="round"

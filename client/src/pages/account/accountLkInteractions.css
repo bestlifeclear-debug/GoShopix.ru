@@ -67,16 +67,21 @@
 }
 
 [data-account-lk] [data-lk-logout] {
-  background: transparent !important;
-  color: inherit !important;
-  box-shadow: none !important;
+  background: var(--gradient-primary-horizontal) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.28) !important;
   font-weight: 600;
-  transition: opacity 0.2s ease;
+  transition:
+    filter 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 @media (hover: hover) {
   [data-account-lk] [data-lk-logout]:hover {
-    opacity: 0.85;
+    filter: brightness(1.05);
+    box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.35) !important;
+    transform: translateY(-1px);
   }
 }
 

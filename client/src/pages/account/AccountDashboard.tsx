@@ -12,7 +12,6 @@ import {
   IconProfile,
   IconSupport,
 } from './AccountIcons';
-import { AccountLogoutIcon } from './AccountLogoutButton';
 import type { AccountSection } from './types';
 import { useAccountMobileLayout } from './useAccountMobileLayout';
 import { isActiveOrder, orderShortId, statusLabel, statusTone } from './utils';
@@ -25,7 +24,6 @@ interface AccountDashboardProps {
   onOpenOrder: (orderId: string) => void;
   onAllOrders: () => void;
   onNavigateSection: (id: AccountSection) => void;
-  onLogout: () => void;
   onAddToCart?: (product: ProductListItem) => void | Promise<void>;
 }
 
@@ -55,7 +53,6 @@ export function AccountDashboard({
   onOpenOrder,
   onAllOrders,
   onNavigateSection,
-  onLogout,
   onAddToCart,
 }: AccountDashboardProps) {
   const isCompactMobile = useAccountMobileLayout();
@@ -218,19 +215,6 @@ export function AccountDashboard({
                     </li>
                   );
                 })}
-                <li>
-                  <button
-                    type="button"
-                    className={`${styles.mobileSettingsRow} ${styles.mobileSettingsRowLogout}`}
-                    onClick={onLogout}
-                    data-lk-logout
-                  >
-                    <span className={styles.mobileSettingsIconLogout} aria-hidden>
-                      <AccountLogoutIcon />
-                    </span>
-                    <span className={styles.mobileSettingsLabel}>Выйти</span>
-                  </button>
-                </li>
               </ul>
             </nav>
           </section>
