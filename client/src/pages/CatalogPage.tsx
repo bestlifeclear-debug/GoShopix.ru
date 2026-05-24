@@ -36,6 +36,15 @@ const SORT_OPTIONS = [
   { value: 'newest', label: 'По новизне', short: 'Новинки' },
 ] as const;
 
+/** Лента сортировки на мобилке (десктопный sortBar не затрагиваем). */
+const MOBILE_SORT_OPTIONS = [
+  { value: 'popular', label: 'По популярности', short: 'Популярные' },
+  { value: 'price_asc', label: 'Сначала дешевле', short: 'Дешевле' },
+  { value: 'price_desc', label: 'Сначала дороже', short: 'Дороже' },
+  { value: 'rating_desc', label: 'По рейтингу', short: 'Рейтинг' },
+  { value: 'newest', label: 'По новизне', short: 'Новинки' },
+] as const;
+
 /** Пауза после ввода цены: обновляем только карточки, URL — без «перезагрузки» страницы. */
 const PRICE_DEBOUNCE_MS = 700;
 
@@ -394,9 +403,11 @@ export function CatalogPage() {
         <div className={styles.toolbar}>
           <div className={styles.titleBlock}>
             <h1 className={styles.title}>{pageTitle}</h1>
-            <p className={styles.titleMeta}>
-              {totalCount} {productCountLabel(totalCount)}
-            </p>
+            {isDesktop && (
+              <p className={styles.titleMeta}>
+                {totalCount} {productCountLabel(totalCount)}
+              </p>
+            )}
           </div>
         </div>
 
@@ -438,7 +449,7 @@ export function CatalogPage() {
             role="tablist"
             aria-label="Сортировка"
           >
-            {SORT_OPTIONS.map((o) => (
+            {MOBILE_SORT_OPTIONS.map((o) => (
               <button
                 key={o.value}
                 type="button"
