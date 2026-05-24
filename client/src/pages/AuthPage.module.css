@@ -24,9 +24,9 @@
   justify-content: space-between;
   gap: var(--space-2);
   padding: 10px var(--space-3);
-  background: color-mix(in srgb, var(--color-bg-subtle) 94%, #ffffff 6%);
+  background: #ffffff;
   border-bottom: 1px solid var(--auth-color-border);
-  backdrop-filter: blur(12px);
+  box-shadow: none;
 }
 
 .headerActions {

@@ -16,8 +16,8 @@
 }
 
 [data-account-lk] [data-lk-nav-icon] {
-  color: #5c5c5c;
-  background-color: #f7f7f8;
+  color: #ff3d2e;
+  background-color: var(--color-primary-soft);
 }
 
 @media (hover: hover) {

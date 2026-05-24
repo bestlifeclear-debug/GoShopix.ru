@@ -852,11 +852,11 @@
     margin: 0;
     padding: 6px 12px;
     border-radius: 999px;
-    background: #f3f4f6;
+    background: var(--color-primary-soft);
     font-size: 0.8125rem;
     font-weight: 500;
     line-height: 1.2;
-    color: #6b7280;
+    color: #c2410c;
   }
 
   .mobileLocationBadge svg {
@@ -970,8 +970,8 @@
     width: 48px;
     height: 48px;
     border-radius: 14px;
-    background: #f9fafb;
-    color: #ff7062;
+    background: var(--color-primary-soft);
+    color: #ff3d2e;
   }
 
   .mobileQuickCardIcon svg {
@@ -1030,7 +1030,7 @@
     flex-shrink: 0;
     width: 24px;
     height: 24px;
-    color: #4b5563;
+    color: #ff3d2e;
   }
 
   .mobileSettingsIcon svg {

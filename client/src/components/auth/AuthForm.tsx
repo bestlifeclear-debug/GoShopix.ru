@@ -4,6 +4,7 @@ import { mapApiError } from '../../api/mapApiError';
 import { useAuthStore } from '../../stores/authStore';
 import { validateIdentifier, validateOtpCode } from '../../utils/authValidation';
 import './auth-form.css';
+import styles from './AuthForm.module.css';
 
 export interface AuthFormProps {
   onSuccess?: () => void;
@@ -17,11 +18,6 @@ const DEMO_PHONE = '9001112233';
 
 const inputClass =
   'w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-800 placeholder-slate-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 focus:outline-none transition-all disabled:opacity-60';
-
-const labelClass = 'mb-2 block text-sm font-medium text-slate-600';
-
-const primaryBtnClass =
-  'w-full bg-red-500 hover:bg-red-600 text-white font-medium py-3.5 px-4 rounded-xl transition-colors active:scale-[0.99] text-base mt-2 disabled:pointer-events-none disabled:opacity-60';
 
 export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
   const sendOtp = useAuthStore((s) => s.sendOtp);
@@ -102,17 +98,17 @@ export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-[0_8px_32px_rgb(15,23,42,0.06)] sm:p-8">
+    <div className={styles.card}>
       {step === 'identifier' ? (
-        <form onSubmit={handleSendOtp} noValidate>
-          <h2 className="text-center text-2xl font-bold text-slate-800">Вход или регистрация</h2>
-          <p className="mb-6 mt-2 text-center text-sm leading-relaxed text-slate-500">
-            Мы отправим код подтверждения
-          </p>
+        <form className={styles.form} onSubmit={handleSendOtp} noValidate>
+          <header className={styles.head}>
+            <h2 className={styles.title}>Вход или регистрация</h2>
+            <p className={styles.subtitle}>Мы отправим код подтверждения</p>
+          </header>
 
-          <div className="flex flex-col space-y-4">
-            <div>
-              <label htmlFor="auth-identifier" className={labelClass}>
+          <div className={styles.fieldStack}>
+            <div className={styles.fieldBlock}>
+              <label htmlFor="auth-identifier" className={styles.srOnly}>
                 Почта или телефон
               </label>
               <input
@@ -145,7 +141,7 @@ export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
 
             <button
               type="submit"
-              className={primaryBtnClass}
+              className={styles.primaryBtn}
               disabled={isLoading}
               data-testid="auth-submit"
             >
@@ -154,21 +150,13 @@ export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
           </div>
 
           {showDemoHint && (
-            <div className="mt-6 border-t border-slate-100 pt-5 text-center">
-              <span className="mb-3 block text-xs text-slate-400">Демо-вход</span>
-              <div>
-                <button
-                  type="button"
-                  className="m-1 inline-block rounded-lg border border-slate-200/60 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100"
-                  onClick={() => fillDemo(DEMO_EMAIL)}
-                >
+            <div className={styles.demoSection}>
+              <span className={styles.demoTitle}>Демо-вход</span>
+              <div className={styles.demoActions}>
+                <button type="button" className={styles.demoBtn} onClick={() => fillDemo(DEMO_EMAIL)}>
                   {DEMO_EMAIL}
                 </button>
-                <button
-                  type="button"
-                  className="m-1 inline-block rounded-lg border border-slate-200/60 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-100"
-                  onClick={() => fillDemo(DEMO_PHONE)}
-                >
+                <button type="button" className={styles.demoBtn} onClick={() => fillDemo(DEMO_PHONE)}>
                   +7 {DEMO_PHONE}
                 </button>
               </div>
@@ -176,13 +164,15 @@ export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
           )}
         </form>
       ) : (
-        <form onSubmit={handleVerify} noValidate>
-          <h2 className="text-center text-2xl font-bold text-slate-800">Код подтверждения</h2>
-          <span className="mb-6 mt-2 block text-center text-sm text-slate-400">
-            Отправлен на {maskedDestination || 'указанный контакт'}
-          </span>
+        <form className={styles.form} onSubmit={handleVerify} noValidate>
+          <header className={styles.head}>
+            <h2 className={styles.title}>Код подтверждения</h2>
+            <p className={styles.subtitle}>
+              Отправлен на {maskedDestination || 'указанный контакт'}
+            </p>
+          </header>
 
-          <div className="flex flex-col space-y-4">
+          <div className={styles.fieldStack}>
             {devCode && (
               <div
                 className="rounded-xl border border-red-200 bg-red-50/80 px-4 py-3 text-center"
@@ -195,8 +185,8 @@ export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
               </div>
             )}
 
-            <div>
-              <label htmlFor="auth-otp" className={labelClass}>
+            <div className={styles.fieldBlock}>
+              <label htmlFor="auth-otp" className={styles.srOnly}>
                 Код из письма или SMS
               </label>
               <input
@@ -256,7 +246,7 @@ export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
 
             <button
               type="submit"
-              className={primaryBtnClass}
+              className={styles.primaryBtn}
               disabled={isLoading}
               data-testid="auth-submit"
             >

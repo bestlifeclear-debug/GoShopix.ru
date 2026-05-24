@@ -341,7 +341,7 @@
     min-height: 0;
     max-width: none;
     margin: 0;
-    padding: 8px 16px 10px;
+    padding: 10px 16px 12px;
     box-sizing: border-box;
   }
 
@@ -401,7 +401,7 @@
   .searchGroup {
     width: 100%;
     flex: none;
-    margin-top: 10px;
+    margin-top: 12px;
   }
 
   .navBar {
@@ -423,6 +423,19 @@
 @media (max-width: 767px) {
   .headerHideMobileSearch .topBar .inner,
   .headerMobileCompact .topBar .inner {
-    padding-bottom: 8px;
+    padding-top: 12px;
+    padding-bottom: 14px;
+  }
+
+  .headerMobileCompact .topRow {
+    min-height: 44px;
+  }
+
+  .headerMobileCompact .logoText {
+    font-size: 1.3125rem;
+  }
+
+  .headerMobileCompact .mobileTopTrailing {
+    gap: 16px;
   }
 }
