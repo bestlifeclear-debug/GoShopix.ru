@@ -1056,23 +1056,28 @@
   .mobileLogoutBtn {
     display: block;
     width: 100%;
-    margin: 0;
-    padding: 12px 16px;
+    margin: 4px 0 0;
+    padding: 14px 16px;
     border: none;
     border-radius: 16px;
-    background: #f3f4f6;
+    background: var(--gradient-primary-horizontal);
     font-family: var(--font-family);
     font-size: 1rem;
-    font-weight: 500;
-    color: #374151;
+    font-weight: 600;
+    color: #ffffff;
     text-align: center;
     cursor: pointer;
     box-sizing: border-box;
-    box-shadow: none;
+    box-shadow: 0 4px 14px rgb(var(--color-primary-rgb) / 0.28);
+    transition:
+      opacity var(--transition-fast),
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast);
   }
 
   .mobileLogoutBtn:active {
-    background: #e5e7eb;
+    opacity: 0.92;
+    transform: scale(0.99);
   }
 
   .mobileRecoSection {
@@ -1152,10 +1157,9 @@
   }
 
   [data-account-lk].theme-dark .mobileLogoutBtn {
-    background: var(--lk-bg-muted);
-    border: none;
-    color: var(--lk-text);
-    box-shadow: none;
+    background: var(--lk-nav-primary-bg);
+    color: var(--lk-nav-on-primary);
+    box-shadow: var(--lk-nav-shadow);
   }
 
   [data-account-lk].theme-dark .mobileAvatarAdd {

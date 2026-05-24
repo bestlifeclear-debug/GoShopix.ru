@@ -18,7 +18,7 @@ const DEMO_PHONE = '9001112233';
 const inputClass =
   'w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-base text-slate-800 placeholder-slate-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 focus:outline-none transition-all disabled:opacity-60';
 
-const labelClass = 'mb-2 block text-xs font-medium text-slate-500';
+const labelClass = 'mb-2 block text-sm font-medium text-slate-600';
 
 const primaryBtnClass =
   'w-full bg-red-500 hover:bg-red-600 text-white font-medium py-3.5 px-4 rounded-xl transition-colors active:scale-[0.99] text-base mt-2 disabled:pointer-events-none disabled:opacity-60';
@@ -102,24 +102,24 @@ export function AuthForm({ onSuccess, showDemoHint = true }: AuthFormProps) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+    <div className="mx-auto w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-[0_8px_32px_rgb(15,23,42,0.06)] sm:p-8">
       {step === 'identifier' ? (
         <form onSubmit={handleSendOtp} noValidate>
           <h2 className="text-center text-2xl font-bold text-slate-800">Вход или регистрация</h2>
-          <span className="mb-6 mt-2 block text-center text-sm text-slate-400">
+          <p className="mb-6 mt-2 text-center text-sm leading-relaxed text-slate-500">
             Мы отправим код подтверждения
-          </span>
+          </p>
 
           <div className="flex flex-col space-y-4">
             <div>
               <label htmlFor="auth-identifier" className={labelClass}>
-                Телефон или Email
+                Почта или телефон
               </label>
               <input
                 id="auth-identifier"
                 type="text"
                 className={`${inputClass}${identifierError ? ' border-red-400 focus:border-red-500 focus:ring-red-500/10' : ''}`}
-                placeholder="example@mail.ru или +7 (999) 000-00-00"
+                placeholder="Почта или телефон"
                 autoComplete="username tel email"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}

@@ -272,7 +272,12 @@ export function AccountDashboard({
             </nav>
           </section>
 
-          <button type="button" className={styles.mobileLogoutBtn} onClick={onLogout}>
+          <button
+            type="button"
+            className={styles.mobileLogoutBtn}
+            data-lk-logout
+            onClick={onLogout}
+          >
             Выйти
           </button>
 
