@@ -13,6 +13,10 @@
 }
 
 @media (max-width: 768px) {
+  .layoutCart .footerWrap {
+    display: none;
+  }
+
   /* Серый только у контента — не под шапкой (иначе «молочный» градиент) */
   .layout {
     background: transparent;

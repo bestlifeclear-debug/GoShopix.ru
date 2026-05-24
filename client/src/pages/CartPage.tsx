@@ -132,7 +132,7 @@ export function CartPage() {
   };
 
   return (
-    <PageContainer>
+    <PageContainer className={styles.cartContainer}>
       <div
         className={`${styles.page} ${cart && cart.items.length > 0 ? styles.pageWithItems : ''}`}
       >
@@ -171,7 +171,7 @@ export function CartPage() {
                       aria-label="Удалить товар"
                       onClick={() => void removeItem(item.id)}
                     >
-                      <Trash2 size={18} strokeWidth={1.75} aria-hidden />
+                      <Trash2 size={16} strokeWidth={1.75} aria-hidden />
                     </button>
 
                     <div className={styles.mobileItemMain}>
@@ -203,7 +203,7 @@ export function CartPage() {
                             void updateQuantity(item.id, Math.max(1, item.quantity - 1))
                           }
                         >
-                          <Minus size={16} strokeWidth={2} aria-hidden />
+                          <Minus size={14} strokeWidth={2} aria-hidden />
                         </button>
                         <span className={styles.qtyPillValue}>{item.quantity}</span>
                         <button
@@ -213,7 +213,7 @@ export function CartPage() {
                           onClick={() => void updateQuantity(item.id, item.quantity + 1)}
                           disabled={item.quantity >= item.variant.stock}
                         >
-                          <Plus size={16} strokeWidth={2} aria-hidden />
+                          <Plus size={14} strokeWidth={2} aria-hidden />
                         </button>
                       </div>
                       <span className={styles.mobileLineTotal}>

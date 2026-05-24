@@ -12,6 +12,7 @@ import styles from './MainLayout.module.css';
 export function MainLayout() {
   const { pathname, search } = useLocation();
   const routeKey = `${pathname}${search}`;
+  const isCartRoute = pathname === '/cart';
   const initGuestCart = useCartStore((s) => s.initGuestCart);
 
   useEffect(() => {
@@ -19,14 +20,16 @@ export function MainLayout() {
   }, [initGuestCart]);
 
   return (
-    <div className={styles.layout}>
+    <div className={`${styles.layout} ${isCartRoute ? styles.layoutCart : ''}`}>
       <SiteHeader />
       <main className={styles.main}>
         <div key={routeKey} className={pageTransitionStyles.wrap}>
           <Outlet />
         </div>
       </main>
-      <SiteFooter />
+      <div className={styles.footerWrap}>
+        <SiteFooter />
+      </div>
       <MobileBottomNav />
       <CartDrawer />
       <Toast />

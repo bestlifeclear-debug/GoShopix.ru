@@ -330,19 +330,32 @@
   }
 }
 
-/* Мобильная корзина: soft premium */
+/* Мобильная корзина: компактный app-like layout */
 @media (max-width: 768px) {
+  .cartContainer {
+    margin-top: var(--space-1);
+    padding-bottom: var(--space-2);
+  }
+
+  .page {
+    gap: var(--space-2);
+  }
+
   .pageWithItems {
-    margin-left: calc(-1 * var(--container-padding) + 1rem);
-    margin-right: calc(-1 * var(--container-padding) + 1rem);
-    padding-left: 1rem;
-    padding-right: 1rem;
+    margin-left: calc(-1 * var(--container-padding) + 0.5rem);
+    margin-right: calc(-1 * var(--container-padding) + 0.5rem);
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
     overflow-x: hidden;
     background: #f9fafb;
     border-radius: 0;
   }
 
   .title {
+    text-align: center;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-2);
     padding-left: 0;
     padding-right: 0;
   }
@@ -354,18 +367,17 @@
   .mobileCart {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
 
   .mobileItems {
     list-style: none;
     margin: 0;
     padding: 0;
-    /* pb-40: последняя карточка не уходит под блок «Итого» */
-    padding-bottom: calc(10rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
 
   .mobileItem {
@@ -373,30 +385,30 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding: 1rem;
+    padding: 0.75rem;
     background: #fff;
     border: 1px solid #f3f4f6;
-    border-radius: 1rem;
+    border-radius: 0.75rem;
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
   }
 
   .mobileItemMain {
     display: flex;
-    gap: var(--space-3);
+    gap: 0.625rem;
     min-width: 0;
-    padding-right: 1.75rem;
+    padding-right: 1.5rem;
   }
 
   .mobileRemove {
     position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
+    top: 0.5rem;
+    right: 0.5rem;
     z-index: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
+    width: 1.75rem;
+    height: 1.75rem;
     padding: 0;
     border: none;
     border-radius: 0.5rem;
@@ -412,9 +424,10 @@
   }
 
   .mobileItemImage {
-    width: 80px;
-    height: 80px;
-    border-radius: var(--radius-md);
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
     overflow: hidden;
     background: #f3f4f6;
   }
@@ -429,8 +442,17 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: 2px;
     min-width: 0;
+  }
+
+  .mobileItemInfo .itemName {
+    font-size: var(--font-size-sm);
+    line-height: 1.3;
+  }
+
+  .mobileItemInfo .variant {
+    font-size: var(--font-size-xs);
   }
 
   .mobileItemFooter {
@@ -439,7 +461,7 @@
     justify-content: space-between;
     width: 100%;
     min-width: 0;
-    margin-top: 1rem;
+    margin-top: 0.625rem;
     gap: var(--space-2);
   }
 
@@ -448,18 +470,18 @@
     flex-shrink: 0;
     align-items: center;
     justify-content: space-between;
-    width: 7rem;
-    padding: 0.25rem;
+    width: 6.25rem;
+    padding: 2px;
     background: #f3f4f6;
-    border-radius: 0.75rem;
+    border-radius: 0.625rem;
   }
 
   .qtyPillBtn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
+    width: 1.75rem;
+    height: 1.75rem;
     padding: 0;
     border: none;
     border-radius: 0.5rem;
@@ -489,7 +511,7 @@
 
   .mobileLineTotal {
     flex-shrink: 0;
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-bold);
     color: #111827;
     white-space: nowrap;
@@ -504,8 +526,8 @@
     z-index: 40;
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
-    padding: 1rem;
+    gap: var(--space-2);
+    padding: 0.75rem;
     background: #fff;
     border-top: 1px solid #f3f4f6;
     box-shadow: 0 -4px 15px rgb(0 0 0 / 0.05);
@@ -515,17 +537,18 @@
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
 
   .mobileCheckoutLabel {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     color: #6b7280;
   }
 
   .mobileCheckoutAmount {
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-bold);
+    line-height: 1.2;
     color: #111827;
     font-variant-numeric: tabular-nums;
   }
@@ -533,13 +556,13 @@
   .mobileCheckoutBtn {
     width: 100%;
     margin: 0;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     border: none;
-    border-radius: 1rem;
+    border-radius: 0.75rem;
     background: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
     color: #fff;
     font-family: inherit;
-    font-size: var(--font-size-md);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-semibold);
     text-align: center;
     cursor: pointer;
