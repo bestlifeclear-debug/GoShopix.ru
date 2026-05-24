@@ -9,14 +9,13 @@ import { PageContainer } from '../components/layout/PageContainer';
 import { EmptyCartState } from '../components/EmptyCart/EmptyCartState';
 import { Button, Loader } from '../design-system';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
+import { computeLineTotals, FREE_DELIVERY_FROM } from '../lib/checkoutSelection';
 import { track } from '../lib/analytics';
 import { ApiClientError } from '../api/client';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import './cart-page-mobile.css';
 import styles from './CartPage.module.css';
-
-const FREE_DELIVERY_FROM = 2000;
 
 export function CartPage() {
   const navigate = useNavigate();
@@ -26,6 +25,7 @@ export function CartPage() {
   const addToCart = useCartStore((s) => s.addToCart);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
+  const setCheckoutItemIds = useCartStore((s) => s.setCheckoutItemIds);
   const isLoading = useCartStore((s) => s.isLoading);
 
   const [hits, setHits] = useState<ProductListItem[]>([]);
@@ -129,17 +129,20 @@ export function CartPage() {
     });
   }, [cart?.items]);
 
-  const selectedTotals = useMemo(() => {
-    if (!cart) return { total: 0, count: 0 };
-    let total = 0;
-    let count = 0;
-    for (const item of cart.items) {
-      if (!selectedIds.has(item.id)) continue;
-      total += item.lineTotal;
-      count += item.quantity;
-    }
-    return { total, count };
+  const selectedItems = useMemo(() => {
+    if (!cart) return [];
+    return cart.items.filter((item) => selectedIds.has(item.id));
   }, [cart, selectedIds]);
+
+  const selectedCount = useMemo(
+    () => selectedItems.reduce((n, item) => n + item.quantity, 0),
+    [selectedItems],
+  );
+
+  const selectedLineTotals = useMemo(
+    () => computeLineTotals(selectedItems, compareAtByProduct),
+    [selectedItems, compareAtByProduct],
+  );
 
   const totals = useMemo(() => {
     if (!cart) {
@@ -149,27 +152,17 @@ export function CartPage() {
         subtotal: 0,
         total: 0,
         freeDelivery: false,
+        deliveryRemaining: FREE_DELIVERY_FROM,
       };
     }
-
-    let originalSubtotal = 0;
-    for (const item of cart.items) {
-      const compareAt = compareAtByProduct[item.product.id];
-      const unitOriginal =
-        compareAt != null && compareAt > item.unitPrice ? compareAt : item.unitPrice;
-      originalSubtotal += unitOriginal * item.quantity;
-    }
-
-    const subtotal = cart.subtotal;
-    const discount = Math.max(0, originalSubtotal - subtotal);
-    const freeDelivery = subtotal >= FREE_DELIVERY_FROM;
-
+    const line = computeLineTotals(cart.items, compareAtByProduct);
     return {
-      originalSubtotal,
-      discount,
-      subtotal,
-      total: subtotal,
-      freeDelivery,
+      originalSubtotal: line.originalSubtotal,
+      discount: line.discount,
+      subtotal: line.subtotal,
+      total: line.subtotal,
+      freeDelivery: line.freeDelivery,
+      deliveryRemaining: line.deliveryRemaining,
     };
   }, [cart, compareAtByProduct]);
 
@@ -190,7 +183,9 @@ export function CartPage() {
   const isEmpty = !showInitialLoader && (cart?.items.length ?? 0) === 0;
 
   const handleCheckout = () => {
+    if (!cart?.items.length || selectedItems.length === 0) return;
     setError(null);
+    setCheckoutItemIds(selectedItems.map((item) => item.id));
     track('checkout_open');
     navigate('/checkout');
   };
@@ -233,13 +228,13 @@ export function CartPage() {
               items={cart.items}
               compareAtByProduct={compareAtByProduct}
               selectedIds={selectedIds}
+              lineTotals={selectedLineTotals}
               onToggleItem={toggleItemSelection}
               onToggleAll={toggleSelectAll}
               allSelected={allSelected}
               onUpdateQuantity={(id, qty) => void updateQuantity(id, qty)}
               onRemoveItem={(id) => void removeItem(id)}
-              checkoutTotal={selectedTotals.total}
-              selectedCount={selectedTotals.count}
+              selectedCount={selectedCount}
               onCheckout={handleCheckout}
             />
 

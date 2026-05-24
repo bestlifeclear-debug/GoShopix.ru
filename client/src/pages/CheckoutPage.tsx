@@ -9,11 +9,10 @@ import { track } from '../lib/analytics';
 import { CDEK_CITY_HINTS, getCdekPickupOptions } from '../lib/cdekPickup';
 import { digitsRuPhone, formatRuPhoneDisplay, isRuPhoneComplete } from '../lib/phoneFormat';
 import { ApiClientError } from '../api/client';
+import { computeLineTotals } from '../lib/checkoutSelection';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import styles from './CheckoutPage.module.css';
-
-const FREE_DELIVERY_FROM = 2000;
 const DELIVERY_ESTIMATE_POST = 320;
 const DELIVERY_ESTIMATE_CDEK = 280;
 
@@ -79,7 +78,9 @@ export function CheckoutPage() {
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
   const cart = useCartStore((s) => s.cart);
+  const checkoutItemIds = useCartStore((s) => s.checkoutItemIds);
   const fetchCart = useCartStore((s) => s.fetchCart);
+  const clearCheckoutItemIds = useCartStore((s) => s.clearCheckoutItemIds);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
 
@@ -120,6 +121,20 @@ export function CheckoutPage() {
     void fetchCart();
   }, [token, fetchCart, navigate]);
 
+  const checkoutItems = useMemo(() => {
+    if (!cart?.items.length) return [];
+    if (!checkoutItemIds?.length) return cart.items;
+    const idSet = new Set(checkoutItemIds);
+    return cart.items.filter((item) => idSet.has(item.id));
+  }, [cart?.items, checkoutItemIds]);
+
+  useEffect(() => {
+    if (cart === null) return;
+    if (checkoutItems.length === 0) {
+      navigate('/cart', { replace: true });
+    }
+  }, [cart, checkoutItems.length, navigate]);
+
   useEffect(() => {
     if (user?.profile) {
       const p = user.profile;
@@ -131,7 +146,7 @@ export function CheckoutPage() {
   }, [user]);
 
   useEffect(() => {
-    if (!cart?.items.length) {
+    if (!checkoutItems.length) {
       setCompareAtByProduct({});
       return;
     }
@@ -139,7 +154,7 @@ export function CheckoutPage() {
     let cancelled = false;
     setLoadingPriceMeta(true);
     void Promise.all(
-      cart.items.map(async (item) => {
+      checkoutItems.map(async (item) => {
         const detail = await productsApi.get(item.product.id);
         return { productId: item.product.id, compareAt: detail.compareAtPrice };
       }),
@@ -160,46 +175,26 @@ export function CheckoutPage() {
     return () => {
       cancelled = true;
     };
-  }, [cart?.updatedAt, cart?.itemCount, cart?.items.map((i) => `${i.id}:${i.quantity}`).join('|')]);
+  }, [checkoutItems.map((i) => `${i.id}:${i.quantity}`).join('|')]);
 
   const totals = useMemo(() => {
-    if (!cart) {
-      return {
-        originalSubtotal: 0,
-        discount: 0,
-        subtotal: 0,
-        total: 0,
-        freeDelivery: false,
-      };
-    }
-
-    let originalSubtotal = 0;
-    for (const item of cart.items) {
-      const compareAt = compareAtByProduct[item.product.id];
-      const unitOriginal = compareAt != null && compareAt > item.unitPrice ? compareAt : item.unitPrice;
-      originalSubtotal += unitOriginal * item.quantity;
-    }
-
-    const subtotal = cart.subtotal;
-    const discount = Math.max(0, originalSubtotal - subtotal);
-    const freeDelivery = subtotal >= FREE_DELIVERY_FROM;
-
+    const line = computeLineTotals(checkoutItems, compareAtByProduct);
     return {
-      originalSubtotal,
-      discount,
-      subtotal,
-      total: subtotal,
-      freeDelivery,
+      originalSubtotal: line.originalSubtotal,
+      discount: line.discount,
+      subtotal: line.subtotal,
+      total: line.subtotal,
+      freeDelivery: line.freeDelivery,
     };
-  }, [cart, compareAtByProduct]);
+  }, [checkoutItems, compareAtByProduct]);
 
-  const itemsPreview = useMemo(() => buildItemsPreview(cart?.items ?? []), [cart?.items]);
+  const itemsPreview = useMemo(() => buildItemsPreview(checkoutItems), [checkoutItems]);
 
   useEffect(() => {
     track('checkout_open');
   }, []);
 
-  const isEmpty = cart && cart.items.length === 0;
+  const isEmpty = cart !== null && checkoutItems.length === 0;
 
   const cdekPickupOptions = useMemo(() => getCdekPickupOptions(cdekCity), [cdekCity]);
 
@@ -243,12 +238,12 @@ export function CheckoutPage() {
   ]);
 
   const canSubmit = useMemo(() => {
-    if (!cart?.items.length) return false;
+    if (!checkoutItems.length) return false;
     return Object.keys(errors).length === 0;
-  }, [cart?.items.length, errors]);
+  }, [checkoutItems.length, errors]);
 
   const stepper = useMemo(() => {
-    const cartOk = Boolean(cart?.items.length);
+    const cartOk = checkoutItems.length > 0;
     const deliveryOk =
       deliveryMethod === 'post'
         ? !errors.postIndex && !errors.postCity && !errors.postStreet && !errors.postHouse
@@ -256,7 +251,7 @@ export function CheckoutPage() {
     const paymentOk = Boolean(payment) && deliveryOk;
     const confirmOk = false;
     return { cartOk, deliveryOk, paymentOk, confirmOk };
-  }, [cart?.items.length, deliveryMethod, errors, payment]);
+  }, [checkoutItems.length, deliveryMethod, errors, payment]);
 
   const activeStep = useMemo(() => {
     if (!stepper.cartOk) return 0;
@@ -316,7 +311,7 @@ export function CheckoutPage() {
   };
 
   const handlePay = async () => {
-    if (!cart?.items.length) return;
+    if (!checkoutItems.length) return;
     if (!validateAll()) {
       firstErrorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
@@ -332,8 +327,10 @@ export function CheckoutPage() {
         paymentMethod: payment,
         deliveryMethod,
         customerNote: comment.trim() || undefined,
+        cartItemIds: checkoutItems.map((item) => item.id),
       });
 
+      clearCheckoutItemIds();
       await fetchCart();
 
       const { redirectUrl } = await ordersApi.paymentRedirect(order.id, {
@@ -405,7 +402,7 @@ export function CheckoutPage() {
           </div>
         )}
 
-        {cart && cart.items.length > 0 && (
+        {checkoutItems.length > 0 && (
           <div className={styles.grid}>
             <div className={styles.left}>
               <section className={styles.block}>

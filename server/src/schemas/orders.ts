@@ -8,6 +8,8 @@ export const createOrderSchema = z.object({
   paymentMethod: z.enum(['card', 'cash', 'sbp']).optional(),
   deliveryMethod: z.enum(['post', 'cdek']).optional(),
   customerNote: z.string().max(500).optional(),
+  /** Оформить только выбранные позиции корзины; без поля — вся корзина */
+  cartItemIds: z.array(z.string().min(1)).min(1).max(100).optional(),
 });
 
 export const ordersQuerySchema = paginationQuerySchema;

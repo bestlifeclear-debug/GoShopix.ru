@@ -29,7 +29,12 @@ export function SiteHeader() {
   const navigate = useNavigate();
   const location = useLocation();
   const isAccountRoute = location.pathname === '/account';
-  const hideMobileSearch = isAccountRoute;
+  const isCheckoutFunnelRoute =
+    location.pathname === '/cart' ||
+    location.pathname === '/checkout' ||
+    location.pathname.startsWith('/checkout/');
+  const hideMobileSearch = isAccountRoute || isCheckoutFunnelRoute;
+  const mobileHeaderCompact = isAccountRoute || isCheckoutFunnelRoute;
   const [headerUnreadCount, setHeaderUnreadCount] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
   const catalogCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -171,7 +176,7 @@ export function SiteHeader() {
     >
       <Header
         hideMobileSearch={hideMobileSearch}
-        mobileHeaderCompact={isAccountRoute}
+        mobileHeaderCompact={mobileHeaderCompact}
         mobileTopTrailing={mobileTopTrailing}
         deliverySlot={<HeaderDeliveryCity />}
         searchSlot={

@@ -32,11 +32,15 @@ import { useAuthStore } from './authStore.js';
 interface CartState {
   cart: Cart | null;
   guestItems: GuestCartLine[];
+  /** Позиции для оформления; null — вся корзина */
+  checkoutItemIds: string[] | null;
   drawerOpen: boolean;
   isLoading: boolean;
   /** Блокирует fetchCart, пока идёт add/update/remove — иначе сервер затирает оптимистичное состояние */
   pendingCartOps: number;
   error: string | null;
+  setCheckoutItemIds: (ids: string[]) => void;
+  clearCheckoutItemIds: () => void;
   initGuestCart: () => void;
   openDrawer: () => void;
   closeDrawer: () => void;
@@ -58,10 +62,14 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
   cart: null,
   guestItems: [],
+  checkoutItemIds: null,
   drawerOpen: false,
   isLoading: false,
   pendingCartOps: 0,
   error: null,
+
+  setCheckoutItemIds: (ids) => set({ checkoutItemIds: ids.length > 0 ? ids : null }),
+  clearCheckoutItemIds: () => set({ checkoutItemIds: null }),
 
   initGuestCart: () => {
     if (isAuthenticated()) return;

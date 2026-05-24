@@ -230,8 +230,15 @@ ordersRouter.post('/', validate({ body: createOrderSchema }), async (req, res, n
 
     const userId = req.user!.sub;
 
-    const { shippingName, shippingPhone, shippingAddress, paymentMethod, deliveryMethod, customerNote } =
-      req.body;
+    const {
+      shippingName,
+      shippingPhone,
+      shippingAddress,
+      paymentMethod,
+      deliveryMethod,
+      customerNote,
+      cartItemIds,
+    } = req.body;
 
     const carrier =
       deliveryMethod === 'cdek' ? 'СДЭК' : deliveryMethod === 'post' ? 'Почта России' : undefined;
@@ -254,9 +261,28 @@ ordersRouter.post('/', validate({ body: createOrderSchema }), async (req, res, n
 
     }
 
+    const cartItemIdSet =
+      Array.isArray(cartItemIds) && cartItemIds.length > 0 ? new Set<string>(cartItemIds) : null;
+
+    const itemsToOrder = cartItemIdSet
+      ? cart.items.filter((item) => cartItemIdSet.has(item.id))
+      : cart.items;
+
+    if (itemsToOrder.length === 0) {
+
+      throw new AppError(400, 'No cart items selected for checkout');
+
+    }
+
+    if (cartItemIdSet && itemsToOrder.length !== cartItemIdSet.size) {
+
+      throw new AppError(400, 'Invalid cart item selection');
+
+    }
 
 
-    for (const item of cart.items) {
+
+    for (const item of itemsToOrder) {
 
       if (item.variant.stock < item.quantity) {
 
@@ -272,7 +298,7 @@ ordersRouter.post('/', validate({ body: createOrderSchema }), async (req, res, n
 
       let total = 0;
 
-      const orderItemsData = cart.items.map((item) => {
+      const orderItemsData = itemsToOrder.map((item) => {
 
         const unitPrice = item.variant.price;
 
@@ -346,7 +372,7 @@ ordersRouter.post('/', validate({ body: createOrderSchema }), async (req, res, n
 
 
 
-      for (const item of cart.items) {
+      for (const item of itemsToOrder) {
 
         await tx.productVariant.update({
 
@@ -360,7 +386,12 @@ ordersRouter.post('/', validate({ body: createOrderSchema }), async (req, res, n
 
 
 
-      await tx.cartItem.deleteMany({ where: { cartId: cart.id } });
+      await tx.cartItem.deleteMany({
+        where: {
+          cartId: cart.id,
+          id: { in: itemsToOrder.map((item) => item.id) },
+        },
+      });
 
 
 
