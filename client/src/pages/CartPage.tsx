@@ -5,6 +5,7 @@ import { productsApi } from '../api/index';
 import type { ProductListItem } from '../api/types';
 import { ProductGrid } from '../components/ProductGrid';
 import { PageContainer } from '../components/layout/PageContainer';
+import { EmptyCartState } from '../components/EmptyCart/EmptyCartState';
 import { Button, Loader } from '../design-system';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { track } from '../lib/analytics';
@@ -132,12 +133,8 @@ export function CartPage() {
 
         {isEmpty && (
           <>
-            <div className={styles.empty}>
-              <p className={styles.emptyTitle}>Корзина пуста</p>
-              <p className={styles.emptyHint}>Добавьте товары из каталога или выберите хиты ниже</p>
-              <Link to="/catalog">
-                <Button>Перейти в каталог</Button>
-              </Link>
+            <div className={styles.emptyWrap}>
+              <EmptyCartState hint="Добавьте товары из каталога или выберите хиты ниже" />
             </div>
 
             <section className={styles.recommend}>

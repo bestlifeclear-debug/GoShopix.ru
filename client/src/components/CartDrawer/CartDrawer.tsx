@@ -2,8 +2,9 @@ import { useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
-import { Button } from '../../design-system';
-import { IconClose, IconTrash } from '../../design-system/icons/Icons';
+import { EmptyCartState } from '../EmptyCart/EmptyCartState';
+import { IconTrash } from '../../design-system/icons/Icons';
+import { X } from 'lucide-react';
 import { buildGuestCart } from '../../lib/guestCart.js';
 import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
@@ -77,29 +78,24 @@ export function CartDrawer() {
         aria-modal="true"
         aria-label="Корзина"
       >
-        <header className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-100 px-6 py-4">
-          <h2 className="m-0 text-lg font-bold text-slate-800">Корзина</h2>
+        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-100 bg-white px-5 py-4">
+          <h2 className="m-0 text-xl font-bold text-gray-900">Корзина</h2>
           <button
             type="button"
-            className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-700"
+            className="inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600"
             onClick={closeDrawer}
             aria-label="Закрыть"
           >
-            <IconClose />
+            <X size={22} strokeWidth={1.75} aria-hidden />
           </button>
         </header>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
-          {!cart?.items.length ? (
-            <div className="flex min-h-[200px] flex-col items-center justify-center gap-4 text-center text-sm text-slate-500">
-              <p className="m-0">Корзина пуста</p>
-              <Link to="/catalog" onClick={closeDrawer}>
-                <Button variant="outline" size="sm">
-                  В каталог
-                </Button>
-              </Link>
-            </div>
-          ) : (
+        {!cart?.items.length ? (
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center bg-white px-4 pb-10">
+            <EmptyCartState onCatalogClick={closeDrawer} />
+          </div>
+        ) : (
+        <div className="min-h-0 flex-1 overflow-y-auto bg-white px-6 py-4">
             <ul className="m-0 flex list-none flex-col gap-4 p-0">
               {cart.items.map((item) => {
                 const variantLabel = formatVariantOptions(item);
@@ -181,8 +177,8 @@ export function CartDrawer() {
                 );
               })}
             </ul>
-          )}
         </div>
+        )}
 
         {cart && cart.items.length > 0 && (
           <footer className="sticky bottom-0 left-0 right-0 shrink-0 border-t border-slate-100 bg-white p-6 shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
