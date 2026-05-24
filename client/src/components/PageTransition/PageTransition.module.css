@@ -2,6 +2,12 @@
   animation: fade-in-up 0.32s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
+@media (max-width: 767px) {
+  .wrap {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wrap {
     animation: none;

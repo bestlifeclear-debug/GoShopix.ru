@@ -108,15 +108,23 @@ html.modal-open {
    */
   [data-site-header] {
     background: var(--header-mobile-gradient) !important;
+    border: none !important;
     box-shadow: none !important;
     filter: none !important;
   }
 
   [data-site-header] [data-header-root],
-  [data-site-header] [data-header-layer] {
+  [data-site-header] [data-header-layer],
+  [data-site-header] [data-header-root]::before,
+  [data-site-header] [data-header-root]::after {
     background: none !important;
     border: none !important;
     box-shadow: none !important;
     filter: none !important;
+  }
+
+  /* Тени только у белой капсулы поиска (если появятся в компоненте) */
+  [data-site-header] :not([data-header-search]):not([data-header-search] *) {
+    box-shadow: none !important;
   }
 }

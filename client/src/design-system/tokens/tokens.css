@@ -32,7 +32,7 @@
   /* Header: белый фон (десктоп), мобильный градиент — всегда в :root */
   --color-header-bg: #ffffff;
   --color-header-border: #eeeeee;
-  --header-mobile-gradient: linear-gradient(180deg, #ff8f7f 0%, #ff5c4d 50%, #ff3d2e 100%);
+  --header-mobile-gradient: linear-gradient(180deg, #ff7062 0%, #ff4f42 48%, #ff3d2e 100%);
   /* Пульт иконок в шапке (slate-50 / gray-100) */
   --color-actions-tray-bg: #f8fafc;
 

@@ -21,7 +21,8 @@
 
   .main {
     background: var(--color-app-bg);
-    padding: var(--space-2) 0 var(--space-3);
+    /* Без отступа сверху — иначе серая полоска под шапкой (как тень/тиснение) */
+    padding: 0 0 var(--space-3);
   }
 
   .main:has([data-account-lk]) {

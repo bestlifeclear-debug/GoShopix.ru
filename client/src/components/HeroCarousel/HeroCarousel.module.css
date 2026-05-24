@@ -369,7 +369,8 @@
     min-height: var(--hero-mobile-height);
     max-height: var(--hero-mobile-height);
     border-radius: 16px;
-    box-shadow: 0 6px 20px rgb(0 0 0 / 0.1);
+    /* Только вниз — не «тиснение» под шапкой */
+    box-shadow: 0 8px 16px rgb(0 0 0 / 0.08);
   }
 
   .viewport {
