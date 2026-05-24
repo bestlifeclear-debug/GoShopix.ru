@@ -36,7 +36,9 @@ export function CategoriesHubPage() {
           {CATEGORY_HUB_TILES.map((tile) => (
             <li key={tile.slug} className={styles.gridItem}>
               <Link to={catalogLinkForHubTile(tile.slug)} className={styles.card}>
-                <CategoryHubIcon slug={tile.slug} className={styles.cardIcon} />
+                <span className={styles.iconBadge}>
+                  <CategoryHubIcon slug={tile.slug} className={styles.cardIcon} />
+                </span>
                 <span className={styles.cardLabel}>{tile.name}</span>
               </Link>
             </li>

@@ -32,32 +32,38 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 8px;
   height: 100%;
-  padding: 12px;
-  border-radius: 1rem;
-  background: #f8fafc;
   text-decoration: none;
   color: inherit;
-  transition:
-    background-color var(--transition-fast),
-    transform var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--transition-fast);
 }
 
 .card:active {
   transform: scale(0.98);
-  background: #f1f5f9;
+}
+
+.iconBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 0.75rem;
+  background: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
 }
 
 .cardIcon {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
   flex-shrink: 0;
-  color: #374151;
+  color: #ffffff;
+  opacity: 0.85;
 }
 
 .cardLabel {
+  width: 100%;
   font-size: 11px;
   font-weight: var(--font-weight-medium);
   line-height: 1.25;
@@ -71,8 +77,8 @@
   }
 
   .page {
-    margin-inline: calc(-1 * var(--container-padding) + 1rem);
-    padding-inline: 1rem;
+    margin-inline: calc(-1 * var(--container-padding) + 0.75rem);
+    padding-inline: 0.75rem;
   }
 
   .header {
@@ -85,12 +91,13 @@
     font-weight: var(--font-weight-semibold);
     line-height: 1.25;
     letter-spacing: -0.025em;
+    text-align: center;
     color: #111827;
   }
 
   .grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    gap: 10px;
   }
 }

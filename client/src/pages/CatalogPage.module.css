@@ -238,7 +238,8 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  .subcategoryChip {
+  .subcategoryChip,
+  .mobileSortChip {
     flex: 0 0 auto;
     scroll-snap-align: start;
     min-height: 36px;
@@ -247,25 +248,47 @@
     border-radius: var(--radius-full);
     background: #f3f4f6;
     font-family: inherit;
-    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
-    color: #6b7280;
+    color: #4b5563;
     cursor: pointer;
     white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    appearance: none;
+    box-shadow: none;
+    outline: none;
     transition:
       background-color var(--transition-fast),
-      color var(--transition-fast),
-      box-shadow var(--transition-fast);
+      color var(--transition-fast);
   }
 
-  .subcategoryChip:active:not(.subcategoryChipActive) {
+  .subcategoryChip {
+    font-size: var(--font-size-sm);
+  }
+
+  .subcategoryChip:active:not(.subcategoryChipActive),
+  .mobileSortChip:active:not(.mobileSortChipActive) {
     background: #e5e7eb;
+    color: #4b5563;
+    border: none;
+    box-shadow: none;
   }
 
-  .subcategoryChipActive {
+  .subcategoryChipActive,
+  .mobileSortChipActive {
     background: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
     color: #ffffff;
-    box-shadow: 0 4px 12px rgb(255 61 46 / 0.28);
+    border: none;
+    box-shadow: none;
+    outline: none;
+  }
+
+  .subcategoryChipActive:active,
+  .mobileSortChipActive:active {
+    background: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
+    color: #ffffff;
+    border: none;
+    box-shadow: none;
+    outline: none;
   }
 
   .mobileBar {
@@ -343,36 +366,8 @@
   }
 
   .mobileSortChip {
-    flex: 0 0 auto;
-    scroll-snap-align: start;
-    min-height: 36px;
-    padding: 0 14px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    background: var(--color-bg-elevated);
-    font-family: inherit;
+    padding: 8px 14px;
     font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-muted);
-    cursor: pointer;
-    white-space: nowrap;
-    transition:
-      border-color var(--transition-fast),
-      background-color var(--transition-fast),
-      color var(--transition-fast);
-  }
-
-  .mobileSortChipActive {
-    border-color: transparent;
-    background: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgb(255 61 46 / 0.28);
-  }
-
-  .mobileSortChip:active:not(.mobileSortChipActive) {
-    background: var(--color-primary-soft);
-    border-color: var(--color-primary-border);
-    color: var(--color-primary);
   }
 
   .sortBar {
