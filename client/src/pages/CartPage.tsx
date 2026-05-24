@@ -174,49 +174,51 @@ export function CartPage() {
                       <Trash2 size={18} strokeWidth={1.75} aria-hidden />
                     </button>
 
-                    <Link to={`/product/${item.product.id}`} className={styles.mobileItemImage}>
-                      {item.product.imageUrl ? (
-                        <img src={item.product.imageUrl} alt="" />
-                      ) : (
-                        <span className={styles.itemImagePlaceholder} />
-                      )}
-                    </Link>
-
-                    <div className={styles.mobileItemBody}>
-                      <Link to={`/product/${item.product.id}`} className={styles.itemName}>
-                        {item.product.name}
+                    <div className={styles.mobileItemMain}>
+                      <Link to={`/product/${item.product.id}`} className={styles.mobileItemImage}>
+                        {item.product.imageUrl ? (
+                          <img src={item.product.imageUrl} alt="" />
+                        ) : (
+                          <span className={styles.itemImagePlaceholder} />
+                        )}
                       </Link>
-                      {item.variant.name && (
-                        <span className={styles.variant}>{item.variant.name}</span>
-                      )}
 
-                      <div className={styles.mobileItemFooter}>
-                        <div className={styles.qtyPill}>
-                          <button
-                            type="button"
-                            className={styles.qtyPillBtn}
-                            aria-label="Уменьшить количество"
-                            onClick={() =>
-                              void updateQuantity(item.id, Math.max(1, item.quantity - 1))
-                            }
-                          >
-                            <Minus size={16} strokeWidth={2} aria-hidden />
-                          </button>
-                          <span className={styles.qtyPillValue}>{item.quantity}</span>
-                          <button
-                            type="button"
-                            className={styles.qtyPillBtn}
-                            aria-label="Увеличить количество"
-                            onClick={() => void updateQuantity(item.id, item.quantity + 1)}
-                            disabled={item.quantity >= item.variant.stock}
-                          >
-                            <Plus size={16} strokeWidth={2} aria-hidden />
-                          </button>
-                        </div>
-                        <span className={styles.mobileLineTotal}>
-                          {formatPrice(item.lineTotal)}
-                        </span>
+                      <div className={styles.mobileItemInfo}>
+                        <Link to={`/product/${item.product.id}`} className={styles.itemName}>
+                          {item.product.name}
+                        </Link>
+                        {item.variant.name && (
+                          <span className={styles.variant}>{item.variant.name}</span>
+                        )}
                       </div>
+                    </div>
+
+                    <div className={styles.mobileItemFooter}>
+                      <div className={styles.qtyPill}>
+                        <button
+                          type="button"
+                          className={styles.qtyPillBtn}
+                          aria-label="Уменьшить количество"
+                          onClick={() =>
+                            void updateQuantity(item.id, Math.max(1, item.quantity - 1))
+                          }
+                        >
+                          <Minus size={16} strokeWidth={2} aria-hidden />
+                        </button>
+                        <span className={styles.qtyPillValue}>{item.quantity}</span>
+                        <button
+                          type="button"
+                          className={styles.qtyPillBtn}
+                          aria-label="Увеличить количество"
+                          onClick={() => void updateQuantity(item.id, item.quantity + 1)}
+                          disabled={item.quantity >= item.variant.stock}
+                        >
+                          <Plus size={16} strokeWidth={2} aria-hidden />
+                        </button>
+                      </div>
+                      <span className={styles.mobileLineTotal}>
+                        {formatPrice(item.lineTotal)}
+                      </span>
                     </div>
                   </li>
                 ))}

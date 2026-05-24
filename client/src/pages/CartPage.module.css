@@ -337,7 +337,7 @@
     margin-right: calc(-1 * var(--container-padding) + 1rem);
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-bottom: calc(148px + var(--mobile-bottom-nav-height, 56px));
+    overflow-x: hidden;
     background: #f9fafb;
     border-radius: 0;
   }
@@ -361,6 +361,8 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    /* pb-40: последняя карточка не уходит под блок «Итого» */
+    padding-bottom: calc(10rem + env(safe-area-inset-bottom, 0px));
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
@@ -368,15 +370,21 @@
 
   .mobileItem {
     position: relative;
-    display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     padding: 1rem;
-    padding-right: 2.75rem;
     background: #fff;
     border: 1px solid #f3f4f6;
     border-radius: 1rem;
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  }
+
+  .mobileItemMain {
+    display: flex;
+    gap: var(--space-3);
+    min-width: 0;
+    padding-right: 1.75rem;
   }
 
   .mobileRemove {
@@ -417,8 +425,9 @@
     object-fit: cover;
   }
 
-  .mobileItemBody {
+  .mobileItemInfo {
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: var(--space-1);
     min-width: 0;
@@ -428,12 +437,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-3);
-    margin-top: var(--space-2);
+    width: 100%;
+    min-width: 0;
+    margin-top: 1rem;
+    gap: var(--space-2);
   }
 
   .qtyPill {
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: space-between;
     width: 7rem;
@@ -476,6 +488,7 @@
   }
 
   .mobileLineTotal {
+    flex-shrink: 0;
     font-size: var(--font-size-md);
     font-weight: var(--font-weight-bold);
     color: #111827;
@@ -487,16 +500,15 @@
     position: fixed;
     left: 0;
     right: 0;
-    bottom: var(--mobile-bottom-nav-height, 56px);
+    bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
     z-index: 40;
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
     padding: 1rem;
-    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
     background: #fff;
     border-top: 1px solid #f3f4f6;
-    box-shadow: 0 -4px 20px rgb(0 0 0 / 0.03);
+    box-shadow: 0 -4px 15px rgb(0 0 0 / 0.05);
   }
 
   .mobileCheckoutTotal {
