@@ -11,6 +11,12 @@
   transition: opacity 0.2s ease;
 }
 
+@media (max-width: 767px) {
+  .bar {
+    display: none !important;
+  }
+}
+
 .barActive {
   opacity: 1;
 }

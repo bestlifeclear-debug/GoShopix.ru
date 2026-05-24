@@ -313,8 +313,8 @@
     --header-mobile-top-height: auto;
     position: sticky;
     top: 0;
-    padding-top: env(safe-area-inset-top, 0px);
-    background: transparent !important;
+    padding-top: 0;
+    background: none !important;
     border-bottom: none !important;
     box-shadow: none !important;
     filter: none !important;
@@ -329,9 +329,7 @@
   .topBar,
   .topBar .inner,
   .topRow {
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
+    background: none !important;
     border: none !important;
     box-shadow: none !important;
   }

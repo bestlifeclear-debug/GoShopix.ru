@@ -103,21 +103,18 @@ html.modal-open {
   }
 
   /*
-   * Мобильная шапка: один градиент только на обёртке [data-site-header].
-   * Внутренние header / topBar с десктопа дают #fff — их обнуляем по data-атрибутам
-   * (не зависит от хешей CSS-modules). Белая капсула поиска — только [data-header-search].
+   * Мобильная шапка: градиент на [data-site-header], внутренности без своего фона.
+   * Белая капсула поиска — только внутри [data-header-search].
    */
-  [data-site-header][data-mobile-header='gradient'] {
+  [data-site-header] {
     background: var(--header-mobile-gradient) !important;
     box-shadow: none !important;
     filter: none !important;
   }
 
-  [data-site-header][data-mobile-header='gradient'] [data-header-root],
-  [data-site-header][data-mobile-header='gradient'] [data-header-layer] {
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
+  [data-site-header] [data-header-root],
+  [data-site-header] [data-header-layer] {
+    background: none !important;
     border: none !important;
     box-shadow: none !important;
     filter: none !important;

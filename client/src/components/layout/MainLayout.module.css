@@ -13,12 +13,14 @@
 }
 
 @media (max-width: 768px) {
+  /* Серый только у контента — не под шапкой (иначе «молочный» градиент) */
   .layout {
-    background: var(--color-app-bg);
+    background: transparent;
     padding-bottom: var(--mobile-bottom-nav-height);
   }
 
   .main {
+    background: var(--color-app-bg);
     padding: var(--space-2) 0 var(--space-3);
   }
 

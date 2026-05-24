@@ -5,10 +5,12 @@
 }
 
 @media (max-width: 767px) {
-  .wrap[data-mobile-header='gradient'] {
+  .wrap {
+    padding-top: env(safe-area-inset-top, 0px);
     background: var(--header-mobile-gradient) !important;
     box-shadow: none !important;
     filter: none !important;
+    isolation: isolate;
   }
 }
 
