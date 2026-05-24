@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Minus, Plus, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
 import { productsApi } from '../api/index';
 import type { ProductListItem } from '../api/types';
+import { MobileCartList } from '../components/Cart/MobileCartList';
 import { ProductGrid } from '../components/ProductGrid';
 import { PageContainer } from '../components/layout/PageContainer';
 import { EmptyCartState } from '../components/EmptyCart/EmptyCartState';
@@ -13,6 +13,7 @@ import { track } from '../lib/analytics';
 import { ApiClientError } from '../api/client';
 import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
+import './cart-page-mobile.css';
 import styles from './CartPage.module.css';
 
 const FREE_DELIVERY_FROM = 2000;
@@ -30,6 +31,7 @@ export function CartPage() {
   const [hits, setHits] = useState<ProductListItem[]>([]);
   const [hitsLoading, setHitsLoading] = useState(false);
   const [compareAtByProduct, setCompareAtByProduct] = useState<Record<string, number | null>>({});
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -76,6 +78,68 @@ export function CartPage() {
       cancelled = true;
     };
   }, [cart?.updatedAt, cart?.itemCount, cart?.items.map((i) => `${i.id}:${i.quantity}`).join('|')]);
+
+  const cartItemIds = useMemo(
+    () => (cart?.items ?? []).map((i) => i.id).join('|'),
+    [cart?.items],
+  );
+
+  useEffect(() => {
+    if (!cart?.items.length) {
+      setSelectedIds(new Set());
+      return;
+    }
+    setSelectedIds((prev) => {
+      const itemIds = cart.items.map((i) => i.id);
+      const validIds = new Set(itemIds);
+      if (prev.size === 0) {
+        return new Set(itemIds);
+      }
+      const next = new Set<string>();
+      for (const id of prev) {
+        if (validIds.has(id)) next.add(id);
+      }
+      for (const id of itemIds) {
+        if (!prev.has(id)) next.add(id);
+      }
+      return next.size > 0 ? next : new Set(itemIds);
+    });
+  }, [cartItemIds, cart?.items]);
+
+  const allSelected = Boolean(
+    cart?.items.length && cart.items.every((item) => selectedIds.has(item.id)),
+  );
+
+  const toggleItemSelection = useCallback((itemId: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(itemId)) next.delete(itemId);
+      else next.add(itemId);
+      return next;
+    });
+  }, []);
+
+  const toggleSelectAll = useCallback(() => {
+    if (!cart?.items.length) return;
+    setSelectedIds((prev) => {
+      if (cart.items.every((item) => prev.has(item.id))) {
+        return new Set();
+      }
+      return new Set(cart.items.map((i) => i.id));
+    });
+  }, [cart?.items]);
+
+  const selectedTotals = useMemo(() => {
+    if (!cart) return { total: 0, count: 0 };
+    let total = 0;
+    let count = 0;
+    for (const item of cart.items) {
+      if (!selectedIds.has(item.id)) continue;
+      total += item.lineTotal;
+      count += item.quantity;
+    }
+    return { total, count };
+  }, [cart, selectedIds]);
 
   const totals = useMemo(() => {
     if (!cart) {
@@ -136,7 +200,11 @@ export function CartPage() {
       <div
         className={`${styles.page} ${cart && cart.items.length > 0 ? styles.pageWithItems : ''}`}
       >
-        <h1 className={styles.title}>Корзина</h1>
+        <h1
+          className={`${styles.title} max-md:mt-6 max-md:mb-3 max-md:text-center max-md:text-xl max-md:font-bold`}
+        >
+          Корзина
+        </h1>
 
         {showInitialLoader && <Loader variant="block" label="Загружаем корзину…" />}
 
@@ -161,81 +229,19 @@ export function CartPage() {
 
         {cart && cart.items.length > 0 && (
           <>
-            <div className={styles.mobileCart}>
-              <ul className={styles.mobileItems}>
-                {cart.items.map((item) => (
-                  <li key={item.id} className={styles.mobileItem}>
-                    <button
-                      type="button"
-                      className={styles.mobileRemove}
-                      aria-label="Удалить товар"
-                      onClick={() => void removeItem(item.id)}
-                    >
-                      <Trash2 size={16} strokeWidth={1.75} aria-hidden />
-                    </button>
-
-                    <div className={styles.mobileItemMain}>
-                      <Link to={`/product/${item.product.id}`} className={styles.mobileItemImage}>
-                        {item.product.imageUrl ? (
-                          <img src={item.product.imageUrl} alt="" />
-                        ) : (
-                          <span className={styles.itemImagePlaceholder} />
-                        )}
-                      </Link>
-
-                      <div className={styles.mobileItemInfo}>
-                        <Link to={`/product/${item.product.id}`} className={styles.itemName}>
-                          {item.product.name}
-                        </Link>
-                        {item.variant.name && (
-                          <span className={styles.variant}>{item.variant.name}</span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className={styles.mobileItemFooter}>
-                      <div className={styles.qtyPill}>
-                        <button
-                          type="button"
-                          className={styles.qtyPillBtn}
-                          aria-label="Уменьшить количество"
-                          onClick={() =>
-                            void updateQuantity(item.id, Math.max(1, item.quantity - 1))
-                          }
-                        >
-                          <Minus size={14} strokeWidth={2} aria-hidden />
-                        </button>
-                        <span className={styles.qtyPillValue}>{item.quantity}</span>
-                        <button
-                          type="button"
-                          className={styles.qtyPillBtn}
-                          aria-label="Увеличить количество"
-                          onClick={() => void updateQuantity(item.id, item.quantity + 1)}
-                          disabled={item.quantity >= item.variant.stock}
-                        >
-                          <Plus size={14} strokeWidth={2} aria-hidden />
-                        </button>
-                      </div>
-                      <span className={styles.mobileLineTotal}>
-                        {formatPrice(item.lineTotal)}
-                      </span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-
-              <div className={styles.mobileCheckout}>
-                <div className={styles.mobileCheckoutTotal}>
-                  <span className={styles.mobileCheckoutLabel}>Итого:</span>
-                  <strong className={styles.mobileCheckoutAmount}>
-                    {formatPrice(totals.total)}
-                  </strong>
-                </div>
-                <button type="button" className={styles.mobileCheckoutBtn} onClick={handleCheckout}>
-                  Перейти к оформлению
-                </button>
-              </div>
-            </div>
+            <MobileCartList
+              items={cart.items}
+              compareAtByProduct={compareAtByProduct}
+              selectedIds={selectedIds}
+              onToggleItem={toggleItemSelection}
+              onToggleAll={toggleSelectAll}
+              allSelected={allSelected}
+              onUpdateQuantity={(id, qty) => void updateQuantity(id, qty)}
+              onRemoveItem={(id) => void removeItem(id)}
+              checkoutTotal={selectedTotals.total}
+              selectedCount={selectedTotals.count}
+              onCheckout={handleCheckout}
+            />
 
             <div className={styles.layout}>
             <div className={styles.itemsCol}>
