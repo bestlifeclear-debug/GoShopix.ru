@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Minus, Plus, Trash2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
 import { productsApi } from '../api/index';
@@ -124,9 +125,17 @@ export function CartPage() {
   const showInitialLoader = isLoading && cart === null;
   const isEmpty = !showInitialLoader && (cart?.items.length ?? 0) === 0;
 
+  const handleCheckout = () => {
+    setError(null);
+    track('checkout_open');
+    navigate('/checkout');
+  };
+
   return (
     <PageContainer>
-      <div className={styles.page}>
+      <div
+        className={`${styles.page} ${cart && cart.items.length > 0 ? styles.pageWithItems : ''}`}
+      >
         <h1 className={styles.title}>Корзина</h1>
 
         {showInitialLoader && <Loader variant="block" label="Загружаем корзину…" />}
@@ -151,7 +160,82 @@ export function CartPage() {
         )}
 
         {cart && cart.items.length > 0 && (
-          <div className={styles.layout}>
+          <>
+            <div className={styles.mobileCart}>
+              <ul className={styles.mobileItems}>
+                {cart.items.map((item) => (
+                  <li key={item.id} className={styles.mobileItem}>
+                    <button
+                      type="button"
+                      className={styles.mobileRemove}
+                      aria-label="Удалить товар"
+                      onClick={() => void removeItem(item.id)}
+                    >
+                      <Trash2 size={18} strokeWidth={1.75} aria-hidden />
+                    </button>
+
+                    <Link to={`/product/${item.product.id}`} className={styles.mobileItemImage}>
+                      {item.product.imageUrl ? (
+                        <img src={item.product.imageUrl} alt="" />
+                      ) : (
+                        <span className={styles.itemImagePlaceholder} />
+                      )}
+                    </Link>
+
+                    <div className={styles.mobileItemBody}>
+                      <Link to={`/product/${item.product.id}`} className={styles.itemName}>
+                        {item.product.name}
+                      </Link>
+                      {item.variant.name && (
+                        <span className={styles.variant}>{item.variant.name}</span>
+                      )}
+
+                      <div className={styles.mobileItemFooter}>
+                        <div className={styles.qtyPill}>
+                          <button
+                            type="button"
+                            className={styles.qtyPillBtn}
+                            aria-label="Уменьшить количество"
+                            onClick={() =>
+                              void updateQuantity(item.id, Math.max(1, item.quantity - 1))
+                            }
+                          >
+                            <Minus size={16} strokeWidth={2} aria-hidden />
+                          </button>
+                          <span className={styles.qtyPillValue}>{item.quantity}</span>
+                          <button
+                            type="button"
+                            className={styles.qtyPillBtn}
+                            aria-label="Увеличить количество"
+                            onClick={() => void updateQuantity(item.id, item.quantity + 1)}
+                            disabled={item.quantity >= item.variant.stock}
+                          >
+                            <Plus size={16} strokeWidth={2} aria-hidden />
+                          </button>
+                        </div>
+                        <span className={styles.mobileLineTotal}>
+                          {formatPrice(item.lineTotal)}
+                        </span>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <div className={styles.mobileCheckout}>
+                <div className={styles.mobileCheckoutTotal}>
+                  <span className={styles.mobileCheckoutLabel}>Итого:</span>
+                  <strong className={styles.mobileCheckoutAmount}>
+                    {formatPrice(totals.total)}
+                  </strong>
+                </div>
+                <button type="button" className={styles.mobileCheckoutBtn} onClick={handleCheckout}>
+                  Перейти к оформлению
+                </button>
+              </div>
+            </div>
+
+            <div className={styles.layout}>
             <div className={styles.itemsCol}>
               <ul className={styles.items}>
                 {cart.items.map((item) => (
@@ -257,11 +341,7 @@ export function CartPage() {
                   size="lg"
                   fullWidth
                   className={styles.checkoutBtn}
-                  onClick={() => {
-                    setError(null);
-                    track('checkout_open');
-                    navigate('/checkout');
-                  }}
+                  onClick={handleCheckout}
                 >
                   Перейти к оформлению
                 </Button>
@@ -273,7 +353,8 @@ export function CartPage() {
                 </p>
               </div>
             </aside>
-          </div>
+            </div>
+          </>
         )}
 
       </div>
