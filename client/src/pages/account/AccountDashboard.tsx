@@ -28,7 +28,6 @@ interface AccountDashboardProps {
   onOpenOrder: (orderId: string) => void;
   onAllOrders: () => void;
   onNavigateSection: (id: AccountSection) => void;
-  onLogout: () => void;
   onAddToCart?: (product: ProductListItem) => void | Promise<void>;
 }
 
@@ -65,7 +64,6 @@ export function AccountDashboard({
   onOpenOrder,
   onAllOrders,
   onNavigateSection,
-  onLogout,
   onAddToCart,
 }: AccountDashboardProps) {
   const isCompactMobile = useAccountMobileLayout();
@@ -271,15 +269,6 @@ export function AccountDashboard({
               </ul>
             </nav>
           </section>
-
-          <button
-            type="button"
-            className={styles.mobileLogoutBtn}
-            data-lk-logout
-            onClick={onLogout}
-          >
-            Выйти
-          </button>
 
           {recommendationsSection}
         </div>

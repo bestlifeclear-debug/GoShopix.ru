@@ -99,6 +99,20 @@ export function IconBell(props: IconProps) {
   );
 }
 
+export function IconLogOut(props: IconProps) {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <path
+        d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5M15 12H3M10 7l5 5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function IconHeart(props: IconProps) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>

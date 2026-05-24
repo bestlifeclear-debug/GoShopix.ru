@@ -30,7 +30,6 @@ export function AccountPage() {
 
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
   const fetchMe = useAuthStore((s) => s.fetchMe);
   const addToCart = useCartStore((s) => s.addToCart);
   const openDrawer = useCartStore((s) => s.openDrawer);
@@ -150,7 +149,6 @@ export function AccountPage() {
           userEmail={user?.email ?? undefined}
           isSeller={user?.role === 'SELLER'}
           onNavigate={navigateSection}
-          onLogout={logout}
         />
       }
     >
@@ -180,7 +178,6 @@ export function AccountPage() {
                 onOpenOrder={openOrder}
                 onAllOrders={() => navigateSection('orders')}
                 onNavigateSection={navigateSection}
-                onLogout={logout}
                 onAddToCart={handleAddProductToCart}
               />
             </>

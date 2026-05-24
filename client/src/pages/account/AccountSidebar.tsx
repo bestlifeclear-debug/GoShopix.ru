@@ -11,7 +11,6 @@ interface AccountSidebarProps {
   userEmail?: string;
   isSeller?: boolean;
   onNavigate: (id: AccountSection) => void;
-  onLogout: () => void;
 }
 
 export function AccountSidebar({
@@ -20,7 +19,6 @@ export function AccountSidebar({
   userEmail,
   isSeller,
   onNavigate,
-  onLogout,
 }: AccountSidebarProps) {
   const isCompactMobile = useAccountMobileLayout();
 
@@ -80,9 +78,6 @@ export function AccountSidebar({
               {userEmail}
             </p>
           )}
-          <button type="button" className={styles.logoutBtn} data-lk-logout onClick={onLogout}>
-            Выйти
-          </button>
         </footer>
       </aside>
     </div>

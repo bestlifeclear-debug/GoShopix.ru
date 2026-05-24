@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthForm } from '../components/auth/AuthForm';
-import { SiteFooter } from '../components/layout/SiteFooter';
 import { useAuthStore } from '../stores/authStore';
 import styles from './AuthPage.module.css';
 
@@ -46,8 +45,6 @@ export function AuthPage() {
       <main className={styles.main} id="main-content">
         <AuthForm onSuccess={handleSuccess} />
       </main>
-
-      <SiteFooter />
     </div>
   );
 }
