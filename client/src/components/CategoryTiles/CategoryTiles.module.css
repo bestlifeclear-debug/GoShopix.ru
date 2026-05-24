@@ -185,6 +185,67 @@
   opacity: 0.92;
 }
 
+.scrollMobile .imageBoxIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scrollMobile .categoryIcon {
+  width: 34px;
+  height: 34px;
+  color: #ffffff;
+}
+
+.scrollMobile .tileIcon:active .imageBoxIcon {
+  transform: scale(0.96);
+  opacity: 0.92;
+}
+
+.scrollMobile .catElectronics {
+  background: linear-gradient(145deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.scrollMobile .catSmartphones {
+  background: linear-gradient(145deg, #6366f1 0%, #4f46e5 100%);
+}
+
+.scrollMobile .catLaptops {
+  background: linear-gradient(145deg, #0ea5e9 0%, #0284c7 100%);
+}
+
+.scrollMobile .catClothing {
+  background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+}
+
+.scrollMobile .catAudio {
+  background: linear-gradient(145deg, #a855f7 0%, #7c3aed 100%);
+}
+
+.scrollMobile .catShoes {
+  background: linear-gradient(145deg, #f97316 0%, #ea580c 100%);
+}
+
+.scrollMobile .catAccessories {
+  background: linear-gradient(145deg, #ec4899 0%, #db2777 100%);
+}
+
+.scrollMobile .catSport {
+  background: linear-gradient(145deg, #22c55e 0%, #16a34a 100%);
+}
+
+.scrollMobile .catHome {
+  background: linear-gradient(145deg, #14b8a6 0%, #0d9488 100%);
+}
+
+.scrollMobile .catAppliances {
+  background: linear-gradient(145deg, #64748b 0%, #475569 100%);
+}
+
+.scrollMobile .catDefault {
+  background: linear-gradient(145deg, #94a3b8 0%, #64748b 100%);
+}
+
 @media (max-width: 1024px) {
   .scroll {
     grid-template-columns: repeat(4, minmax(0, 1fr));

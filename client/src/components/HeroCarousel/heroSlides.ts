@@ -11,6 +11,8 @@ export interface HeroSlide {
   promo: string;
   eyebrow: string;
   title: string;
+  /** Строки заголовка на мобилке — без длинных тире и «рваных» переносов */
+  mobileTitle?: readonly [string, string];
   /** Подзаголовок — только десктоп; на мобилке скрыт */
   text: string;
   cta: { to: string; label: string };
@@ -33,6 +35,7 @@ export const HERO_SLIDES: HeroSlide[] = [
     promo: '−30%',
     eyebrow: 'Мега-распродажа',
     title: 'Техника со скидкой до 30%',
+    mobileTitle: ['Техника со', 'скидкой до 30%'],
     text: 'Смартфоны, ноутбуки и гаджеты до конца недели.',
     countdownEndsAt: endOfCurrentWeek(),
     cta: { to: '/catalog?categorySlug=electronics', label: 'В каталог' },
@@ -42,7 +45,8 @@ export const HERO_SLIDES: HeroSlide[] = [
     theme: 'fashion',
     promo: '−40%',
     eyebrow: 'Мода и стиль',
-    title: 'Одежда и обувь — сезонные цены',
+    title: 'Одежда и обувь со скидкой',
+    mobileTitle: ['Одежда и обувь', 'со скидкой'],
     text: 'Куртки, кроссовки и гардероб от топ-продавцов.',
     cta: { to: '/catalog?categorySlug=clothing', label: 'В каталог' },
   },
@@ -51,7 +55,8 @@ export const HERO_SLIDES: HeroSlide[] = [
     theme: 'audio',
     promo: 'Хит',
     eyebrow: 'Бестселлер',
-    title: 'Наушники и аудио — топ недели',
+    title: 'Наушники и аудио',
+    mobileTitle: ['Наушники', 'и аудио'],
     text: 'Проверенные модели с тысячами отзывов.',
     cta: { to: '/catalog?sort=popular', label: 'Смотреть хиты' },
   },
@@ -61,6 +66,7 @@ export const HERO_SLIDES: HeroSlide[] = [
     promo: 'New',
     eyebrow: 'Новинки',
     title: 'Ноутбуки для работы и учёбы',
+    mobileTitle: ['Ноутбуки для', 'работы и учёбы'],
     text: 'Мощные конфигурации с быстрой доставкой.',
     cta: { to: '/catalog?sort=newest', label: 'Новинки' },
   },
@@ -69,7 +75,8 @@ export const HERO_SLIDES: HeroSlide[] = [
     theme: 'delivery',
     promo: '0 ₽',
     eyebrow: 'Бесплатная доставка',
-    title: 'От 2 000 ₽ — доставка 0 ₽',
+    title: 'Доставка 0 ₽ от 2 000 ₽',
+    mobileTitle: ['Доставка 0 ₽', 'от 2 000 ₽'],
     text: 'Соберите корзину — доставка в ПВЗ бесплатно.',
     cta: { to: '/catalog', label: 'В каталог' },
   },

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import type { CategoryNode } from '../../api/types';
 import { IconCatalog } from '../../design-system/icons/Icons';
 import { categoryImageUrl } from '../../lib/categoryImages';
+import { CategoryTileIcon, categoryTileThemeClass } from './CategoryTileIcon';
 import styles from './CategoryTiles.module.css';
 
 const ALL_CATEGORIES_LABEL = 'Все категории';
@@ -41,16 +42,24 @@ export function CategoryTiles({ categories, variant = 'default' }: CategoryTiles
         <Link
           key={cat.id}
           to={`/catalog?categorySlug=${cat.slug}`}
-          className={styles.tile}
+          className={`${styles.tile} ${variant === 'mobile' ? styles.tileIcon : ''}`}
           role="listitem"
         >
-          <span className={styles.imageBox}>
-            <img
-              src={categoryImageUrl(cat.slug)}
-              alt=""
-              className={styles.image}
-              loading="lazy"
-            />
+          <span
+            className={`${styles.imageBox} ${
+              variant === 'mobile' ? `${styles.imageBoxIcon} ${categoryTileThemeClass(cat.slug)}` : ''
+            }`}
+          >
+            {variant === 'mobile' ? (
+              <CategoryTileIcon slug={cat.slug} />
+            ) : (
+              <img
+                src={categoryImageUrl(cat.slug)}
+                alt=""
+                className={styles.image}
+                loading="lazy"
+              />
+            )}
           </span>
           <span className={styles.label}>{cat.name}</span>
         </Link>

@@ -69,7 +69,18 @@ export function HeroCarousel() {
                   <div className={styles.copy}>
                     <span className={styles.promoRibbon}>{slide.promo}</span>
                     <p className={styles.eyebrow}>{slide.eyebrow}</p>
-                    <h1 className={styles.title}>{slide.title}</h1>
+                    <h1 className={styles.title}>
+                      <span className={styles.titleDesktop}>{slide.title}</span>
+                      {slide.mobileTitle && (
+                        <span className={styles.titleMobile}>
+                          {slide.mobileTitle.map((line) => (
+                            <span key={line} className={styles.titleLine}>
+                              {line}
+                            </span>
+                          ))}
+                        </span>
+                      )}
+                    </h1>
                     <p className={styles.text}>{slide.text}</p>
                     {slide.countdownEndsAt && (
                       <CountdownTimer
