@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { ApiClientError } from '../api/client.js';
 import { authApi } from '../api/index.js';
 import type { User } from '../api/types.js';
+import { writeAuthTokenToStorage } from '../lib/authTokenStorage.js';
 import { mapApiError } from '../api/mapApiError.js';
 import { useCartStore } from './cartStore.js';
 
@@ -15,6 +17,12 @@ interface AuthState {
   logout: () => void;
   fetchMe: () => Promise<void>;
   clearError: () => void;
+}
+
+let fetchMeInFlight: Promise<void> | null = null;
+
+function syncTokenToStorage(token: string | null) {
+  writeAuthTokenToStorage(token);
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -42,7 +50,7 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           const { user, token } = await authApi.verifyOtp(identifier, code);
-          localStorage.setItem('goshopix_token', token);
+          syncTokenToStorage(token);
           set({ user, token, isLoading: false });
           useCartStore.getState().closeDrawer();
           await useCartStore.getState().mergeGuestCart();
@@ -54,7 +62,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
-        localStorage.removeItem('goshopix_token');
+        syncTokenToStorage(null);
         useCartStore.getState().closeDrawer();
         useCartStore.setState({ cart: null, error: null });
         useCartStore.getState().initGuestCart();
@@ -64,12 +72,30 @@ export const useAuthStore = create<AuthState>()(
       fetchMe: async () => {
         const { token } = get();
         if (!token) return;
-        try {
-          const user = await authApi.me();
-          set({ user });
-        } catch {
-          get().logout();
+
+        syncTokenToStorage(token);
+
+        if (fetchMeInFlight) {
+          return fetchMeInFlight;
         }
+
+        fetchMeInFlight = (async () => {
+          try {
+            const user = await authApi.me();
+            if (get().token) {
+              set({ user });
+            }
+          } catch (e) {
+            // Сеть/таймаут при cold start не должны разлогинивать пользователя
+            if (e instanceof ApiClientError && e.status === 401) {
+              get().logout();
+            }
+          } finally {
+            fetchMeInFlight = null;
+          }
+        })();
+
+        return fetchMeInFlight;
       },
 
       clearError: () => set({ error: null }),
@@ -77,6 +103,11 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'goshopix-auth',
       partialize: (s) => ({ token: s.token, user: s.user }),
+      onRehydrateStorage: () => (state, err) => {
+        if (!err && state?.token) {
+          syncTokenToStorage(state.token);
+        }
+      },
     },
   ),
 );

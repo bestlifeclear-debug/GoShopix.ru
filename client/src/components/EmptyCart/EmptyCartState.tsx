@@ -14,7 +14,7 @@ export function EmptyCartState({ onCatalogClick, hint, className = '' }: EmptyCa
       <EmptyCartIllustration className={styles.illustration} />
       <p className={styles.title}>Корзина пуста</p>
       {hint ? <p className={styles.hint}>{hint}</p> : null}
-      <Link to="/catalog" className={styles.catalogBtn} onClick={onCatalogClick}>
+      <Link to="/categories" className={styles.catalogBtn} onClick={onCatalogClick}>
         В каталог
       </Link>
     </div>

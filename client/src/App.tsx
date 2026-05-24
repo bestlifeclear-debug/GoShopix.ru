@@ -3,16 +3,24 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import { useAuthStore } from './stores/authStore';
 
-export default function App() {
-  const token = useAuthStore((s) => s.token);
-  const fetchMe = useAuthStore((s) => s.fetchMe);
+function bootstrapSession() {
+  const { token } = useAuthStore.getState();
+  if (token) {
+    void useAuthStore.getState().fetchMe();
+  }
+}
 
+export default function App() {
   useEffect(() => {
-    if (token) {
-      localStorage.setItem('goshopix_token', token);
-      void fetchMe();
+    if (useAuthStore.persist.hasHydrated()) {
+      bootstrapSession();
+      return;
     }
-  }, [token, fetchMe]);
+
+    return useAuthStore.persist.onFinishHydration(() => {
+      bootstrapSession();
+    });
+  }, []);
 
   return <RouterProvider router={router} />;
 }

@@ -1,3 +1,4 @@
+import { readAuthTokenFromStorage } from '../lib/authTokenStorage.js';
 import type { ApiError, ApiSuccess } from './types.js';
 
 const apiBase = import.meta.env.VITE_API_URL ?? '';
@@ -14,11 +15,7 @@ export class ApiClientError extends Error {
 }
 
 function getToken(): string | null {
-  try {
-    return localStorage.getItem('goshopix_token');
-  } catch {
-    return null;
-  }
+  return readAuthTokenFromStorage();
 }
 
 async function parseJsonSafe(res: Response): Promise<ApiSuccess<unknown> | ApiError | null> {
