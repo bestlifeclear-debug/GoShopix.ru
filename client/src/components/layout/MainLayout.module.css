@@ -1,5 +1,5 @@
 .layout {
-  --mobile-bottom-nav-height: 56px;
+  --mobile-bottom-nav-height: calc(56px + env(safe-area-inset-bottom, 0px));
   min-height: 100vh;
   display: flex;
   flex-direction: column;

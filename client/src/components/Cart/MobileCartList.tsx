@@ -66,7 +66,13 @@ export function MobileCartList({
         </button>
       </div>
 
-      <ul className="m-0 flex list-none flex-col gap-2 p-0 pb-[calc(14.5rem+env(safe-area-inset-bottom,0px))]">
+      <ul
+        className="m-0 flex list-none flex-col gap-2 p-0"
+        style={{
+          paddingBottom:
+            'calc(var(--mobile-bottom-nav-height, calc(56px + env(safe-area-inset-bottom, 0px))) + 9.25rem)',
+        }}
+      >
         {items.map((item) => {
           const isSelected = selectedIds.has(item.id);
           const compareAt = compareAtByProduct[item.product.id];
@@ -76,7 +82,7 @@ export function MobileCartList({
             <li
               key={item.id}
               className={[
-                'relative flex flex-col overflow-hidden rounded-xl border border-gray-100 bg-white p-3 shadow-sm',
+                'relative flex flex-col overflow-hidden rounded-xl border border-gray-100 bg-white p-2.5 shadow-sm',
                 isSelected ? '' : 'opacity-75',
               ].join(' ')}
             >
@@ -170,10 +176,7 @@ export function MobileCartList({
         })}
       </ul>
 
-      <div
-        className={styles.stickyPanel}
-        style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}
-      >
+      <div className={styles.stickyPanel}>
         <div className={styles.summaryBlock}>
           {lineTotals.discount > 0 && hasSelection ? (
             <div className={`${styles.summaryRow} ${styles.summaryRowSavings}`}>
@@ -195,27 +198,6 @@ export function MobileCartList({
             </span>
             <strong className={styles.totalAmount}>{formatPrice(lineTotals.subtotal)}</strong>
           </div>
-        </div>
-
-        <div className={styles.payBadges} aria-label="Способы оплаты: Мир, СБП">
-          <span className={styles.payBadge}>
-            <img
-              src="/payment-icons/mir.png"
-              alt="Мир"
-              className={styles.payMir}
-              width={56}
-              height={20}
-            />
-          </span>
-          <span className={styles.payBadge}>
-            <img
-              src="/payment-icons/sbp.png"
-              alt="СБП"
-              className={styles.paySbp}
-              width={22}
-              height={22}
-            />
-          </span>
         </div>
 
         <button

@@ -196,7 +196,7 @@ export function CartPage() {
         className={`${styles.page} ${cart && cart.items.length > 0 ? styles.pageWithItems : ''}`}
       >
         <h1
-          className={`${styles.title} max-md:mt-6 max-md:mb-3 max-md:text-center max-md:text-xl max-md:font-bold`}
+          className={`${styles.title} max-md:mt-2 max-md:mb-1.5 max-md:text-left max-md:text-base max-md:font-semibold max-md:text-gray-700`}
         >
           Корзина
         </h1>
