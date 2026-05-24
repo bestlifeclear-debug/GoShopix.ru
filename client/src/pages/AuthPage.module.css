@@ -7,9 +7,10 @@
   --auth-color-hint: #666666;
   --auth-focus-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.22);
 
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  min-height: 0;
-  height: auto;
+  min-height: 100dvh;
   font-family: var(--font-family);
   background: var(--color-bg-subtle);
   color: var(--auth-color-primary-text);
@@ -73,10 +74,15 @@
 }
 
 .main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   max-width: 28rem;
   margin: 0 auto;
-  padding: var(--space-2) var(--space-2) var(--space-2);
+  padding: var(--space-2);
   box-sizing: border-box;
 }
 
