@@ -195,7 +195,7 @@ export function CartPage() {
       <div
         className={`${styles.page} ${cart && cart.items.length > 0 ? styles.pageWithItems : ''}`}
       >
-        <h1 className={`${styles.title} max-md:sr-only`}>Корзина</h1>
+        <h1 className={`${styles.title} ${styles.titleDesktopOnly}`}>Корзина</h1>
 
         {showInitialLoader && <Loader variant="block" label="Загружаем корзину…" />}
 

@@ -10,6 +10,16 @@
   margin: 0;
 }
 
+.titleDesktopOnly {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .titleDesktopOnly {
+    display: none;
+  }
+}
+
 .loading {
   margin: 0;
   color: var(--color-text-muted);

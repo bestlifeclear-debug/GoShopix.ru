@@ -2,12 +2,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
+import { Truck } from 'lucide-react';
+import { CartCheckoutSummary } from '../Cart/CartCheckoutSummary';
 import { CartItemCheckbox } from '../Cart/CartItemCheckbox';
 import { EmptyCartState } from '../EmptyCart/EmptyCartState';
 import { IconTrash } from '../../design-system/icons/Icons';
 import { X } from 'lucide-react';
 import { buildGuestCart } from '../../lib/guestCart.js';
 import { computeLineTotals } from '../../lib/checkoutSelection';
+import { formatEstimatedDeliveryDate } from '../../lib/cartDeliveryDate';
 import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
 import './cart-drawer.css';
@@ -36,6 +39,7 @@ export function CartDrawer() {
   const isLoading = useCartStore((s) => s.isLoading);
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const deliveryDateLabel = useMemo(() => formatEstimatedDeliveryDate(7), []);
 
   const cart = useMemo(() => {
     if (token) return serverCart;
@@ -137,25 +141,32 @@ export function CartDrawer() {
     navigate('/auth?returnUrl=/checkout');
   };
 
-  const hasSelection = selectedCount > 0;
+  const itemCountLabel = cart
+    ? `${cart.itemCount} ${cart.itemCount === 1 ? 'товар' : cart.itemCount < 5 ? 'товара' : 'товаров'}`
+    : '';
 
   const content = (
     <>
       <div
-        className="cart-drawer-overlay fixed inset-0 z-[1100] bg-black/45"
+        className="cart-drawer-overlay"
         role="presentation"
         onClick={closeDrawer}
       />
       <aside
-        className="cart-drawer-panel fixed top-0 right-0 z-[1101] flex h-full w-full max-w-[420px] flex-col bg-white shadow-[-8px_0_32px_rgb(0_0_0/0.15)]"
+        className="cart-drawer-panel"
         role="dialog"
         aria-modal="true"
         aria-labelledby="cart-drawer-title"
       >
         <header className="cart-drawer-header">
-          <h2 id="cart-drawer-title" className="cart-drawer-title">
-            Корзина
-          </h2>
+          <div className="cart-drawer-headerText">
+            <h2 id="cart-drawer-title" className="cart-drawer-title">
+              Корзина
+            </h2>
+            {cart && cart.items.length > 0 ? (
+              <p className="cart-drawer-meta">{itemCountLabel}</p>
+            ) : null}
+          </div>
           <button
             type="button"
             className="cart-drawer-close"
@@ -168,7 +179,7 @@ export function CartDrawer() {
 
         {!cart?.items.length ? (
           <div className="cart-drawer-empty">
-            <EmptyCartState onCatalogClick={closeDrawer} />
+            <EmptyCartState onCatalogClick={closeDrawer} hint="Добавьте товары — оформление займёт пару минут" />
           </div>
         ) : (
           <div className="cart-drawer-body">
@@ -215,45 +226,51 @@ export function CartDrawer() {
                       >
                         {item.product.imageUrl ? (
                           <img src={item.product.imageUrl} alt="" />
-                        ) : null}
+                        ) : (
+                          <span className="cart-drawer-thumbPlaceholder" />
+                        )}
                       </Link>
 
-                      <div className="min-w-0 flex-1">
-                        <div className="cart-drawer-lineTop">
-                          <div className="min-w-0 flex-1">
-                            <Link
-                              to={`/product/${item.product.id}`}
-                              className="cart-drawer-name"
-                              onClick={closeDrawer}
+                      <div className="cart-drawer-itemBody">
+                        <Link
+                          to={`/product/${item.product.id}`}
+                          className="cart-drawer-name"
+                          onClick={closeDrawer}
+                        >
+                          {item.product.name}
+                        </Link>
+                        {variantLabel ? (
+                          <p className="cart-drawer-variant">{variantLabel}</p>
+                        ) : null}
+                        <p className="cart-drawer-deliveryEta">
+                          <Truck size={12} strokeWidth={1.75} aria-hidden />
+                          <span>Доставка ~{deliveryDateLabel}</span>
+                        </p>
+
+                        <div className="cart-drawer-itemFooter">
+                          <div className="cart-drawer-qty">
+                            <button
+                              type="button"
+                              className="cart-drawer-qtyBtn"
+                              aria-label="Уменьшить количество"
+                              onClick={() =>
+                                void updateQuantity(item.id, Math.max(1, item.quantity - 1))
+                              }
                             >
-                              {item.product.name}
-                            </Link>
-                            {variantLabel ? (
-                              <p className="cart-drawer-variant">{variantLabel}</p>
-                            ) : null}
+                              −
+                            </button>
+                            <span className="cart-drawer-qtyValue">{item.quantity}</span>
+                            <button
+                              type="button"
+                              className="cart-drawer-qtyBtn"
+                              aria-label="Увеличить количество"
+                              disabled={item.quantity >= item.variant.stock}
+                              onClick={() => void updateQuantity(item.id, item.quantity + 1)}
+                            >
+                              +
+                            </button>
                           </div>
                           <span className="cart-drawer-price">{formatPrice(item.lineTotal)}</span>
-                        </div>
-
-                        <div className="cart-drawer-qty">
-                          <button
-                            type="button"
-                            className="cart-drawer-qtyBtn"
-                            aria-label="Уменьшить количество"
-                            onClick={() => void updateQuantity(item.id, Math.max(1, item.quantity - 1))}
-                          >
-                            −
-                          </button>
-                          <span className="cart-drawer-qtyValue">{item.quantity}</span>
-                          <button
-                            type="button"
-                            className="cart-drawer-qtyBtn"
-                            aria-label="Увеличить количество"
-                            disabled={item.quantity >= item.variant.stock}
-                            onClick={() => void updateQuantity(item.id, item.quantity + 1)}
-                          >
-                            +
-                          </button>
                         </div>
                       </div>
                     </div>
@@ -266,21 +283,25 @@ export function CartDrawer() {
 
         {cart && cart.items.length > 0 && (
           <footer className="cart-drawer-footer">
-            <div className="cart-drawer-totalRow">
-              <span className="cart-drawer-totalLabel">К оплате · {selectedCount} шт.</span>
-              <span className="cart-drawer-totalAmount">
-                {formatPrice(selectedLineTotals.subtotal)}
-              </span>
-            </div>
-            <button
-              type="button"
-              className="cart-drawer-checkout"
-              onClick={handleCheckout}
-              disabled={isLoading || !hasSelection}
-            >
-              {isLoading ? 'Загрузка…' : 'Перейти к оформлению'}
-            </button>
-            <p className="cart-drawer-trust">Войдите, чтобы оформить заказ</p>
+            <CartCheckoutSummary
+              lineTotals={selectedLineTotals}
+              selectedCount={selectedCount}
+              onCheckout={handleCheckout}
+              checkoutLabel={isLoading ? 'Загрузка…' : 'Оформить заказ'}
+              checkoutDisabled={isLoading}
+              trustLine={
+                <p className="cart-drawer-trust">
+                  <button
+                    type="button"
+                    className="cart-drawer-trustBtn"
+                    onClick={handleCheckout}
+                    disabled={isLoading || selectedCount === 0}
+                  >
+                    Войти за минуту — корзина сохранится
+                  </button>
+                </p>
+              }
+            />
           </footer>
         )}
       </aside>
