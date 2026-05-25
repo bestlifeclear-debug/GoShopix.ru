@@ -11,7 +11,7 @@ export interface DeliveryBadgeProps {
 export function DeliveryBadge({ deliveryDays, className = '' }: DeliveryBadgeProps) {
   const label = formatDeliveryDateLabel(deliveryDays);
   const rootClass = [
-    'mt-1.5 inline-flex max-w-full items-center gap-1 rounded px-1.5 py-0.5',
+    'mt-1.5 inline-flex w-fit max-w-full shrink-0 items-center gap-1 self-start rounded px-1.5 py-0.5',
     'bg-emerald-50 text-xs font-medium text-emerald-700',
     className,
   ]

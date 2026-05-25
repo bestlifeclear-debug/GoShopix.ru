@@ -159,15 +159,19 @@
 .body {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: var(--space-1);
   padding: var(--space-2);
   flex: 1;
+  min-height: 0;
 }
 
 .rowTitle {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  width: 100%;
   text-align: left;
 }
 
@@ -198,7 +202,8 @@
 }
 
 .rowRating {
-  min-height: 20px;
+  min-height: 0;
+  margin: 0;
 }
 
 @media (max-width: 767px) {
@@ -238,6 +243,9 @@
 
   .rowRating {
     display: none;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
   }
 
   .discountBadge {
