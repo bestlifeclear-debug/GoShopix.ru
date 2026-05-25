@@ -141,7 +141,8 @@ export function AccountPage() {
   }
 
   const sectionTitle = SECTION_TITLES[section] ?? 'Личный кабинет';
-  const showSectionHeading = section !== 'dashboard';
+  const showSectionHeading = section !== 'dashboard' && section !== 'favorites';
+  const showMobileProfileBar = isCompactLk && section !== 'favorites';
 
   return (
     <AccountLayout
@@ -158,7 +159,7 @@ export function AccountPage() {
       }
     >
       <div className={styles.content}>
-        {isCompactLk && (
+        {showMobileProfileBar && (
           <AccountProfileBar
             displayName={displayName}
             avatarUrl={user?.profile?.avatarUrl}
@@ -205,7 +206,14 @@ export function AccountPage() {
             />
           )}
 
-          {section === 'favorites' && <AccountFavorites favorites={favorites} />}
+          {section === 'favorites' && (
+            <AccountFavorites
+              favorites={favorites}
+              recommendations={recommendations}
+              onAddToCart={handleAddProductToCart}
+              onFavoritesChange={setFavorites}
+            />
+          )}
 
           {section === 'notifications' && (
             <AccountNotifications

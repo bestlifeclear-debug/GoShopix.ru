@@ -224,8 +224,8 @@ export function CartPage() {
             </div>
 
             <section className={styles.recommend}>
-              <h2 className={styles.recommendTitle}>С этим часто берут</h2>
-              <p className={styles.recommendLead}>Популярное сейчас — добавьте в заказ за пару касаний</p>
+              <h2 className={styles.recommendTitle}>Популярное сейчас</h2>
+              <p className={styles.recommendLead}>Топ выбора покупателей — добавьте в корзину в один клик</p>
               <ProductGrid
                 products={hits}
                 loading={hitsLoading}
