@@ -10,6 +10,8 @@ interface MobileProductCardProps {
   product: ProductListItem;
   highlightPrice?: boolean;
   onAddToCart?: () => void | Promise<void>;
+  /** В корзине / рекомендациях — без кнопки избранного */
+  showFavorite?: boolean;
 }
 
 type CartUiState = 'idle' | 'loading' | 'success';
@@ -28,7 +30,12 @@ function placeholderHue(id: string): number {
   return h;
 }
 
-export function MobileProductCard({ product, highlightPrice, onAddToCart }: MobileProductCardProps) {
+export function MobileProductCard({
+  product,
+  highlightPrice,
+  onAddToCart,
+  showFavorite = true,
+}: MobileProductCardProps) {
   const image = product.images?.[0]?.url ?? product.imageUrl ?? undefined;
   const hasDiscount = product.compareAtPrice != null && product.compareAtPrice > product.price;
   const productUrl = `/product/${product.id}`;
@@ -77,18 +84,20 @@ export function MobileProductCard({ product, highlightPrice, onAddToCart }: Mobi
             </div>
           )}
         </Link>
-        <button
-          type="button"
-          className={`${styles.favBtn} ${fav ? styles.favBtnActive : ''}`}
-          aria-label={fav ? 'Убрать из избранного' : 'В избранное'}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setFav((v) => !v);
-          }}
-        >
-          <IconHeart />
-        </button>
+        {showFavorite ? (
+          <button
+            type="button"
+            className={`${styles.favBtn} ${fav ? styles.favBtnActive : ''}`}
+            aria-label={fav ? 'Убрать из избранного' : 'В избранное'}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setFav((v) => !v);
+            }}
+          >
+            <IconHeart />
+          </button>
+        ) : null}
       </div>
 
       <div className={styles.body}>

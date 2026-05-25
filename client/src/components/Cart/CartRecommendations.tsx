@@ -1,18 +1,21 @@
 import { useEffect, useState } from 'react';
-import { formatPrice } from '@goshopix/shared';
-import { Link } from 'react-router-dom';
 import { productsApi } from '../../api/index';
 import type { ProductListItem } from '../../api/types';
+import { MobileProductCard } from '../ProductRail/MobileProductCard';
 import styles from './CartRecommendations.module.css';
 
 type CartRecommendationsProps = {
   onAdd?: (product: ProductListItem) => void;
   title?: string;
+  limit?: number;
+  variant?: 'page' | 'drawer';
 };
 
 export function CartRecommendations({
   onAdd,
-  title = 'Добавьте к заказу',
+  title = 'Может пригодиться',
+  limit = 6,
+  variant = 'page',
 }: CartRecommendationsProps) {
   const [items, setItems] = useState<ProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,9 +24,9 @@ export function CartRecommendations({
     let cancelled = false;
     setLoading(true);
     void productsApi
-      .list({ page: 1, limit: 6, sort: 'popular' })
+      .list({ page: 1, limit: Math.max(limit, 6), sort: 'popular' })
       .then((res) => {
-        if (!cancelled) setItems(res.items.slice(0, 6));
+        if (!cancelled) setItems(res.items.slice(0, limit));
       })
       .catch(() => {
         if (!cancelled) setItems([]);
@@ -34,39 +37,31 @@ export function CartRecommendations({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [limit]);
 
   if (loading || items.length === 0) return null;
 
   return (
-    <section className={styles.root} aria-label={title}>
+    <section
+      className={[styles.root, variant === 'drawer' ? styles.rootDrawer : ''].filter(Boolean).join(' ')}
+      aria-label={title}
+    >
       <h3 className={styles.title}>{title}</h3>
       <ul className={styles.rail}>
-        {items.map((product) => (
-          <li key={product.id} className={styles.card}>
-            <Link to={`/product/${product.id}`} className={styles.thumb}>
-              {product.imageUrl ? (
-                <img src={product.imageUrl} alt="" />
-              ) : (
-                <span className={styles.thumbPlaceholder} />
-              )}
-            </Link>
-            <Link to={`/product/${product.id}`} className={styles.name}>
-              {product.name}
-            </Link>
-            <div className={styles.priceRow}>
-              <span className={styles.price}>{formatPrice(product.price)}</span>
-              {product.compareAtPrice != null && product.compareAtPrice > product.price ? (
-                <span className={styles.oldPrice}>{formatPrice(product.compareAtPrice)}</span>
-              ) : null}
-            </div>
-            {onAdd ? (
-              <button type="button" className={styles.addBtn} onClick={() => onAdd(product)}>
-                В корзину
-              </button>
-            ) : null}
-          </li>
-        ))}
+        {items.map((product) => {
+          const hasDiscount =
+            product.compareAtPrice != null && product.compareAtPrice > product.price;
+          return (
+            <li key={product.id} className={styles.railItem}>
+              <MobileProductCard
+                product={product}
+                highlightPrice={hasDiscount}
+                showFavorite={false}
+                onAddToCart={onAdd ? () => onAdd(product) : undefined}
+              />
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

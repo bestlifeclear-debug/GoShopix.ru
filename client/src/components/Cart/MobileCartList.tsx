@@ -58,12 +58,7 @@ export function MobileCartList({
 
   return (
     <div className={styles.root}>
-      <header className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Корзина</h1>
-        <p className={styles.pageMeta}>{formatItemCount(totalQty)}</p>
-      </header>
-
-      <div className={styles.selectAllRow}>
+      <div className={styles.toolbar}>
         <CartItemCheckbox
           checked={allSelected}
           onChange={() => onToggleAll()}
@@ -72,6 +67,7 @@ export function MobileCartList({
         <button type="button" className={styles.selectAllBtn} onClick={onToggleAll}>
           Выбрать всё
         </button>
+        <span className={styles.itemCount}>{formatItemCount(totalQty)}</span>
       </div>
 
       <div className={styles.scrollArea}>
@@ -92,7 +88,7 @@ export function MobileCartList({
         </ul>
 
         {onRecommendAdd ? (
-          <CartRecommendations onAdd={onRecommendAdd} title="Может пригодиться" />
+          <CartRecommendations onAdd={onRecommendAdd} variant="page" limit={6} />
         ) : null}
       </div>
 

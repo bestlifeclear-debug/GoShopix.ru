@@ -171,17 +171,17 @@ export function CartDrawer() {
         className="cart-drawer-panel"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="cart-drawer-title"
+        aria-labelledby="cart-drawer-sr-title"
       >
         <header className="cart-drawer-header">
-          <div className="cart-drawer-headerText">
-            <h2 id="cart-drawer-title" className="cart-drawer-title">
-              Корзина
-            </h2>
-            {cart && cart.items.length > 0 ? (
-              <p className="cart-drawer-meta">{itemCountLabel}</p>
-            ) : null}
-          </div>
+          <p id="cart-drawer-sr-title" className="cart-drawer-srTitle">
+            Корзина
+          </p>
+          {cart && cart.items.length > 0 ? (
+            <p className="cart-drawer-meta">{itemCountLabel}</p>
+          ) : (
+            <span className="cart-drawer-metaPlaceholder" aria-hidden />
+          )}
           <button
             type="button"
             className="cart-drawer-close"
@@ -227,7 +227,7 @@ export function CartDrawer() {
                 ))}
               </ul>
 
-              <CartRecommendations onAdd={handleRecommendAdd} title="Может пригодиться" />
+              <CartRecommendations onAdd={handleRecommendAdd} variant="drawer" limit={4} />
             </div>
           </div>
         )}
