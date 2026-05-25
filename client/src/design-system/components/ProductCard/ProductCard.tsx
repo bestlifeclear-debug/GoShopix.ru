@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { DeliveryBadge } from '../../../components/DeliveryBadge/DeliveryBadge';
 import { ProductGridCartButton } from '../../../components/ProductGridCartButton/ProductGridCartButton';
 import { ProductPrice } from '../../../components/ProductPrice/ProductPrice';
 import { IconChevronLeft, IconChevronRight, IconHeart } from '../../icons/Icons';
@@ -20,8 +21,8 @@ export interface ProductCardProps {
   discountPercent?: number | null;
   rating: number;
   reviewCount: number;
-  /** До 2 строк характеристик на превью (без запроса к API) */
-  specLines?: string[];
+  /** Срок доставки в днях для бейджа под ценой */
+  deliveryDays?: number;
   images: ProductCardImage[];
   onAddToCart?: () => void | Promise<void>;
   onFavorite?: (e: React.MouseEvent) => void;
@@ -36,7 +37,7 @@ export function ProductCard({
   discountPercent,
   rating,
   reviewCount,
-  specLines = [],
+  deliveryDays = 1,
   images,
   onAddToCart,
   onFavorite,
@@ -55,7 +56,6 @@ export function ProductCard({
   );
 
   const current = slides[index] ?? slides[0];
-  const specs = specLines.filter(Boolean).slice(0, 2);
 
   return (
     <article
@@ -124,18 +124,11 @@ export function ProductCard({
         </div>
 
         <ProductPrice price={price} compareAtPrice={compareAtPrice} size="md" />
+        <DeliveryBadge deliveryDays={deliveryDays} />
 
         <div className={styles.rowRating}>
           <StarRating value={rating} reviewCount={reviewCount} size="sm" />
         </div>
-
-        {specs.length > 0 && (
-          <ul className={styles.specs} aria-label="Краткие характеристики">
-            {specs.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ul>
-        )}
 
       </div>
     </article>

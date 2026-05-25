@@ -1,4 +1,4 @@
-import { formatDeliveryLabel } from '@goshopix/shared';
+import { resolveProductDeliveryDays } from '@goshopix/shared';
 import { useEffect, useState } from 'react';
 import { ProductCard, ProductCardSkeleton, ProductSkeleton } from '../design-system';
 import type { ProductListItem } from '../api/types';
@@ -16,14 +16,6 @@ interface ProductGridProps {
   variant?: 'standard' | 'compact';
   /** Без кнопки избранного (корзина, рекомендации) */
   hideFavorite?: boolean;
-}
-
-function buildSpecLines(product: ProductListItem): string[] {
-  const lines: string[] = [];
-  if (product.category?.name) lines.push(product.category.name);
-  const delivery = formatDeliveryLabel(product.deliveryDaysMin, product.deliveryDaysMax);
-  if (delivery) lines.push(delivery);
-  return lines.slice(0, 2);
 }
 
 function useMaxWidth(query: string) {
@@ -111,7 +103,10 @@ export function ProductGrid({
             discountPercent={product.discountPercent}
             rating={product.rating}
             reviewCount={product.reviewCount}
-            specLines={buildSpecLines(product)}
+            deliveryDays={resolveProductDeliveryDays(
+              product.deliveryDaysMin,
+              product.deliveryDaysMax,
+            )}
             images={product.images}
             onAddToCart={() => onAddToCart?.(product)}
           />

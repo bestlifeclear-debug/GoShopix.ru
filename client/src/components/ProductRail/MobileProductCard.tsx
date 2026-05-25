@@ -1,7 +1,8 @@
-import { formatDeliveryLabel } from '@goshopix/shared';
+import { resolveProductDeliveryDays } from '@goshopix/shared';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { ProductListItem } from '../../api/types';
+import { DeliveryBadge } from '../DeliveryBadge/DeliveryBadge';
 import { ProductGridCartButton } from '../ProductGridCartButton/ProductGridCartButton';
 import { ProductPrice } from '../ProductPrice/ProductPrice';
 import { StarRating } from '../../design-system';
@@ -15,14 +16,6 @@ interface MobileProductCardProps {
   showFavorite?: boolean;
   /** Избранное: активное сердце и удаление (вместо локального toggle) */
   onRemoveFavorite?: () => void | Promise<void>;
-}
-
-function buildMetaLine(product: ProductListItem): string | null {
-  const parts: string[] = [];
-  if (product.category?.name) parts.push(product.category.name);
-  const delivery = formatDeliveryLabel(product.deliveryDaysMin, product.deliveryDaysMax);
-  if (delivery) parts.push(delivery);
-  return parts.length > 0 ? parts.join(' · ') : null;
 }
 
 function placeholderHue(id: string): number {
@@ -39,7 +32,10 @@ export function MobileProductCard({
 }: MobileProductCardProps) {
   const image = product.images?.[0]?.url ?? product.imageUrl ?? undefined;
   const productUrl = `/product/${product.id}`;
-  const meta = buildMetaLine(product);
+  const deliveryDays = resolveProductDeliveryDays(
+    product.deliveryDaysMin,
+    product.deliveryDaysMax,
+  );
   const brand = product.brand?.trim();
   const [fav, setFav] = useState(false);
   const [removingFavorite, setRemovingFavorite] = useState(false);
@@ -119,8 +115,7 @@ export function MobileProductCard({
           compareAtPrice={product.compareAtPrice}
           size="sm"
         />
-
-        {meta && <p className={styles.meta}>{meta}</p>}
+        <DeliveryBadge deliveryDays={deliveryDays} />
       </div>
     </article>
   );

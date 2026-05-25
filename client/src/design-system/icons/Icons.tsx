@@ -226,3 +226,17 @@ export function IconHistory(props: IconProps) {
     </svg>
   );
 }
+
+export function IconTruck(props: IconProps) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <path
+        d="M3 7h11v8H3V7zm11 0h3l3 4v4h-6V7zM7 19a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm10 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
