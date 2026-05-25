@@ -48,20 +48,15 @@ export function CartRecommendations({
     >
       <h3 className={styles.title}>{title}</h3>
       <ul className={styles.rail}>
-        {items.map((product) => {
-          const hasDiscount =
-            product.compareAtPrice != null && product.compareAtPrice > product.price;
-          return (
-            <li key={product.id} className={styles.railItem}>
-              <MobileProductCard
-                product={product}
-                highlightPrice={hasDiscount}
-                showFavorite={false}
-                onAddToCart={onAdd ? () => onAdd(product) : undefined}
-              />
-            </li>
-          );
-        })}
+        {items.map((product) => (
+          <li key={product.id} className={styles.railItem}>
+            <MobileProductCard
+              product={product}
+              showFavorite={false}
+              onAddToCart={onAdd ? () => onAdd(product) : undefined}
+            />
+          </li>
+        ))}
       </ul>
     </section>
   );

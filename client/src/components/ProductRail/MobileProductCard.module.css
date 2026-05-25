@@ -70,14 +70,14 @@
 
 .favBtn {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 4px;
+  right: 4px;
   z-index: 3;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
@@ -137,32 +137,6 @@
   color: var(--color-primary);
 }
 
-.prices {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.price {
-  font-size: 15px;
-  font-weight: var(--font-weight-bold);
-  line-height: 1.2;
-  color: var(--color-text);
-}
-
-.pricesSale .price {
-  color: var(--color-sale);
-}
-
-.oldPrice {
-  font-size: 11px;
-  font-weight: var(--font-weight-regular);
-  color: var(--color-text-muted);
-  text-decoration: line-through;
-  line-height: 1.2;
-}
-
 .rating {
   display: flex;
   align-items: center;
@@ -187,59 +161,13 @@
   overflow: hidden;
 }
 
-.cartBtn {
-  width: 100%;
-  min-height: 32px;
-  margin-top: auto;
-  padding: 0 8px;
-  border: none;
-  border-radius: var(--radius-cta);
-  background: var(--color-button-primary);
-  color: var(--color-text-inverse);
-  font-family: var(--font-family);
-  font-size: 11px;
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  transition:
-    background var(--transition-ui),
-    transform var(--transition-fast),
-    opacity var(--transition-fast);
-}
-
-.cartBtn:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.cartBtn:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
-}
-
-.cartBtnLoading {
-  opacity: 0.85;
-  cursor: wait;
-}
-
-.cartBtnSuccess {
-  background: var(--color-success);
-}
-
 @media (min-width: 360px) {
   .body {
     padding: 10px;
     gap: 5px;
   }
 
-  .price {
-    font-size: 16px;
-  }
-
   .title {
     font-size: 13px;
-  }
-
-  .cartBtn {
-    min-height: 34px;
-    font-size: 12px;
   }
 }

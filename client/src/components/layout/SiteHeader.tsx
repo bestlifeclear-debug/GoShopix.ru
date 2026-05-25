@@ -29,6 +29,8 @@ export function SiteHeader() {
   const navigate = useNavigate();
   const location = useLocation();
   const isAccountRoute = location.pathname === '/account';
+  const isFavoritesSection =
+    isAccountRoute && new URLSearchParams(location.search).get('section') === 'favorites';
   const isCheckoutFunnelRoute =
     location.pathname === '/cart' ||
     location.pathname === '/checkout' ||
@@ -154,7 +156,7 @@ export function SiteHeader() {
 
   const mobileTopTrailing = (
     <>
-      {!isAccountRoute && <HeaderDeliveryCity />}
+      {(!isAccountRoute || isFavoritesSection) && <HeaderDeliveryCity />}
       {headerAccountActions}
     </>
   );

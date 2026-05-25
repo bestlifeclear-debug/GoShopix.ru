@@ -1,20 +1,19 @@
-import { formatDeliveryLabel, formatPrice } from '@goshopix/shared';
+import { formatDeliveryLabel } from '@goshopix/shared';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { ProductListItem } from '../../api/types';
+import { ProductGridCartButton } from '../ProductGridCartButton/ProductGridCartButton';
+import { ProductPrice } from '../ProductPrice/ProductPrice';
 import { StarRating } from '../../design-system';
 import { IconHeart } from '../../design-system/icons/Icons';
 import styles from './MobileProductCard.module.css';
 
 interface MobileProductCardProps {
   product: ProductListItem;
-  highlightPrice?: boolean;
   onAddToCart?: () => void | Promise<void>;
   /** В корзине / рекомендациях — без кнопки избранного */
   showFavorite?: boolean;
 }
-
-type CartUiState = 'idle' | 'loading' | 'success';
 
 function buildMetaLine(product: ProductListItem): string | null {
   const parts: string[] = [];
@@ -32,35 +31,14 @@ function placeholderHue(id: string): number {
 
 export function MobileProductCard({
   product,
-  highlightPrice,
   onAddToCart,
   showFavorite = true,
 }: MobileProductCardProps) {
   const image = product.images?.[0]?.url ?? product.imageUrl ?? undefined;
-  const hasDiscount = product.compareAtPrice != null && product.compareAtPrice > product.price;
   const productUrl = `/product/${product.id}`;
   const meta = buildMetaLine(product);
   const brand = product.brand?.trim();
   const [fav, setFav] = useState(false);
-  const [cartState, setCartState] = useState<CartUiState>('idle');
-
-  const handleAddToCart = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!onAddToCart || cartState === 'loading') return;
-    setCartState('loading');
-    try {
-      await onAddToCart();
-      setCartState('success');
-      window.setTimeout(() => setCartState('idle'), 1800);
-    } catch {
-      setCartState('idle');
-    }
-  };
-
-  const cartLabel =
-    cartState === 'loading' ? 'Добавляем…' : cartState === 'success' ? 'В корзине ✓' : 'В корзину';
-
   const hue = placeholderHue(product.id);
 
   return (
@@ -98,6 +76,7 @@ export function MobileProductCard({
             <IconHeart />
           </button>
         ) : null}
+        <ProductGridCartButton onAdd={onAddToCart} />
       </div>
 
       <div className={styles.body}>
@@ -106,12 +85,7 @@ export function MobileProductCard({
           {product.name}
         </Link>
 
-        <div className={`${styles.prices} ${highlightPrice ? styles.pricesSale : ''}`}>
-          <span className={styles.price}>{formatPrice(product.price)}</span>
-          {hasDiscount && (
-            <span className={styles.oldPrice}>{formatPrice(product.compareAtPrice!)}</span>
-          )}
-        </div>
+        <ProductPrice price={product.price} compareAtPrice={product.compareAtPrice} size="sm" />
 
         {(product.rating > 0 || product.reviewCount > 0) && (
           <div className={styles.rating}>
@@ -123,16 +97,6 @@ export function MobileProductCard({
         )}
 
         {meta && <p className={styles.meta}>{meta}</p>}
-
-        <button
-          type="button"
-          className={`${styles.cartBtn} ${cartState === 'loading' ? styles.cartBtnLoading : ''} ${cartState === 'success' ? styles.cartBtnSuccess : ''}`}
-          onClick={handleAddToCart}
-          disabled={cartState === 'loading'}
-          aria-live="polite"
-        >
-          {cartLabel}
-        </button>
       </div>
     </article>
   );

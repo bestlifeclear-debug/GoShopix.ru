@@ -371,7 +371,11 @@ export function ProductPage() {
             <div className={styles.asideSticky}>
               <div ref={buyBoxRef} className={styles.buyBox}>
                 <div className={styles.priceBlock}>
-                  <span className={styles.price}>{formatPrice(displayPrice)}</span>
+                  <span
+                    className={`${styles.price} ${compareAt != null && compareAt > displayPrice ? styles.priceOnSale : ''}`}
+                  >
+                    {formatPrice(displayPrice)}
+                  </span>
                   {compareAt != null && compareAt > displayPrice && (
                     <>
                       <span className={styles.oldPrice}>{formatPrice(compareAt)}</span>
@@ -477,7 +481,11 @@ export function ProductPage() {
             )}
           </div>
           <div className={styles.mobileBarPrice}>
-            <span className={styles.mobileBarPriceValue}>{formatPrice(displayPrice)}</span>
+            <span
+              className={`${styles.mobileBarPriceValue} ${compareAt != null && compareAt > displayPrice ? styles.mobileBarPriceOnSale : ''}`}
+            >
+              {formatPrice(displayPrice)}
+            </span>
             {compareAt != null && compareAt > displayPrice && (
               <span className={styles.mobileBarOldPrice}>{formatPrice(compareAt)}</span>
             )}

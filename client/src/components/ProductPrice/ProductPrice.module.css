@@ -1,0 +1,47 @@
+.root {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.price {
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.priceOnSale {
+  color: var(--color-primary);
+}
+
+.oldPrice {
+  font-weight: var(--font-weight-regular);
+  line-height: 1.2;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  font-variant-numeric: tabular-nums;
+}
+
+.sizeSm .price {
+  font-size: 15px;
+}
+
+.sizeSm .oldPrice {
+  font-size: 11px;
+}
+
+.sizeMd .price {
+  font-size: var(--font-size-lg);
+}
+
+.sizeMd .oldPrice {
+  font-size: var(--font-size-sm);
+}
+
+@media (min-width: 360px) {
+  .sizeSm .price {
+    font-size: 16px;
+  }
+}

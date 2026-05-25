@@ -143,10 +143,14 @@
 .price {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
-  color: #0f172a;
+  color: var(--color-text);
   margin: 0;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
+}
+
+.priceOnSale {
+  color: var(--color-primary);
 }
 
 .oldPrice {
@@ -750,6 +754,10 @@
     font-variant-numeric: tabular-nums;
     color: var(--color-text);
     line-height: 1.2;
+  }
+
+  .mobileBarPriceOnSale {
+    color: var(--color-primary);
   }
 
   .mobileBarOldPrice {

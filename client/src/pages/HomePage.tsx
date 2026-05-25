@@ -100,7 +100,6 @@ export function HomePage() {
           products={discounted}
           onAddToCart={handleAdd}
           loading={loading}
-          highlightPrice
         />
         <ProductRail
           title="Новинки"

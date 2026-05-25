@@ -75,9 +75,11 @@
 }
 
 .compactSkeletonBtn {
-  height: 32px;
-  margin-top: 4px;
-  border-radius: var(--radius-cta);
+  width: 44px;
+  height: 44px;
+  margin-top: auto;
+  margin-left: auto;
+  border-radius: var(--radius-full);
   background: var(--color-bg-subtle);
 }
 

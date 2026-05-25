@@ -1,6 +1,7 @@
-import { formatPrice } from '@goshopix/shared';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ProductGridCartButton } from '../../../components/ProductGridCartButton/ProductGridCartButton';
+import { ProductPrice } from '../../../components/ProductPrice/ProductPrice';
 import { IconChevronLeft, IconChevronRight, IconHeart } from '../../icons/Icons';
 import { StarRating } from '../StarRating/StarRating';
 import styles from './ProductCard.module.css';
@@ -22,11 +23,9 @@ export interface ProductCardProps {
   /** До 2 строк характеристик на превью (без запроса к API) */
   specLines?: string[];
   images: ProductCardImage[];
-  onAddToCart?: (e: React.MouseEvent) => void | Promise<void>;
+  onAddToCart?: () => void | Promise<void>;
   onFavorite?: (e: React.MouseEvent) => void;
 }
-
-type CartUiState = 'idle' | 'loading' | 'success';
 
 export function ProductCard({
   productId,
@@ -46,8 +45,6 @@ export function ProductCard({
   const [index, setIndex] = useState(0);
   const [hovered, setHovered] = useState(false);
   const [fav, setFav] = useState(false);
-  const [cartState, setCartState] = useState<CartUiState>('idle');
-
   const go = useCallback(
     (dir: -1 | 1) => (e: React.MouseEvent) => {
       e.preventDefault();
@@ -57,25 +54,8 @@ export function ProductCard({
     [slides.length],
   );
 
-  const handleAddToCart = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!onAddToCart || cartState === 'loading') return;
-    setCartState('loading');
-    try {
-      await onAddToCart(e);
-      setCartState('success');
-      window.setTimeout(() => setCartState('idle'), 1800);
-    } catch {
-      setCartState('idle');
-    }
-  };
-
   const current = slides[index] ?? slides[0];
   const specs = specLines.filter(Boolean).slice(0, 2);
-
-  const cartLabel =
-    cartState === 'loading' ? 'Добавляем…' : cartState === 'success' ? 'В корзине ✓' : 'В корзину';
 
   return (
     <article
@@ -131,6 +111,8 @@ export function ProductCard({
             </button>
           </>
         )}
+
+        {onAddToCart ? <ProductGridCartButton onAdd={onAddToCart} /> : null}
       </div>
 
       <div className={styles.body}>
@@ -141,12 +123,7 @@ export function ProductCard({
           </Link>
         </div>
 
-        <div className={styles.rowPrice}>
-          <span className={styles.price}>{formatPrice(price)}</span>
-          {compareAtPrice != null && compareAtPrice > price && (
-            <span className={styles.oldPrice}>{formatPrice(compareAtPrice)}</span>
-          )}
-        </div>
+        <ProductPrice price={price} compareAtPrice={compareAtPrice} size="md" />
 
         <div className={styles.rowRating}>
           <StarRating value={rating} reviewCount={reviewCount} size="sm" />
@@ -160,15 +137,6 @@ export function ProductCard({
           </ul>
         )}
 
-        <button
-          type="button"
-          className={`${styles.cartBtn} ${cartState === 'loading' ? styles.cartBtnLoading : ''} ${cartState === 'success' ? styles.cartBtnSuccess : ''}`}
-          onClick={handleAddToCart}
-          disabled={cartState === 'loading'}
-          aria-live="polite"
-        >
-          {cartLabel}
-        </button>
       </div>
     </article>
   );

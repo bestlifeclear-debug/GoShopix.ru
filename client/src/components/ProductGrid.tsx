@@ -97,7 +97,6 @@ export function ProductGrid({
           <MobileProductCard
             key={product.id}
             product={product}
-            highlightPrice={Boolean(product.discountPercent && product.discountPercent > 0)}
             showFavorite={!hideFavorite}
             onAddToCart={() => onAddToCart?.(product)}
           />
@@ -114,11 +113,7 @@ export function ProductGrid({
             reviewCount={product.reviewCount}
             specLines={buildSpecLines(product)}
             images={product.images}
-            onAddToCart={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onAddToCart?.(product);
-            }}
+            onAddToCart={() => onAddToCart?.(product)}
           />
         ),
       )}

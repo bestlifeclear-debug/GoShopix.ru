@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { IconHeart } from '../../design-system/icons/Icons';
+import { EmptyFavoritesIllustration } from './EmptyFavoritesIllustration';
 import styles from './EmptyFavoritesState.module.css';
 
 type EmptyFavoritesStateProps = {
@@ -9,7 +9,7 @@ type EmptyFavoritesStateProps = {
 export function EmptyFavoritesState({ className = '' }: EmptyFavoritesStateProps) {
   return (
     <div className={`${styles.root} ${className}`.trim()}>
-      <IconHeart className={styles.icon} strokeWidth={1.5} aria-hidden />
+      <EmptyFavoritesIllustration className={styles.icon} />
       <p className={styles.title}>В избранном пока пусто</p>
       <p className={styles.hint}>Сохраняйте понравившиеся товары сердечком или выберите популярное ниже</p>
       <Link to="/catalog" className={styles.catalogBtn}>

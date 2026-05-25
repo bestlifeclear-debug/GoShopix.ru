@@ -1,8 +1,9 @@
-import { formatPrice } from '@goshopix/shared';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { ProductListItem } from '../../api/types';
-import { IconCart, IconHeart } from '../../design-system/icons/Icons';
+import { ProductGridCartButton } from '../../components/ProductGridCartButton/ProductGridCartButton';
+import { ProductPrice } from '../../components/ProductPrice/ProductPrice';
+import { IconHeart } from '../../design-system/icons/Icons';
 import styles from './FavoriteProductCard.module.css';
 
 interface FavoriteProductCardProps {
@@ -10,8 +11,6 @@ interface FavoriteProductCardProps {
   onRemoveFavorite: () => void | Promise<void>;
   onAddToCart?: () => void | Promise<void>;
 }
-
-type CartUiState = 'idle' | 'loading' | 'success';
 
 function placeholderHue(id: string): number {
   let h = 0;
@@ -25,11 +24,9 @@ export function FavoriteProductCard({
   onAddToCart,
 }: FavoriteProductCardProps) {
   const image = product.images?.[0]?.url ?? product.imageUrl ?? undefined;
-  const hasDiscount = product.compareAtPrice != null && product.compareAtPrice > product.price;
-  const highlightPrice = Boolean(product.discountPercent && product.discountPercent > 0);
   const productUrl = `/product/${product.id}`;
+  const brand = product.brand?.trim();
   const [removing, setRemoving] = useState(false);
-  const [cartState, setCartState] = useState<CartUiState>('idle');
   const hue = placeholderHue(product.id);
 
   const handleRemove = async (e: React.MouseEvent) => {
@@ -43,23 +40,6 @@ export function FavoriteProductCard({
       setRemoving(false);
     }
   };
-
-  const handleAddToCart = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!onAddToCart || cartState === 'loading') return;
-    setCartState('loading');
-    try {
-      await onAddToCart();
-      setCartState('success');
-      window.setTimeout(() => setCartState('idle'), 1800);
-    } catch {
-      setCartState('idle');
-    }
-  };
-
-  const cartLabel =
-    cartState === 'loading' ? 'Добавляем в корзину' : cartState === 'success' ? 'В корзине' : 'В корзину';
 
   return (
     <article className={styles.card}>
@@ -91,24 +71,12 @@ export function FavoriteProductCard({
         >
           <IconHeart />
         </button>
-        <button
-          type="button"
-          className={`${styles.cartBtn} ${cartState === 'success' ? styles.cartBtnSuccess : ''}`}
-          aria-label={cartLabel}
-          disabled={cartState === 'loading'}
-          onClick={handleAddToCart}
-        >
-          <IconCart />
-        </button>
+        <ProductGridCartButton onAdd={onAddToCart} />
       </div>
 
       <div className={styles.body}>
-        <div className={`${styles.prices} ${highlightPrice ? styles.pricesSale : ''}`}>
-          <span className={styles.price}>{formatPrice(product.price)}</span>
-          {hasDiscount && (
-            <span className={styles.oldPrice}>{formatPrice(product.compareAtPrice!)}</span>
-          )}
-        </div>
+        {brand && <span className={styles.brand}>{brand}</span>}
+        <ProductPrice price={product.price} compareAtPrice={product.compareAtPrice} size="sm" />
         <Link to={productUrl} className={styles.title}>
           {product.name}
         </Link>

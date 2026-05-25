@@ -197,25 +197,6 @@
   text-decoration: none;
 }
 
-.rowPrice {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--space-1);
-}
-
-.price {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text);
-}
-
-.oldPrice {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  text-decoration: line-through;
-}
-
 .rowRating {
   min-height: 20px;
 }
@@ -237,52 +218,6 @@
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.cartBtn {
-  width: 100%;
-  min-height: var(--cta-height);
-  margin-top: auto;
-  padding: 0 var(--space-2);
-  border: none;
-  border-radius: var(--radius-cta);
-  background: var(--color-button-primary);
-  color: var(--color-text-inverse);
-  font-family: var(--font-family);
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  transition:
-    background var(--transition-ui),
-    box-shadow var(--transition-ui),
-    transform var(--transition-ui),
-    filter var(--transition-ui);
-}
-
-.cartBtn:hover:not(:disabled) {
-  background: var(--color-button-primary-hover);
-}
-
-.cartBtn:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
-}
-
-.cartBtn:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.cartBtnLoading {
-  opacity: 0.85;
-  cursor: wait;
-}
-
-.cartBtnSuccess {
-  background: var(--color-success);
-}
-
-.cartBtnSuccess:hover:not(:disabled) {
-  background: var(--color-success);
 }
 
 @media (max-width: 767px) {
@@ -315,43 +250,14 @@
     padding: 8px;
   }
 
-  .brand {
-    display: none;
-  }
-
   .title {
     font-size: 12px;
     font-weight: var(--font-weight-medium);
-    order: 2;
-  }
-
-  .rowTitle {
-    order: 2;
-  }
-
-  .rowPrice {
-    order: 1;
-  }
-
-  .price {
-    font-size: 16px;
-  }
-
-  .oldPrice {
-    font-size: 12px;
-    color: #9ca3af;
   }
 
   .rowRating,
   .specs {
     display: none;
-  }
-
-  .cartBtn {
-    min-height: 36px;
-    font-size: 12px;
-    border-radius: var(--radius-full);
-    background: var(--gradient-primary-horizontal);
   }
 
   .discountBadge {

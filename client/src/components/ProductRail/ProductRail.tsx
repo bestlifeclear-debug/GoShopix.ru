@@ -11,7 +11,6 @@ interface ProductRailProps {
   linkLabel?: string;
   products: ProductListItem[];
   loading?: boolean;
-  highlightPrice?: boolean;
   onAddToCart?: (product: ProductListItem) => void;
 }
 
@@ -22,7 +21,6 @@ export function ProductRail({
   linkLabel = 'Все →',
   products,
   loading,
-  highlightPrice,
   onAddToCart,
 }: ProductRailProps) {
   return (
@@ -52,7 +50,6 @@ export function ProductRail({
               <MobileProductCard
                 key={product.id}
                 product={product}
-                highlightPrice={highlightPrice}
                 onAddToCart={() => onAddToCart?.(product)}
               />
             ))}
