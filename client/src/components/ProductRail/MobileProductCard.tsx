@@ -13,6 +13,8 @@ interface MobileProductCardProps {
   onAddToCart?: () => void | Promise<void>;
   /** В корзине / рекомендациях — без кнопки избранного */
   showFavorite?: boolean;
+  /** Избранное: активное сердце и удаление (вместо локального toggle) */
+  onRemoveFavorite?: () => void | Promise<void>;
 }
 
 function buildMetaLine(product: ProductListItem): string | null {
@@ -33,13 +35,33 @@ export function MobileProductCard({
   product,
   onAddToCart,
   showFavorite = true,
+  onRemoveFavorite,
 }: MobileProductCardProps) {
   const image = product.images?.[0]?.url ?? product.imageUrl ?? undefined;
   const productUrl = `/product/${product.id}`;
   const meta = buildMetaLine(product);
   const brand = product.brand?.trim();
   const [fav, setFav] = useState(false);
+  const [removingFavorite, setRemovingFavorite] = useState(false);
   const hue = placeholderHue(product.id);
+  const isFavoriteListed = Boolean(onRemoveFavorite);
+  const favActive = isFavoriteListed || fav;
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onRemoveFavorite) {
+      if (removingFavorite) return;
+      setRemovingFavorite(true);
+      try {
+        await onRemoveFavorite();
+      } finally {
+        setRemovingFavorite(false);
+      }
+      return;
+    }
+    setFav((v) => !v);
+  };
 
   return (
     <article className={styles.card}>
@@ -65,13 +87,10 @@ export function MobileProductCard({
         {showFavorite ? (
           <button
             type="button"
-            className={`${styles.favBtn} ${fav ? styles.favBtnActive : ''}`}
-            aria-label={fav ? 'Убрать из избранного' : 'В избранное'}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setFav((v) => !v);
-            }}
+            className={`${styles.favBtn} ${favActive ? styles.favBtnActive : ''}`}
+            aria-label={favActive ? 'Убрать из избранного' : 'В избранное'}
+            disabled={removingFavorite}
+            onClick={handleFavoriteClick}
           >
             <IconHeart />
           </button>
@@ -85,8 +104,6 @@ export function MobileProductCard({
           {product.name}
         </Link>
 
-        <ProductPrice price={product.price} compareAtPrice={product.compareAtPrice} size="sm" />
-
         {(product.rating > 0 || product.reviewCount > 0) && (
           <div className={styles.rating}>
             <StarRating value={product.rating} size="sm" />
@@ -95,6 +112,13 @@ export function MobileProductCard({
             )}
           </div>
         )}
+
+        <ProductPrice
+          className={styles.priceRow}
+          price={product.price}
+          compareAtPrice={product.compareAtPrice}
+          size="sm"
+        />
 
         {meta && <p className={styles.meta}>{meta}</p>}
       </div>

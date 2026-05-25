@@ -150,6 +150,10 @@
   line-height: 1;
 }
 
+.priceRow {
+  margin-top: auto;
+}
+
 .meta {
   margin: 0;
   font-size: 10px;

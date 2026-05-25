@@ -1,8 +1,8 @@
 import { favoritesApi } from '../../api/index';
 import type { FavoriteItem, ProductListItem } from '../../api/types';
 import { ProductGrid } from '../../components/ProductGrid';
+import { MobileProductCard } from '../../components/ProductRail/MobileProductCard';
 import { EmptyFavoritesState } from './EmptyFavoritesState';
-import { FavoriteProductCard } from './FavoriteProductCard';
 import styles from './AccountFavorites.module.css';
 
 interface AccountFavoritesProps {
@@ -63,7 +63,7 @@ export function AccountFavorites({
       <ul className={styles.grid} aria-label="Избранные товары">
         {favorites.map((item) => (
           <li key={item.id}>
-            <FavoriteProductCard
+            <MobileProductCard
               product={item.product}
               onRemoveFavorite={() => handleRemoveFavorite(item.productId)}
               onAddToCart={() => onAddToCart(item.product)}
