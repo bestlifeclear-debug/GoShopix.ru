@@ -3,7 +3,6 @@ import type { CartItem, ProductListItem } from '../../api/types';
 import { type CartLineTotals } from '../../lib/checkoutSelection';
 import { formatEstimatedDeliveryDate } from '../../lib/cartDeliveryDate';
 import { CartCheckoutSummary } from './CartCheckoutSummary';
-import { CartDeliveryUpsell } from './CartDeliveryUpsell';
 import { CartItemCheckbox } from './CartItemCheckbox';
 import { CartRecommendations } from './CartRecommendations';
 import { MobileCartItemCard } from './MobileCartItemCard';
@@ -75,25 +74,27 @@ export function MobileCartList({
         </button>
       </div>
 
-      <CartDeliveryUpsell lineTotals={lineTotals} compact />
+      <div className={styles.scrollArea}>
+        <ul className={styles.list}>
+          {items.map((item) => (
+            <MobileCartItemCard
+              key={item.id}
+              item={item}
+              compareAt={compareAtByProduct[item.product.id]}
+              isSelected={selectedIds.has(item.id)}
+              deliveryDateLabel={deliveryDateLabel}
+              variantLabel={getVariantLabel?.(item) ?? null}
+              onToggle={() => onToggleItem(item.id)}
+              onUpdateQuantity={(qty) => onUpdateQuantity(item.id, qty)}
+              onRemove={() => onRemoveItem(item.id)}
+            />
+          ))}
+        </ul>
 
-      <ul className={styles.list}>
-        {items.map((item) => (
-          <MobileCartItemCard
-            key={item.id}
-            item={item}
-            compareAt={compareAtByProduct[item.product.id]}
-            isSelected={selectedIds.has(item.id)}
-            deliveryDateLabel={deliveryDateLabel}
-            variantLabel={getVariantLabel?.(item) ?? null}
-            onToggle={() => onToggleItem(item.id)}
-            onUpdateQuantity={(qty) => onUpdateQuantity(item.id, qty)}
-            onRemove={() => onRemoveItem(item.id)}
-          />
-        ))}
-      </ul>
-
-      {onRecommendAdd ? <CartRecommendations onAdd={onRecommendAdd} /> : null}
+        {onRecommendAdd ? (
+          <CartRecommendations onAdd={onRecommendAdd} title="Может пригодиться" />
+        ) : null}
+      </div>
 
       <div className={styles.stickyPanel}>
         <CartCheckoutSummary

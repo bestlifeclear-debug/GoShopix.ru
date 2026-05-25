@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
 import {
   CART_DELIVERY_ESTIMATE_FROM,
@@ -39,6 +40,19 @@ export function CartCheckoutSummary({
       ? Math.min(100, (lineTotals.subtotal / FREE_DELIVERY_FROM) * 100)
       : 0;
 
+  /** Почти заполненный бар на 320px выглядит как «красная полоса» — показываем только при заметном остатке */
+  const showDeliveryProgress =
+    !lineTotals.freeDelivery &&
+    lineTotals.subtotal > 0 &&
+    hasSelection &&
+    lineTotals.deliveryRemaining > 150;
+
+  const showDeliveryHint =
+    !lineTotals.freeDelivery &&
+    lineTotals.subtotal > 0 &&
+    hasSelection &&
+    lineTotals.deliveryRemaining > 0;
+
   return (
     <div className={styles.root}>
       <div className={styles.summaryBlock}>
@@ -51,14 +65,24 @@ export function CartCheckoutSummary({
 
         <div className={styles.deliveryRow}>
           <span>{deliverySummaryLine}</span>
-          {!lineTotals.freeDelivery && lineTotals.subtotal > 0 && hasSelection ? (
+          {showDeliveryHint ? (
             <span className={styles.deliveryHint}>
-              Ещё {formatPrice(lineTotals.deliveryRemaining)} до бесплатной доставки
+              {lineTotals.deliveryRemaining <= 150
+                ? `Осталось ${formatPrice(lineTotals.deliveryRemaining)} до бесплатной доставки`
+                : `Ещё ${formatPrice(lineTotals.deliveryRemaining)} до бесплатной доставки`}
+              {!lineTotals.freeDelivery ? (
+                <>
+                  {' · '}
+                  <Link to="/categories" className={styles.deliveryLink}>
+                    Подобрать
+                  </Link>
+                </>
+              ) : null}
             </span>
           ) : null}
         </div>
 
-        {!lineTotals.freeDelivery && lineTotals.subtotal > 0 && hasSelection ? (
+        {showDeliveryProgress ? (
           <div className={styles.progressTrack} aria-hidden>
             <div className={styles.progressFill} style={{ width: `${progressPct}%` }} />
           </div>
@@ -72,17 +96,6 @@ export function CartCheckoutSummary({
         </div>
       </div>
 
-      {showQuickBuy && onQuickCheckout ? (
-        <button
-          type="button"
-          className={styles.quickBuyBtn}
-          onClick={onQuickCheckout}
-          disabled={checkoutDisabled || !hasSelection}
-        >
-          Купить в 1 клик
-        </button>
-      ) : null}
-
       <button
         type="button"
         className={styles.checkoutBtn}
@@ -91,6 +104,17 @@ export function CartCheckoutSummary({
       >
         {checkoutLabel}
       </button>
+
+      {showQuickBuy && onQuickCheckout ? (
+        <button
+          type="button"
+          className={styles.quickBuyLink}
+          onClick={onQuickCheckout}
+          disabled={checkoutDisabled || !hasSelection}
+        >
+          Купить в 1 клик
+        </button>
+      ) : null}
 
       {trustLine ?? <CartTrustBadges />}
     </div>

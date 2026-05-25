@@ -5,9 +5,9 @@ import { X } from 'lucide-react';
 import { productsApi } from '../../api/index';
 import type { CartItem, ProductListItem } from '../../api/types';
 import { CartCheckoutSummary } from '../Cart/CartCheckoutSummary';
-import { CartDeliveryUpsell } from '../Cart/CartDeliveryUpsell';
 import { CartItemCheckbox } from '../Cart/CartItemCheckbox';
 import { CartRecommendations } from '../Cart/CartRecommendations';
+import { CartTrustBadges } from '../Cart/CartTrustBadges';
 import { MobileCartItemCard } from '../Cart/MobileCartItemCard';
 import { EmptyCartState } from '../EmptyCart/EmptyCartState';
 import { buildCompareAtByProductFromGuest } from '../../lib/cartItemPricing';
@@ -188,7 +188,7 @@ export function CartDrawer() {
             onClick={closeDrawer}
             aria-label="Закрыть корзину"
           >
-            <X size={22} strokeWidth={1.75} aria-hidden />
+            <X size={20} strokeWidth={1.75} aria-hidden />
           </button>
         </header>
 
@@ -209,26 +209,26 @@ export function CartDrawer() {
               </button>
             </div>
 
-            <CartDeliveryUpsell lineTotals={selectedLineTotals} compact />
+            <div className="cart-drawer-scroll">
+              <ul className="cart-drawer-list">
+                {cart.items.map((item) => (
+                  <MobileCartItemCard
+                    key={item.id}
+                    item={item}
+                    compareAt={compareAtByProduct[item.product.id]}
+                    isSelected={selectedIds.has(item.id)}
+                    deliveryDateLabel={deliveryDateLabel}
+                    variantLabel={formatVariantOptions(item)}
+                    onToggle={() => toggleItemSelection(item.id)}
+                    onUpdateQuantity={(qty) => void updateQuantity(item.id, qty)}
+                    onRemove={() => void removeItem(item.id)}
+                    onProductNavigate={closeDrawer}
+                  />
+                ))}
+              </ul>
 
-            <ul className="cart-drawer-list">
-              {cart.items.map((item) => (
-                <MobileCartItemCard
-                  key={item.id}
-                  item={item}
-                  compareAt={compareAtByProduct[item.product.id]}
-                  isSelected={selectedIds.has(item.id)}
-                  deliveryDateLabel={deliveryDateLabel}
-                  variantLabel={formatVariantOptions(item)}
-                  onToggle={() => toggleItemSelection(item.id)}
-                  onUpdateQuantity={(qty) => void updateQuantity(item.id, qty)}
-                  onRemove={() => void removeItem(item.id)}
-                  onProductNavigate={closeDrawer}
-                />
-              ))}
-            </ul>
-
-            <CartRecommendations onAdd={handleRecommendAdd} title="Добавьте к заказу" />
+              <CartRecommendations onAdd={handleRecommendAdd} title="Может пригодиться" />
+            </div>
           </div>
         )}
 
@@ -243,16 +243,17 @@ export function CartDrawer() {
               checkoutLabel={isLoading ? 'Загрузка…' : 'Оформить заказ'}
               checkoutDisabled={isLoading}
               trustLine={
-                <p className="cart-drawer-trust">
+                <div className="cart-drawer-trustWrap">
+                  <CartTrustBadges />
                   <button
                     type="button"
-                    className="cart-drawer-trustBtn"
+                    className="cart-drawer-loginHint"
                     onClick={proceedToAuth}
                     disabled={isLoading || selectedCount === 0}
                   >
                     Войти за минуту — корзина сохранится
                   </button>
-                </p>
+                </div>
               }
             />
           </footer>

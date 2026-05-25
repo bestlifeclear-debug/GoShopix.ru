@@ -104,11 +104,21 @@
 }
 
 .cart-drawer-body {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f3f4f6;
+  padding: 0.5rem 0.75rem 0;
+}
+
+.cart-drawer-scroll {
   min-height: 0;
   flex: 1;
   overflow-y: auto;
-  background: #fff;
-  padding: 0.5rem 0.75rem 0.75rem;
+  padding-bottom: 0.5rem;
+  -webkit-overflow-scrolling: touch;
 }
 
 .cart-drawer-selectAll {
@@ -132,7 +142,7 @@
 .cart-drawer-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -300,41 +310,53 @@
 
 .cart-drawer-footer {
   flex-shrink: 0;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid #e5e7eb;
   background: #fff;
-  padding: 0.75rem;
-  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
-  box-shadow: 0 -4px 15px rgb(0 0 0 / 0.05);
+  padding: 0.625rem 0.75rem;
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -2px 12px rgb(0 0 0 / 0.04);
 }
 
-.cart-drawer-trust {
+.cart-drawer-trustWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.cart-drawer-loginHint {
   margin: 0;
-  font-size: 0.75rem;
-  line-height: 1.35;
-  text-align: center;
-  color: #6b7280;
-}
-
-.cart-drawer-trustBtn {
   padding: 0;
   border: 0;
   background: transparent;
-  font-size: inherit;
-  line-height: inherit;
-  color: #4b5563;
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  color: #6b7280;
   text-decoration: underline;
   text-underline-offset: 2px;
   cursor: pointer;
 }
 
-.cart-drawer-trustBtn:hover:not(:disabled) {
-  color: #111827;
+.cart-drawer-loginHint:hover:not(:disabled) {
+  color: #374151;
 }
 
-.cart-drawer-trustBtn:disabled {
+.cart-drawer-loginHint:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.45;
   text-decoration: none;
+}
+
+@media (max-width: 380px) {
+  .cart-drawer-body {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .cart-drawer-footer {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
 }
 
 .cart-drawer-empty {
