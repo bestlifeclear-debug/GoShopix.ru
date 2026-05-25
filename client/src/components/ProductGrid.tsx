@@ -14,6 +14,8 @@ interface ProductGridProps {
   minSlots?: number;
   /** compact — 2 колонки и MobileProductCard на мобилке (каталог, листинги) */
   variant?: 'standard' | 'compact';
+  /** Без кнопки избранного (корзина, рекомендации) */
+  hideFavorite?: boolean;
 }
 
 function buildSpecLines(product: ProductListItem): string[] {
@@ -58,6 +60,7 @@ export function ProductGrid({
   skeletonCount = 8,
   minSlots = 0,
   variant = 'standard',
+  hideFavorite = false,
 }: ProductGridProps) {
   const isMobile = useMaxWidth('(max-width: 767px)');
   const useCompactCards = variant === 'compact' && isMobile;
@@ -95,6 +98,7 @@ export function ProductGrid({
             key={product.id}
             product={product}
             highlightPrice={Boolean(product.discountPercent && product.discountPercent > 0)}
+            showFavorite={!hideFavorite}
             onAddToCart={() => onAddToCart?.(product)}
           />
         ) : (

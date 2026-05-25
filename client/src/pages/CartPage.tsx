@@ -220,16 +220,19 @@ export function CartPage() {
         {isEmpty && (
           <>
             <div className={styles.emptyWrap}>
-              <EmptyCartState hint="Добавьте товары из каталога или выберите хиты ниже" />
+              <EmptyCartState hint="Добавьте из каталога или выберите популярное ниже" />
             </div>
 
             <section className={styles.recommend}>
-              <h2 className={styles.recommendTitle}>Хиты продаж</h2>
+              <h2 className={styles.recommendTitle}>С этим часто берут</h2>
+              <p className={styles.recommendLead}>Популярное сейчас — добавьте в заказ за пару касаний</p>
               <ProductGrid
                 products={hits}
                 loading={hitsLoading}
                 skeletonCount={4}
                 minSlots={4}
+                variant="compact"
+                hideFavorite
                 onAddToCart={handleRecommendAdd}
               />
             </section>

@@ -36,13 +36,45 @@
 .recommend {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
+  padding-bottom: 0;
 }
 
 .recommendTitle {
   margin: 0;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
+}
+
+.recommendLead {
+  margin: -0.25rem 0 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 768px) {
+  .emptyWrap {
+    min-height: min(40vh, 320px);
+    padding: var(--space-6) var(--space-3) var(--space-4);
+  }
+
+  .recommend {
+    gap: var(--space-2);
+    padding: 0 var(--space-1) 0;
+  }
+
+  .recommendTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #111827;
+  }
+
+  .recommendLead {
+    margin-top: 0.125rem;
+    font-size: 0.8125rem;
+  }
 }
 
 /* Двухколоночная сетка: 2/3 + 1/3 */

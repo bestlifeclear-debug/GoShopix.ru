@@ -27,7 +27,11 @@
   .main {
     background: var(--color-app-bg);
     /* Без отступа сверху — иначе серая полоска под шапкой (как тень/тиснение) */
-    padding: 0 0 var(--space-3);
+    padding: 0;
+  }
+
+  .layoutCart .main {
+    padding-bottom: 0;
   }
 
   .main:has([data-account-lk]) {

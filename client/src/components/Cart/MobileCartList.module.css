@@ -71,25 +71,15 @@
   z-index: 999;
   border-top: 1px solid #e5e7eb;
   background: #fff;
-  padding: 0.625rem 1rem 0.5rem;
+  padding: 0.625rem 0.75rem 0.375rem;
   box-shadow: 0 -2px 12px rgb(0 0 0 / 0.04);
   bottom: var(--mobile-bottom-nav-height, calc(56px + env(safe-area-inset-bottom, 0px)));
 }
 
-.stickyPanel::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  height: var(--mobile-bottom-nav-height, calc(56px + env(safe-area-inset-bottom, 0px)));
-  background: #fff;
-  pointer-events: none;
-}
-
 @media (max-width: 380px) {
   .stickyPanel {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-bottom: 0.3125rem;
   }
 }
