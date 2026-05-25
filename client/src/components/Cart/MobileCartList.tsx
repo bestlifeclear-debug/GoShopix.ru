@@ -210,8 +210,6 @@ export function MobileCartList({
         </button>
 
         <p className={styles.trustLine}>
-          Безопасная оплата
-          <span aria-hidden> · </span>
           <Link to="/privacy" className={styles.trustLink}>
             Возврат 14 дней
           </Link>

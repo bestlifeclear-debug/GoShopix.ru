@@ -73,7 +73,25 @@
   flex: 1;
   overflow-y: auto;
   background: #fff;
-  padding: 0.75rem;
+  padding: 0.5rem 0.75rem 0.75rem;
+}
+
+.cart-drawer-selectAll {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 0.5rem;
+}
+
+.cart-drawer-selectAllBtn {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.25rem;
+  border: 0;
+  background: transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
 }
 
 .cart-drawer-list {
@@ -89,6 +107,11 @@
   position: relative;
   border-bottom: 1px solid #f3f4f6;
   padding-bottom: 0.75rem;
+  transition: opacity 0.15s;
+}
+
+.cart-drawer-itemMuted {
+  opacity: 0.75;
 }
 
 .cart-drawer-item:last-child {
@@ -119,9 +142,9 @@
 }
 
 .cart-drawer-row {
-  display: grid;
-  grid-template-columns: 3.5rem 1fr;
-  gap: 0.625rem;
+  display: flex;
+  min-width: 0;
+  gap: 0.25rem;
   padding-right: 2rem;
 }
 

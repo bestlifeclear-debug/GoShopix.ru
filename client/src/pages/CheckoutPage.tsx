@@ -125,7 +125,7 @@ export function CheckoutPage() {
     if (!cart?.items.length) return [];
     if (!checkoutItemIds?.length) return cart.items;
     const idSet = new Set(checkoutItemIds);
-    return cart.items.filter((item) => idSet.has(item.id));
+    return cart.items.filter((item) => idSet.has(item.id) || idSet.has(item.variant.id));
   }, [cart?.items, checkoutItemIds]);
 
   useEffect(() => {

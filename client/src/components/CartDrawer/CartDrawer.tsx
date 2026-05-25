@@ -1,11 +1,13 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
+import { CartItemCheckbox } from '../Cart/CartItemCheckbox';
 import { EmptyCartState } from '../EmptyCart/EmptyCartState';
 import { IconTrash } from '../../design-system/icons/Icons';
 import { X } from 'lucide-react';
 import { buildGuestCart } from '../../lib/guestCart.js';
+import { computeLineTotals } from '../../lib/checkoutSelection';
 import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
 import './cart-drawer.css';
@@ -26,17 +28,85 @@ export function CartDrawer() {
   const token = useAuthStore((s) => s.token);
   const drawerOpen = useCartStore((s) => s.drawerOpen);
   const closeDrawer = useCartStore((s) => s.closeDrawer);
+  const setCheckoutItemIds = useCartStore((s) => s.setCheckoutItemIds);
   const serverCart = useCartStore((s) => s.cart);
   const guestItems = useCartStore((s) => s.guestItems);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
   const isLoading = useCartStore((s) => s.isLoading);
 
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+
   const cart = useMemo(() => {
     if (token) return serverCart;
     if (guestItems.length === 0) return null;
     return buildGuestCart(guestItems);
   }, [token, serverCart, guestItems]);
+
+  const cartItemIds = useMemo(
+    () => (cart?.items ?? []).map((i) => i.id).join('|'),
+    [cart?.items],
+  );
+
+  useEffect(() => {
+    if (!cart?.items.length) {
+      setSelectedIds(new Set());
+      return;
+    }
+    setSelectedIds((prev) => {
+      const itemIds = cart.items.map((i) => i.id);
+      const validIds = new Set(itemIds);
+      if (prev.size === 0) {
+        return new Set(itemIds);
+      }
+      const next = new Set<string>();
+      for (const id of prev) {
+        if (validIds.has(id)) next.add(id);
+      }
+      for (const id of itemIds) {
+        if (!prev.has(id)) next.add(id);
+      }
+      return next.size > 0 ? next : new Set(itemIds);
+    });
+  }, [cartItemIds, cart?.items]);
+
+  const allSelected = Boolean(
+    cart?.items.length && cart.items.every((item) => selectedIds.has(item.id)),
+  );
+
+  const toggleItemSelection = useCallback((itemId: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(itemId)) next.delete(itemId);
+      else next.add(itemId);
+      return next;
+    });
+  }, []);
+
+  const toggleSelectAll = useCallback(() => {
+    if (!cart?.items.length) return;
+    setSelectedIds((prev) => {
+      if (cart.items.every((item) => prev.has(item.id))) {
+        return new Set();
+      }
+      return new Set(cart.items.map((i) => i.id));
+    });
+  }, [cart?.items]);
+
+  const selectedItems = useMemo(() => {
+    if (!cart) return [];
+    return cart.items.filter((item) => selectedIds.has(item.id));
+  }, [cart, selectedIds]);
+
+  const selectedCount = useMemo(
+    () => selectedItems.reduce((n, item) => n + item.quantity, 0),
+    [selectedItems],
+  );
+
+  const selectedLineTotals = useMemo(
+    () => computeLineTotals(selectedItems, {}),
+    [selectedItems],
+  );
 
   const isGuestDrawer = drawerOpen && !token;
 
@@ -61,9 +131,13 @@ export function CartDrawer() {
   if (!isGuestDrawer) return null;
 
   const handleCheckout = () => {
+    if (!selectedItems.length) return;
+    setCheckoutItemIds(selectedItems.map((item) => item.id));
     closeDrawer();
     navigate('/auth?returnUrl=/checkout');
   };
+
+  const hasSelection = selectedCount > 0;
 
   const content = (
     <>
@@ -98,11 +172,26 @@ export function CartDrawer() {
           </div>
         ) : (
           <div className="cart-drawer-body">
+            <div className="cart-drawer-selectAll">
+              <CartItemCheckbox
+                checked={allSelected}
+                onChange={() => toggleSelectAll()}
+                ariaLabel="Выбрать все товары"
+              />
+              <button type="button" className="cart-drawer-selectAllBtn" onClick={toggleSelectAll}>
+                Выбрать всё
+              </button>
+            </div>
+
             <ul className="cart-drawer-list">
               {cart.items.map((item) => {
                 const variantLabel = formatVariantOptions(item);
+                const isSelected = selectedIds.has(item.id);
                 return (
-                  <li key={item.id} className="cart-drawer-item">
+                  <li
+                    key={item.id}
+                    className={`cart-drawer-item${isSelected ? '' : ' cart-drawer-itemMuted'}`}
+                  >
                     <button
                       type="button"
                       className="cart-drawer-remove"
@@ -113,6 +202,12 @@ export function CartDrawer() {
                     </button>
 
                     <div className="cart-drawer-row">
+                      <CartItemCheckbox
+                        checked={isSelected}
+                        onChange={() => toggleItemSelection(item.id)}
+                        ariaLabel={`Выбрать ${item.product.name}`}
+                      />
+
                       <Link
                         to={`/product/${item.product.id}`}
                         className="cart-drawer-thumb"
@@ -123,7 +218,7 @@ export function CartDrawer() {
                         ) : null}
                       </Link>
 
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="cart-drawer-lineTop">
                           <div className="min-w-0 flex-1">
                             <Link
@@ -172,18 +267,20 @@ export function CartDrawer() {
         {cart && cart.items.length > 0 && (
           <footer className="cart-drawer-footer">
             <div className="cart-drawer-totalRow">
-              <span className="cart-drawer-totalLabel">К оплате · {cart.itemCount} шт.</span>
-              <span className="cart-drawer-totalAmount">{formatPrice(cart.subtotal)}</span>
+              <span className="cart-drawer-totalLabel">К оплате · {selectedCount} шт.</span>
+              <span className="cart-drawer-totalAmount">
+                {formatPrice(selectedLineTotals.subtotal)}
+              </span>
             </div>
             <button
               type="button"
               className="cart-drawer-checkout"
               onClick={handleCheckout}
-              disabled={isLoading}
+              disabled={isLoading || !hasSelection}
             >
               {isLoading ? 'Загрузка…' : 'Перейти к оформлению'}
             </button>
-            <p className="cart-drawer-trust">Войдите, чтобы оформить заказ · Безопасная оплата</p>
+            <p className="cart-drawer-trust">Войдите, чтобы оформить заказ</p>
           </footer>
         )}
       </aside>
