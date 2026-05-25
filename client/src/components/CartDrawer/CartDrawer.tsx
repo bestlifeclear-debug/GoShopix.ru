@@ -1,13 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Link, useNavigate } from 'react-router-dom';
-import { formatPrice } from '@goshopix/shared';
-import { Truck } from 'lucide-react';
-import { CartCheckoutSummary } from '../Cart/CartCheckoutSummary';
-import { CartItemCheckbox } from '../Cart/CartItemCheckbox';
-import { EmptyCartState } from '../EmptyCart/EmptyCartState';
-import { IconTrash } from '../../design-system/icons/Icons';
+import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
+import { productsApi } from '../../api/index';
+import type { CartItem, ProductListItem } from '../../api/types';
+import { CartCheckoutSummary } from '../Cart/CartCheckoutSummary';
+import { CartDeliveryUpsell } from '../Cart/CartDeliveryUpsell';
+import { CartItemCheckbox } from '../Cart/CartItemCheckbox';
+import { CartRecommendations } from '../Cart/CartRecommendations';
+import { MobileCartItemCard } from '../Cart/MobileCartItemCard';
+import { EmptyCartState } from '../EmptyCart/EmptyCartState';
+import { buildCompareAtByProductFromGuest } from '../../lib/cartItemPricing';
+import { snapshotFromDetail } from '../../lib/cartSnapshot';
 import { buildGuestCart } from '../../lib/guestCart.js';
 import { computeLineTotals } from '../../lib/checkoutSelection';
 import { formatEstimatedDeliveryDate } from '../../lib/cartDeliveryDate';
@@ -15,9 +19,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
 import './cart-drawer.css';
 
-function formatVariantOptions(item: {
-  variant: { name: string | null; options: { name: string; value: string }[] };
-}) {
+function formatVariantOptions(item: CartItem) {
   const fromOptions = item.variant.options
     .map((o) => o.value)
     .filter(Boolean)
@@ -32,8 +34,8 @@ export function CartDrawer() {
   const drawerOpen = useCartStore((s) => s.drawerOpen);
   const closeDrawer = useCartStore((s) => s.closeDrawer);
   const setCheckoutItemIds = useCartStore((s) => s.setCheckoutItemIds);
-  const serverCart = useCartStore((s) => s.cart);
   const guestItems = useCartStore((s) => s.guestItems);
+  const addToCart = useCartStore((s) => s.addToCart);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
   const isLoading = useCartStore((s) => s.isLoading);
@@ -42,10 +44,14 @@ export function CartDrawer() {
   const deliveryDateLabel = useMemo(() => formatEstimatedDeliveryDate(7), []);
 
   const cart = useMemo(() => {
-    if (token) return serverCart;
     if (guestItems.length === 0) return null;
     return buildGuestCart(guestItems);
-  }, [token, serverCart, guestItems]);
+  }, [guestItems]);
+
+  const compareAtByProduct = useMemo(
+    () => buildCompareAtByProductFromGuest(guestItems),
+    [guestItems],
+  );
 
   const cartItemIds = useMemo(
     () => (cart?.items ?? []).map((i) => i.id).join('|'),
@@ -108,8 +114,8 @@ export function CartDrawer() {
   );
 
   const selectedLineTotals = useMemo(
-    () => computeLineTotals(selectedItems, {}),
-    [selectedItems],
+    () => computeLineTotals(selectedItems, compareAtByProduct),
+    [selectedItems, compareAtByProduct],
   );
 
   const isGuestDrawer = drawerOpen && !token;
@@ -134,24 +140,33 @@ export function CartDrawer() {
 
   if (!isGuestDrawer) return null;
 
-  const handleCheckout = () => {
+  const proceedToAuth = () => {
     if (!selectedItems.length) return;
     setCheckoutItemIds(selectedItems.map((item) => item.id));
     closeDrawer();
     navigate('/auth?returnUrl=/checkout');
   };
 
+  const handleRecommendAdd = async (product: ProductListItem) => {
+    try {
+      const detail = await productsApi.get(product.id);
+      const variant = detail.variants.find((v) => v.isDefault) ?? detail.variants[0];
+      if (!variant) return;
+      await addToCart(variant.id, 1, snapshotFromDetail(detail, variant));
+    } catch {
+      /* ignore */
+    }
+  };
+
   const itemCountLabel = cart
     ? `${cart.itemCount} ${cart.itemCount === 1 ? 'товар' : cart.itemCount < 5 ? 'товара' : 'товаров'}`
     : '';
 
+  const showQuickBuy = (cart?.items.length ?? 0) === 1;
+
   const content = (
     <>
-      <div
-        className="cart-drawer-overlay"
-        role="presentation"
-        onClick={closeDrawer}
-      />
+      <div className="cart-drawer-overlay" role="presentation" onClick={closeDrawer} />
       <aside
         className="cart-drawer-panel"
         role="dialog"
@@ -194,90 +209,26 @@ export function CartDrawer() {
               </button>
             </div>
 
+            <CartDeliveryUpsell lineTotals={selectedLineTotals} compact />
+
             <ul className="cart-drawer-list">
-              {cart.items.map((item) => {
-                const variantLabel = formatVariantOptions(item);
-                const isSelected = selectedIds.has(item.id);
-                return (
-                  <li
-                    key={item.id}
-                    className={`cart-drawer-item${isSelected ? '' : ' cart-drawer-itemMuted'}`}
-                  >
-                    <button
-                      type="button"
-                      className="cart-drawer-remove"
-                      aria-label="Удалить товар"
-                      onClick={() => void removeItem(item.id)}
-                    >
-                      <IconTrash />
-                    </button>
-
-                    <div className="cart-drawer-row">
-                      <CartItemCheckbox
-                        checked={isSelected}
-                        onChange={() => toggleItemSelection(item.id)}
-                        ariaLabel={`Выбрать ${item.product.name}`}
-                      />
-
-                      <Link
-                        to={`/product/${item.product.id}`}
-                        className="cart-drawer-thumb"
-                        onClick={closeDrawer}
-                      >
-                        {item.product.imageUrl ? (
-                          <img src={item.product.imageUrl} alt="" />
-                        ) : (
-                          <span className="cart-drawer-thumbPlaceholder" />
-                        )}
-                      </Link>
-
-                      <div className="cart-drawer-itemBody">
-                        <Link
-                          to={`/product/${item.product.id}`}
-                          className="cart-drawer-name"
-                          onClick={closeDrawer}
-                        >
-                          {item.product.name}
-                        </Link>
-                        {variantLabel ? (
-                          <p className="cart-drawer-variant">{variantLabel}</p>
-                        ) : null}
-                        <p className="cart-drawer-deliveryEta">
-                          <Truck size={12} strokeWidth={1.75} aria-hidden />
-                          <span>Доставка ~{deliveryDateLabel}</span>
-                        </p>
-
-                        <div className="cart-drawer-itemFooter">
-                          <div className="cart-drawer-qty">
-                            <button
-                              type="button"
-                              className="cart-drawer-qtyBtn"
-                              aria-label="Уменьшить количество"
-                              onClick={() =>
-                                void updateQuantity(item.id, Math.max(1, item.quantity - 1))
-                              }
-                            >
-                              −
-                            </button>
-                            <span className="cart-drawer-qtyValue">{item.quantity}</span>
-                            <button
-                              type="button"
-                              className="cart-drawer-qtyBtn"
-                              aria-label="Увеличить количество"
-                              disabled={item.quantity >= item.variant.stock}
-                              onClick={() => void updateQuantity(item.id, item.quantity + 1)}
-                            >
-                              +
-                            </button>
-                          </div>
-                          <span className="cart-drawer-price">{formatPrice(item.lineTotal)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
+              {cart.items.map((item) => (
+                <MobileCartItemCard
+                  key={item.id}
+                  item={item}
+                  compareAt={compareAtByProduct[item.product.id]}
+                  isSelected={selectedIds.has(item.id)}
+                  deliveryDateLabel={deliveryDateLabel}
+                  variantLabel={formatVariantOptions(item)}
+                  onToggle={() => toggleItemSelection(item.id)}
+                  onUpdateQuantity={(qty) => void updateQuantity(item.id, qty)}
+                  onRemove={() => void removeItem(item.id)}
+                  onProductNavigate={closeDrawer}
+                />
+              ))}
             </ul>
+
+            <CartRecommendations onAdd={handleRecommendAdd} title="Добавьте к заказу" />
           </div>
         )}
 
@@ -286,7 +237,9 @@ export function CartDrawer() {
             <CartCheckoutSummary
               lineTotals={selectedLineTotals}
               selectedCount={selectedCount}
-              onCheckout={handleCheckout}
+              onCheckout={proceedToAuth}
+              onQuickCheckout={proceedToAuth}
+              showQuickBuy={showQuickBuy}
               checkoutLabel={isLoading ? 'Загрузка…' : 'Оформить заказ'}
               checkoutDisabled={isLoading}
               trustLine={
@@ -294,7 +247,7 @@ export function CartDrawer() {
                   <button
                     type="button"
                     className="cart-drawer-trustBtn"
-                    onClick={handleCheckout}
+                    onClick={proceedToAuth}
                     disabled={isLoading || selectedCount === 0}
                   >
                     Войти за минуту — корзина сохранится

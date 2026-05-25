@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
 import {
   CART_DELIVERY_ESTIMATE_FROM,
   FREE_DELIVERY_FROM,
   type CartLineTotals,
 } from '../../lib/checkoutSelection';
+import { CartTrustBadges } from './CartTrustBadges';
 import styles from './CartCheckoutSummary.module.css';
 
 type CartCheckoutSummaryProps = {
@@ -15,6 +15,8 @@ type CartCheckoutSummaryProps = {
   checkoutLabel: string;
   checkoutDisabled?: boolean;
   trustLine?: ReactNode;
+  onQuickCheckout?: () => void;
+  showQuickBuy?: boolean;
 };
 
 export function CartCheckoutSummary({
@@ -24,6 +26,8 @@ export function CartCheckoutSummary({
   checkoutLabel,
   checkoutDisabled = false,
   trustLine,
+  onQuickCheckout,
+  showQuickBuy = false,
 }: CartCheckoutSummaryProps) {
   const hasSelection = selectedCount > 0;
   const deliverySummaryLine = lineTotals.freeDelivery
@@ -68,6 +72,17 @@ export function CartCheckoutSummary({
         </div>
       </div>
 
+      {showQuickBuy && onQuickCheckout ? (
+        <button
+          type="button"
+          className={styles.quickBuyBtn}
+          onClick={onQuickCheckout}
+          disabled={checkoutDisabled || !hasSelection}
+        >
+          Купить в 1 клик
+        </button>
+      ) : null}
+
       <button
         type="button"
         className={styles.checkoutBtn}
@@ -77,13 +92,7 @@ export function CartCheckoutSummary({
         {checkoutLabel}
       </button>
 
-      {trustLine ?? (
-        <p className={styles.trustLine}>
-          <Link to="/privacy" className={styles.trustLink}>
-            Возврат 14 дней
-          </Link>
-        </p>
-      )}
+      {trustLine ?? <CartTrustBadges />}
     </div>
   );
 }

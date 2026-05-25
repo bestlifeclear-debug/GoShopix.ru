@@ -47,7 +47,6 @@ export function SiteHeader() {
   const user = useAuthStore((s) => s.user);
   const cartCount = useCartStore((s) => selectCartItemCount(s, Boolean(token)));
   const fetchCart = useCartStore((s) => s.fetchCart);
-  const openDrawer = useCartStore((s) => s.openDrawer);
   const initGuestCart = useCartStore((s) => s.initGuestCart);
 
   useEffect(() => {
@@ -56,11 +55,7 @@ export function SiteHeader() {
   }, [token, fetchCart, initGuestCart]);
 
   const handleCartClick = () => {
-    if (token) {
-      navigate('/cart');
-    } else {
-      openDrawer();
-    }
+    navigate('/cart');
   };
 
   useEffect(() => {

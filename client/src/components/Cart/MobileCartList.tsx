@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
-import { Minus, Plus, Trash2, Truck } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { formatPrice } from '@goshopix/shared';
-import type { CartItem } from '../../api/types';
+import type { CartItem, ProductListItem } from '../../api/types';
 import { type CartLineTotals } from '../../lib/checkoutSelection';
 import { formatEstimatedDeliveryDate } from '../../lib/cartDeliveryDate';
 import { CartCheckoutSummary } from './CartCheckoutSummary';
+import { CartDeliveryUpsell } from './CartDeliveryUpsell';
 import { CartItemCheckbox } from './CartItemCheckbox';
+import { CartRecommendations } from './CartRecommendations';
+import { MobileCartItemCard } from './MobileCartItemCard';
 import styles from './MobileCartList.module.css';
 
 interface MobileCartListProps {
@@ -21,13 +21,10 @@ interface MobileCartListProps {
   onRemoveItem: (itemId: string) => void;
   selectedCount: number;
   onCheckout: () => void;
-}
-
-function getLinePricing(item: CartItem, compareAt: number | null | undefined) {
-  const unitCompareAt =
-    compareAt != null && compareAt > item.unitPrice ? compareAt : null;
-  const oldLineTotal = unitCompareAt != null ? unitCompareAt * item.quantity : null;
-  return { oldLineTotal, lineTotal: item.lineTotal };
+  onQuickCheckout?: () => void;
+  getVariantLabel?: (item: CartItem) => string | null;
+  onRecommendAdd?: (product: ProductListItem) => void;
+  checkoutLabel?: string;
 }
 
 function formatItemCount(count: number): string {
@@ -51,9 +48,14 @@ export function MobileCartList({
   onRemoveItem,
   selectedCount,
   onCheckout,
+  onQuickCheckout,
+  getVariantLabel,
+  onRecommendAdd,
+  checkoutLabel = 'Оформить заказ',
 }: MobileCartListProps) {
   const deliveryDateLabel = useMemo(() => formatEstimatedDeliveryDate(7), []);
   const totalQty = useMemo(() => items.reduce((n, i) => n + i.quantity, 0), [items]);
+  const showQuickBuy = items.length === 1 && selectedIds.size === 1;
 
   return (
     <div className={styles.root}>
@@ -73,100 +75,34 @@ export function MobileCartList({
         </button>
       </div>
 
+      <CartDeliveryUpsell lineTotals={lineTotals} compact />
+
       <ul className={styles.list}>
-        {items.map((item) => {
-          const isSelected = selectedIds.has(item.id);
-          const compareAt = compareAtByProduct[item.product.id];
-          const { oldLineTotal, lineTotal } = getLinePricing(item, compareAt);
-
-          return (
-            <li
-              key={item.id}
-              className={[styles.card, isSelected ? '' : styles.cardMuted].join(' ')}
-            >
-              <button
-                type="button"
-                className={styles.removeBtn}
-                aria-label="Удалить товар"
-                onClick={() => onRemoveItem(item.id)}
-              >
-                <Trash2 size={16} strokeWidth={1.75} aria-hidden />
-              </button>
-
-              <div className={styles.cardTop}>
-                <div className={styles.checkboxWrap}>
-                  <CartItemCheckbox
-                    checked={isSelected}
-                    onChange={() => onToggleItem(item.id)}
-                    ariaLabel={`Выбрать ${item.product.name}`}
-                  />
-                </div>
-
-                <Link
-                  to={`/product/${item.product.id}`}
-                  className={styles.thumb}
-                >
-                  {item.product.imageUrl ? (
-                    <img src={item.product.imageUrl} alt="" />
-                  ) : (
-                    <span className={styles.thumbPlaceholder} />
-                  )}
-                </Link>
-
-                <div className={styles.cardBody}>
-                  <Link to={`/product/${item.product.id}`} className={styles.productName}>
-                    {item.product.name}
-                  </Link>
-                  {item.variant.name ? (
-                    <span className={styles.variant}>{item.variant.name}</span>
-                  ) : null}
-                  <p className={styles.deliveryEta}>
-                    <Truck size={12} strokeWidth={1.75} aria-hidden />
-                    <span>Доставка ~{deliveryDateLabel}</span>
-                  </p>
-                </div>
-              </div>
-
-              <div className={styles.cardBottom}>
-                <div className={styles.qtyControl}>
-                  <button
-                    type="button"
-                    className={styles.qtyBtn}
-                    aria-label="Уменьшить количество"
-                    onClick={() => onUpdateQuantity(item.id, Math.max(1, item.quantity - 1))}
-                  >
-                    <Minus size={14} strokeWidth={2} aria-hidden />
-                  </button>
-                  <span className={styles.qtyValue}>{item.quantity}</span>
-                  <button
-                    type="button"
-                    className={styles.qtyBtn}
-                    aria-label="Увеличить количество"
-                    onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                    disabled={item.quantity >= item.variant.stock}
-                  >
-                    <Plus size={14} strokeWidth={2} aria-hidden />
-                  </button>
-                </div>
-
-                <div className={styles.priceCol}>
-                  {oldLineTotal != null ? (
-                    <span className={styles.oldPrice}>{formatPrice(oldLineTotal)}</span>
-                  ) : null}
-                  <span className={styles.price}>{formatPrice(lineTotal)}</span>
-                </div>
-              </div>
-            </li>
-          );
-        })}
+        {items.map((item) => (
+          <MobileCartItemCard
+            key={item.id}
+            item={item}
+            compareAt={compareAtByProduct[item.product.id]}
+            isSelected={selectedIds.has(item.id)}
+            deliveryDateLabel={deliveryDateLabel}
+            variantLabel={getVariantLabel?.(item) ?? null}
+            onToggle={() => onToggleItem(item.id)}
+            onUpdateQuantity={(qty) => onUpdateQuantity(item.id, qty)}
+            onRemove={() => onRemoveItem(item.id)}
+          />
+        ))}
       </ul>
+
+      {onRecommendAdd ? <CartRecommendations onAdd={onRecommendAdd} /> : null}
 
       <div className={styles.stickyPanel}>
         <CartCheckoutSummary
           lineTotals={lineTotals}
           selectedCount={selectedCount}
           onCheckout={onCheckout}
-          checkoutLabel="Оформить заказ"
+          onQuickCheckout={onQuickCheckout}
+          showQuickBuy={showQuickBuy && Boolean(onQuickCheckout)}
+          checkoutLabel={checkoutLabel}
         />
       </div>
     </div>

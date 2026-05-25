@@ -9,6 +9,7 @@ export interface CartItemSnapshot {
   productSlug: string;
   variantName: string | null;
   unitPrice: number;
+  compareAtPrice?: number | null;
   stock: number;
   imageUrl: string | null;
 }
@@ -84,7 +85,13 @@ export function addGuestLine(items: GuestCartLine[], snapshot: CartItemSnapshot,
   if (existing) {
     const newQty = Math.min(existing.quantity + quantity, snapshot.stock);
     return items.map((i) =>
-      i.variantId === snapshot.variantId ? { ...i, quantity: newQty } : i,
+      i.variantId === snapshot.variantId
+        ? {
+            ...i,
+            quantity: newQty,
+            compareAtPrice: snapshot.compareAtPrice ?? i.compareAtPrice,
+          }
+        : i,
     );
   }
   return [...items, { ...snapshot, quantity: Math.min(quantity, snapshot.stock) }];

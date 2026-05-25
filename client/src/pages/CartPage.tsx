@@ -2,14 +2,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice } from '@goshopix/shared';
 import { productsApi } from '../api/index';
-import type { ProductListItem } from '../api/types';
+import type { Cart, ProductListItem } from '../api/types';
 import { MobileCartList } from '../components/Cart/MobileCartList';
 import { ProductGrid } from '../components/ProductGrid';
 import { PageContainer } from '../components/layout/PageContainer';
 import { EmptyCartState } from '../components/EmptyCart/EmptyCartState';
 import { Button, Loader } from '../design-system';
+import { buildCompareAtByProductFromGuest } from '../lib/cartItemPricing';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { computeLineTotals, FREE_DELIVERY_FROM } from '../lib/checkoutSelection';
+import { buildGuestCart } from '../lib/guestCart';
 import { track } from '../lib/analytics';
 import { ApiClientError } from '../api/client';
 import { useAuthStore } from '../stores/authStore';
@@ -21,6 +23,8 @@ export function CartPage() {
   const navigate = useNavigate();
   const token = useAuthStore((s) => s.token);
   const cart = useCartStore((s) => s.cart);
+  const guestItems = useCartStore((s) => s.guestItems);
+  const initGuestCart = useCartStore((s) => s.initGuestCart);
   const fetchCart = useCartStore((s) => s.fetchCart);
   const addToCart = useCartStore((s) => s.addToCart);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
@@ -34,13 +38,25 @@ export function CartPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [, setError] = useState<string | null>(null);
 
+  const effectiveCart: Cart | null = useMemo(() => {
+    if (token) return cart;
+    if (guestItems.length === 0) return null;
+    return buildGuestCart(guestItems);
+  }, [token, cart, guestItems]);
+
+  const guestCompareAt = useMemo(
+    () => buildCompareAtByProductFromGuest(guestItems),
+    [guestItems],
+  );
+
+  const compareAtMap = token ? compareAtByProduct : guestCompareAt;
+
   useEffect(() => {
-    if (!token) {
-      navigate('/auth?returnUrl=/cart');
-      return;
+    initGuestCart();
+    if (token) {
+      void fetchCart();
     }
-    void fetchCart();
-  }, [token, fetchCart, navigate]);
+  }, [token, fetchCart, initGuestCart]);
 
   useEffect(() => {
     setHitsLoading(true);
@@ -52,7 +68,8 @@ export function CartPage() {
   }, []);
 
   useEffect(() => {
-    if (!cart?.items.length) {
+    if (!token || !cart?.items.length) {
+      if (!token) return;
       setCompareAtByProduct({});
       return;
     }
@@ -77,20 +94,20 @@ export function CartPage() {
     return () => {
       cancelled = true;
     };
-  }, [cart?.updatedAt, cart?.itemCount, cart?.items.map((i) => `${i.id}:${i.quantity}`).join('|')]);
+  }, [token, cart?.updatedAt, cart?.itemCount, cart?.items.map((i) => `${i.id}:${i.quantity}`).join('|')]);
 
   const cartItemIds = useMemo(
-    () => (cart?.items ?? []).map((i) => i.id).join('|'),
-    [cart?.items],
+    () => (effectiveCart?.items ?? []).map((i) => i.id).join('|'),
+    [effectiveCart?.items],
   );
 
   useEffect(() => {
-    if (!cart?.items.length) {
+    if (!effectiveCart?.items.length) {
       setSelectedIds(new Set());
       return;
     }
     setSelectedIds((prev) => {
-      const itemIds = cart.items.map((i) => i.id);
+      const itemIds = effectiveCart.items.map((i) => i.id);
       const validIds = new Set(itemIds);
       if (prev.size === 0) {
         return new Set(itemIds);
@@ -104,10 +121,11 @@ export function CartPage() {
       }
       return next.size > 0 ? next : new Set(itemIds);
     });
-  }, [cartItemIds, cart?.items]);
+  }, [cartItemIds, effectiveCart?.items]);
 
   const allSelected = Boolean(
-    cart?.items.length && cart.items.every((item) => selectedIds.has(item.id)),
+    effectiveCart?.items.length &&
+      effectiveCart.items.every((item) => selectedIds.has(item.id)),
   );
 
   const toggleItemSelection = useCallback((itemId: string) => {
@@ -120,19 +138,19 @@ export function CartPage() {
   }, []);
 
   const toggleSelectAll = useCallback(() => {
-    if (!cart?.items.length) return;
+    if (!effectiveCart?.items.length) return;
     setSelectedIds((prev) => {
-      if (cart.items.every((item) => prev.has(item.id))) {
+      if (effectiveCart.items.every((item) => prev.has(item.id))) {
         return new Set();
       }
-      return new Set(cart.items.map((i) => i.id));
+      return new Set(effectiveCart.items.map((i) => i.id));
     });
-  }, [cart?.items]);
+  }, [effectiveCart?.items]);
 
   const selectedItems = useMemo(() => {
-    if (!cart) return [];
-    return cart.items.filter((item) => selectedIds.has(item.id));
-  }, [cart, selectedIds]);
+    if (!effectiveCart) return [];
+    return effectiveCart.items.filter((item) => selectedIds.has(item.id));
+  }, [effectiveCart, selectedIds]);
 
   const selectedCount = useMemo(
     () => selectedItems.reduce((n, item) => n + item.quantity, 0),
@@ -140,12 +158,12 @@ export function CartPage() {
   );
 
   const selectedLineTotals = useMemo(
-    () => computeLineTotals(selectedItems, compareAtByProduct),
-    [selectedItems, compareAtByProduct],
+    () => computeLineTotals(selectedItems, compareAtMap),
+    [selectedItems, compareAtMap],
   );
 
   const totals = useMemo(() => {
-    if (!cart) {
+    if (!effectiveCart) {
       return {
         originalSubtotal: 0,
         discount: 0,
@@ -155,7 +173,7 @@ export function CartPage() {
         deliveryRemaining: FREE_DELIVERY_FROM,
       };
     }
-    const line = computeLineTotals(cart.items, compareAtByProduct);
+    const line = computeLineTotals(effectiveCart.items, compareAtMap);
     return {
       originalSubtotal: line.originalSubtotal,
       discount: line.discount,
@@ -164,7 +182,7 @@ export function CartPage() {
       freeDelivery: line.freeDelivery,
       deliveryRemaining: line.deliveryRemaining,
     };
-  }, [cart, compareAtByProduct]);
+  }, [effectiveCart, compareAtMap]);
 
   const handleRecommendAdd = async (product: ProductListItem) => {
     try {
@@ -177,15 +195,17 @@ export function CartPage() {
     }
   };
 
-  if (!token) return null;
+  const showInitialLoader = Boolean(token && isLoading && cart === null);
+  const isEmpty = !showInitialLoader && (effectiveCart?.items.length ?? 0) === 0;
 
-  const showInitialLoader = isLoading && cart === null;
-  const isEmpty = !showInitialLoader && (cart?.items.length ?? 0) === 0;
-
-  const handleCheckout = () => {
-    if (!cart?.items.length || selectedItems.length === 0) return;
+  const proceedToCheckout = () => {
+    if (!effectiveCart?.items.length || selectedItems.length === 0) return;
     setError(null);
     setCheckoutItemIds(selectedItems.map((item) => item.id));
+    if (!token) {
+      navigate('/auth?returnUrl=/checkout');
+      return;
+    }
     track('checkout_open');
     navigate('/checkout');
   };
@@ -193,7 +213,7 @@ export function CartPage() {
   return (
     <PageContainer className={styles.cartContainer}>
       <div
-        className={`${styles.page} ${cart && cart.items.length > 0 ? styles.pageWithItems : ''}`}
+        className={`${styles.page} ${effectiveCart && effectiveCart.items.length > 0 ? styles.pageWithItems : ''}`}
       >
         <h1 className={`${styles.title} ${styles.titleDesktopOnly}`}>Корзина</h1>
 
@@ -218,11 +238,11 @@ export function CartPage() {
           </>
         )}
 
-        {cart && cart.items.length > 0 && (
+        {effectiveCart && effectiveCart.items.length > 0 && (
           <>
             <MobileCartList
-              items={cart.items}
-              compareAtByProduct={compareAtByProduct}
+              items={effectiveCart.items}
+              compareAtByProduct={compareAtMap}
               selectedIds={selectedIds}
               lineTotals={selectedLineTotals}
               onToggleItem={toggleItemSelection}
@@ -231,131 +251,138 @@ export function CartPage() {
               onUpdateQuantity={(id, qty) => void updateQuantity(id, qty)}
               onRemoveItem={(id) => void removeItem(id)}
               selectedCount={selectedCount}
-              onCheckout={handleCheckout}
+              onCheckout={proceedToCheckout}
+              onQuickCheckout={proceedToCheckout}
+              onRecommendAdd={handleRecommendAdd}
+              checkoutLabel={token ? 'Оформить заказ' : 'Оформить заказ'}
             />
 
-            <div className={styles.layout}>
-            <div className={styles.itemsCol}>
-              <ul className={styles.items}>
-                {cart.items.map((item) => (
-                  <li key={item.id} className={styles.item}>
-                    <Link to={`/product/${item.product.id}`} className={styles.itemImage}>
-                      {item.product.imageUrl ? (
-                        <img src={item.product.imageUrl} alt="" />
-                      ) : (
-                        <span className={styles.itemImagePlaceholder} />
-                      )}
-                    </Link>
-                    <div className={styles.itemBody}>
-                      <Link to={`/product/${item.product.id}`} className={styles.itemName}>
-                        {item.product.name}
-                      </Link>
-                      {item.variant.name && (
-                        <span className={styles.variant}>{item.variant.name}</span>
-                      )}
-                      <div className={styles.qtyRow}>
-                        <button
-                          type="button"
-                          aria-label="Уменьшить количество"
-                          onClick={() => void updateQuantity(item.id, Math.max(1, item.quantity - 1))}
-                        >
-                          −
-                        </button>
-                        <span>{item.quantity}</span>
-                        <button
-                          type="button"
-                          aria-label="Увеличить количество"
-                          onClick={() => void updateQuantity(item.id, item.quantity + 1)}
-                          disabled={item.quantity >= item.variant.stock}
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    <div className={styles.itemRight}>
-                      <span className={styles.lineTotal}>{formatPrice(item.lineTotal)}</span>
-                      <button
-                        type="button"
-                        className={styles.remove}
-                        onClick={() => void removeItem(item.id)}
-                      >
-                        Удалить
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <aside className={styles.summaryCol}>
-              <div className={`gsp-panel ${styles.summaryCard}`}>
-                <h2 className={styles.summaryHeading}>Итого</h2>
-
-                <dl className={styles.summaryRows}>
-                  <div className={styles.summaryRow}>
-                    <dt>
-                      Товары ({cart.itemCount} {cart.itemCount === 1 ? 'шт.' : 'шт.'})
-                    </dt>
-                    <dd>{formatPrice(totals.originalSubtotal)}</dd>
-                  </div>
-
-                  {totals.discount > 0 && (
-                    <div className={`${styles.summaryRow} ${styles.summaryRowSale}`}>
-                      <dt>Скидка</dt>
-                      <dd>−{formatPrice(totals.discount)}</dd>
-                    </div>
-                  )}
-
-                  <div className={styles.summaryRow}>
-                    <dt>Доставка</dt>
-                    <dd className={styles.summaryDelivery}>
-                      {totals.freeDelivery ? 'Бесплатно' : 'Рассчитаем при оформлении'}
-                    </dd>
-                  </div>
-                </dl>
-
-                <div className={styles.summaryTotal}>
-                  <span>К оплате</span>
-                  <strong>{formatPrice(totals.total)}</strong>
+            {token ? (
+              <div className={styles.layout}>
+                <div className={styles.itemsCol}>
+                  <ul className={styles.items}>
+                    {effectiveCart.items.map((item) => (
+                      <li key={item.id} className={styles.item}>
+                        <Link to={`/product/${item.product.id}`} className={styles.itemImage}>
+                          {item.product.imageUrl ? (
+                            <img src={item.product.imageUrl} alt="" />
+                          ) : (
+                            <span className={styles.itemImagePlaceholder} />
+                          )}
+                        </Link>
+                        <div className={styles.itemBody}>
+                          <Link to={`/product/${item.product.id}`} className={styles.itemName}>
+                            {item.product.name}
+                          </Link>
+                          {item.variant.name && (
+                            <span className={styles.variant}>{item.variant.name}</span>
+                          )}
+                          <div className={styles.qtyRow}>
+                            <button
+                              type="button"
+                              aria-label="Уменьшить количество"
+                              onClick={() =>
+                                void updateQuantity(item.id, Math.max(1, item.quantity - 1))
+                              }
+                            >
+                              −
+                            </button>
+                            <span>{item.quantity}</span>
+                            <button
+                              type="button"
+                              aria-label="Увеличить количество"
+                              onClick={() => void updateQuantity(item.id, item.quantity + 1)}
+                              disabled={item.quantity >= item.variant.stock}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                        <div className={styles.itemRight}>
+                          <span className={styles.lineTotal}>{formatPrice(item.lineTotal)}</span>
+                          <button
+                            type="button"
+                            className={styles.remove}
+                            onClick={() => void removeItem(item.id)}
+                          >
+                            Удалить
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                {!totals.freeDelivery && totals.subtotal > 0 && (
-                  <div className={styles.deliveryProgress}>
-                    <p className={styles.deliveryProgressText}>
-                      До бесплатной доставки осталось{' '}
-                      {formatPrice(Math.max(0, FREE_DELIVERY_FROM - totals.subtotal))}
-                    </p>
-                    <div className={styles.deliveryProgressTrack} aria-hidden>
-                      <div
-                        className={styles.deliveryProgressFill}
-                        style={{
-                          width: `${Math.min(100, (totals.subtotal / FREE_DELIVERY_FROM) * 100)}%`,
-                        }}
-                      />
+                <aside className={styles.summaryCol}>
+                  <div className={`gsp-panel ${styles.summaryCard}`}>
+                    <h2 className={styles.summaryHeading}>Итого</h2>
+
+                    <dl className={styles.summaryRows}>
+                      <div className={styles.summaryRow}>
+                        <dt>
+                          Товары ({effectiveCart.itemCount}{' '}
+                          {effectiveCart.itemCount === 1 ? 'шт.' : 'шт.'})
+                        </dt>
+                        <dd>{formatPrice(totals.originalSubtotal)}</dd>
+                      </div>
+
+                      {totals.discount > 0 && (
+                        <div className={`${styles.summaryRow} ${styles.summaryRowSale}`}>
+                          <dt>Скидка</dt>
+                          <dd>−{formatPrice(totals.discount)}</dd>
+                        </div>
+                      )}
+
+                      <div className={styles.summaryRow}>
+                        <dt>Доставка</dt>
+                        <dd className={styles.summaryDelivery}>
+                          {totals.freeDelivery ? 'Бесплатно' : 'Рассчитаем при оформлении'}
+                        </dd>
+                      </div>
+                    </dl>
+
+                    <div className={styles.summaryTotal}>
+                      <span>К оплате</span>
+                      <strong>{formatPrice(totals.total)}</strong>
                     </div>
+
+                    {!totals.freeDelivery && totals.subtotal > 0 && (
+                      <div className={styles.deliveryProgress}>
+                        <p className={styles.deliveryProgressText}>
+                          До бесплатной доставки осталось{' '}
+                          {formatPrice(Math.max(0, FREE_DELIVERY_FROM - totals.subtotal))}
+                        </p>
+                        <div className={styles.deliveryProgressTrack} aria-hidden>
+                          <div
+                            className={styles.deliveryProgressFill}
+                            style={{
+                              width: `${Math.min(100, (totals.subtotal / FREE_DELIVERY_FROM) * 100)}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <Button
+                      size="lg"
+                      fullWidth
+                      className={styles.checkoutBtn}
+                      onClick={proceedToCheckout}
+                    >
+                      Оформить заказ
+                    </Button>
+
+                    <p className={styles.summaryNote}>
+                      {totals.freeDelivery
+                        ? 'Бесплатная доставка применена'
+                        : `Бесплатная доставка от ${formatPrice(FREE_DELIVERY_FROM)}`}
+                    </p>
                   </div>
-                )}
-
-                <Button
-                  size="lg"
-                  fullWidth
-                  className={styles.checkoutBtn}
-                  onClick={handleCheckout}
-                >
-                  Перейти к оформлению
-                </Button>
-
-                <p className={styles.summaryNote}>
-                  {totals.freeDelivery
-                    ? 'Бесплатная доставка применена'
-                    : `Бесплатная доставка от ${formatPrice(FREE_DELIVERY_FROM)}`}
-                </p>
+                </aside>
               </div>
-            </aside>
-            </div>
+            ) : null}
           </>
         )}
-
       </div>
     </PageContainer>
   );

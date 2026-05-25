@@ -44,17 +44,11 @@ export function MobileBottomNav() {
   const location = useLocation();
   const token = useAuthStore((s) => s.token);
   const cartCount = useCartStore((s) => selectCartItemCount(s, Boolean(token)));
-  const openDrawer = useCartStore((s) => s.openDrawer);
-
   const favoritesTo = token ? '/account?section=favorites' : '/auth?returnUrl=/account%3Fsection%3Dfavorites';
   const profileTo = token ? '/account?section=dashboard' : '/auth';
 
   const handleCartClick = () => {
-    if (token) {
-      navigate('/cart');
-      return;
-    }
-    openDrawer();
+    navigate('/cart');
   };
 
   const items: {

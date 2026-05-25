@@ -2,7 +2,7 @@ import type { ProductDetail, ProductListItem, ProductVariant } from '../api/type
 import type { CartItemSnapshot } from './guestCart.js';
 
 export function snapshotFromVariant(
-  product: Pick<ProductListItem, 'id' | 'name' | 'slug' | 'imageUrl'>,
+  product: Pick<ProductListItem, 'id' | 'name' | 'slug' | 'imageUrl' | 'compareAtPrice'>,
   variant: ProductVariant,
 ): CartItemSnapshot {
   return {
@@ -12,6 +12,7 @@ export function snapshotFromVariant(
     productSlug: product.slug,
     variantName: variant.name,
     unitPrice: variant.price,
+    compareAtPrice: product.compareAtPrice ?? null,
     stock: variant.stock,
     imageUrl: variant.images[0]?.url ?? product.imageUrl,
   };

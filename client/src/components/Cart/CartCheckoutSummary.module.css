@@ -115,20 +115,29 @@
   box-shadow: none;
 }
 
-.trustLine {
+.quickBuyBtn {
+  width: 100%;
   margin: 0;
-  font-size: 0.75rem;
-  line-height: 1.35;
-  color: #6b7280;
-  text-align: center;
+  padding: 0.625rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #fff;
+  color: #111827;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25;
+  cursor: pointer;
+  transition:
+    border-color 150ms,
+    background-color 150ms;
 }
 
-.trustLink {
-  color: #6b7280 !important;
-  text-decoration: underline;
-  text-underline-offset: 2px;
+.quickBuyBtn:hover:not(:disabled) {
+  border-color: #d1d5db;
+  background: #f9fafb;
 }
 
-.trustLink:hover {
-  color: #374151 !important;
+.quickBuyBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }

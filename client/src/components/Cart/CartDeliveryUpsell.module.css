@@ -1,0 +1,37 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #fff7ed 0%, #fff 100%);
+  border: 1px solid #fed7aa;
+}
+
+.compact {
+  padding: 0.5rem 0.625rem;
+}
+
+.text {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: #374151;
+}
+
+.text strong {
+  font-weight: 700;
+  color: #c2410c;
+}
+
+.link {
+  align-self: flex-start;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #ea580c !important;
+  text-decoration: none !important;
+}
+
+.link:hover {
+  text-decoration: underline !important;
+}
