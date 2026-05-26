@@ -202,6 +202,7 @@ export function AccountPage() {
               onOrderUpdated={updateOrderInState}
               onRepeat={handleRepeatOrder}
               onSupport={openSupport}
+              onOpenOrder={openOrder}
               initialExpandedId={orderIdParam}
             />
           )}
