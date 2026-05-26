@@ -154,7 +154,7 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
       )}
 
       {isCompactMobile ? (
-        <p className="mb-3 px-0.5 text-sm leading-snug text-gray-500">
+        <p className="mb-4 mt-1 px-0.5 text-sm leading-relaxed text-gray-500">
           Сохранённые адреса подставляются при оформлении заказа
         </p>
       ) : null}
@@ -166,9 +166,9 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
           {addresses.map((addr) => (
             <li key={addr.id} className="relative">
               <article className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100/90">
-                <div className="flex items-start gap-3 px-3.5 py-3">
+                <div className="flex items-start gap-3 px-4 py-3.5">
                   <span
-                    className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FF7062]/10 text-[#FF7062]"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FF7062]/10 text-[#FF7062]"
                     aria-hidden
                   >
                     {addr.deliveryMethod === 'cdek' ? (
@@ -178,19 +178,19 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
                     )}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-bold text-gray-900">{addr.label}</p>
+                    <p className="text-sm font-bold leading-tight text-gray-900">{addr.label}</p>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                       {addr.isDefault ? (
-                        <span className="rounded-md bg-[#FF7062]/10 px-2 py-0.5 text-[10px] font-semibold text-[#FF7062]">
+                        <span className="rounded-md bg-[#FF7062]/10 px-2 py-0.5 text-[10px] font-semibold leading-tight text-[#FF7062]">
                           По умолчанию
                         </span>
                       ) : null}
-                      <span className="rounded-md bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+                      <span className="rounded-md bg-gray-100 px-2 py-0.5 text-[10px] font-medium leading-tight text-gray-600">
                         {addr.deliveryMethod === 'cdek' ? 'СДЭК' : 'Почта'}
                       </span>
+                      <span className="text-[11px] font-medium text-gray-500">{addr.city}</span>
                     </div>
-                    <p className="mt-1 text-xs font-medium text-gray-500">{addr.city}</p>
-                    <p className="mt-1 text-sm leading-snug text-gray-700">{addr.fullAddress}</p>
+                    <p className="mt-2 text-sm leading-snug text-gray-700">{addr.fullAddress}</p>
                   </div>
                   <div className="relative shrink-0">
                     <button
@@ -253,7 +253,7 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
       )}
 
       {addresses.length > 0 ? (
-        <p className="mt-4 text-center">
+        <p className="mt-6 text-center">
           <button
             type="button"
             className="text-sm font-semibold text-[#FF7062] active:opacity-80"

@@ -22,7 +22,7 @@ export type AddressFormValues = {
   isDefault: boolean;
 };
 
-const LABEL_PRESETS = ['Дом', 'Работа', 'Другое'];
+const LABEL_CHIPS = ['Дом', 'Работа', 'Другое'] as const;
 
 function emptyForm(): AddressFormValues {
   return {
@@ -68,6 +68,11 @@ function isFormValid(values: AddressFormValues): boolean {
   return values.pickupPoint.trim().length >= 3;
 }
 
+function labelChipActive(values: AddressFormValues, chip: (typeof LABEL_CHIPS)[number]): boolean {
+  if (chip === 'Другое') return values.label !== 'Дом' && values.label !== 'Работа';
+  return values.label === chip;
+}
+
 interface AddressFormModalProps {
   open: boolean;
   editing: SavedAddress | null;
@@ -80,6 +85,7 @@ export function AddressFormModal({ open, editing, onClose, onSave }: AddressForm
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const valid = isFormValid(values);
+  const isOtherLabel = values.label !== 'Дом' && values.label !== 'Работа';
 
   useEffect(() => {
     if (!open) return;
@@ -172,56 +178,53 @@ export function AddressFormModal({ open, editing, onClose, onSave }: AddressForm
                 </div>
               </div>
 
-              <label className={styles.field}>
+              <div className={styles.field}>
                 <span className={styles.label}>Название</span>
-                <select
-                  className={`${styles.control} ${styles.select}`}
-                  value={
-                    values.label === 'Дом' || values.label === 'Работа' ? values.label : 'Другое'
-                  }
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    set('label', v === 'Другое' ? 'Другое' : v);
-                  }}
-                >
-                  {LABEL_PRESETS.map((l) => (
-                    <option key={l} value={l}>
-                      {l}
-                    </option>
+                <div className={styles.chipRow} role="group" aria-label="Название адреса">
+                  {LABEL_CHIPS.map((chip) => (
+                    <button
+                      key={chip}
+                      type="button"
+                      className={`${styles.chip} ${labelChipActive(values, chip) ? styles.chipActive : ''}`}
+                      onClick={() => set('label', chip === 'Другое' ? 'Другое' : chip)}
+                    >
+                      {chip}
+                    </button>
                   ))}
-                </select>
-                {values.label !== 'Дом' && values.label !== 'Работа' ? (
+                </div>
+                {isOtherLabel ? (
                   <input
                     className={styles.control}
-                    placeholder="Например: Дача"
+                    placeholder="Название"
                     value={values.label === 'Другое' ? '' : values.label}
                     onChange={(e) => set('label', e.target.value.trim() || 'Другое')}
                   />
                 ) : null}
-              </label>
-
-              <label className={styles.field}>
-                <span className={styles.label}>Город</span>
-                <input
-                  className={styles.control}
-                  value={values.city}
-                  onChange={(e) => set('city', e.target.value)}
-                  placeholder="Барнаул"
-                />
-              </label>
+              </div>
 
               {values.deliveryMethod === 'post' ? (
                 <>
-                  <label className={styles.field}>
-                    <span className={styles.label}>Индекс</span>
-                    <input
-                      className={styles.control}
-                      inputMode="numeric"
-                      value={values.index}
-                      onChange={(e) => set('index', e.target.value)}
-                      placeholder="656000"
-                    />
-                  </label>
+                  <div className={styles.rowIndexCity}>
+                    <label className={styles.field}>
+                      <span className={styles.label}>Индекс</span>
+                      <input
+                        className={styles.control}
+                        inputMode="numeric"
+                        value={values.index}
+                        onChange={(e) => set('index', e.target.value)}
+                        placeholder="656000"
+                      />
+                    </label>
+                    <label className={styles.field}>
+                      <span className={styles.label}>Город</span>
+                      <input
+                        className={styles.control}
+                        value={values.city}
+                        onChange={(e) => set('city', e.target.value)}
+                        placeholder="Барнаул"
+                      />
+                    </label>
+                  </div>
                   <label className={styles.field}>
                     <span className={styles.label}>Улица</span>
                     <input
@@ -253,33 +256,38 @@ export function AddressFormModal({ open, editing, onClose, onSave }: AddressForm
                   </div>
                 </>
               ) : (
-                <label className={styles.field}>
-                  <span className={styles.label}>Пункт выдачи СДЭК</span>
-                  <input
-                    className={styles.control}
-                    value={values.pickupPoint}
-                    onChange={(e) => set('pickupPoint', e.target.value)}
-                    placeholder="Барнаул-3, ул. Павловский тракт, 188"
-                  />
-                </label>
+                <>
+                  <label className={styles.field}>
+                    <span className={styles.label}>Город</span>
+                    <input
+                      className={styles.control}
+                      value={values.city}
+                      onChange={(e) => set('city', e.target.value)}
+                      placeholder="Барнаул"
+                    />
+                  </label>
+                  <label className={styles.field}>
+                    <span className={styles.label}>Пункт выдачи</span>
+                    <input
+                      className={styles.control}
+                      value={values.pickupPoint}
+                      onChange={(e) => set('pickupPoint', e.target.value)}
+                      placeholder="Барнаул-3, ул. Павловский тракт, 188"
+                    />
+                  </label>
+                </>
               )}
 
-              <label className={styles.field}>
-                <span className={styles.label}>
-                  <input
-                    type="checkbox"
-                    checked={values.isDefault}
-                    onChange={(e) => set('isDefault', e.target.checked)}
-                  />{' '}
-                  Использовать по умолчанию
-                </span>
+              <label className={styles.checkRow}>
+                <input
+                  type="checkbox"
+                  checked={values.isDefault}
+                  onChange={(e) => set('isDefault', e.target.checked)}
+                />
+                По умолчанию
               </label>
 
-              {valid ? (
-                <p className={styles.label} style={{ fontWeight: 400, color: '#6b7280', margin: 0 }}>
-                  {preview}
-                </p>
-              ) : null}
+              {valid ? <p className={styles.preview}>{preview}</p> : null}
             </div>
           </div>
 
