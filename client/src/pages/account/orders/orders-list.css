@@ -1,1 +1,8 @@
 @import 'tailwindcss';
+
+/* Локальный заголовок архива — не наследовать 3xl из global.css */
+.orders-archive-title {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+}

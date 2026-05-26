@@ -14,14 +14,22 @@
 @media (max-width: 1024px) {
   .root {
     margin: 0 calc(-1 * var(--container-padding, 16px));
-    padding: 4px var(--container-padding, 16px)
+    padding: 8px var(--container-padding, 16px)
       calc(64px + env(safe-area-inset-bottom, 0px));
     background: #f5f5f7;
     box-sizing: border-box;
+    overflow-x: clip;
   }
 
   .listArea {
-    padding-top: 4px;
+    padding-top: 8px;
+  }
+}
+
+/* 320px: чуть больше воздуха у краёв ленты чипов */
+@media (max-width: 360px) {
+  .root {
+    --container-padding: 14px;
   }
 }
 

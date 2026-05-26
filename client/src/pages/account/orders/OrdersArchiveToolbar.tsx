@@ -140,8 +140,8 @@ export function OrdersArchiveToolbar({
   const hasSearch = search.trim().length > 0;
 
   return (
-    <div className="sticky top-0 z-20 -mx-1 bg-[#f5f5f7]/96 px-1 pb-2 backdrop-blur-md">
-      <div className="flex items-center gap-2 py-1">
+    <div className="sticky top-0 z-20 bg-[#f5f5f7]/96 pb-3 backdrop-blur-md">
+      <div className="flex items-center gap-2.5 pb-3">
         {onBack ? (
           <button
             type="button"
@@ -152,16 +152,19 @@ export function OrdersArchiveToolbar({
             <ChevronLeft size={20} strokeWidth={2} aria-hidden />
           </button>
         ) : null}
-        <h1 className="m-0 min-w-0 flex-1 truncate text-base font-bold text-gray-900">Мои заказы</h1>
+        {/* !text-* — перебивает global.css h1 { font-size: 3xl } */}
+        <h1 className="orders-archive-title m-0 min-w-0 flex-1 truncate text-gray-900">
+          Мои заказы
+        </h1>
         {ordersCount != null && ordersCount > 0 ? (
-          <span className="shrink-0 text-xs font-medium text-gray-500">
+          <span className="shrink-0 text-[11px] font-medium leading-none text-gray-500">
             {ordersCount}{' '}
             {ordersCount === 1 ? 'заказ' : ordersCount >= 2 && ordersCount <= 4 ? 'заказа' : 'заказов'}
           </span>
         ) : null}
       </div>
 
-      <div className="relative mt-1">
+      <div className="relative mb-3">
         <Search
           className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
           strokeWidth={1.75}
@@ -187,22 +190,26 @@ export function OrdersArchiveToolbar({
         ) : null}
       </div>
 
-      <div className="mt-2 flex items-center gap-1.5">
+      <div className="flex items-center gap-2">
         <div
-          className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain scroll-px-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           role="tablist"
           aria-label="Статус заказа"
         >
-          {STATUS_CHIPS.map((chip) => (
-            <StatusChip
-              key={chip.value || 'all'}
-              active={statusFilter === chip.value}
-              label={chip.label}
-              onClick={() => onStatusChange(chip.value)}
-            />
-          ))}
+          <div className="flex w-max items-center gap-1.5 px-2 py-0.5">
+            {STATUS_CHIPS.map((chip) => (
+              <StatusChip
+                key={chip.value || 'all'}
+                active={statusFilter === chip.value}
+                label={chip.label}
+                onClick={() => onStatusChange(chip.value)}
+              />
+            ))}
+          </div>
         </div>
-        <PeriodFilter period={period} onPeriodChange={onPeriodChange} />
+        <div className="shrink-0 pr-0.5">
+          <PeriodFilter period={period} onPeriodChange={onPeriodChange} />
+        </div>
       </div>
     </div>
   );
