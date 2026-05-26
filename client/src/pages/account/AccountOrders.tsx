@@ -7,6 +7,11 @@ import { useAccountMobileLayout } from './useAccountMobileLayout';
 import { MOCK_ARCHIVE_ORDERS, OrderList } from './orders/OrderList';
 import { orderToArchiveItem } from './orders/orderToArchiveItem';
 import type { OrderArchiveItem } from './orders/types';
+import { OrdersArchiveToolbar } from './orders/OrdersArchiveToolbar';
+import type { OrdersPeriod } from './orders/OrdersArchiveToolbar';
+import { EmptyOrdersArchiveState } from './orders/EmptyOrdersArchiveState';
+import { OrdersArchiveHeader } from './orders/OrdersArchiveHeader';
+import ordersStyles from './orders/AccountOrders.module.css';
 
 const STATUS_OPTIONS: { value: '' | OrderStatus; label: string }[] = [
   { value: '', label: 'Все статусы' },
@@ -17,12 +22,21 @@ const STATUS_OPTIONS: { value: '' | OrderStatus; label: string }[] = [
   { value: 'cancelled', label: 'Отменён' },
 ];
 
+function ordersCountLabel(n: number): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return `${n} заказ`;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return `${n} заказа`;
+  return `${n} заказов`;
+}
+
 interface AccountOrdersProps {
   orders: Order[];
   onOrderUpdated: (order: Order) => void;
   onRepeat: (order: Order) => void;
   onSupport: (orderId: string) => void;
   onOpenOrder?: (orderId: string) => void;
+  onBack?: () => void;
   initialExpandedId?: string | null;
 }
 
@@ -32,11 +46,12 @@ export function AccountOrders({
   onRepeat,
   onSupport,
   onOpenOrder,
+  onBack,
   initialExpandedId,
 }: AccountOrdersProps) {
   const isCompactMobile = useAccountMobileLayout();
   const [statusFilter, setStatusFilter] = useState<'' | OrderStatus>('');
-  const [period, setPeriod] = useState<'7d' | '30d' | '90d' | 'all'>('all');
+  const [period, setPeriod] = useState<OrdersPeriod>('all');
   const [search, setSearch] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(initialExpandedId ?? null);
 
@@ -80,68 +95,100 @@ export function AccountOrders({
     [orderById, onOpenOrder],
   );
 
+  const resetFilters = useCallback(() => {
+    setStatusFilter('');
+    setPeriod('all');
+    setSearch('');
+  }, []);
+
   const showArchiveEmpty =
     archiveListItems.length === 0 && !(orders.length === 0 && filtered.length === 0);
 
-  return (
-    <div className={styles.ordersSection}>
-      <div className={styles.filtersBar}>
-        <label className={styles.filterField}>
-          <span className={styles.filterLabel}>Статус</span>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as '' | OrderStatus)}
-          >
-            {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value || 'all'} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className={styles.filterField}>
-          <span className={styles.filterLabel}>Период</span>
-          <select value={period} onChange={(e) => setPeriod(e.target.value as typeof period)}>
-            <option value="7d">7 дней</option>
-            <option value="30d">30 дней</option>
-            <option value="90d">90 дней</option>
-            <option value="all">За всё время</option>
-          </select>
-        </label>
-        <label className={`${styles.filterField} ${styles.filterSearch}`}>
-          <span className={styles.filterLabel}>Поиск</span>
-          <input
-            type="search"
-            placeholder="Номер заказа"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </label>
-      </div>
+  const useArchiveCards = isCompactMobile || filtered.length === 0;
+  const listCount = archiveListItems.length;
 
-      {showArchiveEmpty ? (
-        <p className={styles.emptyState}>Заказов по выбранным фильтрам не найдено.</p>
-      ) : isCompactMobile || filtered.length === 0 ? (
-        <OrderList
-          orders={archiveListItems}
-          onOpenOrder={handleOpenById}
-          onRepeatOrder={handleRepeatById}
+  const desktopFilters = (
+    <div className={ordersStyles.desktopFilters}>
+      <label className={ordersStyles.desktopFilterField}>
+        <span className={ordersStyles.desktopFilterLabel}>Статус</span>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as '' | OrderStatus)}
+        >
+          {STATUS_OPTIONS.map((opt) => (
+            <option key={opt.value || 'all'} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className={ordersStyles.desktopFilterField}>
+        <span className={ordersStyles.desktopFilterLabel}>Период</span>
+        <select value={period} onChange={(e) => setPeriod(e.target.value as OrdersPeriod)}>
+          <option value="7d">7 дней</option>
+          <option value="30d">30 дней</option>
+          <option value="90d">90 дней</option>
+          <option value="all">За всё время</option>
+        </select>
+      </label>
+      <label className={`${ordersStyles.desktopFilterField} ${ordersStyles.desktopFilterSearch}`}>
+        <span className={ordersStyles.desktopFilterLabel}>Поиск</span>
+        <input
+          type="search"
+          placeholder="Номер заказа"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </label>
+    </div>
+  );
+
+  return (
+    <div className={ordersStyles.root}>
+      {isCompactMobile && onBack ? <OrdersArchiveHeader onBack={onBack} /> : null}
+
+      {isCompactMobile ? (
+        <OrdersArchiveToolbar
+          statusFilter={statusFilter}
+          period={period}
+          search={search}
+          onStatusChange={setStatusFilter}
+          onPeriodChange={setPeriod}
+          onSearchChange={setSearch}
         />
       ) : (
-        <div className={styles.orderRows}>
-          {filtered.map((order) => (
-            <OrderExpandableRow
-              key={order.id}
-              order={order}
-              expanded={expandedId === order.id}
-              onToggle={() => setExpandedId((id) => (id === order.id ? null : order.id))}
-              onUpdated={onOrderUpdated}
-              onRepeat={onRepeat}
-              onSupport={onSupport}
-            />
-          ))}
-        </div>
+        desktopFilters
       )}
+
+      <div className={ordersStyles.listArea}>
+        {listCount > 0 && !showArchiveEmpty ? (
+          <p className={ordersStyles.listMeta}>{ordersCountLabel(listCount)}</p>
+        ) : null}
+
+        {showArchiveEmpty ? (
+          <EmptyOrdersArchiveState onResetFilters={resetFilters} />
+        ) : useArchiveCards ? (
+          <OrderList
+            orders={archiveListItems}
+            onOpenOrder={handleOpenById}
+            onRepeatOrder={handleRepeatById}
+          />
+        ) : (
+          <div className={styles.orderRows}>
+            {filtered.map((order) => (
+              <OrderExpandableRow
+                key={order.id}
+                order={order}
+                expanded={expandedId === order.id}
+                onToggle={() => setExpandedId((id) => (id === order.id ? null : order.id))}
+                onUpdated={onOrderUpdated}
+                onRepeat={onRepeat}
+                onSupport={onSupport}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,0 +1,74 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.listMeta {
+  margin: 0 0 10px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--lk-text-muted, #6b7280);
+}
+
+.listArea {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Десктоп: классическая панель фильтров */
+.desktopFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 20px;
+  background: var(--lk-surface);
+  border: 1px solid var(--lk-border);
+  border-radius: var(--lk-radius);
+}
+
+.desktopFilterField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 160px;
+}
+
+.desktopFilterSearch {
+  flex: 1;
+  min-width: 200px;
+}
+
+.desktopFilterLabel {
+  font-size: 0.8125rem;
+  color: var(--lk-text-muted);
+}
+
+.desktopFilterField select,
+.desktopFilterField input {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--lk-border);
+  border-radius: 10px;
+  font-family: var(--font-family);
+  font-size: 0.9375rem;
+  background: var(--lk-bg-muted);
+  color: var(--lk-text);
+}
+
+@media (max-width: 1024px) {
+  .root {
+    margin: 0 -4px;
+  }
+
+  .desktopFilters {
+    display: none;
+  }
+}
+
+@media (min-width: 1025px) {
+  .listArea {
+    gap: 8px;
+  }
+}

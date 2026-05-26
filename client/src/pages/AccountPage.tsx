@@ -141,8 +141,10 @@ export function AccountPage() {
   }
 
   const sectionTitle = SECTION_TITLES[section] ?? 'Личный кабинет';
-  const showSectionHeading = section !== 'dashboard' && section !== 'favorites';
-  const showMobileProfileBar = isCompactLk && section !== 'favorites';
+  const hideOrdersMobileChrome = isCompactLk && section === 'orders';
+  const showSectionHeading =
+    section !== 'dashboard' && section !== 'favorites' && !hideOrdersMobileChrome;
+  const showMobileProfileBar = isCompactLk && section !== 'favorites' && !hideOrdersMobileChrome;
 
   return (
     <AccountLayout
@@ -203,6 +205,7 @@ export function AccountPage() {
               onRepeat={handleRepeatOrder}
               onSupport={openSupport}
               onOpenOrder={openOrder}
+              onBack={() => navigateSection('dashboard')}
               initialExpandedId={orderIdParam}
             />
           )}
