@@ -35,8 +35,13 @@ export function SiteHeader() {
   const isFavoritesSection = accountSection === 'favorites';
   const isOrdersSection = accountSection === 'orders';
   const isSupportSection = accountSection === 'support';
+  const isAddressesSection = accountSection === 'addresses';
   const showMobileDeliveryCity =
-    !isAccountRoute || isFavoritesSection || isOrdersSection || isSupportSection;
+    !isAccountRoute ||
+    isFavoritesSection ||
+    isOrdersSection ||
+    isSupportSection ||
+    isAddressesSection;
   const isCheckoutFunnelRoute =
     location.pathname === '/cart' ||
     location.pathname === '/checkout' ||

@@ -11,6 +11,7 @@ import { AccountNotifications } from './account/AccountNotifications';
 import { AccountOrders } from './account/AccountOrders';
 import { AccountPlaceholder } from './account/AccountPlaceholder';
 import { AccountProfile } from './account/AccountProfile';
+import { AccountAddresses } from './account/AccountAddresses';
 import { AccountSupport } from './account/AccountSupport';
 import { AccountLayout } from '../components/layout/AccountLayout';
 import { AccountProfileBar } from './account/AccountProfileBar';
@@ -143,7 +144,9 @@ export function AccountPage() {
   const sectionTitle = SECTION_TITLES[section] ?? 'Личный кабинет';
   const hideOrdersMobileChrome = isCompactLk && section === 'orders';
   const hideSupportMobileChrome = isCompactLk && section === 'support';
-  const hideSectionMobileChrome = hideOrdersMobileChrome || hideSupportMobileChrome;
+  const hideAddressesMobileChrome = isCompactLk && section === 'addresses';
+  const hideSectionMobileChrome =
+    hideOrdersMobileChrome || hideSupportMobileChrome || hideAddressesMobileChrome;
   const showSectionHeading =
     section !== 'dashboard' && section !== 'favorites' && !hideSectionMobileChrome;
   const showMobileProfileBar = isCompactLk && section !== 'favorites' && !hideSectionMobileChrome;
@@ -249,12 +252,7 @@ export function AccountPage() {
           )}
 
           {section === 'addresses' && (
-            <AccountPlaceholder
-              title="Адреса доставки"
-              description="Сохранённые адреса подставляются при оформлении заказа в корзине."
-              actionLabel="В корзину"
-              onAction={() => navigate('/cart')}
-            />
+            <AccountAddresses onBack={() => navigateSection('dashboard')} />
           )}
 
           {section === 'payments' && (
