@@ -1,18 +1,19 @@
-import { Search, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react';
 import type { OrderStatus } from '../../../api/types';
 import './orders-list.css';
 
 export type OrdersPeriod = '7d' | '30d' | '90d' | 'all';
 
+/** Архив: короткие подписи, без обрезки «В обра…» */
 const STATUS_CHIPS: { value: '' | OrderStatus; label: string }[] = [
   { value: '', label: 'Все' },
   { value: 'delivered', label: 'Доставлен' },
   { value: 'shipped', label: 'В пути' },
-  { value: 'processing', label: 'В обработке' },
   { value: 'cancelled', label: 'Отменён' },
 ];
 
-const PERIOD_CHIPS: { value: OrdersPeriod; label: string }[] = [
+const PERIOD_OPTIONS: { value: OrdersPeriod; label: string }[] = [
   { value: 'all', label: 'Всё время' },
   { value: '7d', label: '7 дней' },
   { value: '30d', label: '30 дней' },
@@ -23,12 +24,14 @@ type OrdersArchiveToolbarProps = {
   statusFilter: '' | OrderStatus;
   period: OrdersPeriod;
   search: string;
+  ordersCount?: number;
+  onBack?: () => void;
   onStatusChange: (value: '' | OrderStatus) => void;
   onPeriodChange: (value: OrdersPeriod) => void;
   onSearchChange: (value: string) => void;
 };
 
-function Chip({
+function StatusChip({
   active,
   label,
   onClick,
@@ -42,10 +45,10 @@ function Chip({
       type="button"
       onClick={onClick}
       className={[
-        'shrink-0 rounded-full px-3.5 py-2 text-[13px] font-medium whitespace-nowrap transition-colors',
+        'shrink-0 rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors',
         active
-          ? 'bg-[#FF7062] text-white shadow-sm'
-          : 'bg-white text-gray-700 border border-gray-200 active:bg-gray-50',
+          ? 'bg-[#FF7062] text-white'
+          : 'bg-white text-gray-600 ring-1 ring-gray-200/90 active:bg-gray-50',
       ].join(' ')}
     >
       {label}
@@ -53,10 +56,83 @@ function Chip({
   );
 }
 
+function PeriodFilter({
+  period,
+  onPeriodChange,
+}: {
+  period: OrdersPeriod;
+  onPeriodChange: (value: OrdersPeriod) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const activeLabel = PERIOD_OPTIONS.find((o) => o.value === period)?.label ?? 'Период';
+  const isDefault = period === 'all';
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDoc);
+    return () => document.removeEventListener('mousedown', onDoc);
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className="relative shrink-0">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className={[
+          'inline-flex items-center gap-1 rounded-full py-1.5 pr-2 pl-2.5 text-xs font-medium whitespace-nowrap transition-colors',
+          isDefault
+            ? 'bg-white text-gray-600 ring-1 ring-gray-200/90'
+            : 'bg-[#FF7062]/10 text-[#FF7062] ring-1 ring-[#FF7062]/25',
+        ].join(' ')}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+      >
+        <SlidersHorizontal size={13} strokeWidth={2} aria-hidden />
+        <span className="max-w-[5.5rem] truncate">{activeLabel}</span>
+        <ChevronDown
+          size={14}
+          className={['opacity-60 transition-transform', open ? 'rotate-180' : ''].join(' ')}
+          aria-hidden
+        />
+      </button>
+      {open ? (
+        <ul
+          role="listbox"
+          className="absolute right-0 top-[calc(100%+6px)] z-30 min-w-[9.5rem] overflow-hidden rounded-xl border border-gray-100 bg-white py-1 shadow-lg"
+        >
+          {PERIOD_OPTIONS.map((opt) => (
+            <li key={opt.value} role="option" aria-selected={period === opt.value}>
+              <button
+                type="button"
+                className={[
+                  'w-full px-3 py-2 text-left text-sm',
+                  period === opt.value ? 'bg-[#FF7062]/8 font-semibold text-[#FF7062]' : 'text-gray-700',
+                ].join(' ')}
+                onClick={() => {
+                  onPeriodChange(opt.value);
+                  setOpen(false);
+                }}
+              >
+                {opt.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
 export function OrdersArchiveToolbar({
   statusFilter,
   period,
   search,
+  ordersCount,
+  onBack,
   onStatusChange,
   onPeriodChange,
   onSearchChange,
@@ -64,10 +140,30 @@ export function OrdersArchiveToolbar({
   const hasSearch = search.trim().length > 0;
 
   return (
-    <div className="sticky top-0 z-10 -mx-4 bg-[#f7f7f8]/95 px-4 pb-3 pt-0 backdrop-blur-sm">
-      <div className="relative">
+    <div className="sticky top-0 z-20 -mx-1 bg-[#f5f5f7]/96 px-1 pb-2 backdrop-blur-md">
+      <div className="flex items-center gap-2 py-1">
+        {onBack ? (
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-gray-800 ring-1 ring-gray-200/80 active:bg-gray-50"
+            aria-label="На главную личного кабинета"
+          >
+            <ChevronLeft size={20} strokeWidth={2} aria-hidden />
+          </button>
+        ) : null}
+        <h1 className="m-0 min-w-0 flex-1 truncate text-base font-bold text-gray-900">Мои заказы</h1>
+        {ordersCount != null && ordersCount > 0 ? (
+          <span className="shrink-0 text-xs font-medium text-gray-500">
+            {ordersCount}{' '}
+            {ordersCount === 1 ? 'заказ' : ordersCount >= 2 && ordersCount <= 4 ? 'заказа' : 'заказов'}
+          </span>
+        ) : null}
+      </div>
+
+      <div className="relative mt-1">
         <Search
-          className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-400"
+          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
           strokeWidth={1.75}
           aria-hidden
         />
@@ -76,49 +172,37 @@ export function OrdersArchiveToolbar({
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Номер заказа"
-          className="w-full rounded-2xl border border-gray-200/80 bg-white py-3 pr-10 pl-10 text-[15px] text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-[#FF7062]/40 focus:outline-none focus:ring-2 focus:ring-[#FF7062]/15"
+          className="w-full rounded-xl border-0 bg-white py-2.5 pr-9 pl-9 text-sm text-gray-900 shadow-sm ring-1 ring-gray-200/80 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF7062]/25"
           enterKeyHint="search"
         />
         {hasSearch ? (
           <button
             type="button"
-            className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-gray-400 active:bg-gray-100"
+            className="absolute right-1.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-gray-400 active:bg-gray-100"
             aria-label="Очистить поиск"
             onClick={() => onSearchChange('')}
           >
-            <X size={16} strokeWidth={2} aria-hidden />
+            <X size={15} strokeWidth={2} aria-hidden />
           </button>
         ) : null}
       </div>
 
-      <div
-        className="mt-3 flex gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        role="tablist"
-        aria-label="Статус заказа"
-      >
-        {STATUS_CHIPS.map((chip) => (
-          <Chip
-            key={chip.value || 'all'}
-            active={statusFilter === chip.value}
-            label={chip.label}
-            onClick={() => onStatusChange(chip.value)}
-          />
-        ))}
-      </div>
-
-      <div
-        className="mt-2 flex gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        role="tablist"
-        aria-label="Период"
-      >
-        {PERIOD_CHIPS.map((chip) => (
-          <Chip
-            key={chip.value}
-            active={period === chip.value}
-            label={chip.label}
-            onClick={() => onPeriodChange(chip.value)}
-          />
-        ))}
+      <div className="mt-2 flex items-center gap-1.5">
+        <div
+          className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          role="tablist"
+          aria-label="Статус заказа"
+        >
+          {STATUS_CHIPS.map((chip) => (
+            <StatusChip
+              key={chip.value || 'all'}
+              active={statusFilter === chip.value}
+              label={chip.label}
+              onClick={() => onStatusChange(chip.value)}
+            />
+          ))}
+        </div>
+        <PeriodFilter period={period} onPeriodChange={onPeriodChange} />
       </div>
     </div>
   );

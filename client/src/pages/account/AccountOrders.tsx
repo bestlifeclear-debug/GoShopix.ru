@@ -10,7 +10,6 @@ import type { OrderArchiveItem } from './orders/types';
 import { OrdersArchiveToolbar } from './orders/OrdersArchiveToolbar';
 import type { OrdersPeriod } from './orders/OrdersArchiveToolbar';
 import { EmptyOrdersArchiveState } from './orders/EmptyOrdersArchiveState';
-import { OrdersArchiveHeader } from './orders/OrdersArchiveHeader';
 import ordersStyles from './orders/AccountOrders.module.css';
 
 const STATUS_OPTIONS: { value: '' | OrderStatus; label: string }[] = [
@@ -21,14 +20,6 @@ const STATUS_OPTIONS: { value: '' | OrderStatus; label: string }[] = [
   { value: 'delivered', label: 'Доставлен' },
   { value: 'cancelled', label: 'Отменён' },
 ];
-
-function ordersCountLabel(n: number): string {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return `${n} заказ`;
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return `${n} заказа`;
-  return `${n} заказов`;
-}
 
 interface AccountOrdersProps {
   orders: Order[];
@@ -145,13 +136,13 @@ export function AccountOrders({
 
   return (
     <div className={ordersStyles.root}>
-      {isCompactMobile && onBack ? <OrdersArchiveHeader onBack={onBack} /> : null}
-
       {isCompactMobile ? (
         <OrdersArchiveToolbar
           statusFilter={statusFilter}
           period={period}
           search={search}
+          ordersCount={listCount > 0 && !showArchiveEmpty ? listCount : undefined}
+          onBack={onBack}
           onStatusChange={setStatusFilter}
           onPeriodChange={setPeriod}
           onSearchChange={setSearch}
@@ -161,10 +152,6 @@ export function AccountOrders({
       )}
 
       <div className={ordersStyles.listArea}>
-        {listCount > 0 && !showArchiveEmpty ? (
-          <p className={ordersStyles.listMeta}>{ordersCountLabel(listCount)}</p>
-        ) : null}
-
         {showArchiveEmpty ? (
           <EmptyOrdersArchiveState onResetFilters={resetFilters} />
         ) : useArchiveCards ? (

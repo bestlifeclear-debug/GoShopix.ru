@@ -4,17 +4,25 @@
   min-width: 0;
 }
 
-.listMeta {
-  margin: 0 0 10px;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--lk-text-muted, #6b7280);
-}
-
 .listArea {
   display: flex;
   flex-direction: column;
   min-width: 0;
+}
+
+/* Мобильный архив: фон как у WB/Ozon, отступ под таббар */
+@media (max-width: 1024px) {
+  .root {
+    margin: 0 calc(-1 * var(--container-padding, 16px));
+    padding: 4px var(--container-padding, 16px)
+      calc(64px + env(safe-area-inset-bottom, 0px));
+    background: #f5f5f7;
+    box-sizing: border-box;
+  }
+
+  .listArea {
+    padding-top: 4px;
+  }
 }
 
 /* Десктоп: классическая панель фильтров */
@@ -58,10 +66,6 @@
 }
 
 @media (max-width: 1024px) {
-  .root {
-    margin: 0 -4px;
-  }
-
   .desktopFilters {
     display: none;
   }

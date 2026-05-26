@@ -1,4 +1,4 @@
-import { ChevronRight, ShoppingCart } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import { formatPrice } from '@goshopix/shared';
 import type { OrderArchiveItem, OrderArchiveStatus } from './types';
 import './orders-list.css';
@@ -40,21 +40,19 @@ export function OrderCard({ order, onOpen, onRepeat }: OrderCardProps) {
             : undefined
         }
         className={[
-          'rounded-2xl border border-gray-100/90 bg-white p-3.5 shadow-sm',
+          'overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100/90',
           'transition-transform active:scale-[0.99]',
           onOpen ? 'cursor-pointer' : '',
         ].join(' ')}
       >
-        <header className="flex items-center justify-between gap-3 border-b border-gray-50 pb-2.5">
+        <header className="flex items-center justify-between gap-2 border-b border-gray-50 px-3.5 py-2.5">
           <div className="min-w-0">
-            <p className="text-[15px] font-bold tracking-tight text-gray-900">
-              № {order.orderNumber}
-            </p>
-            <time className="mt-0.5 block text-xs text-gray-500">{order.date}</time>
+            <p className="text-sm font-bold text-gray-900">№ {order.orderNumber}</p>
+            <time className="mt-0.5 block text-[11px] text-gray-500">{order.date}</time>
           </div>
           <span
             className={[
-              'w-fit shrink-0 rounded-lg px-2 py-0.5 text-[11px] font-semibold',
+              'shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold leading-tight',
               STATUS_BADGE[order.status],
             ].join(' ')}
           >
@@ -62,8 +60,8 @@ export function OrderCard({ order, onOpen, onRepeat }: OrderCardProps) {
           </span>
         </header>
 
-        <div className="flex items-center gap-3 pt-2.5">
-          <div className="h-[4.25rem] w-[4.25rem] shrink-0 overflow-hidden rounded-xl bg-gray-50 ring-1 ring-gray-100/80">
+        <div className="flex items-center gap-2.5 px-3.5 py-3">
+          <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-50 ring-1 ring-gray-100">
             {order.productImageUrl ? (
               <img
                 src={order.productImageUrl}
@@ -73,7 +71,7 @@ export function OrderCard({ order, onOpen, onRepeat }: OrderCardProps) {
               />
             ) : (
               <span
-                className="flex h-full w-full items-center justify-center text-lg font-semibold text-gray-300"
+                className="flex h-full w-full items-center justify-center text-base font-semibold text-gray-300"
                 aria-hidden
               >
                 {order.productName.charAt(0).toUpperCase()}
@@ -82,33 +80,28 @@ export function OrderCard({ order, onOpen, onRepeat }: OrderCardProps) {
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="line-clamp-2 text-sm leading-snug text-gray-800">{order.productName}</p>
+            <p className="line-clamp-2 text-[13px] leading-snug text-gray-800">{order.productName}</p>
             {order.extraItemsCount > 0 ? (
-              <p className="mt-0.5 text-xs text-gray-400">
+              <p className="mt-0.5 text-[11px] text-gray-400">
                 + ещё {order.extraItemsCount} {pluralItems(order.extraItemsCount)}
               </p>
             ) : null}
-            <p className="mt-1 text-[15px] font-bold text-gray-900">
+            <p className="mt-1 text-sm font-bold tabular-nums text-gray-900">
               {formatPrice(order.totalAmount)}
             </p>
           </div>
 
-          <div className="flex shrink-0 flex-col items-center gap-1 self-stretch justify-center">
-            <button
-              type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FF7062]/10 text-[#FF7062] transition-colors active:bg-[#FF7062]/20"
-              aria-label="Повторить заказ"
-              onClick={(e) => {
-                e.stopPropagation();
-                onRepeat?.(order.id);
-              }}
-            >
-              <ShoppingCart size={18} strokeWidth={1.75} aria-hidden />
-            </button>
-            {onOpen ? (
-              <ChevronRight size={16} className="text-gray-300" strokeWidth={2} aria-hidden />
-            ) : null}
-          </div>
+          <button
+            type="button"
+            className="flex h-11 w-11 shrink-0 items-center justify-center self-center rounded-full bg-[#FF7062]/12 text-[#FF7062] transition-colors active:bg-[#FF7062]/22"
+            aria-label="Повторить заказ"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRepeat?.(order.id);
+            }}
+          >
+            <ShoppingCart size={19} strokeWidth={1.75} aria-hidden />
+          </button>
         </div>
       </div>
     </article>
