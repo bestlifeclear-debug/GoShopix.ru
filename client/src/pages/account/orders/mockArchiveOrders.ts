@@ -5,6 +5,7 @@ export const MOCK_ARCHIVE_ORDERS: OrderArchiveItem[] = [
   {
     id: 'ord-demo-001',
     orderNumber: '48291736',
+    sortAt: '2026-05-12T12:00:00.000Z',
     date: '12 мая 2026',
     status: 'delivered',
     statusLabel: 'Доставлен',
@@ -17,6 +18,7 @@ export const MOCK_ARCHIVE_ORDERS: OrderArchiveItem[] = [
   {
     id: 'ord-demo-002',
     orderNumber: '48120344',
+    sortAt: '2026-04-28T12:00:00.000Z',
     date: '28 апреля 2026',
     status: 'delivered',
     statusLabel: 'Доставлен',
@@ -29,6 +31,7 @@ export const MOCK_ARCHIVE_ORDERS: OrderArchiveItem[] = [
   {
     id: 'ord-demo-003',
     orderNumber: '47988102',
+    sortAt: '2026-04-15T12:00:00.000Z',
     date: '15 апреля 2026',
     status: 'cancelled',
     statusLabel: 'Отменён',

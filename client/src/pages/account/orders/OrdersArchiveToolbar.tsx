@@ -175,7 +175,7 @@ export function OrdersArchiveToolbar({
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Номер заказа"
-          className="w-full rounded-xl border-0 bg-white py-2.5 pr-9 pl-9 text-sm text-gray-900 shadow-sm ring-1 ring-gray-200/80 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF7062]/25"
+          className="w-full rounded-xl border-0 bg-white py-2 pr-9 pl-9 text-sm text-gray-900 shadow-sm ring-1 ring-gray-200/80 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FF7062]/25"
           enterKeyHint="search"
         />
         {hasSearch ? (

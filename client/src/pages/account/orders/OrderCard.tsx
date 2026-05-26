@@ -1,12 +1,13 @@
-import { ShoppingCart } from 'lucide-react';
+import type { MouseEvent, PointerEvent } from 'react';
+import { Repeat2 } from 'lucide-react';
 import { formatPrice } from '@goshopix/shared';
 import type { OrderArchiveItem, OrderArchiveStatus } from './types';
 import './orders-list.css';
 
 type OrderCardProps = {
   order: OrderArchiveItem;
-  onOpen?: (orderId: string) => void;
-  onRepeat?: (orderId: string) => void;
+  onOpen?: (order: OrderArchiveItem) => void;
+  onRepeat?: (order: OrderArchiveItem) => void;
 };
 
 const STATUS_BADGE: Record<OrderArchiveStatus, string> = {
@@ -21,7 +22,15 @@ function pluralItems(n: number): string {
 }
 
 export function OrderCard({ order, onOpen, onRepeat }: OrderCardProps) {
-  const handleOpen = () => onOpen?.(order.id);
+  const canRepeat = order.status === 'delivered' && Boolean(onRepeat);
+
+  const handleOpen = () => onOpen?.(order);
+
+  const handleRepeat = (e: MouseEvent | PointerEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    onRepeat?.(order);
+  };
 
   return (
     <article>
@@ -48,7 +57,9 @@ export function OrderCard({ order, onOpen, onRepeat }: OrderCardProps) {
         <header className="flex items-center justify-between gap-2 border-b border-gray-50 px-3.5 py-2.5">
           <div className="min-w-0">
             <p className="text-sm font-bold text-gray-900">№ {order.orderNumber}</p>
-            <time className="mt-0.5 block text-[11px] text-gray-500">{order.date}</time>
+            <time className="mt-0.5 block text-[11px] text-gray-500" dateTime={order.sortAt}>
+              {order.date}
+            </time>
           </div>
           <span
             className={[
@@ -91,17 +102,20 @@ export function OrderCard({ order, onOpen, onRepeat }: OrderCardProps) {
             </p>
           </div>
 
-          <button
-            type="button"
-            className="flex h-11 w-11 shrink-0 items-center justify-center self-center rounded-full bg-[#FF7062]/12 text-[#FF7062] transition-colors active:bg-[#FF7062]/22"
-            aria-label="Повторить заказ"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRepeat?.(order.id);
-            }}
-          >
-            <ShoppingCart size={19} strokeWidth={1.75} aria-hidden />
-          </button>
+          {canRepeat ? (
+            <button
+              type="button"
+              className="flex shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl bg-[#FF7062]/10 px-2 py-2 text-[#FF7062] transition-colors active:bg-[#FF7062]/22"
+              aria-label="Купить снова"
+              onClick={handleRepeat}
+              onPointerDown={handleRepeat}
+            >
+              <Repeat2 size={17} strokeWidth={2.25} aria-hidden className="shrink-0" />
+              <span className="max-w-[3.5rem] text-center text-[9px] font-semibold leading-[1.15]">
+                Купить снова
+              </span>
+            </button>
+          ) : null}
         </div>
       </div>
     </article>

@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { Order, OrderStatus } from '../../api/types';
+import { showCartAddedToast, showInfoToast } from '../../stores/toastStore';
 import styles from '../AccountPage.module.css';
 import { filterOrdersByPeriod } from './utils';
 import { OrderExpandableRow } from './OrderExpandableRow';
@@ -40,6 +42,7 @@ export function AccountOrders({
   onBack,
   initialExpandedId,
 }: AccountOrdersProps) {
+  const navigate = useNavigate();
   const isCompactMobile = useAccountMobileLayout();
   const [statusFilter, setStatusFilter] = useState<'' | OrderStatus>('');
   const [period, setPeriod] = useState<OrdersPeriod>('all');
@@ -66,22 +69,27 @@ export function AccountOrders({
 
   const orderById = useMemo(() => new Map(orders.map((o) => [o.id, o])), [orders]);
 
-  const handleRepeatById = useCallback(
-    (orderId: string) => {
-      const order = orderById.get(orderId);
-      if (order) void onRepeat(order);
-    },
-    [orderById, onRepeat],
-  );
-
-  const handleOpenById = useCallback(
-    (orderId: string) => {
-      if (orderById.has(orderId)) {
-        onOpenOrder?.(orderId);
-        setExpandedId(orderId);
+  const handleRepeatArchive = useCallback(
+    (item: OrderArchiveItem) => {
+      const order = orderById.get(item.id);
+      if (order) {
+        void onRepeat(order);
         return;
       }
-      onOpenOrder?.(orderId);
+      showCartAddedToast();
+      navigate('/catalog');
+    },
+    [orderById, onRepeat, navigate],
+  );
+
+  const handleOpenArchive = useCallback(
+    (item: OrderArchiveItem) => {
+      if (orderById.has(item.id)) {
+        onOpenOrder?.(item.id);
+        setExpandedId(item.id);
+        return;
+      }
+      showInfoToast('Демо-заказ: детали появятся после подключения API');
     },
     [orderById, onOpenOrder],
   );
@@ -157,8 +165,8 @@ export function AccountOrders({
         ) : useArchiveCards ? (
           <OrderList
             orders={archiveListItems}
-            onOpenOrder={handleOpenById}
-            onRepeatOrder={handleRepeatById}
+            onOpenOrder={handleOpenArchive}
+            onRepeatOrder={handleRepeatArchive}
           />
         ) : (
           <div className={styles.orderRows}>

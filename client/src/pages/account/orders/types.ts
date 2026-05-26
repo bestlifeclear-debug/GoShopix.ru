@@ -4,6 +4,8 @@ export type OrderArchiveStatus = 'delivered' | 'cancelled';
 export interface OrderArchiveItem {
   id: string;
   orderNumber: string;
+  /** ISO-дата для сортировки и группировки по месяцам */
+  sortAt: string;
   date: string;
   status: OrderArchiveStatus;
   statusLabel: string;

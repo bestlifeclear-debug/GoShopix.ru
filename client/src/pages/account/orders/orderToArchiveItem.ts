@@ -14,6 +14,7 @@ export function orderToArchiveItem(order: Order): OrderArchiveItem {
   return {
     id: order.id,
     orderNumber: orderShortId(order.id),
+    sortAt: order.createdAt,
     date: new Date(order.createdAt).toLocaleDateString('ru-RU', {
       day: 'numeric',
       month: 'long',
