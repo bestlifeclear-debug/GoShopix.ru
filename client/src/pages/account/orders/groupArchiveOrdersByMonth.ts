@@ -6,9 +6,23 @@ export type OrderArchiveMonthGroup = {
   items: OrderArchiveItem[];
 };
 
-function capitalizeMonth(label: string): string {
-  if (!label) return label;
-  return label.charAt(0).toUpperCase() + label.slice(1);
+const MONTHS_NOMINATIVE = [
+  'Январь',
+  'Февраль',
+  'Март',
+  'Апрель',
+  'Май',
+  'Июнь',
+  'Июль',
+  'Август',
+  'Сентябрь',
+  'Октябрь',
+  'Ноябрь',
+  'Декабрь',
+] as const;
+
+function monthGroupLabel(d: Date): string {
+  return `${MONTHS_NOMINATIVE[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 export function groupArchiveOrdersByMonth(orders: OrderArchiveItem[]): OrderArchiveMonthGroup[] {
@@ -21,9 +35,7 @@ export function groupArchiveOrdersByMonth(orders: OrderArchiveItem[]): OrderArch
   for (const order of sorted) {
     const d = new Date(order.sortAt);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    const label = capitalizeMonth(
-      d.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }),
-    );
+    const label = monthGroupLabel(d);
 
     const existing = map.get(key);
     if (existing) {

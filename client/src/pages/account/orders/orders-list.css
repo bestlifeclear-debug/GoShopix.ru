@@ -6,3 +6,12 @@
   font-weight: 600 !important;
   line-height: 1.35 !important;
 }
+
+/* Месяц в ленте — не h2 из global.css (2xl) */
+.orders-archive-month {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}

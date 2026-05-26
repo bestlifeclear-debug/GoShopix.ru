@@ -15,12 +15,6 @@ const STATUS_BADGE: Record<OrderArchiveStatus, string> = {
   cancelled: 'bg-gray-100 text-gray-500',
 };
 
-function pluralItems(n: number): string {
-  if (n === 1) return 'товар';
-  if (n >= 2 && n <= 4) return 'товара';
-  return 'товаров';
-}
-
 export function OrderCard({ order, onOpen, onRepeat }: OrderCardProps) {
   const canRepeat = order.status === 'delivered' && Boolean(onRepeat);
 
@@ -92,11 +86,6 @@ export function OrderCard({ order, onOpen, onRepeat }: OrderCardProps) {
 
           <div className="min-w-0 flex-1">
             <p className="line-clamp-2 text-[13px] leading-snug text-gray-800">{order.productName}</p>
-            {order.extraItemsCount > 0 ? (
-              <p className="mt-0.5 text-[11px] text-gray-400">
-                + ещё {order.extraItemsCount} {pluralItems(order.extraItemsCount)}
-              </p>
-            ) : null}
             <p className="mt-1 text-sm font-bold tabular-nums text-gray-900">
               {formatPrice(order.totalAmount)}
             </p>

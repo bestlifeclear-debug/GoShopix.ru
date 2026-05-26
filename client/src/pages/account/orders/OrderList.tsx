@@ -24,14 +24,12 @@ export function OrderList({
 
   return (
     <ul
-      className={['m-0 flex list-none flex-col gap-5 p-0 pb-2', className].filter(Boolean).join(' ')}
+      className={['m-0 flex list-none flex-col gap-4 p-0 pb-2', className].filter(Boolean).join(' ')}
       aria-label="Список заказов"
     >
       {monthGroups.map((group) => (
         <li key={group.key} className="flex flex-col gap-3">
-          <h2 className="m-0 px-0.5 text-xs font-semibold tracking-wide text-gray-500 capitalize">
-            {group.label}
-          </h2>
+          <p className="orders-archive-month m-0 px-0.5 text-gray-500">{group.label}</p>
           <ul className="m-0 flex list-none flex-col gap-3 p-0">
             {group.items.map((order) => (
               <li key={order.id}>
