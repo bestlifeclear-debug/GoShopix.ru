@@ -313,62 +313,24 @@
   background: var(--lk-nav-fill);
 }
 
-.ticketsZone {
-  margin-top: 40px;
-  padding: 32px 24px 8px;
-  background: var(--lk-bg-muted);
-  border-radius: var(--lk-radius);
-  border: 1px solid var(--lk-border);
-}
-
-.ticketsDivider {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: -8px 0 28px;
-}
-
-.ticketsDividerLine {
-  flex: 1;
-  height: 3px;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--color-primary, #e53935) 15%,
-    var(--color-primary, #e53935) 85%,
-    transparent 100%
-  );
-}
-
-.ticketsDividerLabel {
-  flex-shrink: 0;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background-color: var(--color-button-primary, #e53935);
-  color: #ffffff;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  box-shadow: 0 2px 8px rgb(var(--color-primary-rgb, 229 57 53) / 0.35);
-}
-
-.ticketsSection {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.ticketsSectionTitle {
+.mobileLead {
   margin: 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--lk-text);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: #6b7280;
 }
 
 .ticketsSectionHint {
-  margin: 0 0 4px;
+  margin: -6px 0 4px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--lk-text-muted);
+}
+
+.ticketsLoading {
+  margin: 0;
+  padding: 16px;
+  text-align: center;
   font-size: 0.875rem;
   color: var(--lk-text-muted);
 }
@@ -514,14 +476,21 @@
   border-color: var(--lk-accent);
 }
 
-.ticketsEmpty {
-  margin: 0;
-  padding: 24px;
-  text-align: center;
-  color: var(--lk-text-muted);
-  background: var(--lk-surface);
-  border-radius: var(--lk-radius);
-  border: 1px dashed var(--lk-empty-border);
+.contactCardCompact .sectionTitle {
+  font-size: 0.9375rem;
+}
+
+.contactCardCompact .contactText {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.contactCardCompact .contactEmail {
+  font-size: 0.875rem;
+}
+
+.contactCardCompact .copyBtn {
+  font-size: 0.75rem;
 }
 
 .stickyCta {
@@ -541,37 +510,24 @@
   }
 
   .helpZone {
-    gap: 20px;
+    gap: 16px;
+    padding-top: 4px;
   }
 
-  .hero {
-    padding: 18px 16px;
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 1px 3px rgb(15 23 42 / 0.08);
-  }
-
-  .heroText {
-    margin-bottom: 16px;
-    font-size: 0.875rem;
-  }
-
-  .searchWrap {
-    border-radius: 12px;
-  }
-
-  .searchInput {
-    min-height: 46px;
-    font-size: 0.9375rem;
+  .mobileLead {
+    padding: 0 2px;
   }
 
   .sectionBlock {
-    gap: 10px;
+    gap: 8px;
   }
 
   .sectionTitle {
     padding: 0 2px;
-    font-size: 1.0625rem;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #111827;
   }
 
   .quickGrid {
@@ -649,27 +605,41 @@
     display: none;
   }
 
-  .ticketsZone {
-    margin-top: 24px;
-    padding: 20px 14px 8px;
-    border: none;
-    border-radius: 16px;
-    background: var(--lk-surface);
-    box-shadow: 0 1px 3px rgb(15 23 42 / 0.08);
-  }
-
-  .ticketsDivider {
-    margin: 0 0 20px;
-  }
-
-  .ticketsDividerLabel {
-    font-size: 0.75rem;
-    padding: 5px 10px;
+  .contactCardCompact {
+    padding: 14px 16px;
   }
 
   .ticketRow {
-    border: none;
+    border: 1px solid rgb(243 244 246);
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgb(15 23 42 / 0.08);
+  }
+
+  .ticketSubject {
+    font-size: 0.875rem;
+    line-height: 1.35;
+  }
+
+  .ticketMeta {
+    font-size: 0.75rem;
+  }
+
+  .statusBadge {
+    font-size: 0.6875rem;
+    padding: 3px 8px;
+  }
+
+  .replyInput {
+    border: 1px solid rgb(229 231 235 / 0.9);
+    border-radius: 12px;
+    background: #fff;
+    font-size: 0.875rem;
     box-shadow: 0 1px 3px rgb(15 23 42 / 0.06);
+  }
+
+  .replyInput:focus {
+    border-color: rgb(255 112 98 / 0.5);
+    box-shadow: 0 0 0 2px rgb(255 112 98 / 0.2);
   }
 
   .stickyCta {

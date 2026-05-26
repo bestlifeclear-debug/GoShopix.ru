@@ -34,8 +34,9 @@ export function SiteHeader() {
     : null;
   const isFavoritesSection = accountSection === 'favorites';
   const isOrdersSection = accountSection === 'orders';
+  const isSupportSection = accountSection === 'support';
   const showMobileDeliveryCity =
-    !isAccountRoute || isFavoritesSection || isOrdersSection;
+    !isAccountRoute || isFavoritesSection || isOrdersSection || isSupportSection;
   const isCheckoutFunnelRoute =
     location.pathname === '/cart' ||
     location.pathname === '/checkout' ||

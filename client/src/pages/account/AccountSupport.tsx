@@ -24,6 +24,8 @@ import {
   TICKET_STATUS_LABELS,
   type QuickActionId,
 } from './supportConstants';
+import { EmptySupportTicketsState } from './EmptySupportTicketsState';
+import { SupportMobileToolbar } from './SupportMobileToolbar';
 import { SupportTicketModal } from './SupportTicketModal';
 import { useAccountMobileLayout } from './useAccountMobileLayout';
 import styles from './AccountSupport.module.css';
@@ -45,6 +47,7 @@ interface AccountSupportProps {
   isSeller: boolean;
   onNavigateSection: (id: AccountSection) => void;
   onOpenOrder: (orderId: string) => void;
+  onBack?: () => void;
 }
 
 export function AccountSupport({
@@ -53,6 +56,7 @@ export function AccountSupport({
   isSeller,
   onNavigateSection,
   onOpenOrder,
+  onBack,
 }: AccountSupportProps) {
   const isCompactMobile = useAccountMobileLayout();
   const navigate = useNavigate();
@@ -207,6 +211,15 @@ export function AccountSupport({
 
   return (
     <div className={`${styles.support} ${isCompactMobile ? styles.supportFeed : ''}`}>
+      {isCompactMobile ? (
+        <SupportMobileToolbar
+          search={search}
+          ticketsCount={!ticketsLoading && tickets.length > 0 ? tickets.length : undefined}
+          onBack={onBack}
+          onSearchChange={setSearch}
+        />
+      ) : null}
+
       {contextOrder && (
         <div className={styles.orderBanner} role="status">
           <p className={styles.orderBannerText}>
@@ -224,25 +237,31 @@ export function AccountSupport({
       )}
 
       <div className={styles.helpZone}>
-      <section className={styles.hero} aria-labelledby="support-hero-title">
-        <p id="support-hero-title" className={`${styles.heroTitle} support-hero-title`}>
-          Чем помочь?
-        </p>
-        <p className={styles.heroText}>
+      {isCompactMobile ? (
+        <p className={styles.mobileLead}>
           Служба поддержки GoShopix на связи круглосуточно — найдите ответ ниже или создайте обращение.
         </p>
-        <div className={styles.searchWrap}>
-          <Search className={styles.searchIcon} size={20} aria-hidden />
-          <input
-            type="search"
-            className={styles.searchInput}
-            placeholder="Поиск по вопросам"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            aria-label="Поиск по базе помощи"
-          />
-        </div>
-      </section>
+      ) : (
+        <section className={styles.hero} aria-labelledby="support-hero-title">
+          <p id="support-hero-title" className={`${styles.heroTitle} support-hero-title`}>
+            Чем помочь?
+          </p>
+          <p className={styles.heroText}>
+            Служба поддержки GoShopix на связи круглосуточно — найдите ответ ниже или создайте обращение.
+          </p>
+          <div className={styles.searchWrap}>
+            <Search className={styles.searchIcon} size={20} aria-hidden />
+            <input
+              type="search"
+              className={styles.searchInput}
+              placeholder="Поиск по вопросам"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              aria-label="Поиск по базе помощи"
+            />
+          </div>
+        </section>
+      )}
 
       <section className={styles.sectionBlock} aria-labelledby="support-quick-title">
         <p id="support-quick-title" className={`${styles.sectionTitle} support-section-title`}>
@@ -308,50 +327,19 @@ export function AccountSupport({
         )}
       </section>
 
-      <section className={styles.contactCard} aria-labelledby="support-contact-title">
-        <div>
-          <p id="support-contact-title" className={`${styles.sectionTitle} support-section-title`}>
-            Не нашли ответ?
+      <section className={styles.sectionBlock} aria-labelledby="support-tickets-title">
+        <p id="support-tickets-title" className={`${styles.sectionTitle} support-section-title`}>
+          Мои обращения
+        </p>
+        {!isCompactMobile ? (
+          <p className={styles.ticketsSectionHint}>
+            Здесь отображаются ваши диалоги со службой поддержки
           </p>
-          <p className={styles.contactText}>Опишите ситуацию — мы ответим в обращении в личном кабинете.</p>
-          <div className={styles.contactEmailRow}>
-            <a href={`mailto:${SUPPORT_EMAIL}`} className={styles.contactEmail}>
-              {SUPPORT_EMAIL}
-            </a>
-            <button type="button" className={styles.copyBtn} onClick={() => void copyEmail()}>
-              {copyDone ? 'Скопировано' : 'Копировать'}
-            </button>
-          </div>
-        </div>
-        <Button
-          className={styles.contactCardCta}
-          onClick={() => openModal(contextOrderId ? 'order' : undefined)}
-        >
-          Написать в поддержку
-        </Button>
-      </section>
-      </div>
-
-      <div className={styles.ticketsZone}>
-        <div className={styles.ticketsDivider}>
-          <span className={styles.ticketsDividerLine} />
-          <span className={styles.ticketsDividerLabel}>Мои обращения</span>
-          <span className={styles.ticketsDividerLine} />
-        </div>
-
-      <section className={styles.ticketsSection} aria-labelledby="support-tickets-title">
-        <p id="support-tickets-title" className={`${styles.ticketsSectionTitle} support-tickets-title`}>
-          История обращений
-        </p>
-        <p className={styles.ticketsSectionHint}>
-          Здесь отображаются ваши диалоги со службой поддержки
-        </p>
+        ) : null}
         {ticketsLoading ? (
-          <p className={styles.ticketsEmpty}>Загрузка…</p>
+          <p className={styles.ticketsLoading}>Загрузка…</p>
         ) : tickets.length === 0 ? (
-          <p className={styles.ticketsEmpty}>
-            Обращений пока нет. Нажмите «Написать в поддержку», если нужна помощь специалиста.
-          </p>
+          <EmptySupportTicketsState onCreateTicket={() => openModal(contextOrderId ? 'order' : undefined)} />
         ) : (
           <ul className={styles.ticketsList}>
             {tickets.map((ticket) => {
@@ -436,6 +424,32 @@ export function AccountSupport({
             })}
           </ul>
         )}
+      </section>
+
+      <section
+        className={`${styles.contactCard} ${isCompactMobile ? styles.contactCardCompact : ''}`}
+        aria-labelledby="support-contact-title"
+      >
+        <div>
+          <p id="support-contact-title" className={`${styles.sectionTitle} support-section-title`}>
+            Не нашли ответ?
+          </p>
+          <p className={styles.contactText}>Опишите ситуацию — мы ответим в обращении в личном кабинете.</p>
+          <div className={styles.contactEmailRow}>
+            <a href={`mailto:${SUPPORT_EMAIL}`} className={styles.contactEmail}>
+              {SUPPORT_EMAIL}
+            </a>
+            <button type="button" className={styles.copyBtn} onClick={() => void copyEmail()}>
+              {copyDone ? 'Скопировано' : 'Копировать'}
+            </button>
+          </div>
+        </div>
+        <Button
+          className={styles.contactCardCta}
+          onClick={() => openModal(contextOrderId ? 'order' : undefined)}
+        >
+          Написать в поддержку
+        </Button>
       </section>
       </div>
 

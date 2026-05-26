@@ -142,9 +142,11 @@ export function AccountPage() {
 
   const sectionTitle = SECTION_TITLES[section] ?? 'Личный кабинет';
   const hideOrdersMobileChrome = isCompactLk && section === 'orders';
+  const hideSupportMobileChrome = isCompactLk && section === 'support';
+  const hideSectionMobileChrome = hideOrdersMobileChrome || hideSupportMobileChrome;
   const showSectionHeading =
-    section !== 'dashboard' && section !== 'favorites' && !hideOrdersMobileChrome;
-  const showMobileProfileBar = isCompactLk && section !== 'favorites' && !hideOrdersMobileChrome;
+    section !== 'dashboard' && section !== 'favorites' && !hideSectionMobileChrome;
+  const showMobileProfileBar = isCompactLk && section !== 'favorites' && !hideSectionMobileChrome;
 
   return (
     <AccountLayout
@@ -279,6 +281,7 @@ export function AccountPage() {
               isSeller={user?.role === 'SELLER'}
               onNavigateSection={(id) => navigateSection(id)}
               onOpenOrder={openOrder}
+              onBack={() => navigateSection('dashboard')}
             />
           )}
         </div>

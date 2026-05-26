@@ -2,10 +2,10 @@
 
 /* Заголовки секций — не наследовать размеры h1/h2 из global.css */
 .support-section-title {
-  font-size: 17px !important;
-  font-weight: 700 !important;
-  line-height: 1.3 !important;
-  letter-spacing: -0.01em;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0;
 }
 
 .support-hero-title {
