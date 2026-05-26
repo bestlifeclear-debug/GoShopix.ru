@@ -29,8 +29,13 @@ export function SiteHeader() {
   const navigate = useNavigate();
   const location = useLocation();
   const isAccountRoute = location.pathname === '/account';
-  const isFavoritesSection =
-    isAccountRoute && new URLSearchParams(location.search).get('section') === 'favorites';
+  const accountSection = isAccountRoute
+    ? new URLSearchParams(location.search).get('section')
+    : null;
+  const isFavoritesSection = accountSection === 'favorites';
+  const isOrdersSection = accountSection === 'orders';
+  const showMobileDeliveryCity =
+    !isAccountRoute || isFavoritesSection || isOrdersSection;
   const isCheckoutFunnelRoute =
     location.pathname === '/cart' ||
     location.pathname === '/checkout' ||
@@ -156,7 +161,7 @@ export function SiteHeader() {
 
   const mobileTopTrailing = (
     <>
-      {(!isAccountRoute || isFavoritesSection) && <HeaderDeliveryCity />}
+      {showMobileDeliveryCity && <HeaderDeliveryCity />}
       {headerAccountActions}
     </>
   );
