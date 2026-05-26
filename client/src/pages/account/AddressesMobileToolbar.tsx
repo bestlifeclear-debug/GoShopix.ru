@@ -9,7 +9,7 @@ type AddressesMobileToolbarProps = {
 
 export function AddressesMobileToolbar({ count, onBack, onAdd }: AddressesMobileToolbarProps) {
   return (
-    <div className="sticky top-0 z-20 -mx-[var(--container-padding,16px)] bg-[#f5f5f7]/96 px-[var(--container-padding,16px)] pb-4 pt-1 backdrop-blur-md">
+    <div className="sticky top-0 z-20 -mx-[var(--container-padding,16px)] bg-[#f5f5f7]/96 px-[var(--container-padding,16px)] pb-4 pt-3 backdrop-blur-md">
       <div className="flex items-start gap-2">
         {onBack ? (
           <button

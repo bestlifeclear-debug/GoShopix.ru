@@ -93,7 +93,7 @@
 @media (max-width: 1024px) {
   .root {
     margin: 0 calc(-1 * var(--container-padding, 16px));
-    padding: 0 var(--container-padding, 16px)
+    padding: 12px var(--container-padding, 16px)
       calc(28px + env(safe-area-inset-bottom, 0px));
     background: #f5f5f7;
     box-sizing: border-box;
