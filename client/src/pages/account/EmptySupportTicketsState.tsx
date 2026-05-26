@@ -16,7 +16,7 @@ export function EmptySupportTicketsState({ onCreateTicket }: EmptySupportTickets
       </div>
       <p className="mt-3 text-base font-semibold leading-snug text-gray-900">Обращений пока нет</p>
       <p className="mt-1.5 max-w-[16rem] text-sm leading-normal text-gray-500">
-        Создайте обращение — ответим в этом разделе
+        Создайте обращение — ответим как можно быстрее
       </p>
       {onCreateTicket ? (
         <button

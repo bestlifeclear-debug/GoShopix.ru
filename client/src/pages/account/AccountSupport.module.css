@@ -320,6 +320,39 @@
   color: #6b7280;
 }
 
+.ticketsSectionSpaced {
+  margin-top: 20px;
+}
+
+.ticketsSectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ticketsSectionHead .sectionTitle {
+  flex: 1;
+  min-width: 0;
+}
+
+.newTicketLink {
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #ff7062;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.newTicketLink:active {
+  opacity: 0.75;
+}
+
 .ticketsSectionHint {
   margin: -6px 0 4px;
   font-size: 0.875rem;
@@ -601,12 +634,8 @@
     box-shadow: 0 1px 3px rgb(15 23 42 / 0.08);
   }
 
-  .contactCardCta {
-    display: none;
-  }
-
-  .contactCardCompact {
-    padding: 14px 16px;
+  .ticketsSectionSpaced {
+    margin-top: 24px;
   }
 
   .ticketRow {
@@ -642,22 +671,6 @@
     box-shadow: 0 0 0 2px rgb(255 112 98 / 0.2);
   }
 
-  .stickyCta {
-    display: block;
-    position: sticky;
-    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-    z-index: 5;
-    padding-top: 10px;
-    margin-top: 4px;
-  }
-
-  .stickyCta button {
-    width: 100%;
-    min-height: 48px;
-    border-radius: 16px;
-    background: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
-    box-shadow: 0 8px 24px rgb(255 61 46 / 0.28);
-  }
 }
 
 @media (max-width: 360px) {

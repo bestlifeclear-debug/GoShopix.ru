@@ -18,7 +18,6 @@ import { Button } from '../../design-system';
 import type { AccountSection } from './types';
 import { orderShortId } from './utils';
 import {
-  SUPPORT_EMAIL,
   SUPPORT_FAQ,
   SUPPORT_QUICK_ACTIONS,
   TICKET_STATUS_LABELS,
@@ -71,7 +70,6 @@ export function AccountSupport({
   const [ticketDetails, setTicketDetails] = useState<Record<string, SupportTicket>>({});
   const [replyText, setReplyText] = useState('');
   const [replyLoading, setReplyLoading] = useState(false);
-  const [copyDone, setCopyDone] = useState(false);
 
   const contextOrder = useMemo(
     () => (contextOrderId ? orders.find((o) => o.id === contextOrderId) : null),
@@ -199,16 +197,6 @@ export function AccountSupport({
     }
   };
 
-  const copyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(SUPPORT_EMAIL);
-      setCopyDone(true);
-      setTimeout(() => setCopyDone(false), 2000);
-    } catch {
-      /* ignore */
-    }
-  };
-
   return (
     <div className={`${styles.support} ${isCompactMobile ? styles.supportFeed : ''}`}>
       {isCompactMobile ? (
@@ -327,10 +315,24 @@ export function AccountSupport({
         )}
       </section>
 
-      <section className={styles.sectionBlock} aria-labelledby="support-tickets-title">
-        <p id="support-tickets-title" className={`${styles.sectionTitle} support-section-title`}>
-          Мои обращения
-        </p>
+      <section
+        className={`${styles.sectionBlock} ${styles.ticketsSectionSpaced}`}
+        aria-labelledby="support-tickets-title"
+      >
+        <div className={styles.ticketsSectionHead}>
+          <p id="support-tickets-title" className={`${styles.sectionTitle} support-section-title`}>
+            Мои обращения
+          </p>
+          {!ticketsLoading && tickets.length > 0 ? (
+            <button
+              type="button"
+              className={styles.newTicketLink}
+              onClick={() => openModal(contextOrderId ? 'order' : undefined)}
+            >
+              Новое обращение
+            </button>
+          ) : null}
+        </div>
         {!isCompactMobile ? (
           <p className={styles.ticketsSectionHint}>
             Здесь отображаются ваши диалоги со службой поддержки
@@ -425,36 +427,6 @@ export function AccountSupport({
           </ul>
         )}
       </section>
-
-      <section
-        className={`${styles.contactCard} ${isCompactMobile ? styles.contactCardCompact : ''}`}
-        aria-labelledby="support-contact-title"
-      >
-        <div>
-          <p id="support-contact-title" className={`${styles.sectionTitle} support-section-title`}>
-            Не нашли ответ?
-          </p>
-          <p className={styles.contactText}>Опишите ситуацию — мы ответим в обращении в личном кабинете.</p>
-          <div className={styles.contactEmailRow}>
-            <a href={`mailto:${SUPPORT_EMAIL}`} className={styles.contactEmail}>
-              {SUPPORT_EMAIL}
-            </a>
-            <button type="button" className={styles.copyBtn} onClick={() => void copyEmail()}>
-              {copyDone ? 'Скопировано' : 'Копировать'}
-            </button>
-          </div>
-        </div>
-        <Button
-          className={styles.contactCardCta}
-          onClick={() => openModal(contextOrderId ? 'order' : undefined)}
-        >
-          Написать в поддержку
-        </Button>
-      </section>
-      </div>
-
-      <div className={styles.stickyCta}>
-        <Button onClick={() => openModal()}>Написать в поддержку</Button>
       </div>
 
       <SupportTicketModal
