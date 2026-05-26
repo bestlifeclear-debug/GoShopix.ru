@@ -25,7 +25,9 @@ import {
   type QuickActionId,
 } from './supportConstants';
 import { SupportTicketModal } from './SupportTicketModal';
+import { useAccountMobileLayout } from './useAccountMobileLayout';
 import styles from './AccountSupport.module.css';
+import './support-section.css';
 
 const QUICK_ICONS: Record<QuickActionId, typeof Package> = {
   orders: Package,
@@ -52,6 +54,7 @@ export function AccountSupport({
   onNavigateSection,
   onOpenOrder,
 }: AccountSupportProps) {
+  const isCompactMobile = useAccountMobileLayout();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [expandedFaq, setExpandedFaq] = useState<Set<string>>(new Set());
@@ -203,7 +206,7 @@ export function AccountSupport({
   };
 
   return (
-    <div className={styles.support}>
+    <div className={`${styles.support} ${isCompactMobile ? styles.supportFeed : ''}`}>
       {contextOrder && (
         <div className={styles.orderBanner} role="status">
           <p className={styles.orderBannerText}>
@@ -222,9 +225,9 @@ export function AccountSupport({
 
       <div className={styles.helpZone}>
       <section className={styles.hero} aria-labelledby="support-hero-title">
-        <h2 id="support-hero-title" className={styles.heroTitle}>
+        <p id="support-hero-title" className={`${styles.heroTitle} support-hero-title`}>
           Чем помочь?
-        </h2>
+        </p>
         <p className={styles.heroText}>
           Служба поддержки GoShopix на связи круглосуточно — найдите ответ ниже или создайте обращение.
         </p>
@@ -233,7 +236,7 @@ export function AccountSupport({
           <input
             type="search"
             className={styles.searchInput}
-            placeholder="Поиск по вопросам и темам"
+            placeholder="Поиск по вопросам"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             aria-label="Поиск по базе помощи"
@@ -242,9 +245,9 @@ export function AccountSupport({
       </section>
 
       <section className={styles.sectionBlock} aria-labelledby="support-quick-title">
-        <h2 id="support-quick-title" className={styles.sectionTitle}>
+        <p id="support-quick-title" className={`${styles.sectionTitle} support-section-title`}>
           Быстрые действия
-        </h2>
+        </p>
         <ul className={styles.quickGrid}>
           {quickActions.map((action) => {
             const Icon = QUICK_ICONS[action.id] ?? HelpCircle;
@@ -267,9 +270,9 @@ export function AccountSupport({
       </section>
 
       <section className={styles.sectionBlock} aria-labelledby="support-faq-title">
-        <h2 id="support-faq-title" className={styles.sectionTitle}>
+        <p id="support-faq-title" className={`${styles.sectionTitle} support-section-title`}>
           Популярные вопросы
-        </h2>
+        </p>
         {filteredFaq.length === 0 ? (
           <p className={styles.faqEmpty}>
             По запросу ничего не найдено.{' '}
@@ -307,9 +310,9 @@ export function AccountSupport({
 
       <section className={styles.contactCard} aria-labelledby="support-contact-title">
         <div>
-          <h2 id="support-contact-title" className={styles.sectionTitle}>
+          <p id="support-contact-title" className={`${styles.sectionTitle} support-section-title`}>
             Не нашли ответ?
-          </h2>
+          </p>
           <p className={styles.contactText}>Опишите ситуацию — мы ответим в обращении в личном кабинете.</p>
           <div className={styles.contactEmailRow}>
             <a href={`mailto:${SUPPORT_EMAIL}`} className={styles.contactEmail}>
@@ -320,7 +323,12 @@ export function AccountSupport({
             </button>
           </div>
         </div>
-        <Button onClick={() => openModal(contextOrderId ? 'order' : undefined)}>Написать в поддержку</Button>
+        <Button
+          className={styles.contactCardCta}
+          onClick={() => openModal(contextOrderId ? 'order' : undefined)}
+        >
+          Написать в поддержку
+        </Button>
       </section>
       </div>
 
@@ -332,9 +340,9 @@ export function AccountSupport({
         </div>
 
       <section className={styles.ticketsSection} aria-labelledby="support-tickets-title">
-        <h2 id="support-tickets-title" className={styles.ticketsSectionTitle}>
+        <p id="support-tickets-title" className={`${styles.ticketsSectionTitle} support-tickets-title`}>
           История обращений
-        </h2>
+        </p>
         <p className={styles.ticketsSectionHint}>
           Здесь отображаются ваши диалоги со службой поддержки
         </p>

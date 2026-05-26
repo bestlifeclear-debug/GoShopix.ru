@@ -15,7 +15,7 @@
   padding: 24px;
   background: var(--lk-surface);
   border: 1px solid var(--lk-border);
-  border-radius: var(--lk-radius);
+  border-radius: 16px;
   box-shadow: var(--shadow-sm);
 }
 
@@ -146,20 +146,26 @@
   min-height: 72px;
   padding: 14px 16px;
   border: 1px solid var(--lk-border);
-  border-radius: 14px;
+  border-radius: 16px;
   background: var(--lk-surface);
   text-align: left;
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
   transition:
     background var(--lk-transition),
     border-color var(--lk-transition),
-    box-shadow var(--lk-transition);
+    box-shadow var(--lk-transition),
+    transform var(--lk-transition);
 }
 
 .quickTile:hover {
   border-color: var(--lk-hover-border);
   background: var(--lk-nav-fill);
   box-shadow: var(--lk-nav-shadow);
+}
+
+.quickTile:active {
+  transform: scale(0.98);
 }
 
 .quickIcon {
@@ -209,9 +215,10 @@
 }
 
 .faqItem {
-  border: 1px solid var(--lk-border);
-  border-radius: 14px;
+  border: 1px solid rgb(15 23 42 / 0.06);
+  border-radius: 16px;
   background: var(--lk-surface);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
@@ -262,7 +269,8 @@
   padding: 24px;
   background: var(--lk-surface);
   border: 1px solid var(--lk-border);
-  border-radius: var(--lk-radius);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
 }
 
 .contactText {
@@ -520,14 +528,138 @@
   display: none;
 }
 
-@media (max-width: 768px) {
+/* Мобильная лента ЛК — как в «Мои заказы» */
+@media (max-width: 1024px) {
+  .supportFeed {
+    margin: 0 calc(-1 * var(--container-padding, 16px));
+    padding: 4px var(--container-padding, 16px)
+      calc(72px + env(safe-area-inset-bottom, 0px));
+    background: #f5f5f7;
+    box-sizing: border-box;
+    overflow-x: clip;
+    max-width: none;
+  }
+
+  .helpZone {
+    gap: 20px;
+  }
+
+  .hero {
+    padding: 18px 16px;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgb(15 23 42 / 0.08);
+  }
+
+  .heroText {
+    margin-bottom: 16px;
+    font-size: 0.875rem;
+  }
+
+  .searchWrap {
+    border-radius: 12px;
+  }
+
+  .searchInput {
+    min-height: 46px;
+    font-size: 0.9375rem;
+  }
+
+  .sectionBlock {
+    gap: 10px;
+  }
+
+  .sectionTitle {
+    padding: 0 2px;
+    font-size: 1.0625rem;
+  }
+
   .quickGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .quickTile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 0;
+    padding: 14px 12px;
+    border: none;
+    box-shadow: 0 1px 3px rgb(15 23 42 / 0.08);
+  }
+
+  .quickIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+  }
+
+  .quickBody {
+    width: 100%;
+  }
+
+  .quickTitle {
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    hyphens: none;
+  }
+
+  .quickSubtitle {
+    margin-top: 4px;
+    font-size: 0.6875rem;
+    line-height: 1.35;
+    color: var(--lk-text-muted);
+  }
+
+  .quickChevron {
+    display: none;
+  }
+
+  .faqList {
+    gap: 8px;
+  }
+
+  .faqTrigger {
+    padding: 14px 16px;
+    font-size: 0.875rem;
+    line-height: 1.35;
+  }
+
+  .faqAnswer {
+    padding: 0 16px 14px;
+    font-size: 0.8125rem;
+  }
+
+  .faqEmpty {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 1px 3px rgb(15 23 42 / 0.06);
+  }
+
+  .contactCard {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 18px 16px;
+    border: none;
+    box-shadow: 0 1px 3px rgb(15 23 42 / 0.08);
+  }
+
+  .contactCardCta {
+    display: none;
   }
 
   .ticketsZone {
-    margin-top: 32px;
-    padding: 24px 16px 4px;
+    margin-top: 24px;
+    padding: 20px 14px 8px;
+    border: none;
+    border-radius: 16px;
+    background: var(--lk-surface);
+    box-shadow: 0 1px 3px rgb(15 23 42 / 0.08);
+  }
+
+  .ticketsDivider {
+    margin: 0 0 20px;
   }
 
   .ticketsDividerLabel {
@@ -535,26 +667,41 @@
     padding: 5px 10px;
   }
 
-  .contactCard {
-    flex-direction: column;
-    align-items: stretch;
+  .ticketRow {
+    border: none;
+    box-shadow: 0 1px 3px rgb(15 23 42 / 0.06);
   }
 
   .stickyCta {
     display: block;
     position: sticky;
-    bottom: 12px;
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     z-index: 5;
-    padding-top: 8px;
+    padding-top: 10px;
+    margin-top: 4px;
   }
 
   .stickyCta button {
     width: 100%;
+    min-height: 48px;
+    border-radius: 16px;
+    background: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
+    box-shadow: 0 8px 24px rgb(255 61 46 / 0.28);
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 360px) {
+  .supportFeed {
+    --container-padding: 14px;
+  }
+
+  .quickTitle {
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 1025px) {
   .quickGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
