@@ -253,15 +253,11 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
       )}
 
       {addresses.length > 0 ? (
-        <p className="mt-6 text-center">
-          <button
-            type="button"
-            className="text-sm font-semibold text-[#FF7062] active:opacity-80"
-            onClick={() => navigate('/cart')}
-          >
+        <div className={styles.cartCtaWrap}>
+          <button type="button" className={styles.cartCta} onClick={() => navigate('/cart')}>
             Перейти в корзину
           </button>
-        </p>
+        </div>
       ) : null}
 
       <AddressFormModal
