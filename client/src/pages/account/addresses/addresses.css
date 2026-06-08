@@ -120,6 +120,14 @@
   background: rgb(255 112 98 / 0.1);
 }
 
+.addr-card__carrier-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
 .addr-card__tag {
   display: inline-flex;
   align-items: center;
@@ -128,8 +136,17 @@
   font-size: 10px;
   font-weight: 600;
   line-height: 1.4;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   color: #6b7280;
   background: #f3f4f6;
+}
+
+.addr-card__carrier-sep {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  color: #d1d5db;
 }
 
 .addr-card__hours {

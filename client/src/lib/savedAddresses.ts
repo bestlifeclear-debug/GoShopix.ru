@@ -1,5 +1,10 @@
 export type SavedAddressDelivery = 'post' | 'cdek';
 
+/** Единый регистр бренда перевозчика во всех строках UI и данных */
+export const CDEK_CARRIER_LABEL = 'СДЭК';
+
+const CDEK_CARRIER_RE = /\bсдэк\b/giu;
+
 /** Время работы ПВЗ в формате HH:MM */
 export interface PickupWorkingHours {
   opensAt: string;
@@ -91,11 +96,39 @@ export function groupAddressesByDelivery(addresses: SavedAddress[]): {
   };
 }
 
+function normalizeCdekCarrierText(value: string): string {
+  return value.replace(CDEK_CARRIER_RE, CDEK_CARRIER_LABEL);
+}
+
+/** Приводит поля ПВЗ к единому регистру «СДЭК» (localStorage, мок, будущий API). */
+export function normalizeSavedAddress(address: SavedAddress): SavedAddress {
+  if (address.deliveryMethod !== 'cdek') return address;
+
+  const city = address.city.trim();
+  const pickupPoint = address.pickupPoint?.trim();
+  const label = normalizeCdekCarrierText(address.label.trim());
+
+  return {
+    ...address,
+    label,
+    city,
+    pickupPoint: pickupPoint ? normalizeCdekCarrierText(pickupPoint) : pickupPoint,
+    fullAddress: pickupPoint
+      ? formatCdekAddress({ city, pickupPoint })
+      : normalizeCdekCarrierText(address.fullAddress.trim()),
+  };
+}
+
+export function formatPickupCarrierLine(city: string): string {
+  return `${CDEK_CARRIER_LABEL} · ${city.trim()}`;
+}
+
 function normalizeList(items: SavedAddress[]): SavedAddress[] {
   if (items.length === 0) return [];
-  const hasDefault = items.some((a) => a.isDefault);
-  if (hasDefault) return items;
-  return items.map((a, i) => ({ ...a, isDefault: i === 0 }));
+  const normalized = items.map(normalizeSavedAddress);
+  const hasDefault = normalized.some((a) => a.isDefault);
+  if (hasDefault) return normalized;
+  return normalized.map((a, i) => ({ ...a, isDefault: i === 0 }));
 }
 
 export function readSavedAddresses(): SavedAddress[] {
@@ -104,7 +137,16 @@ export function readSavedAddresses(): SavedAddress[] {
     if (!raw) return [...MOCK_SAVED_ADDRESSES];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed) || parsed.length === 0) return [...MOCK_SAVED_ADDRESSES];
-    return normalizeList(parsed as SavedAddress[]);
+    const normalized = normalizeList(parsed as SavedAddress[]);
+    const migrated = JSON.stringify(normalized);
+    if (migrated !== raw) {
+      try {
+        localStorage.setItem(STORAGE_KEY, migrated);
+      } catch {
+        /* ignore */
+      }
+    }
+    return normalized;
   } catch {
     return [...MOCK_SAVED_ADDRESSES];
   }
@@ -131,5 +173,7 @@ export function formatPostAddress(parts: {
 }
 
 export function formatCdekAddress(parts: { city: string; pickupPoint: string }): string {
-  return `СДЭК, ${parts.city.trim()}, ${parts.pickupPoint.trim()}`;
+  const city = parts.city.trim();
+  const pickupPoint = normalizeCdekCarrierText(parts.pickupPoint.trim());
+  return `${CDEK_CARRIER_LABEL}, ${city}, ${pickupPoint}`;
 }

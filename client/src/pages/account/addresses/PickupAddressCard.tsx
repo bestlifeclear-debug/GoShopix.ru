@@ -1,6 +1,10 @@
 import { Clock } from 'lucide-react';
 import type { SavedAddress } from '../../../lib/savedAddresses';
-import { formatPickupWorkingStatus } from '../../../lib/savedAddresses';
+import {
+  CDEK_CARRIER_LABEL,
+  formatPickupCarrierLine,
+  formatPickupWorkingStatus,
+} from '../../../lib/savedAddresses';
 import { AddressCardActions } from './AddressCardActions';
 import { AddressRadio } from './AddressRadio';
 import { PickupMapThumb } from './PickupMapThumb';
@@ -32,7 +36,7 @@ export function PickupAddressCard({
         className="addr-card__select"
         onClick={onSelect}
         aria-pressed={selected}
-        aria-label={`${address.label}, ${address.fullAddress}${selected ? ', основной адрес' : ''}`}
+        aria-label={`${address.label}, ${formatPickupCarrierLine(address.city)}, ${address.pickupPoint ?? address.fullAddress}${selected ? ', основной адрес' : ''}`}
       >
         <AddressRadio selected={selected} />
         <div className="min-w-0 flex-1">
@@ -40,10 +44,13 @@ export function PickupAddressCard({
             <p className="addr-card__title">{address.label}</p>
             {selected ? <span className="addr-card__badge">Основной</span> : null}
           </div>
-          <div className="mt-0.5 flex flex-wrap items-center gap-1">
-            <span className="addr-card__tag">СДЭК</span>
+          <p className="addr-card__carrier-line">
+            <span className="addr-card__tag">{CDEK_CARRIER_LABEL}</span>
+            <span className="addr-card__carrier-sep" aria-hidden>
+              ·
+            </span>
             <span className="addr-card__meta addr-card__meta--inline">{address.city}</span>
-          </div>
+          </p>
           <p className="addr-card__address">{address.pickupPoint ?? address.fullAddress}</p>
           {workingStatus ? (
             <p className="addr-card__hours">
