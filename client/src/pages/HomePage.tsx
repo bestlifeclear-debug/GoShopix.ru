@@ -5,9 +5,8 @@ import { CategoryTabs } from '../components/CategoryTabs/CategoryTabs';
 import { CategorySection, CategoryTiles } from '../components/CategoryTiles/CategoryTiles';
 import { HeroCarousel } from '../components/HeroCarousel/HeroCarousel';
 import { HomeLaunchPromo } from '../components/HomeLaunchPromo/HomeLaunchPromo';
+import { HomeProductSection } from '../components/HomeProductSection/HomeProductSection';
 import { HomeQuickFilters } from '../components/HomeQuickFilters/HomeQuickFilters';
-import { HomeTrustStrip } from '../components/HomeTrustStrip/HomeTrustStrip';
-import { HomeWhyGoShopix } from '../components/HomeWhyGoShopix/HomeWhyGoShopix';
 import { ProductRail } from '../components/ProductRail/ProductRail';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
 import { useAuthStore } from '../stores/authStore';
@@ -32,6 +31,7 @@ export function HomePage() {
   const [hits, setHits] = useState<ProductListItem[]>([]);
   const [discounted, setDiscounted] = useState<ProductListItem[]>([]);
   const [newItems, setNewItems] = useState<ProductListItem[]>([]);
+  const [catalogPreview, setCatalogPreview] = useState<ProductListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const token = useAuthStore((s) => s.token);
   const addToCart = useCartStore((s) => s.addToCart);
@@ -54,6 +54,7 @@ export function HomePage() {
 
       const items = catalog?.items ?? [];
       if (items.length > 0) {
+        setCatalogPreview(items.slice(0, 12));
         setHits(
           popular && popular.items.length > 0 ? popular.items : pickTopRated(items, 12),
         );
@@ -83,11 +84,8 @@ export function HomePage() {
       <div className="container">
         <HeroCarousel />
         <HomeLaunchPromo />
-        <HomeTrustStrip />
         <div className={styles.mobileOnly}>
-        <HomeQuickFilters variant="compact" />
         <CategorySection categories={categories} />
-        <HomeWhyGoShopix />
 
         <ProductRail
           title="Бестселлеры"
@@ -98,8 +96,8 @@ export function HomePage() {
           loading={loading}
         />
         <ProductRail
-          title="Скидки"
-          hint="Лучшие предложения"
+          title="Выгодные предложения"
+          hint="Лучшие скидки"
           linkTo="/catalog?sort=price_asc"
           products={discounted}
           onAddToCart={handleAdd}
@@ -110,6 +108,13 @@ export function HomePage() {
           hint="Свежие поступления"
           linkTo="/catalog?sort=newest"
           products={newItems}
+          onAddToCart={handleAdd}
+          loading={loading}
+        />
+        <ProductRail
+          title="Рекомендуем"
+          linkTo="/catalog"
+          products={catalogPreview}
           onAddToCart={handleAdd}
           loading={loading}
         />
@@ -129,7 +134,42 @@ export function HomePage() {
           <CategoryTiles categories={categories} />
         </section>
         <HomeQuickFilters />
-        <HomeWhyGoShopix />
+        <HomeProductSection
+          title="Бестселлеры"
+          hint="Топ товаров по отзывам покупателей"
+          linkTo="/catalog?sort=popular"
+          linkLabel="Все хиты →"
+          products={hits}
+          onAddToCart={handleAdd}
+          loading={loading}
+        />
+        <HomeProductSection
+          title="Выгодные предложения"
+          hint="Максимальная экономия — акции обновляются ежедневно"
+          linkTo="/catalog?sort=price_asc"
+          linkLabel="Все акции →"
+          products={discounted}
+          onAddToCart={handleAdd}
+          loading={loading}
+        />
+        <HomeProductSection
+          title="Новинки"
+          hint="Свежие поступления на маркетплейсе"
+          linkTo="/catalog?sort=newest"
+          linkLabel="Смотреть все →"
+          products={newItems}
+          onAddToCart={handleAdd}
+          loading={loading}
+        />
+        <HomeProductSection
+          title="Рекомендуем"
+          hint="Популярные товары из каталога"
+          linkTo="/catalog"
+          linkLabel="Весь каталог →"
+          products={catalogPreview}
+          onAddToCart={handleAdd}
+          loading={loading}
+        />
       </div>
       </div>
     </div>
