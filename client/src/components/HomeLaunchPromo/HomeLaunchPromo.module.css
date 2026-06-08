@@ -119,6 +119,20 @@
   text-underline-offset: 3px;
 }
 
+@media (max-width: 767px) {
+  .title {
+    white-space: nowrap;
+    font-size: clamp(0.9375rem, 3.9vw, 1.0625rem);
+  }
+
+  .textAccent {
+    white-space: nowrap;
+    display: inline-block;
+    max-width: 100%;
+    font-size: 13px;
+  }
+}
+
 @media (min-width: 768px) {
   .banner {
     grid-template-columns: auto minmax(0, 1fr) auto;
