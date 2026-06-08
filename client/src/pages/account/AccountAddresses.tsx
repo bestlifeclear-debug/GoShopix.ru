@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, MoreVertical, Pencil, Star, Trash2, Truck } from 'lucide-react';
+import { Home, Package, Plus } from 'lucide-react';
 import {
   formatCdekAddress,
   formatPostAddress,
+  groupAddressesByDelivery,
   readSavedAddresses,
   type SavedAddress,
   writeSavedAddresses,
@@ -13,6 +14,12 @@ import { AddressFormModal, type AddressFormValues } from './AddressFormModal';
 import { AddressesMobileToolbar } from './AddressesMobileToolbar';
 import { EmptyAddressesState } from './EmptyAddressesState';
 import { useAccountMobileLayout } from './useAccountMobileLayout';
+import {
+  AddAddressButton,
+  AddressSectionHeader,
+  CourierAddressCard,
+  PickupAddressCard,
+} from './addresses';
 import styles from './AccountAddresses.module.css';
 
 interface AccountAddressesProps {
@@ -52,6 +59,7 @@ function buildAddress(values: AddressFormValues, id: string): SavedAddress {
     fullAddress: formatCdekAddress({ city, pickupPoint }),
     isDefault: values.isDefault,
     pickupPoint,
+    workingHours: { opensAt: '09:00', closesAt: '21:00' },
   };
 }
 
@@ -59,11 +67,22 @@ function applyDefault(addresses: SavedAddress[], defaultId: string): SavedAddres
   return addresses.map((a) => ({ ...a, isDefault: a.id === defaultId }));
 }
 
+function courierCountLabel(count: number): string {
+  if (count === 1) return '1 адрес';
+  if (count >= 2 && count <= 4) return `${count} адреса`;
+  return `${count} адресов`;
+}
+
+function pickupCountLabel(count: number): string {
+  if (count === 1) return '1 пункт';
+  if (count >= 2 && count <= 4) return `${count} пункта`;
+  return `${count} пунктов`;
+}
+
 export function AccountAddresses({ onBack }: AccountAddressesProps) {
   const navigate = useNavigate();
   const isCompactMobile = useAccountMobileLayout();
   const [addresses, setAddresses] = useState<SavedAddress[]>([]);
-  const [menuId, setMenuId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<SavedAddress | null>(null);
 
@@ -75,6 +94,9 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
     load();
   }, [load]);
 
+  const { courier, pickup } = useMemo(() => groupAddressesByDelivery(addresses), [addresses]);
+  const defaultId = addresses.find((a) => a.isDefault)?.id ?? null;
+
   const persist = (next: SavedAddress[]) => {
     writeSavedAddresses(next);
     setAddresses(next);
@@ -83,20 +105,27 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
   const openAdd = () => {
     setEditing(null);
     setModalOpen(true);
-    setMenuId(null);
   };
 
   const openEdit = (addr: SavedAddress) => {
     setEditing(addr);
     setModalOpen(true);
-    setMenuId(null);
   };
 
   const handleSave = (values: AddressFormValues, editingId: string | null) => {
     const id = editingId ?? `addr-${Date.now()}`;
     const nextItem = buildAddress(values, id);
     let next = editingId
-      ? addresses.map((a) => (a.id === editingId ? nextItem : a))
+      ? addresses.map((a) =>
+          a.id === editingId
+            ? {
+                ...a,
+                ...nextItem,
+                workingHours: nextItem.workingHours ?? a.workingHours,
+                coordinates: a.coordinates,
+              }
+            : a,
+        )
       : [...addresses, nextItem];
 
     if (values.isDefault || next.length === 1) {
@@ -124,15 +153,13 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
       next = applyDefault(next, next[0].id);
     }
     persist(next);
-    setMenuId(null);
   };
 
   const handleSetDefault = (id: string) => {
     const item = addresses.find((a) => a.id === id);
-    if (!item) return;
+    if (!item || item.isDefault) return;
     writeDeliveryCity(item.city);
     persist(applyDefault(addresses, id));
-    setMenuId(null);
   };
 
   return (
@@ -148,6 +175,7 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
             </p>
           </div>
           <button type="button" className={styles.addBtnDesktop} onClick={openAdd}>
+            <Plus size={18} strokeWidth={2.5} aria-hidden />
             Добавить адрес
           </button>
         </header>
@@ -162,94 +190,66 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
       {addresses.length === 0 ? (
         <EmptyAddressesState onAdd={openAdd} />
       ) : (
-        <ul className={styles.list} aria-label="Сохранённые адреса">
-          {addresses.map((addr) => (
-            <li key={addr.id} className="relative">
-              <article className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100/90">
-                <div className="flex items-start gap-3 px-4 py-3.5">
-                  <span
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FF7062]/10 text-[#FF7062]"
-                    aria-hidden
-                  >
-                    {addr.deliveryMethod === 'cdek' ? (
-                      <Truck size={18} strokeWidth={2} />
-                    ) : (
-                      <MapPin size={18} strokeWidth={2} />
-                    )}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold leading-tight text-gray-900">{addr.label}</p>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                      {addr.isDefault ? (
-                        <span className="rounded-md bg-[#FF7062]/10 px-2 py-0.5 text-[10px] font-semibold leading-tight text-[#FF7062]">
-                          По умолчанию
-                        </span>
-                      ) : null}
-                      <span className="rounded-md bg-gray-100 px-2 py-0.5 text-[10px] font-medium leading-tight text-gray-600">
-                        {addr.deliveryMethod === 'cdek' ? 'СДЭК' : 'Почта'}
-                      </span>
-                      <span className="text-[11px] font-medium text-gray-500">{addr.city}</span>
-                    </div>
-                    <p className="mt-2 text-sm leading-snug text-gray-700">{addr.fullAddress}</p>
-                  </div>
-                  <div className="relative shrink-0">
-                    <button
-                      type="button"
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 active:bg-gray-100"
-                      aria-label="Действия с адресом"
-                      aria-expanded={menuId === addr.id}
-                      onClick={() => setMenuId((id) => (id === addr.id ? null : addr.id))}
-                    >
-                      <MoreVertical size={18} aria-hidden />
-                    </button>
-                    {menuId === addr.id ? (
-                      <ul
-                        className="absolute right-0 top-[calc(100%+4px)] z-20 min-w-[11rem] overflow-hidden rounded-xl border border-gray-100 bg-white py-1 shadow-lg"
-                        role="menu"
-                      >
-                        {!addr.isDefault ? (
-                          <li role="none">
-                            <button
-                              type="button"
-                              role="menuitem"
-                              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-700 active:bg-gray-50"
-                              onClick={() => handleSetDefault(addr.id)}
-                            >
-                              <Star size={16} className="text-[#FF7062]" aria-hidden />
-                              Сделать основным
-                            </button>
-                          </li>
-                        ) : null}
-                        <li role="none">
-                          <button
-                            type="button"
-                            role="menuitem"
-                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-700 active:bg-gray-50"
-                            onClick={() => openEdit(addr)}
-                          >
-                            <Pencil size={16} aria-hidden />
-                            Изменить
-                          </button>
-                        </li>
-                        <li role="none">
-                          <button
-                            type="button"
-                            role="menuitem"
-                            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-red-600 active:bg-red-50"
-                            onClick={() => handleDelete(addr.id)}
-                          >
-                            <Trash2 size={16} aria-hidden />
-                            Удалить
-                          </button>
-                        </li>
-                      </ul>
-                    ) : null}
-                  </div>
-                </div>
-              </article>
-            </li>
-          ))}
-        </ul>
+        <div className={styles.sections}>
+          {!isCompactMobile ? (
+            <div className={styles.prominentAdd}>
+              <AddAddressButton onClick={openAdd} />
+            </div>
+          ) : null}
+
+          <section className={styles.section} aria-labelledby="courier-section-title">
+            <AddressSectionHeader
+              icon={Home}
+              title="Курьерская доставка"
+              count={courier.length}
+              countLabel={courierCountLabel}
+            />
+            {courier.length === 0 ? (
+              <AddAddressButton onClick={openAdd} variant="dashed" label="Добавить адрес доставки" />
+            ) : (
+              <ul className={styles.list} aria-label="Адреса курьерской доставки">
+                {courier.map((addr) => (
+                  <li key={addr.id}>
+                    <CourierAddressCard
+                      address={addr}
+                      selected={defaultId === addr.id}
+                      onSelect={() => handleSetDefault(addr.id)}
+                      onEdit={() => openEdit(addr)}
+                      onDelete={() => handleDelete(addr.id)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className={styles.section} aria-labelledby="pickup-section-title">
+            <AddressSectionHeader
+              icon={Package}
+              title="Пункты выдачи (ПВЗ)"
+              count={pickup.length}
+              countLabel={pickupCountLabel}
+            />
+            {pickup.length === 0 ? (
+              <AddAddressButton onClick={openAdd} variant="dashed" label="Добавить пункт выдачи" />
+            ) : (
+              <ul className={styles.list} aria-label="Пункты выдачи заказов">
+                {pickup.map((addr) => (
+                  <li key={addr.id}>
+                    <PickupAddressCard
+                      address={addr}
+                      selected={defaultId === addr.id}
+                      onSelect={() => handleSetDefault(addr.id)}
+                      onEdit={() => openEdit(addr)}
+                      onDelete={() => handleDelete(addr.id)}
+                      showMap={isCompactMobile}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
       )}
 
       {addresses.length > 0 ? (

@@ -33,7 +33,7 @@ export function AddressesMobileToolbar({ count, onBack, onAdd }: AddressesMobile
         <button
           type="button"
           onClick={onAdd}
-          className="mt-0.5 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl bg-[#FF7062] px-3 text-xs font-semibold text-white shadow-sm active:scale-[0.98]"
+          className="mt-0.5 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl bg-gradient-to-r from-[#FF7062] to-[#FF3D2E] px-3 text-xs font-semibold text-white shadow-[0_4px_14px_rgb(255_61_46/0.3)] active:scale-[0.98]"
         >
           <Plus size={16} strokeWidth={2.5} aria-hidden />
           Добавить

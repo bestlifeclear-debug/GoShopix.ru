@@ -5,6 +5,16 @@
   max-width: 920px;
 }
 
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section {
+  min-width: 0;
+}
+
 .list {
   display: flex;
   flex-direction: column;
@@ -12,6 +22,16 @@
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.prominentAdd {
+  margin-bottom: 4px;
+}
+
+.addBtnDesktop {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .desktopHead {
