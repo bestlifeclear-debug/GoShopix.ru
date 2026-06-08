@@ -40,3 +40,30 @@ export function writeDeliveryCity(city: string): void {
     /* ignore quota / private mode */
   }
 }
+
+let detectPromise: Promise<string | null> | null = null;
+
+/**
+ * Запрашивает город с бэкенда по IP и сохраняет в localStorage.
+ * Повторные вызовы дедуплицируются; при уже сохранённом городе API не дергается.
+ */
+export async function detectAndSaveDeliveryCity(
+  detect: () => Promise<{ city: string | null }>,
+): Promise<string | null> {
+  const stored = readDeliveryCity();
+  if (stored) return stored;
+
+  detectPromise ??= detect()
+    .then((res) => {
+      const city = res.city?.trim();
+      if (!city) return null;
+      writeDeliveryCity(city);
+      return city;
+    })
+    .catch(() => null)
+    .finally(() => {
+      detectPromise = null;
+    });
+
+  return detectPromise;
+}

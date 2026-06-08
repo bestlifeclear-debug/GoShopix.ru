@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { cityDetectApi } from '../../api';
-import { DEFAULT_DELIVERY_CITY, readDeliveryCity, writeDeliveryCity } from '../../lib/deliveryCity';
+import {
+  DEFAULT_DELIVERY_CITY,
+  detectAndSaveDeliveryCity,
+  readDeliveryCity,
+} from '../../lib/deliveryCity';
 import styles from './HeaderDeliveryCity.module.css';
 
 export function HeaderDeliveryCity() {
@@ -13,11 +17,8 @@ export function HeaderDeliveryCity() {
       return;
     }
 
-    void cityDetectApi.detect().then((res) => {
-      const detected = res.city?.trim();
-      if (!detected) return;
-      writeDeliveryCity(detected);
-      setCity(detected);
+    void detectAndSaveDeliveryCity(() => cityDetectApi.detect()).then((detected) => {
+      if (detected) setCity(detected);
     });
   }, []);
 

@@ -36,12 +36,14 @@ export function SiteHeader() {
   const isOrdersSection = accountSection === 'orders';
   const isSupportSection = accountSection === 'support';
   const isAddressesSection = accountSection === 'addresses';
+  const isProfileSection = accountSection === 'profile';
   const showMobileDeliveryCity =
     !isAccountRoute ||
     isFavoritesSection ||
     isOrdersSection ||
     isSupportSection ||
-    isAddressesSection;
+    isAddressesSection ||
+    isProfileSection;
   const isCheckoutFunnelRoute =
     location.pathname === '/cart' ||
     location.pathname === '/checkout' ||

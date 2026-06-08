@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { cityDetectApi } from '../../api';
-import { DEFAULT_DELIVERY_CITY, readDeliveryCity, writeDeliveryCity } from '../../lib/deliveryCity';
+import { DEFAULT_DELIVERY_CITY, detectAndSaveDeliveryCity, readDeliveryCity } from '../../lib/deliveryCity';
 import { IconLocation } from './AccountIcons';
 import { AccountLogoutButton } from './AccountLogoutButton';
 import styles from './AccountProfileBar.module.css';
@@ -26,11 +26,8 @@ export function AccountProfileBar({ displayName, avatarUrl, onLogout }: AccountP
       setDeliveryCity(stored);
       return;
     }
-    void cityDetectApi.detect().then((res) => {
-      const detected = res.city?.trim();
-      if (!detected) return;
-      writeDeliveryCity(detected);
-      setDeliveryCity(detected);
+    void detectAndSaveDeliveryCity(() => cityDetectApi.detect()).then((detected) => {
+      if (detected) setDeliveryCity(detected);
     });
   }, []);
 
