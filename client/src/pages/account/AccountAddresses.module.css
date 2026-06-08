@@ -92,6 +92,12 @@
   font-weight: 600;
   color: #fff;
   cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: none;
+  filter: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
   transition: transform 0.15s ease;
 }
 
@@ -120,7 +126,9 @@
 
   .cartCtaWrap {
     margin-top: 20px;
-    padding-bottom: 2px;
+    /* Отступ от нижнего меню — иначе его серая тень ложится на кнопку */
+    margin-bottom: 8px;
+    padding-bottom: 0;
   }
 }
 

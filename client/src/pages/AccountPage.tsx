@@ -145,8 +145,12 @@ export function AccountPage() {
   const hideOrdersMobileChrome = isCompactLk && section === 'orders';
   const hideSupportMobileChrome = isCompactLk && section === 'support';
   const hideAddressesMobileChrome = isCompactLk && section === 'addresses';
+  const hideProfileMobileChrome = isCompactLk && section === 'profile';
   const hideSectionMobileChrome =
-    hideOrdersMobileChrome || hideSupportMobileChrome || hideAddressesMobileChrome;
+    hideOrdersMobileChrome ||
+    hideSupportMobileChrome ||
+    hideAddressesMobileChrome ||
+    hideProfileMobileChrome;
   const showSectionHeading =
     section !== 'dashboard' && section !== 'favorites' && !hideSectionMobileChrome;
   const showMobileProfileBar = isCompactLk && section !== 'favorites' && !hideSectionMobileChrome;
@@ -239,6 +243,7 @@ export function AccountPage() {
               notifSettings={notifSettings}
               onSettingsChange={setNotifSettings}
               onProfileSaved={fetchMe}
+              onBack={() => navigateSection('dashboard')}
             />
           )}
 
