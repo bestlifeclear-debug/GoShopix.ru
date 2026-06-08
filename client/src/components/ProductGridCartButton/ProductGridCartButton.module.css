@@ -11,7 +11,7 @@
   padding: 0;
   border: none;
   border-radius: var(--radius-full);
-  background: var(--color-button-primary);
+  background: var(--gradient-primary-horizontal);
   color: var(--color-text-inverse);
   box-shadow: 0 4px 12px rgb(var(--color-primary-rgb) / 0.35);
   cursor: pointer;

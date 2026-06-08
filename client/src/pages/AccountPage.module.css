@@ -1165,7 +1165,7 @@
   }
 
   .mobileRecoGrid :global([class*='gridCompact']) {
-    gap: 10px;
+    gap: 4px;
   }
 
   [data-account-lk].theme-dark .mobileProfileName,

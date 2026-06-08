@@ -47,7 +47,8 @@
   .mobileOnly {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     margin-top: 16px;
+    padding-bottom: var(--space-2);
   }
 }

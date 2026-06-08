@@ -12,7 +12,15 @@
   padding: var(--space-2) 0 var(--space-5);
 }
 
+.footerWrap {
+  margin-top: 0;
+}
+
 @media (max-width: 768px) {
+  .footerWrap {
+    margin-top: 32px;
+  }
+
   .layoutCart .footerWrap,
   .layoutCategoriesHub .footerWrap {
     display: none;
