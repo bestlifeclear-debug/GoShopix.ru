@@ -167,8 +167,12 @@ export function SiteHeader() {
     <HeaderNotificationBell unreadCount={headerUnreadCount} />
   ) : null;
 
-  const mobileCitySlot = showMobileDeliveryCity ? <HeaderDeliveryCity /> : null;
-  const mobileTopTrailing = headerAccountActions;
+  const mobileTopTrailing = (
+    <>
+      {showMobileDeliveryCity && <HeaderDeliveryCity />}
+      {headerAccountActions}
+    </>
+  );
 
   const desktopAccountActions = token ? (
     <HeaderNotificationBell unreadCount={headerUnreadCount} variant="nav" />
@@ -183,7 +187,6 @@ export function SiteHeader() {
       <Header
         hideMobileSearch={hideMobileSearch}
         mobileHeaderCompact={mobileHeaderCompact}
-        mobileCitySlot={mobileCitySlot}
         mobileTopTrailing={mobileTopTrailing}
         deliverySlot={<HeaderDeliveryCity />}
         searchSlot={

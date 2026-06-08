@@ -7,9 +7,9 @@
 @media (max-width: 767px) {
   .wrap {
     padding-top: env(safe-area-inset-top, 0px);
-    background: #ffffff !important;
-    border-bottom: 1px solid #e5e7eb !important;
-    box-shadow: 0 1px 3px rgb(17 24 39 / 0.04) !important;
+    background: var(--header-mobile-gradient) !important;
+    border: none !important;
+    box-shadow: none !important;
     filter: none !important;
   }
 }

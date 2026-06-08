@@ -43,20 +43,20 @@
 @media (max-width: 768px) {
   .root {
     align-items: center;
-    justify-content: flex-start;
-    gap: 3px;
-    max-width: min(42vw, 160px);
+    justify-content: flex-end;
+    gap: 4px;
+    max-width: 100%;
     min-height: 0;
     padding: 0;
   }
 
   .icon {
-    color: #ff5a5f;
+    color: #ffffff;
   }
 
   .icon svg {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
   }
 
   .text {
@@ -64,7 +64,7 @@
     gap: 0;
     font-size: 13px;
     line-height: 1.2;
-    color: #111827;
+    color: #ffffff;
   }
 
   .label {
@@ -74,7 +74,7 @@
   .city {
     font-size: 13px;
     font-weight: var(--font-weight-semibold);
-    color: #111827;
+    color: #ffffff;
     line-height: 1.2;
   }
 }

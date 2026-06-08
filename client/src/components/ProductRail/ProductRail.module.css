@@ -12,26 +12,24 @@
 
 .title {
   margin: 0;
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
-  color: #111827;
-  line-height: 1.25;
-  letter-spacing: -0.03em;
+  color: var(--color-text);
+  line-height: var(--line-height-tight);
 }
 
 .hint {
   margin: 4px 0 0;
-  font-size: 13px;
-  color: #6b7280;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
 }
 
 .link {
   flex-shrink: 0;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  color: #ff5a5f;
+  color: var(--color-primary);
   text-decoration: none;
-  line-height: 1.2;
 }
 
 .trackWrap {
@@ -60,18 +58,10 @@
     margin-bottom: 12px;
   }
 
-  .head {
-    align-items: center;
-    margin-bottom: 14px;
-  }
-
+  /* Ozon-style: плотная 2-колоночная сетка на всю ширину, фон ленты #f5f5f7 */
   .trackWrap {
     margin-inline: calc(-1 * var(--container-padding));
-    padding: 6px;
-    background: #f8f9fb;
-  }
-
-  .track {
-    gap: 8px;
+    padding: 4px;
+    background: #f5f5f7;
   }
 }

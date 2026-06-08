@@ -26,26 +26,6 @@
   display: contents;
 }
 
-.mobileTopLeading {
-  display: none;
-}
-
-.mobileCitySlot {
-  display: none;
-}
-
-.mobileSearchRow {
-  display: none;
-}
-
-.searchGroupMobile {
-  display: none;
-}
-
-.mobileCatalogBtn {
-  display: none;
-}
-
 .mobileTopTrailing {
   display: none;
 }
@@ -334,7 +314,7 @@
     position: sticky;
     top: 0;
     padding-top: 0;
-    background: #ffffff !important;
+    background: none !important;
     border-bottom: none !important;
     box-shadow: none !important;
     filter: none !important;
@@ -349,7 +329,7 @@
   .topBar,
   .topBar .inner,
   .topRow {
-    background: transparent !important;
+    background: none !important;
     border: none !important;
     box-shadow: none !important;
   }
@@ -361,7 +341,7 @@
     min-height: 0;
     max-width: none;
     margin: 0;
-    padding: 12px 16px 14px;
+    padding: 10px 16px 12px;
     box-sizing: border-box;
   }
 
@@ -369,24 +349,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 8px;
     width: 100%;
     padding: 0;
     box-sizing: border-box;
   }
 
-  .mobileTopLeading {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .mobileCitySlot {
-    display: flex;
-    align-items: center;
-    min-width: 0;
+  .topRow .logo {
+    flex-shrink: 0;
   }
 
   .menuBtn {
@@ -398,75 +368,40 @@
     align-items: center;
     flex-shrink: 0;
     line-height: 0;
-    color: #111827;
   }
 
   .logoMark {
     display: none;
   }
 
+  .logo {
+    color: #ffffff;
+  }
+
   .logoText {
     display: inline;
     font-family: var(--font-family-logo);
-    font-size: 1.1875rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     line-height: 1.15;
-    color: #111827;
+    color: #ffffff;
   }
 
   .mobileTopTrailing {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 8px;
-    flex-shrink: 0;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
     margin-left: auto;
   }
 
   .searchGroup {
-    display: none;
-  }
-
-  .mobileSearchRow {
-    display: flex;
-    align-items: center;
-    gap: 10px;
     width: 100%;
+    flex: none;
     margin-top: 12px;
-  }
-
-  .searchGroupMobile {
-    display: block;
-    flex: 1;
-    min-width: 0;
-    width: auto;
-    margin-top: 0;
-  }
-
-  .mobileCatalogBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #ff5a5f 0%, #ff3d2e 100%);
-    color: #ffffff;
-    text-decoration: none;
-    box-shadow: 0 4px 14px rgb(255 90 95 / 0.32);
-    transition: transform var(--transition-fast), opacity var(--transition-fast);
-  }
-
-  .mobileCatalogBtn:active {
-    transform: scale(0.96);
-    opacity: 0.94;
-  }
-
-  .mobileCatalogBtn svg {
-    width: 22px;
-    height: 22px;
   }
 
   .navBar {

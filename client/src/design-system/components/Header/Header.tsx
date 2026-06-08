@@ -31,9 +31,7 @@ export interface HeaderProps {
   hideMobileSearch?: boolean;
   /** Компактный мобильный хедер (ЛК): без поиска, без тени, прозрачный фон под wrap */
   mobileHeaderCompact?: boolean;
-  /** Город доставки рядом с логотипом на мобилке */
-  mobileCitySlot?: ReactNode;
-  /** Правая часть верхнего бара на мобилке (колокольчик и т.п.) */
+  /** Правая часть верхнего бара на мобилке (локация, колокольчик) */
   mobileTopTrailing?: ReactNode;
 }
 
@@ -56,7 +54,6 @@ export function Header({
   extraActions,
   hideMobileSearch = false,
   mobileHeaderCompact = false,
-  mobileCitySlot,
   mobileTopTrailing,
 }: HeaderProps) {
   const isMobile = useMaxWidth(MOBILE_HEADER_MEDIA);
@@ -100,31 +97,18 @@ export function Header({
                 {menuOpen ? <IconClose /> : <IconMenu />}
               </button>
             )}
-            <div className={styles.mobileTopLeading}>
-              <Link to="/" className={styles.logo} aria-label="GoShopix — на главную">
-                <span className={styles.logoMark}>G</span>
-                <span className={styles.logoText}>GoShopix</span>
-              </Link>
-              {mobileCitySlot ? <div className={styles.mobileCitySlot}>{mobileCitySlot}</div> : null}
-            </div>
+            <Link to="/" className={styles.logo} aria-label="GoShopix — на главную">
+              <span className={styles.logoMark}>G</span>
+              <span className={styles.logoText}>GoShopix</span>
+            </Link>
             {mobileTopTrailing ? (
               <div className={styles.mobileTopTrailing}>{mobileTopTrailing}</div>
             ) : null}
           </div>
           {!hideSearchOnMobile && searchSlot ? (
-            <>
-              <div className={styles.searchGroup} data-header-search>
-                {searchSlot}
-              </div>
-              <div className={styles.mobileSearchRow}>
-                <div className={styles.searchGroupMobile} data-header-search>
-                  {searchSlot}
-                </div>
-                <Link to="/categories" className={styles.mobileCatalogBtn} aria-label="Каталог">
-                  <IconCatalog />
-                </Link>
-              </div>
-            </>
+            <div className={styles.searchGroup} data-header-search>
+              {searchSlot}
+            </div>
           ) : null}
         </div>
       </div>
