@@ -14,11 +14,11 @@
 
 @media (max-width: 768px) {
   .iconWrap {
-    color: #ffffff;
+    color: #374151;
   }
 
   .dot {
-    border-color: #ff8878;
+    border-color: #ffffff;
   }
 }
 

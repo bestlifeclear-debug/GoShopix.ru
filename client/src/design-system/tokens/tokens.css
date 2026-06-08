@@ -1,7 +1,7 @@
 /* GoShopix — 8px-сетка, токены темы (WCAG 2.1 AA: контраст текста ≥ 4.5:1) */
 :root {
   /* Акцент: кораллово-оранжевый градиент (#FF7062 → #FF3D2E) */
-  --color-primary-light: #ff7062;
+  --color-primary-light: #ff5a5f;
   --color-primary: #ff3d2e;
   --color-primary-hover: #ff5748;
   --color-primary-active: #e63628;
@@ -37,13 +37,13 @@
   --color-actions-tray-bg: #f8fafc;
 
   --color-bg: #ffffff;
-  --color-app-bg: #f8f9fa;
-  --color-bg-subtle: #f8f9fa;
+  --color-app-bg: #f8f9fb;
+  --color-bg-subtle: #f8f9fb;
   --color-bg-elevated: #ffffff;
   --color-surface-card: #ffffff;
 
-  --color-text: #1a1a1a;
-  --color-text-muted: #5c5c5c;
+  --color-text: #111827;
+  --color-text-muted: #6b7280;
   --color-text-inverse: #ffffff;
 
   /* Скидки: контрастный красный на бледном фоне */
@@ -59,7 +59,7 @@
   --color-error: #c62828;
   --color-error-bg: #ffebee;
 
-  --color-border: #e0e0e0;
+  --color-border: #e5e7eb;
   --color-border-focus: var(--color-primary);
 
   --color-focus-glow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.22);
@@ -115,7 +115,7 @@
   --radius-search: var(--radius-md);
   --color-search-field-bg: #f1f5f9;
   --color-search-field-border: #cbd5e1;
-  --shadow-search: 0 1px 2px rgb(15 23 42 / 0.06), 0 2px 10px rgb(15 23 42 / 0.05);
+  --shadow-search: 0 2px 8px rgb(17 24 39 / 0.06), 0 8px 24px rgb(17 24 39 / 0.08);
 
   --transition-ui: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);

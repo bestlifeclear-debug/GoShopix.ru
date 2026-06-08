@@ -90,7 +90,7 @@ export function CategorySection({ categories, catalogLink = '/categories' }: Cat
           Категории
         </h2>
         <Link to={catalogLink} className={styles.sectionLink}>
-          Все →
+          Все категории →
         </Link>
       </div>
       <div className={styles.trackWrap}>

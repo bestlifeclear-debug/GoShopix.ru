@@ -18,7 +18,7 @@ export function ProductRail({
   title,
   hint,
   linkTo,
-  linkLabel = 'Все →',
+  linkLabel = 'Смотреть все →',
   products,
   loading,
   onAddToCart,
