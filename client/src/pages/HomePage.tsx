@@ -4,6 +4,7 @@ import type { CategoryNode, ProductListItem } from '../api/types';
 import { CategoryTabs } from '../components/CategoryTabs/CategoryTabs';
 import { CategorySection, CategoryTiles } from '../components/CategoryTiles/CategoryTiles';
 import { HeroCarousel } from '../components/HeroCarousel/HeroCarousel';
+import { HomeLaunchPromo } from '../components/HomeLaunchPromo/HomeLaunchPromo';
 import { HomeProductSection } from '../components/HomeProductSection/HomeProductSection';
 import { HomeQuickFilters } from '../components/HomeQuickFilters/HomeQuickFilters';
 import { ProductRail } from '../components/ProductRail/ProductRail';
@@ -82,6 +83,7 @@ export function HomePage() {
     <div className={styles.page}>
       <div className="container">
         <HeroCarousel />
+        <HomeLaunchPromo />
         <div className={styles.mobileOnly}>
         <CategorySection categories={categories} />
 
