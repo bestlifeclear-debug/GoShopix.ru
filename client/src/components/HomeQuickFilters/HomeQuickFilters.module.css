@@ -6,6 +6,11 @@
   padding-top: var(--space-2);
 }
 
+.sectionCompact {
+  margin-top: 0;
+  padding-top: 0;
+}
+
 .row {
   display: flex;
   align-items: center;
@@ -80,6 +85,25 @@
 }
 
 @media (max-width: 767px) {
+  .sectionCompact .row {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .sectionCompact .chips {
+    flex-wrap: nowrap;
+  }
+
+  .sectionCompact .chip {
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 12px;
+    line-height: 32px;
+    border-radius: var(--radius-full);
+    background: #fff;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.06);
+  }
+
   .row {
     flex-direction: column;
     align-items: stretch;
