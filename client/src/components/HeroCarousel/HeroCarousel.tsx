@@ -69,7 +69,7 @@ export function HeroCarousel() {
                   <div className={styles.copy}>
                     <span className={styles.promoRibbon}>{slide.promo}</span>
                     <p className={styles.eyebrow}>{slide.eyebrow}</p>
-                    <h1 className={styles.title}>
+                    <p className={styles.title}>
                       <span className={styles.titleDesktop}>{slide.title}</span>
                       {slide.mobileTitle && (
                         <span className={styles.titleMobile}>
@@ -80,7 +80,7 @@ export function HeroCarousel() {
                           ))}
                         </span>
                       )}
-                    </h1>
+                    </p>
                     <p className={styles.text}>{slide.text}</p>
                     {slide.countdownEndsAt && (
                       <CountdownTimer
