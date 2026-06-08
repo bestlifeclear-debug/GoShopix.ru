@@ -9,22 +9,22 @@ type AddressesMobileToolbarProps = {
 
 export function AddressesMobileToolbar({ count, onBack, onAdd }: AddressesMobileToolbarProps) {
   return (
-    <div className="sticky top-0 z-20 -mx-[var(--container-padding,16px)] bg-[#f5f5f7]/96 px-[var(--container-padding,16px)] pb-4 pt-3 backdrop-blur-md">
-      <div className="flex items-start gap-2">
+    <div className="sticky top-0 z-20 -mx-[var(--container-padding,16px)] bg-[#f5f5f7]/96 px-[var(--container-padding,16px)] pb-3 pt-2 backdrop-blur-md">
+      <div className="flex items-center gap-2">
         {onBack ? (
           <button
             type="button"
             onClick={onBack}
-            className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-gray-800 ring-1 ring-gray-200/80 active:bg-gray-50"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-white text-gray-800 ring-1 ring-gray-200/80 active:bg-gray-50"
             aria-label="На главную личного кабинета"
           >
-            <ChevronLeft size={20} strokeWidth={2} aria-hidden />
+            <ChevronLeft size={18} strokeWidth={2} aria-hidden />
           </button>
         ) : null}
-        <div className="min-w-0 flex-1 pt-0.5">
+        <div className="min-w-0 flex-1">
           <p className="orders-archive-title m-0 text-gray-900">Адреса доставки</p>
           {count != null && count > 0 ? (
-            <p className="m-0 mt-0.5 text-[11px] font-medium leading-none text-gray-500">
+            <p className="m-0 mt-0.5 text-[11px] font-medium leading-none text-gray-400">
               {count}{' '}
               {count === 1 ? 'адрес' : count >= 2 && count <= 4 ? 'адреса' : 'адресов'}
             </p>
@@ -33,9 +33,9 @@ export function AddressesMobileToolbar({ count, onBack, onAdd }: AddressesMobile
         <button
           type="button"
           onClick={onAdd}
-          className="mt-0.5 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl bg-gradient-to-r from-[#FF7062] to-[#FF3D2E] px-3 text-xs font-semibold text-white shadow-[0_4px_14px_rgb(255_61_46/0.3)] active:scale-[0.98]"
+          className="inline-flex h-8 shrink-0 items-center gap-1 rounded-[10px] bg-gradient-to-r from-[#FF7062] to-[#FF3D2E] px-2.5 text-[11px] font-semibold text-white shadow-[0_2px_10px_rgb(255_61_46/0.28)] active:scale-[0.98]"
         >
-          <Plus size={16} strokeWidth={2.5} aria-hidden />
+          <Plus size={14} strokeWidth={2.5} aria-hidden />
           Добавить
         </button>
       </div>

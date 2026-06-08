@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home, Package, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import {
   formatCdekAddress,
   formatPostAddress,
@@ -20,6 +20,7 @@ import {
   CourierAddressCard,
   PickupAddressCard,
 } from './addresses';
+import './addresses/addresses.css';
 import styles from './AccountAddresses.module.css';
 
 interface AccountAddressesProps {
@@ -182,9 +183,7 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
       )}
 
       {isCompactMobile ? (
-        <p className="mb-4 mt-1 px-0.5 text-sm leading-relaxed text-gray-500">
-          Сохранённые адреса подставляются при оформлении заказа
-        </p>
+        <p className="addr-hint">Сохранённые адреса подставляются при оформлении заказа</p>
       ) : null}
 
       {addresses.length === 0 ? (
@@ -199,7 +198,6 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
 
           <section className={styles.section} aria-labelledby="courier-section-title">
             <AddressSectionHeader
-              icon={Home}
               title="Курьерская доставка"
               count={courier.length}
               countLabel={courierCountLabel}
@@ -225,7 +223,6 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
 
           <section className={styles.section} aria-labelledby="pickup-section-title">
             <AddressSectionHeader
-              icon={Package}
               title="Пункты выдачи (ПВЗ)"
               count={pickup.length}
               countLabel={pickupCountLabel}
@@ -242,7 +239,7 @@ export function AccountAddresses({ onBack }: AccountAddressesProps) {
                       onSelect={() => handleSetDefault(addr.id)}
                       onEdit={() => openEdit(addr)}
                       onDelete={() => handleDelete(addr.id)}
-                      showMap={isCompactMobile}
+                      showMap
                     />
                   </li>
                 ))}

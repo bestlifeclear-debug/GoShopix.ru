@@ -8,7 +8,7 @@
 .sections {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 18px;
 }
 
 .section {
@@ -18,20 +18,14 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .prominentAdd {
-  margin-bottom: 4px;
-}
-
-.addBtnDesktop {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  margin-bottom: 2px;
 }
 
 .desktopHead {
@@ -57,8 +51,38 @@
 }
 
 .addBtnDesktop {
+  display: inline-flex;
   flex-shrink: 0;
-  min-height: 44px;
+  align-items: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgb(255 61 46 / 0.22);
+}
+
+.addBtnDesktop:active {
+  transform: scale(0.98);
+}
+
+.cartCtaWrap {
+  margin-top: 16px;
+  padding-top: 2px;
+}
+
+.cartCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 46px;
   padding: 0 20px;
   border: none;
   border-radius: 14px;
@@ -68,34 +92,7 @@
   font-weight: 600;
   color: #fff;
   cursor: pointer;
-  box-shadow: 0 8px 20px rgb(255 61 46 / 0.25);
-}
-
-.addBtnDesktop:active {
-  transform: scale(0.98);
-}
-
-.cartCtaWrap {
-  margin-top: 20px;
-  padding-top: 4px;
-}
-
-.cartCta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 48px;
-  padding: 0 20px;
-  border: none;
-  border-radius: 16px;
-  background: linear-gradient(90deg, #ff7062 0%, #ff3d2e 100%);
-  font-family: inherit;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgb(255 61 46 / 0.28);
+  box-shadow: 0 6px 20px rgb(255 61 46 / 0.24);
   transition: transform 0.15s ease;
 }
 
@@ -104,17 +101,10 @@
 }
 
 @media (max-width: 1024px) {
-  .cartCtaWrap {
-    margin-top: 24px;
-    padding-bottom: 4px;
-  }
-}
-
-@media (max-width: 1024px) {
   .root {
     margin: 0 calc(-1 * var(--container-padding, 16px));
-    padding: 12px var(--container-padding, 16px)
-      calc(28px + env(safe-area-inset-bottom, 0px));
+    padding: 8px var(--container-padding, 16px)
+      calc(24px + env(safe-area-inset-bottom, 0px));
     background: #f5f5f7;
     box-sizing: border-box;
     overflow-x: clip;
@@ -123,6 +113,15 @@
 
   .desktopHead {
     display: none;
+  }
+
+  .sections {
+    gap: 16px;
+  }
+
+  .cartCtaWrap {
+    margin-top: 20px;
+    padding-bottom: 2px;
   }
 }
 

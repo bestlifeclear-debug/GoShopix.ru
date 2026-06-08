@@ -16,9 +16,9 @@ export function AddAddressButton({
       <button
         type="button"
         onClick={onClick}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#FF7062]/35 bg-white py-3.5 text-sm font-semibold text-[#FF7062] shadow-sm active:border-[#FF7062]/55 active:bg-[#FF7062]/5"
+        className="flex w-full items-center justify-center gap-1.5 rounded-[14px] border border-dashed border-[#FF7062]/30 bg-white py-3 text-[13px] font-medium text-[#FF7062] active:border-[#FF7062]/50 active:bg-[#FF7062]/[0.03]"
       >
-        <Plus size={18} strokeWidth={2.5} aria-hidden />
+        <Plus size={16} strokeWidth={2.5} aria-hidden />
         {label}
       </button>
     );
@@ -28,9 +28,9 @@ export function AddAddressButton({
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex w-full min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#FF7062] to-[#FF3D2E] px-5 text-[15px] font-semibold text-white shadow-[0_8px_24px_rgb(255_61_46/0.28)] transition-transform active:scale-[0.98]"
+      className="inline-flex w-full min-h-[44px] items-center justify-center gap-1.5 rounded-[14px] bg-gradient-to-r from-[#FF7062] to-[#FF3D2E] px-4 text-[14px] font-semibold text-white shadow-[0_4px_16px_rgb(255_61_46/0.22)] transition-transform active:scale-[0.99]"
     >
-      <Plus size={20} strokeWidth={2.5} aria-hidden />
+      <Plus size={18} strokeWidth={2.5} aria-hidden />
       {label}
     </button>
   );
