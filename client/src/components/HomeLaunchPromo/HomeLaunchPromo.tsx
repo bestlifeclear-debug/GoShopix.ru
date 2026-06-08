@@ -13,11 +13,21 @@ export function HomeLaunchPromo() {
 
       <div className={styles.content}>
         <span className={styles.badge}>Мы открылись</span>
-        <p className={styles.title}>Новый маркетплейс, набираем продавцов</p>
+        <p className={styles.title}>
+          <span className={styles.titleDesktop}>Новый маркетплейс, набираем продавцов</span>
+          <span className={styles.titleMobile}>
+            <span className={styles.titleLine}>Новый маркетплейс,</span>
+            <span className={styles.titleLine}>набираем продавцов</span>
+          </span>
+        </p>
         <p className={styles.text}>
-          Расширяем каталог каждый день.{' '}
-          <span className={styles.textAccent}>
+          <span className={styles.textLine}>Расширяем каталог каждый день.</span>
+          <span className={styles.textDesktop}>
             Подключайтесь на старте, тариф&nbsp;0&nbsp;₽/мес, комиссия&nbsp;6%.
+          </span>
+          <span className={styles.textMobile}>
+            <span className={styles.textLine}>Подключайтесь на старте,</span>
+            <span className={styles.textLine}>тариф&nbsp;0&nbsp;₽/мес, комиссия&nbsp;6%.</span>
           </span>
         </p>
       </div>
