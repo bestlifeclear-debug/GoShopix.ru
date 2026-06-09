@@ -17,6 +17,7 @@
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
   line-height: var(--line-height-tight);
+  letter-spacing: -0.02em;
 }
 
 .hint {

@@ -32,7 +32,19 @@
   /* Header: белый фон (десктоп), мобильный градиент — всегда в :root */
   --color-header-bg: #ffffff;
   --color-header-border: #eeeeee;
-  --header-mobile-gradient: linear-gradient(180deg, #ff7062 0%, #ff4f42 48%, #ff3d2e 100%);
+  --header-mobile-gradient: linear-gradient(
+    180deg,
+    #ff5a4d 0%,
+    #ff4a3d 38%,
+    #ff3d2e 72%,
+    #fff5f3 100%
+  );
+  --header-mobile-gradient-fade: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.4) 60%,
+    #ffffff 100%
+  );
   /* Пульт иконок в шапке (slate-50 / gray-100) */
   --color-actions-tray-bg: #f8fafc;
 
@@ -69,11 +81,14 @@
   --color-button-primary-hover: var(--color-primary-hover);
   --color-button-primary-gradient: var(--gradient-primary-horizontal);
 
-  --shadow-sm: 0 2px 8px rgb(26 26 26 / 0.06);
-  --shadow-md: 0 6px 24px rgb(26 26 26 / 0.08);
-  --shadow-lg: 0 12px 40px rgb(26 26 26 / 0.1);
-  --shadow-card: 0 1px 2px rgb(26 26 26 / 0.04), 0 4px 16px rgb(26 26 26 / 0.06);
-  --shadow-card-hover: 0 8px 24px rgb(26 26 26 / 0.08);
+  --shadow-sm: 0 2px 8px rgb(26 26 26 / 0.05);
+  --shadow-md: 0 8px 28px rgb(26 26 26 / 0.07);
+  --shadow-lg: 0 16px 48px rgb(26 26 26 / 0.09);
+  --shadow-card: 0 2px 8px rgb(26 26 26 / 0.04), 0 8px 24px rgb(26 26 26 / 0.05);
+  --shadow-card-hover: 0 12px 32px rgb(26 26 26 / 0.08);
+  --shadow-elevated: 0 4px 20px rgb(26 26 26 / 0.08), 0 1px 4px rgb(26 26 26 / 0.04);
+  --shadow-search-elevated: 0 4px 24px rgb(26 26 26 / 0.12), 0 2px 8px rgb(26 26 26 / 0.06);
+  --shadow-header-action: 0 4px 16px rgb(26 26 26 / 0.12), 0 1px 4px rgb(26 26 26 / 0.06);
   --shadow-focus: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.25);
 
   --font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
@@ -102,20 +117,20 @@
   --space-6: 48px;
   --space-8: 64px;
 
-  /* Скругления: CTA 12px, карточки 16px, поиск 12px */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-2xl: 20px;
+  /* Скругления: premium e-commerce — крупные радиусы */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-2xl: 28px;
   --radius-full: 9999px;
   --sticky-top: 124px;
   --radius-cta: var(--radius-md);
-  --radius-card: var(--radius-lg);
+  --radius-card: var(--radius-xl);
   --radius-search: var(--radius-md);
-  --color-search-field-bg: #f1f5f9;
-  --color-search-field-border: #cbd5e1;
-  --shadow-search: 0 1px 2px rgb(15 23 42 / 0.06), 0 2px 10px rgb(15 23 42 / 0.05);
+  --color-search-field-bg: #ffffff;
+  --color-search-field-border: transparent;
+  --shadow-search: var(--shadow-search-elevated);
 
   --transition-ui: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -144,10 +159,10 @@
     --header-top-height: auto;
     --header-height: auto;
     --radius-search: var(--radius-full);
-    --search-height: 48px;
-    --radius-search: var(--radius-full);
-    --mobile-bottom-nav-height: calc(56px + env(safe-area-inset-bottom, 0px));
-    --container-padding: 12px;
+    --search-height: 52px;
+    --mobile-bottom-nav-height: calc(60px + env(safe-area-inset-bottom, 0px));
+    --container-padding: 16px;
+    --radius-card: var(--radius-xl);
   }
 }
 

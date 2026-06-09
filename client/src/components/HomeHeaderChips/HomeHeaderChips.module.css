@@ -1,0 +1,92 @@
+.wrap {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .wrap {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding-bottom: 4px;
+  }
+
+  .track {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 2px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    min-height: 40px;
+    padding: 0 14px 0 6px;
+    border-radius: var(--radius-full);
+    background: #ffffff;
+    box-shadow: var(--shadow-header-action);
+    color: var(--color-text);
+    font-size: 13px;
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+    scroll-snap-align: start;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .chip:active {
+    transform: scale(0.97);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .iconWrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    line-height: 0;
+  }
+
+  .iconWrap svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .tonesale {
+    background: rgb(229 57 53 / 0.12);
+    color: #e53935;
+  }
+
+  .tonepromo {
+    background: rgb(234 88 12 / 0.12);
+    color: #ea580c;
+  }
+
+  .tonedelivery {
+    background: rgb(37 99 235 / 0.12);
+    color: #2563eb;
+  }
+
+  .tonenew {
+    background: rgb(124 58 237 / 0.12);
+    color: #7c3aed;
+  }
+
+  .label {
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+}

@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { IconHistory, IconSearch } from '../../design-system/icons/Icons';
+import { IconCamera, IconHistory, IconMic, IconSearch } from '../../design-system/icons/Icons';
 import styles from './SearchBox.module.css';
 
 export interface SearchSuggestion {
@@ -23,6 +23,9 @@ interface SearchBoxProps {
   className?: string;
   compact?: boolean;
   hideSubmit?: boolean;
+  /** Иконки голосового и визуального поиска (мобилка) */
+  showMobileActions?: boolean;
+  onVisualSearch?: () => void;
 }
 
 const RECENT_KEY = 'goshopix-recent-searches';
@@ -54,6 +57,8 @@ export function SearchBox({
   className,
   compact,
   hideSubmit,
+  showMobileActions = true,
+  onVisualSearch,
 }: SearchBoxProps) {
   const listId = useId();
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -137,6 +142,26 @@ export function SearchBox({
           aria-autocomplete="list"
           aria-label="Поиск"
         />
+        {showMobileActions ? (
+          <div className={styles.mobileActions} aria-hidden={false}>
+            <button
+              type="button"
+              className={styles.mobileActionBtn}
+              aria-label="Голосовой поиск"
+              onClick={() => wrapRef.current?.querySelector('input')?.focus()}
+            >
+              <IconMic />
+            </button>
+            <button
+              type="button"
+              className={styles.mobileActionBtn}
+              aria-label="Поиск по фото"
+              onClick={onVisualSearch}
+            >
+              <IconCamera />
+            </button>
+          </div>
+        ) : null}
         <button type="button" className={styles.submit} onClick={handleSubmit}>
           <span className={styles.submitText}>Найти</span>
           <IconSearch className={styles.submitIcon} aria-hidden />

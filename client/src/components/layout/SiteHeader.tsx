@@ -3,13 +3,15 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { categoriesApi, notificationsApi, productsApi } from '../../api/index';
 import type { CategoryNode } from '../../api/types';
 import { Header, type HeaderNavLink } from '../../design-system';
-import { IconClose } from '../../design-system/icons/Icons';
+import { IconClose, IconUser } from '../../design-system/icons/Icons';
 import { CatalogMenu } from '../CatalogMenu/CatalogMenu';
 import { HeaderDeliveryCity } from '../HeaderDeliveryCity/HeaderDeliveryCity';
+import { HomeHeaderChips } from '../HomeHeaderChips/HomeHeaderChips';
 import { HeaderNotificationBell } from './HeaderNotificationBell';
 import { SearchBox, type SearchSuggestion } from '../SearchBox/SearchBox';
 import { useAuthStore } from '../../stores/authStore';
 import { selectCartItemCount, useCartStore } from '../../stores/cartStore';
+import actionStyles from './MobileHeaderAction.module.css';
 import styles from './SiteHeader.module.css';
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -163,14 +165,22 @@ export function SiteHeader() {
       </Link>
     ) : null;
 
-  const headerAccountActions = token ? (
-    <HeaderNotificationBell unreadCount={headerUnreadCount} />
-  ) : null;
+  const isHomeRoute = location.pathname === '/';
 
   const mobileTopTrailing = (
     <>
-      {showMobileDeliveryCity && <HeaderDeliveryCity />}
-      {headerAccountActions}
+      <HeaderNotificationBell
+        unreadCount={token ? headerUnreadCount : 0}
+        variant="mobileAction"
+        to={token ? '/account?section=notifications' : '/auth'}
+      />
+      <Link
+        to={token ? '/account?section=dashboard' : '/auth'}
+        className={actionStyles.btn}
+        aria-label={token ? 'Личный кабинет' : 'Войти'}
+      >
+        <IconUser className={actionStyles.icon} strokeWidth={1.75} />
+      </Link>
     </>
   );
 
@@ -187,7 +197,9 @@ export function SiteHeader() {
       <Header
         hideMobileSearch={hideMobileSearch}
         mobileHeaderCompact={mobileHeaderCompact}
+        mobileLocationSlot={showMobileDeliveryCity ? <HeaderDeliveryCity /> : null}
         mobileTopTrailing={mobileTopTrailing}
+        mobileChipsSlot={isHomeRoute && !hideMobileSearch ? <HomeHeaderChips /> : null}
         deliverySlot={<HeaderDeliveryCity />}
         searchSlot={
           <SearchBox
@@ -195,6 +207,7 @@ export function SiteHeader() {
             onChange={setSearch}
             onSubmit={() => goSearch()}
             onHintPick={(hint) => goSearch(hint)}
+            onVisualSearch={() => navigate('/catalog')}
             suggestions={suggestions}
           />
         }

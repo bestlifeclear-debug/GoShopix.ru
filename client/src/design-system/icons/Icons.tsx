@@ -227,6 +227,78 @@ export function IconHistory(props: IconProps) {
   );
 }
 
+export function IconMic(props: IconProps) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="M6 11a6 6 0 0012 0M12 17v4M9 21h6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+export function IconCamera(props: IconProps) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <path
+        d="M4 8h3l2-3h6l2 3h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V10a2 2 0 012-2z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="13" r="3.5" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+export function IconChevronDown(props: IconProps) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function IconPercent(props: IconProps) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <circle cx="7.5" cy="7.5" r="2.5" stroke="currentColor" strokeWidth="2" />
+      <circle cx="16.5" cy="16.5" r="2.5" stroke="currentColor" strokeWidth="2" />
+      <path d="M19 5L5 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconZap(props: IconProps) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <path
+        d="M13 2L4 14h7l-1 8 10-14h-7l0-6z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function IconStar(props: IconProps) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <path
+        d="M12 3l2.6 6.4L21 10.5l-5 4.2L17.2 21 12 17.8 6.8 21l1.2-6.3-5-4.2 6.4-1.1L12 3z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function IconTruck(props: IconProps) {
   return (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>

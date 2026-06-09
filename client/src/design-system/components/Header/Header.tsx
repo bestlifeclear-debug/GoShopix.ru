@@ -31,8 +31,12 @@ export interface HeaderProps {
   hideMobileSearch?: boolean;
   /** Компактный мобильный хедер (ЛК): без поиска, без тени, прозрачный фон под wrap */
   mobileHeaderCompact?: boolean;
-  /** Правая часть верхнего бара на мобилке (локация, колокольчик) */
+  /** Под логотипом на мобилке (город доставки) */
+  mobileLocationSlot?: ReactNode;
+  /** Правая часть верхнего бара на мобилке (колокольчик, профиль) */
   mobileTopTrailing?: ReactNode;
+  /** Чипы быстрой навигации под поиском (главная) */
+  mobileChipsSlot?: ReactNode;
 }
 
 export function Header({
@@ -54,7 +58,9 @@ export function Header({
   extraActions,
   hideMobileSearch = false,
   mobileHeaderCompact = false,
+  mobileLocationSlot,
   mobileTopTrailing,
+  mobileChipsSlot,
 }: HeaderProps) {
   const isMobile = useMaxWidth(MOBILE_HEADER_MEDIA);
   const hideSearchOnMobile = hideMobileSearch && isMobile;
@@ -97,12 +103,19 @@ export function Header({
                 {menuOpen ? <IconClose /> : <IconMenu />}
               </button>
             )}
-            <Link to="/" className={styles.logo} aria-label="GoShopix — на главную">
-              <span className={styles.logoMark}>G</span>
-              <span className={styles.logoText}>GoShopix</span>
-            </Link>
+            <div className={styles.brandCol}>
+              <Link to="/" className={styles.logo} aria-label="GoShopix — на главную">
+                <span className={styles.logoMark}>G</span>
+                <span className={styles.logoText}>GoShopix</span>
+              </Link>
+              {mobileLocationSlot ? (
+                <div className={styles.mobileLocation}>{mobileLocationSlot}</div>
+              ) : null}
+            </div>
             {mobileTopTrailing ? (
-              <div className={styles.mobileTopTrailing}>{mobileTopTrailing}</div>
+              <div className={styles.mobileTopTrailing} data-header-action>
+                {mobileTopTrailing}
+              </div>
             ) : null}
           </div>
           {!hideSearchOnMobile && searchSlot ? (
@@ -110,6 +123,7 @@ export function Header({
               {searchSlot}
             </div>
           ) : null}
+          {mobileChipsSlot ? <div className={styles.mobileChips}>{mobileChipsSlot}</div> : null}
         </div>
       </div>
 

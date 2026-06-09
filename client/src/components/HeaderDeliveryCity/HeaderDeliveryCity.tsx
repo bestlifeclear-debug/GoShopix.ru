@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { cityDetectApi } from '../../api';
+import { IconChevronDown } from '../../design-system/icons/Icons';
 import {
   DEFAULT_DELIVERY_CITY,
   detectAndSaveDeliveryCity,
@@ -23,7 +24,12 @@ export function HeaderDeliveryCity() {
   }, []);
 
   return (
-    <div className={styles.root} aria-label={`Город доставки: ${city}`} title={city}>
+    <button
+      type="button"
+      className={styles.root}
+      aria-label={`Город доставки: ${city}`}
+      title={city}
+    >
       <span className={styles.icon} aria-hidden>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -39,6 +45,7 @@ export function HeaderDeliveryCity() {
         <span className={styles.label}>Город:</span>{' '}
         <span className={styles.city}>{city}</span>
       </span>
-    </div>
+      <IconChevronDown className={styles.chevron} aria-hidden />
+    </button>
   );
 }

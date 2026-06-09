@@ -123,8 +123,10 @@ html.modal-open {
     filter: none !important;
   }
 
-  /* Тени только у белой капсулы поиска (если появятся в компоненте) */
-  [data-site-header] :not([data-header-search]):not([data-header-search] *) {
+  /* Тени: поиск, кнопки действий и чипы в шапке */
+  [data-site-header] :not([data-header-search]):not([data-header-search] *):not(
+      [data-header-action]
+    ):not([data-header-action] *):not([data-header-chips]):not([data-header-chips] *) {
     box-shadow: none !important;
   }
 }

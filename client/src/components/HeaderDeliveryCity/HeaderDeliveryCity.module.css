@@ -7,6 +7,11 @@
   padding: 0 4px;
   flex-shrink: 0;
   box-sizing: border-box;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .icon {
@@ -40,10 +45,16 @@
   text-overflow: ellipsis;
 }
 
+.chevron {
+  display: none;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
 @media (max-width: 768px) {
   .root {
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-start;
     gap: 4px;
     max-width: 100%;
     min-height: 0;
@@ -51,12 +62,12 @@
   }
 
   .icon {
-    color: #ffffff;
+    color: rgb(255 255 255 / 0.92);
   }
 
   .icon svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 
   .text {
@@ -64,7 +75,7 @@
     gap: 0;
     font-size: 13px;
     line-height: 1.2;
-    color: #ffffff;
+    color: rgb(255 255 255 / 0.95);
   }
 
   .label {
@@ -73,8 +84,15 @@
 
   .city {
     font-size: 13px;
-    font-weight: var(--font-weight-semibold);
-    color: #ffffff;
+    font-weight: var(--font-weight-medium);
+    color: rgb(255 255 255 / 0.95);
     line-height: 1.2;
+  }
+
+  .chevron {
+    display: inline-flex;
+    width: 14px;
+    height: 14px;
+    color: rgb(255 255 255 / 0.8);
   }
 }

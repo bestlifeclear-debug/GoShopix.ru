@@ -33,8 +33,7 @@
   }
 
   .main {
-    background: var(--color-app-bg);
-    /* Без отступа сверху — иначе серая полоска под шапкой (как тень/тиснение) */
+    background: #ffffff;
     padding: 0;
   }
 

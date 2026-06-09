@@ -7,9 +7,8 @@
 
 @media (max-width: 767px) {
   .page {
-    gap: var(--space-2);
-    padding-top: var(--space-2);
-    /* Анимация только в main — шапка не бледнеет */
+    gap: 20px;
+    padding-top: 8px;
     animation: none;
   }
 }
@@ -25,18 +24,19 @@
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
+  letter-spacing: -0.02em;
 }
 
 .desktopOnly {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-5);
   margin-top: var(--space-4);
 }
 
 .mobileOnly {
   display: none;
-  margin-top: var(--space-4);
+  margin-top: 0;
 }
 
 @media (max-width: 767px) {
@@ -47,8 +47,8 @@
   .mobileOnly {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-top: 16px;
+    gap: 20px;
+    margin-top: 0;
     padding-bottom: var(--space-2);
   }
 }
