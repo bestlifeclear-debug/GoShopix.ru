@@ -1,7 +1,7 @@
 .gallery {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
   width: 100%;
   min-width: 0;
   max-width: 100%;
@@ -21,11 +21,12 @@
   aspect-ratio: 1;
   border: none;
   padding: 0;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   cursor: zoom-in;
-  background: var(--color-bg-subtle);
+  background: #f8f9fb;
   box-sizing: border-box;
+  touch-action: pan-y pinch-zoom;
 }
 
 .arrow {
@@ -40,44 +41,75 @@
   margin-top: -22px;
   border: none;
   border-radius: var(--radius-full);
-  background: rgb(255 255 255 / 0.95);
-  color: var(--color-text);
-  box-shadow: none;
+  background: rgb(255 255 255 / 0.96);
+  color: #111827;
+  box-shadow: 0 2px 12px rgb(17 24 39 / 0.12);
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
-    color var(--transition-fast);
+    color var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .arrow:hover {
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
+  background: #fff5f4;
+  color: #ff5a5f;
+  transform: scale(1.04);
 }
 
 .arrowPrev {
-  left: var(--space-3);
+  left: var(--space-2);
 }
 
 .arrowNext {
-  right: var(--space-3);
+  right: var(--space-2);
 }
 
 .counter {
   position: absolute;
-  bottom: var(--space-3);
-  right: var(--space-3);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
-  background: rgb(0 0 0 / 0.55);
+  bottom: var(--space-2);
+  right: var(--space-2);
+  padding: 6px 10px;
+  border-radius: var(--radius-full);
+  background: rgb(17 24 39 / 0.62);
   color: #fff;
   font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+}
+
+.dots {
+  position: absolute;
+  bottom: var(--space-2);
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--radius-full);
+  background: rgb(17 24 39 / 0.45);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: rgb(255 255 255 / 0.45);
+  transition: background var(--transition-fast);
+}
+
+.dotActive {
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
 }
 
 .main img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  background: #ffffff;
 }
 
 .placeholder {
@@ -85,17 +117,18 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: var(--color-text-muted);
+  color: #9ca3af;
+  font-size: var(--font-size-md);
 }
 
 .thumbs {
   display: flex;
-  gap: var(--space-2);
+  gap: 10px;
   width: 100%;
   max-width: 100%;
   min-width: 0;
   margin: 0;
-  padding: 0;
+  padding: 2px 0;
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: thin;
@@ -108,20 +141,23 @@
 
 .thumbs::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: #cbd5e1;
+  background: #d1d5db;
 }
 
 .thumb {
   flex-shrink: 0;
-  width: 76px;
-  height: 76px;
+  width: 72px;
+  height: 72px;
   padding: 0;
   border: 2px solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   overflow: hidden;
   cursor: pointer;
-  background: var(--color-bg-subtle);
+  background: #f8f9fb;
   box-sizing: border-box;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .thumb img {
@@ -131,10 +167,68 @@
 }
 
 .thumbActive {
-  border-color: var(--color-primary);
+  border-color: #ff5a5f;
+  box-shadow: 0 0 0 1px rgb(255 90 95 / 0.25);
 }
 
 .zoomImg {
   max-width: 100%;
+  max-height: 80vh;
   border-radius: var(--radius-md);
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .main {
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+  }
+
+  .arrow {
+    width: 36px;
+    height: 36px;
+    margin-top: -18px;
+  }
+
+  .arrowPrev {
+    left: 8px;
+  }
+
+  .arrowNext {
+    right: 8px;
+  }
+
+  .counter {
+    display: none;
+  }
+
+  .dots {
+    display: flex;
+  }
+
+  .thumbs {
+    gap: 8px;
+  }
+
+  .thumb {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+@media (min-width: 769px) {
+  .main {
+    aspect-ratio: 4 / 5;
+    max-height: 640px;
+  }
+
+  .main img {
+    object-fit: contain;
+  }
+}
+
+@media (hover: none) {
+  .arrow {
+    opacity: 0.92;
+  }
 }

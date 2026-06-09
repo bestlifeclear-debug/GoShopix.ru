@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CreditCard, Package, RotateCcw, ShieldCheck, Store, Truck } from 'lucide-react';
+import { ChevronDown, CreditCard, Heart, Package, RotateCcw, ShieldCheck, Store, Truck } from 'lucide-react';
 import { formatPrice } from '@goshopix/shared';
 import { favoritesApi, productsApi } from '../api/index';
 import type { ProductDetail, ProductListItem, ProductVariant } from '../api/types';
+import { Breadcrumb } from '../components/Breadcrumb/Breadcrumb';
 import { ImageGallery } from '../components/ImageGallery';
-import { ProductGrid } from '../components/ProductGrid';
 import { Tabs } from '../components/Tabs';
 import { Button, ProductCardSkeleton, StarRating } from '../design-system';
 import { snapshotFromDetail } from '../lib/cartSnapshot';
@@ -16,6 +16,7 @@ import { PageContainer } from '../components/layout/PageContainer';
 import { ProductReviews } from '../components/ProductReviews/ProductReviews';
 import { ProductQa } from '../components/ProductQa/ProductQa';
 import { QuestionWriteModal } from '../components/ProductQa/QuestionWriteModal';
+import { ProductRelatedRail } from '../components/ProductRail/ProductRelatedRail';
 import { track } from '../lib/analytics';
 import { showInfoToast } from '../stores/toastStore';
 import styles from './ProductPage.module.css';
@@ -25,6 +26,8 @@ const TRUST_SIGNALS = [
   { icon: CreditCard, label: 'Безопасная оплата' },
   { icon: RotateCcw, label: 'Возврат 14 дней' },
 ] as const;
+
+const BRIEF_DESC_MAX = 180;
 
 function formatDeliveryPromise(deliveryDaysMin: number | null | undefined): string {
   const days = Math.max(1, deliveryDaysMin ?? 1);
@@ -38,14 +41,48 @@ function formatDeliveryPromise(deliveryDaysMin: number | null | undefined): stri
   return `Доставим ${dateLabel}`;
 }
 
+function truncateText(text: string, maxLen: number): string {
+  if (text.length <= maxLen) return text;
+  const cut = text.slice(0, maxLen);
+  const lastSpace = cut.lastIndexOf(' ');
+  return `${(lastSpace > 60 ? cut.slice(0, lastSpace) : cut).trim()}…`;
+}
+
 function StockStatus({ stock }: { stock: number }) {
   if (stock <= 0) {
     return <p className={styles.stockOut}>Нет в наличии</p>;
   }
   if (stock <= 5) {
-    return <p className={styles.stockLow}>Осталось всего {stock} шт.</p>;
+    return <p className={styles.stockLow}>Осталось {stock} шт.</p>;
   }
-  return <p className={styles.stock}>В наличии: {stock} шт.</p>;
+  return <p className={styles.stock}>В наличии</p>;
+}
+
+function CollapsibleSection({
+  title,
+  defaultOpen = false,
+  children,
+}: {
+  title: string;
+  defaultOpen?: boolean;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <div className={`${styles.collapsible} ${open ? styles.collapsibleOpen : ''}`}>
+      <button
+        type="button"
+        className={styles.collapsibleTrigger}
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <span>{title}</span>
+        <ChevronDown size={20} strokeWidth={2} className={styles.collapsibleIcon} aria-hidden />
+      </button>
+      {open && <div className={styles.collapsibleBody}>{children}</div>}
+    </div>
+  );
 }
 
 function StoreCard({
@@ -103,9 +140,7 @@ export function ProductPage() {
 
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
-  const questionAuthorName =
-    user?.profile?.name?.trim() ||
-    null;
+  const questionAuthorName = user?.profile?.name?.trim() || null;
   const addToCart = useCartStore((s) => s.addToCart);
   const openDrawer = useCartStore((s) => s.openDrawer);
 
@@ -138,8 +173,8 @@ export function ProductPage() {
       .list({ categorySlug: product.category.slug, limit: 8 })
       .then((res) => {
         const others = res.items.filter((p) => p.id !== product.id);
-        setSimilar(others.slice(0, 4));
-        setAlsoBought(others.slice(2, 6));
+        setSimilar(others.slice(0, 8));
+        setAlsoBought(others.slice(2, 10));
       })
       .catch(() => {});
   }, [product?.id, product?.category?.slug]);
@@ -175,6 +210,7 @@ export function ProductPage() {
 
   const displayPrice = selectedVariant?.price ?? product?.price ?? 0;
   const compareAt = product?.compareAtPrice ?? null;
+  const hasDiscount = compareAt != null && compareAt > displayPrice;
 
   useEffect(() => {
     if (loading || !product) return;
@@ -223,6 +259,21 @@ export function ProductPage() {
     }
   };
 
+  const handleBuyNow = async () => {
+    if (!selectedVariant || !product) return;
+    try {
+      const snapshot = snapshotFromDetail(product, selectedVariant);
+      await addToCart(selectedVariant.id, 1, snapshot);
+      if (!token) {
+        navigate('/auth?returnUrl=' + encodeURIComponent('/checkout'));
+        return;
+      }
+      navigate('/checkout');
+    } catch (e) {
+      setMsg(mapApiError(e, 'Не удалось оформить заказ'));
+    }
+  };
+
   const toggleFavorite = async () => {
     if (!token || !id) {
       navigate('/auth?returnUrl=' + encodeURIComponent(window.location.pathname));
@@ -257,12 +308,12 @@ export function ProductPage() {
     return (
       <PageContainer>
         <div className={styles.page} aria-busy="true" aria-label="Загрузка товара">
-          <div className={styles.grid}>
-            <div className={styles.colLeft}>
+          <div className={styles.skeletonBreadcrumb} />
+          <div className={styles.heroGrid}>
+            <div className={styles.gallerySection}>
               <div className={styles.skeletonGallery} />
-              <div className={styles.skeletonBlock} />
             </div>
-            <aside className={styles.aside}>
+            <div className={styles.buySection}>
               <div className={styles.skeletonMeta}>
                 <span className={styles.skeletonLine} />
                 <span className={`${styles.skeletonLine} ${styles.skeletonLineLg}`} />
@@ -273,11 +324,11 @@ export function ProductPage() {
                 <span className={styles.skeletonBlock} />
                 <span className={styles.skeletonBtn} />
               </div>
-            </aside>
+            </div>
           </div>
           <section className={styles.related} aria-hidden>
             <span className={styles.skeletonSectionTitle} />
-            <div className={styles.skeletonGrid}>
+            <div className={styles.skeletonRail}>
               {Array.from({ length: 4 }, (_, i) => (
                 <ProductCardSkeleton key={i} />
               ))}
@@ -287,6 +338,7 @@ export function ProductPage() {
       </PageContainer>
     );
   }
+
   if (!product) {
     return (
       <PageContainer>
@@ -308,24 +360,191 @@ export function ProductPage() {
 
   const thumbUrl = images[0]?.url ?? '';
   const outOfStock = !selectedVariant || selectedVariant.stock === 0;
+  const description = product.description || 'Описание отсутствует.';
+  const briefDescription = truncateText(description, BRIEF_DESC_MAX);
+  const showBriefExpand = description.length > BRIEF_DESC_MAX;
+
+  const breadcrumbItems = [
+    { label: 'Главная', href: '/' },
+    ...(product.category
+      ? [{ label: product.category.name, href: `/catalog?categorySlug=${product.category.slug}` }]
+      : []),
+    { label: product.name },
+  ];
+
+  const buyBoxContent = (
+    <>
+      <div className={styles.priceBlock}>
+        <div className={styles.priceRow}>
+          <span className={`${styles.price} ${hasDiscount ? styles.priceOnSale : ''}`}>
+            {formatPrice(displayPrice)}
+          </span>
+          {hasDiscount && (
+            <>
+              <span className={styles.oldPrice}>{formatPrice(compareAt)}</span>
+              {product.discountPercent != null && (
+                <span className={styles.discountTag}>−{product.discountPercent}%</span>
+              )}
+            </>
+          )}
+        </div>
+        <span className={styles.priceHint}>Цена за 1 шт.</span>
+      </div>
+
+      <div className={styles.priceMeta}>
+        {selectedVariant && <StockStatus stock={selectedVariant.stock} />}
+        <button type="button" className={styles.ratingLink} onClick={() => setTab('reviews')}>
+          <StarRating
+            value={product.rating}
+            reviewCount={product.reviewCount}
+            size="sm"
+            showValue
+          />
+        </button>
+      </div>
+
+      {[...optionGroups.entries()].map(([name, values]) => {
+        const isSizeGroup = name === 'Размер' || values.some((v) => /\d+\s*мм/i.test(v));
+        return (
+          <div key={name} className={styles.optionGroup}>
+            <span className={styles.optionLabel}>{name}</span>
+            <div className={styles.optionValues}>
+              {values.map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  className={`${styles.optionBtn} ${isSizeGroup ? styles.optionBtnCompact : ''} ${selectedOptions[name] === val ? styles.optionActive : ''}`}
+                  onClick={() => setSelectedOptions((o) => ({ ...o, [name]: val }))}
+                >
+                  {val}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+
+      <div className={styles.deliveryCard}>
+        <h3 className={styles.deliveryTitle}>Доставка</h3>
+        <p className={styles.deliveryMain}>
+          По России: <strong>{deliveryPromise}</strong>
+        </p>
+        <ul className={styles.deliveryList}>
+          <li className={styles.deliveryItem}>
+            <Truck size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
+            <span>Курьер — бесплатно от 2 000 ₽</span>
+          </li>
+          <li className={styles.deliveryItem}>
+            <Package size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
+            <span>Пункт выдачи — бесплатно от 2 000 ₽</span>
+          </li>
+          <li className={`${styles.deliveryItem} ${styles.deliveryItemMuted}`}>
+            <RotateCcw size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
+            <span>Возврат в течение 14 дней</span>
+          </li>
+        </ul>
+      </div>
+
+      {product.store && (
+        <p className={styles.sellerRow}>
+          <Store size={16} strokeWidth={2} className={styles.sellerIcon} aria-hidden />
+          <span className={styles.sellerLabel}>Продавец:</span>
+          <span className={styles.sellerName}>{product.store.name}</span>
+        </p>
+      )}
+
+      <div className={styles.buyBoxActions}>
+        <Button
+          size="lg"
+          fullWidth
+          className={styles.btnPrimary}
+          onClick={handleAddToCart}
+          disabled={outOfStock}
+        >
+          Добавить в корзину
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          fullWidth
+          className={styles.btnOutline}
+          onClick={handleBuyNow}
+          disabled={outOfStock}
+        >
+          Купить в 1 клик
+        </Button>
+        <button
+          type="button"
+          className={`${styles.favBtn} ${isFavorite ? styles.favBtnActive : ''}`}
+          onClick={toggleFavorite}
+          aria-label={isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
+        >
+          <Heart size={18} strokeWidth={2} fill={isFavorite ? 'currentColor' : 'none'} aria-hidden />
+          <span>{isFavorite ? 'В избранном' : 'В избранное'}</span>
+        </button>
+      </div>
+
+      <ul className={styles.trustRow} aria-label="Гарантии покупки">
+        {TRUST_SIGNALS.map(({ icon: Icon, label }) => (
+          <li key={label} className={styles.trustItem}>
+            <Icon size={16} strokeWidth={2} className={styles.trustIcon} aria-hidden />
+            <span>{label}</span>
+          </li>
+        ))}
+      </ul>
+
+      {msg && <p className={styles.msg}>{msg}</p>}
+    </>
+  );
 
   return (
     <PageContainer>
       <div className={`${styles.page} ${showMobileBar ? styles.pageWithMobileBar : ''}`}>
-        <div className={styles.grid}>
-          <div className={styles.colLeft}>
+        <Breadcrumb items={breadcrumbItems} />
+
+        <div className={styles.heroGrid}>
+          <div className={styles.gallerySection}>
             <div className={styles.galleryFrame}>
               <ImageGallery images={images} name={product.name} />
             </div>
+          </div>
 
-            <div className={styles.colLeftDetails}>
-              <div className={styles.detailsCard}>
-                <h2 className={styles.detailsTitle}>Описание</h2>
-                <p className={styles.detailsText}>{product.description || 'Описание отсутствует.'}</p>
-              </div>
+          <div className={styles.buySection}>
+            <div className={styles.productMeta}>
+              {product.brand && <p className={styles.brand}>{product.brand}</p>}
+              <h1 className={styles.name}>{product.name}</h1>
+            </div>
 
-              <div className={styles.detailsCard}>
-                <h2 className={styles.detailsTitle}>Характеристики</h2>
+            <div ref={buyBoxRef} className={styles.buyBox}>
+              {buyBoxContent}
+            </div>
+
+            <div className={styles.mobileBrief}>
+              <h2 className={styles.mobileBriefTitle}>Краткое описание</h2>
+              <p className={styles.mobileBriefText}>{briefDescription}</p>
+              {showBriefExpand && (
+                <button
+                  type="button"
+                  className={styles.mobileBriefMore}
+                  onClick={() => {
+                    document.getElementById('pdp-description')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  Читать полностью
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.detailsSection}>
+            <div id="pdp-description" className={styles.detailsCard}>
+              <CollapsibleSection title="Описание" defaultOpen>
+                <p className={styles.detailsText}>{description}</p>
+              </CollapsibleSection>
+            </div>
+
+            <div className={styles.detailsCard}>
+              <CollapsibleSection title="Характеристики">
                 <table className={styles.specTable}>
                   <tbody>
                     {product.brand && (
@@ -348,125 +567,11 @@ export function ProductPage() {
                     ))}
                   </tbody>
                 </table>
-              </div>
-
-              <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
+              </CollapsibleSection>
             </div>
+
+            <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
           </div>
-
-          <aside className={styles.aside}>
-            <div className={styles.productMeta}>
-              {product.brand && <p className={styles.brand}>{product.brand}</p>}
-              <h1 className={styles.name}>{product.name}</h1>
-              <div className={styles.ratingRow}>
-                <StarRating value={product.rating} reviewCount={product.reviewCount} />
-                {product.reviewCount > 0 && (
-                  <button type="button" className={styles.reviewsJump} onClick={() => setTab('reviews')}>
-                    К отзывам ({product.reviewCount})
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className={styles.asideSticky}>
-              <div ref={buyBoxRef} className={styles.buyBox}>
-                <div className={styles.priceBlock}>
-                  <span
-                    className={`${styles.price} ${compareAt != null && compareAt > displayPrice ? styles.priceOnSale : ''}`}
-                  >
-                    {formatPrice(displayPrice)}
-                  </span>
-                  {compareAt != null && compareAt > displayPrice && (
-                    <>
-                      <span className={styles.oldPrice}>{formatPrice(compareAt)}</span>
-                      {product.discountPercent != null && (
-                        <span className={styles.discountTag}>−{product.discountPercent}%</span>
-                      )}
-                    </>
-                  )}
-                </div>
-
-                {[...optionGroups.entries()].map(([name, values]) => {
-                  const isSizeGroup =
-                    name === 'Размер' || values.some((v) => /\d+\s*мм/i.test(v));
-                  return (
-                    <div key={name} className={styles.optionGroup}>
-                      <span className={styles.optionLabel}>{name}</span>
-                      <div className={styles.optionValues}>
-                        {values.map((val) => (
-                          <button
-                            key={val}
-                            type="button"
-                            className={`${styles.optionBtn} ${isSizeGroup ? styles.optionBtnCompact : ''} ${selectedOptions[name] === val ? styles.optionActive : ''}`}
-                            onClick={() => setSelectedOptions((o) => ({ ...o, [name]: val }))}
-                          >
-                            {val}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {selectedVariant && <StockStatus stock={selectedVariant.stock} />}
-
-                <div className={styles.deliveryCard}>
-                  <h3 className={styles.deliveryTitle}>Доставка</h3>
-                  <p className={styles.deliveryMain}>
-                    По России: <strong>{deliveryPromise}</strong>
-                  </p>
-                  <ul className={styles.deliveryList}>
-                    <li className={styles.deliveryItem}>
-                      <Truck size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
-                      <span>Курьер — бесплатно от 2 000 ₽</span>
-                    </li>
-                    <li className={styles.deliveryItem}>
-                      <Package size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
-                      <span>Пункт выдачи — бесплатно от 2 000 ₽</span>
-                    </li>
-                    <li className={`${styles.deliveryItem} ${styles.deliveryItemMuted}`}>
-                      <RotateCcw size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
-                      <span>Возврат в течение 14 дней</span>
-                    </li>
-                  </ul>
-                </div>
-
-                {product.store && (
-                  <p className={styles.sellerRow}>
-                    <Store size={16} strokeWidth={2} className={styles.sellerIcon} aria-hidden />
-                    <span className={styles.sellerLabel}>Продавец:</span>
-                    <span className={styles.sellerName}>{product.store.name}</span>
-                  </p>
-                )}
-
-                <div className={styles.buyBoxActions}>
-                  <Button
-                    size="lg"
-                    fullWidth
-                    className={styles.buyBoxCartBtn}
-                    onClick={handleAddToCart}
-                    disabled={outOfStock}
-                  >
-                    В корзину
-                  </Button>
-                  <Button variant="outline" size="lg" fullWidth onClick={toggleFavorite}>
-                    {isFavorite ? '♥ В избранном' : '♡ В избранное'}
-                  </Button>
-                </div>
-
-                <ul className={styles.trustRow} aria-label="Гарантии покупки">
-                  {TRUST_SIGNALS.map(({ icon: Icon, label }) => (
-                    <li key={label} className={styles.trustItem}>
-                      <Icon size={16} strokeWidth={2} className={styles.trustIcon} aria-hidden />
-                      <span>{label}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {msg && <p className={styles.msg}>{msg}</p>}
-              </div>
-            </div>
-          </aside>
         </div>
 
         <div
@@ -481,12 +586,10 @@ export function ProductPage() {
             )}
           </div>
           <div className={styles.mobileBarPrice}>
-            <span
-              className={`${styles.mobileBarPriceValue} ${compareAt != null && compareAt > displayPrice ? styles.mobileBarPriceOnSale : ''}`}
-            >
+            <span className={`${styles.mobileBarPriceValue} ${hasDiscount ? styles.mobileBarPriceOnSale : ''}`}>
               {formatPrice(displayPrice)}
             </span>
-            {compareAt != null && compareAt > displayPrice && (
+            {hasDiscount && (
               <span className={styles.mobileBarOldPrice}>{formatPrice(compareAt)}</span>
             )}
           </div>
@@ -545,17 +648,19 @@ export function ProductPage() {
         />
 
         {similar.length > 0 && (
-          <section className={styles.related}>
-            <h2 className={styles.relatedTitle}>Похожие товары</h2>
-            <ProductGrid products={similar} onAddToCart={handleSimilarAdd} />
-          </section>
+          <ProductRelatedRail
+            title="Похожие товары"
+            products={similar}
+            onAddToCart={handleSimilarAdd}
+          />
         )}
 
         {alsoBought.length > 0 && (
-          <section className={styles.related}>
-            <h2 className={styles.relatedTitle}>С этим покупают</h2>
-            <ProductGrid products={alsoBought} onAddToCart={handleSimilarAdd} />
-          </section>
+          <ProductRelatedRail
+            title="С этим покупают"
+            products={alsoBought}
+            onAddToCart={handleSimilarAdd}
+          />
         )}
       </div>
     </PageContainer>
