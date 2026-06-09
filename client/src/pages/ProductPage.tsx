@@ -88,12 +88,14 @@ function CollapsibleSection({
 function StoreCard({
   product,
   deliveryRangeText,
+  flat = false,
 }: {
   product: ProductDetail;
   deliveryRangeText: string;
+  flat?: boolean;
 }) {
   return (
-    <div className={styles.storeCard}>
+    <div className={flat ? `${styles.storeCard} ${styles.storeCardFlat}` : styles.storeCard}>
       <h2 className={styles.storeCardTitle}>О магазине</h2>
       <p className={styles.storeLine}>
         <Store size={18} strokeWidth={2} className={styles.storeIcon} aria-hidden />
@@ -135,6 +137,7 @@ export function ProductPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [showMobileBar, setShowMobileBar] = useState(false);
+  const [detailsTab, setDetailsTab] = useState<'description' | 'specs' | 'store'>('description');
   const [questionModalOpen, setQuestionModalOpen] = useState(false);
   const buyBoxRef = useRef<HTMLDivElement>(null);
 
@@ -306,9 +309,9 @@ export function ProductPage() {
 
   if (loading) {
     return (
-      <PageContainer>
+      <PageContainer className={styles.pageContainer}>
         <div className={styles.page} aria-busy="true" aria-label="Загрузка товара">
-          <div className={styles.skeletonBreadcrumb} />
+          <div className={`${styles.contentPad} ${styles.skeletonBreadcrumb}`} />
           <div className={styles.heroGrid}>
             <div className={styles.gallerySection}>
               <div className={styles.skeletonGallery} />
@@ -374,33 +377,35 @@ export function ProductPage() {
 
   const buyBoxContent = (
     <>
-      <div className={styles.priceBlock}>
-        <div className={styles.priceRow}>
-          <span className={`${styles.price} ${hasDiscount ? styles.priceOnSale : ''}`}>
-            {formatPrice(displayPrice)}
-          </span>
-          {hasDiscount && (
-            <>
-              <span className={styles.oldPrice}>{formatPrice(compareAt)}</span>
-              {product.discountPercent != null && (
-                <span className={styles.discountTag}>−{product.discountPercent}%</span>
-              )}
-            </>
-          )}
+      <div className={styles.priceCard}>
+        <div className={styles.priceBlock}>
+          <div className={styles.priceRow}>
+            <span className={`${styles.price} ${hasDiscount ? styles.priceOnSale : ''}`}>
+              {formatPrice(displayPrice)}
+            </span>
+            {hasDiscount && (
+              <>
+                <span className={styles.oldPrice}>{formatPrice(compareAt)}</span>
+                {product.discountPercent != null && (
+                  <span className={styles.discountTag}>−{product.discountPercent}%</span>
+                )}
+              </>
+            )}
+          </div>
+          <span className={styles.priceHint}>Цена за 1 шт.</span>
         </div>
-        <span className={styles.priceHint}>Цена за 1 шт.</span>
-      </div>
 
-      <div className={styles.priceMeta}>
-        {selectedVariant && <StockStatus stock={selectedVariant.stock} />}
-        <button type="button" className={styles.ratingLink} onClick={() => setTab('reviews')}>
-          <StarRating
-            value={product.rating}
-            reviewCount={product.reviewCount}
-            size="sm"
-            showValue
-          />
-        </button>
+        <div className={styles.priceMeta}>
+          {selectedVariant && <StockStatus stock={selectedVariant.stock} />}
+          <button type="button" className={styles.ratingLink} onClick={() => setTab('reviews')}>
+            <StarRating
+              value={product.rating}
+              reviewCount={product.reviewCount}
+              size="sm"
+              showValue
+            />
+          </button>
+        </div>
       </div>
 
       {[...optionGroups.entries()].map(([name, values]) => {
@@ -497,10 +502,37 @@ export function ProductPage() {
     </>
   );
 
+  const specRows = (
+    <table className={styles.specTable}>
+      <tbody>
+        {product.brand && (
+          <tr>
+            <th>Бренд</th>
+            <td>{product.brand}</td>
+          </tr>
+        )}
+        {product.attributes.map((a) => (
+          <tr key={a.slug}>
+            <th>{a.name}</th>
+            <td>{a.value}</td>
+          </tr>
+        ))}
+        {selectedVariant?.options.map((o) => (
+          <tr key={o.id}>
+            <th>{o.name}</th>
+            <td>{o.value}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+
   return (
-    <PageContainer>
+    <PageContainer className={styles.pageContainer}>
       <div className={`${styles.page} ${showMobileBar ? styles.pageWithMobileBar : ''}`}>
-        <Breadcrumb items={breadcrumbItems} />
+        <div className={styles.contentPad}>
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
 
         <div className={styles.heroGrid}>
           <div className={styles.gallerySection}>
@@ -509,7 +541,7 @@ export function ProductPage() {
             </div>
           </div>
 
-          <div className={styles.buySection}>
+          <div className={`${styles.buySection} ${styles.contentPad}`}>
             <div className={styles.productMeta}>
               {product.brand && <p className={styles.brand}>{product.brand}</p>}
               <h1 className={styles.name}>{product.name}</h1>
@@ -527,6 +559,7 @@ export function ProductPage() {
                   type="button"
                   className={styles.mobileBriefMore}
                   onClick={() => {
+                    setDetailsTab('description');
                     document.getElementById('pdp-description')?.scrollIntoView({ behavior: 'smooth' });
                   }}
                 >
@@ -536,41 +569,63 @@ export function ProductPage() {
             </div>
           </div>
 
-          <div className={styles.detailsSection}>
-            <div id="pdp-description" className={styles.detailsCard}>
-              <CollapsibleSection title="Описание" defaultOpen>
-                <p className={styles.detailsText}>{description}</p>
-              </CollapsibleSection>
+          <div className={`${styles.detailsSection} ${styles.contentPad}`}>
+            <div className={styles.detailsTabs} role="tablist" aria-label="Информация о товаре">
+              {(
+                [
+                  { id: 'description', label: 'Описание' },
+                  { id: 'specs', label: 'Характеристики' },
+                  { id: 'store', label: 'О магазине' },
+                ] as const
+              ).map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={detailsTab === item.id}
+                  className={`${styles.detailsTab} ${detailsTab === item.id ? styles.detailsTabActive : ''}`}
+                  onClick={() => setDetailsTab(item.id)}
+                >
+                  {item.label}
+                </button>
+              ))}
             </div>
 
-            <div className={styles.detailsCard}>
-              <CollapsibleSection title="Характеристики">
-                <table className={styles.specTable}>
-                  <tbody>
-                    {product.brand && (
-                      <tr>
-                        <th>Бренд</th>
-                        <td>{product.brand}</td>
-                      </tr>
-                    )}
-                    {product.attributes.map((a) => (
-                      <tr key={a.slug}>
-                        <th>{a.name}</th>
-                        <td>{a.value}</td>
-                      </tr>
-                    ))}
-                    {selectedVariant?.options.map((o) => (
-                      <tr key={o.id}>
-                        <th>{o.name}</th>
-                        <td>{o.value}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </CollapsibleSection>
+            <div
+              id="pdp-description"
+              role="tabpanel"
+              className={`${styles.detailsTabPanel} ${detailsTab === 'description' ? styles.detailsTabPanelActive : ''}`}
+            >
+              <p className={styles.detailsText}>{description}</p>
             </div>
 
-            <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
+            <div
+              role="tabpanel"
+              className={`${styles.detailsTabPanel} ${detailsTab === 'specs' ? styles.detailsTabPanelActive : ''}`}
+            >
+              {specRows}
+            </div>
+
+            <div
+              role="tabpanel"
+              className={`${styles.detailsTabPanel} ${detailsTab === 'store' ? styles.detailsTabPanelActive : ''}`}
+            >
+              <StoreCard product={product} deliveryRangeText={deliveryRangeText} flat />
+            </div>
+
+            <div className={styles.detailsDesktopOnly}>
+              <div id="pdp-description-desktop" className={styles.detailsCard}>
+                <CollapsibleSection title="Описание" defaultOpen>
+                  <p className={styles.detailsText}>{description}</p>
+                </CollapsibleSection>
+              </div>
+
+              <div className={styles.detailsCard}>
+                <CollapsibleSection title="Характеристики">{specRows}</CollapsibleSection>
+              </div>
+
+              <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
+            </div>
           </div>
         </div>
 
@@ -593,16 +648,20 @@ export function ProductPage() {
               <span className={styles.mobileBarOldPrice}>{formatPrice(compareAt)}</span>
             )}
           </div>
-          <Button
-            size="lg"
-            className={styles.mobileBarBtn}
-            onClick={handleAddToCart}
-            disabled={outOfStock}
-          >
-            В корзину
-          </Button>
+          <div className={styles.mobileBarBtnWrap}>
+            <Button
+              size="lg"
+              className={styles.mobileBarBtn}
+              onClick={handleAddToCart}
+              disabled={outOfStock}
+            >
+              <span>В корзину</span>
+              <span className={styles.mobileBarBtnHint}>{deliveryPromise}</span>
+            </Button>
+          </div>
         </div>
 
+        <div className={`${styles.reviewsSection} ${styles.contentPad}`}>
         <Tabs
           tabs={[
             { id: 'reviews', label: `Отзывы (${product.reviewCount})` },
@@ -631,6 +690,7 @@ export function ProductPage() {
             </div>
           )}
         </Tabs>
+        </div>
 
         <QuestionWriteModal
           open={questionModalOpen}
@@ -648,19 +708,23 @@ export function ProductPage() {
         />
 
         {similar.length > 0 && (
-          <ProductRelatedRail
-            title="Похожие товары"
-            products={similar}
-            onAddToCart={handleSimilarAdd}
-          />
+          <div className={`${styles.related} ${styles.contentPad}`}>
+            <ProductRelatedRail
+              title="Похожие товары"
+              products={similar}
+              onAddToCart={handleSimilarAdd}
+            />
+          </div>
         )}
 
         {alsoBought.length > 0 && (
-          <ProductRelatedRail
-            title="С этим покупают"
-            products={alsoBought}
-            onAddToCart={handleSimilarAdd}
-          />
+          <div className={`${styles.related} ${styles.contentPad}`}>
+            <ProductRelatedRail
+              title="С этим покупают"
+              products={alsoBought}
+              onAddToCart={handleSimilarAdd}
+            />
+          </div>
         )}
       </div>
     </PageContainer>

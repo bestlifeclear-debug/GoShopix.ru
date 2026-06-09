@@ -132,6 +132,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: thin;
+  scroll-padding-inline: var(--container-padding);
   -webkit-overflow-scrolling: touch;
 }
 
@@ -179,23 +180,29 @@
 }
 
 @media (max-width: 768px) {
+  .gallery {
+    gap: 10px;
+  }
+
   .main {
     aspect-ratio: 1;
-    border-radius: var(--radius-md);
+    border-radius: 0;
+    background: #ffffff;
   }
 
   .arrow {
     width: 36px;
     height: 36px;
     margin-top: -18px;
+    box-shadow: 0 2px 8px rgb(17 24 39 / 0.14);
   }
 
   .arrowPrev {
-    left: 8px;
+    left: var(--container-padding);
   }
 
   .arrowNext {
-    right: 8px;
+    right: var(--container-padding);
   }
 
   .counter {
@@ -204,15 +211,20 @@
 
   .dots {
     display: flex;
+    bottom: 12px;
+    background: rgb(17 24 39 / 0.38);
   }
 
   .thumbs {
     gap: 8px;
+    padding: 4px var(--container-padding) 2px;
+    scroll-padding-inline: var(--container-padding);
   }
 
   .thumb {
-    width: 64px;
-    height: 64px;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-sm);
   }
 }
 

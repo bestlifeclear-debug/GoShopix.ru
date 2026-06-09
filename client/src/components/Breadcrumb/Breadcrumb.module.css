@@ -1,7 +1,7 @@
 .root {
   width: 100%;
   min-width: 0;
-  overflow: hidden;
+  padding: var(--space-2) 0;
 }
 
 .list {
@@ -64,6 +64,10 @@
 }
 
 @media (max-width: 768px) {
+  .root {
+    padding: 10px 0 6px;
+  }
+
   .link,
   .text,
   .current {
@@ -71,6 +75,6 @@
   }
 
   .current {
-    max-width: min(180px, 36vw);
+    max-width: min(200px, 42vw);
   }
 }

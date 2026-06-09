@@ -1,12 +1,16 @@
-/* PDP — премиальный стиль маркетплейса (Ozon/WB) */
+/* PDP — стиль маркетплейса (Ozon / Wildberries) */
+.pageContainer {
+  box-sizing: border-box;
+}
+
 .page {
   --pdp-accent: #ff5a5f;
   --pdp-accent-light: #ff7a6e;
   --pdp-bg: #ffffff;
-  --pdp-bg-subtle: #f8f9fb;
+  --pdp-bg-subtle: #f3f4f6;
   --pdp-text: #111827;
   --pdp-text-muted: #6b7280;
-  --pdp-border: #e5e7eb;
+  --pdp-border: #eceef2;
   --pdp-success: #16a34a;
 
   display: flex;
@@ -14,8 +18,13 @@
   gap: var(--space-4);
   width: 100%;
   min-width: 0;
-  overflow-x: hidden;
   background: var(--pdp-bg);
+}
+
+.contentPad {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
 }
 
 .heroGrid {
@@ -56,7 +65,7 @@
   min-width: 0;
   width: 100%;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
   box-sizing: border-box;
   padding: var(--space-2);
   border-radius: var(--radius-lg);
@@ -102,6 +111,15 @@
   box-shadow: 0 1px 3px rgb(17 24 39 / 0.04), 0 8px 24px rgb(17 24 39 / 0.06);
 }
 
+.priceCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--pdp-bg);
+}
+
 .priceBlock {
   display: flex;
   flex-direction: column;
@@ -143,7 +161,7 @@
 
 .discountTag {
   padding: 4px 10px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   background: #fef2f2;
   color: var(--pdp-accent);
   font-size: var(--font-size-sm);
@@ -417,10 +435,47 @@
 
 .mobileBrief {
   display: block;
-  padding: var(--space-3);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--pdp-border);
+  padding: var(--space-3) 0;
+}
+
+.detailsTabs {
+  display: none;
+}
+
+.detailsTab {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0 14px;
+  border: none;
+  border-radius: var(--radius-full);
   background: var(--pdp-bg-subtle);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--pdp-text-muted);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.detailsTabActive {
+  background: var(--pdp-text);
+  color: #ffffff;
+  font-weight: var(--font-weight-semibold);
+}
+
+.detailsTabPanel {
+  display: none;
+}
+
+.detailsTabPanelActive {
+  display: block;
+}
+
+.detailsDesktopOnly {
+  display: block;
 }
 
 .mobileBriefTitle {
@@ -458,6 +513,12 @@
   border: 1px solid var(--pdp-border);
   box-shadow: 0 1px 3px rgb(17 24 39 / 0.04);
   overflow: hidden;
+}
+
+.detailsCardFlat {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .collapsible {
@@ -517,6 +578,18 @@
   background: var(--pdp-bg-subtle);
   border: 1px solid var(--pdp-border);
   box-shadow: 0 1px 3px rgb(17 24 39 / 0.04);
+}
+
+.storeCardFlat {
+  padding: var(--space-3) 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.storeCardFlat .storeCardTitle {
+  display: none;
 }
 
 .storeCardTitle {
@@ -766,6 +839,18 @@
 
 /* Desktop layout */
 @media (min-width: 769px) {
+  .detailsTabs,
+  .detailsTabPanel {
+    display: none !important;
+  }
+
+  .priceCard {
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    gap: var(--space-3);
+  }
+
   .heroGrid {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
     grid-template-areas:
@@ -800,14 +885,26 @@
   }
 }
 
-/* Mobile layout */
+/* Mobile — единый белый холст, галерея edge-to-edge (Ozon / WB) */
 @media (max-width: 768px) {
+  .pageContainer {
+    margin-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background: var(--pdp-bg);
+  }
+
   .page {
-    gap: var(--space-3);
+    gap: 0;
+    overflow-x: clip;
+  }
+
+  .contentPad {
+    padding-inline: var(--container-padding);
   }
 
   .heroGrid {
-    gap: var(--space-2);
+    gap: 0;
   }
 
   .galleryFrame {
@@ -815,22 +912,41 @@
     border: none;
     box-shadow: none;
     border-radius: 0;
-    margin-inline: calc(-1 * var(--container-padding));
-    width: calc(100% + 2 * var(--container-padding));
+    margin-inline: 0;
+    width: 100%;
     max-width: none;
+    overflow: visible;
   }
 
   .productMeta {
     order: -1;
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-1);
   }
 
   .buyBox {
+    padding: 0;
+    gap: var(--space-3);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .priceCard {
     padding: var(--space-3);
-    gap: var(--space-2);
+    background: var(--pdp-bg-subtle);
+    border-radius: var(--radius-lg);
+  }
+
+  .deliveryCard {
+    background: var(--pdp-bg);
+    border-color: var(--pdp-border);
   }
 
   .buyBoxActions {
     gap: 10px;
+    padding-top: var(--space-1);
   }
 
   .btnPrimary,
@@ -838,12 +954,63 @@
     min-height: 48px !important;
   }
 
-  .storeKpis {
-    grid-template-columns: 1fr;
+  .detailsSection {
+    gap: 0;
+    padding-top: var(--space-2);
+    border-top: 8px solid var(--pdp-bg-subtle);
+  }
+
+  .detailsDesktopOnly {
+    display: none;
+  }
+
+  .detailsTabs {
+    display: flex;
+    gap: 8px;
+    padding: var(--space-3) 0 var(--space-2);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .detailsTabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .detailsTabPanel {
+    padding-bottom: var(--space-3);
+  }
+
+  .detailsTabPanelActive {
+    display: block;
+  }
+
+  .detailsText {
+    font-size: var(--font-size-md);
+    line-height: 1.6;
+  }
+
+  .storeCardFlat .storeKpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .storeCardFlat .kpi {
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    background: var(--pdp-bg-subtle);
+    border: none;
   }
 
   .askQuestionBtn {
     width: 100%;
+  }
+
+  .related,
+  .reviewsSection {
+    padding-top: var(--space-2);
+    border-top: 8px solid var(--pdp-bg-subtle);
   }
 
   .mobileBar {
@@ -929,15 +1096,29 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .mobileBarBtn {
+  .mobileBarBtnWrap {
     flex-shrink: 0;
+    min-width: 132px;
+  }
+
+  .mobileBarBtn {
     min-height: 48px !important;
-    min-width: 120px;
+    width: 100%;
     padding-left: var(--space-2) !important;
     padding-right: var(--space-2) !important;
     border-radius: var(--radius-md) !important;
     font-weight: var(--font-weight-bold) !important;
     background: linear-gradient(180deg, var(--pdp-accent-light) 0%, var(--pdp-accent) 100%) !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    line-height: 1.15 !important;
+  }
+
+  .mobileBarBtnHint {
+    display: block;
+    font-size: 10px;
+    font-weight: var(--font-weight-medium);
+    opacity: 0.92;
   }
 
   .pageWithMobileBar {
