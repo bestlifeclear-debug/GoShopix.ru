@@ -72,10 +72,18 @@ export function ProductQa() {
   };
 
   if (questions.length === 0) {
-    return <p className={styles.empty}>Пока нет вопросов — задайте первый.</p>;
+    return (
+      <p className={styles.empty}>
+        <span className={styles.emptyIcon} aria-hidden>
+          💬
+        </span>
+        Пока нет вопросов — задайте первый, и продавец ответит здесь.
+      </p>
+    );
   }
 
   return (
+    <div className={styles.section}>
     <ul className={styles.list}>
       {questions.map((item) => (
         <QuestionItem
@@ -87,5 +95,6 @@ export function ProductQa() {
         />
       ))}
     </ul>
+    </div>
   );
 }

@@ -14,29 +14,52 @@ interface TabsProps {
   children: ReactNode;
   /** Дополнительные элементы справа от табов (например, кнопка действия) */
   actions?: ReactNode;
+  className?: string;
+  variant?: 'default' | 'pdp';
 }
 
-export function Tabs({ tabs, active, onChange, children, actions }: TabsProps) {
+export function Tabs({
+  tabs,
+  active,
+  onChange,
+  children,
+  actions,
+  className,
+  variant = 'default',
+}: TabsProps) {
+  const isPdp = variant === 'pdp';
+
   return (
-    <div className={styles.tabs}>
-      <div className={cn(styles.header, actions ? styles.headerWithActions : undefined)}>
-        <div className={styles.list} role="tablist">
+    <div className={cn(styles.tabs, isPdp && styles.tabsPdp, className)}>
+      <div
+        className={cn(
+          styles.header,
+          isPdp && styles.headerPdp,
+          actions ? styles.headerWithActions : undefined,
+        )}
+      >
+        <div className={cn(styles.list, isPdp && styles.listPdp)} role="tablist">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             role="tab"
             aria-selected={active === tab.id}
-            className={cn(styles.tab, active === tab.id && styles.active)}
+            className={cn(
+              styles.tab,
+              isPdp && styles.tabPdp,
+              active === tab.id && styles.active,
+              active === tab.id && isPdp && styles.activePdp,
+            )}
             onClick={() => onChange(tab.id)}
           >
             {tab.label}
           </button>
         ))}
         </div>
-        {actions ? <div className={styles.actions}>{actions}</div> : null}
+        {actions ? <div className={cn(styles.actions, isPdp && styles.actionsPdp)}>{actions}</div> : null}
       </div>
-      <div className={styles.panel} role="tabpanel">
+      <div className={cn(styles.panel, isPdp && styles.panelPdp)} role="tabpanel">
         {children}
       </div>
     </div>

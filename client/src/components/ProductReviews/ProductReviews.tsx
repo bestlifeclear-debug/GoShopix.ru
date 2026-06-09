@@ -181,16 +181,23 @@ export function ProductReviews({ averageRating, reviewCount }: ProductReviewsPro
 
   return (
     <section className={styles.section} aria-label="Отзывы покупателей">
-      <div className={styles.summary}>
-        <div className={styles.summaryScore}>
-          <span className={styles.scoreBig}>{averageRating.toFixed(1)}</span>
-          <StarRating value={averageRating} reviewCount={totalCount} />
+      <div className={styles.summaryCard}>
+        <div className={styles.summaryHead}>
+          <div className={styles.summaryScore}>
+            <span className={styles.scoreBig}>{averageRating.toFixed(1)}</span>
+            <StarRating value={averageRating} reviewCount={totalCount} size="sm" />
+          </div>
+          <Button type="button" className={styles.writeBtn} onClick={() => setModalOpen(true)}>
+            Написать отзыв
+          </Button>
         </div>
 
         <div className={styles.distribution}>
           {distribution.map((row) => (
             <div key={row.stars} className={styles.distRow}>
-              <span className={styles.distLabel}>{row.stars} звёзд</span>
+              <span className={styles.distStars} aria-hidden>
+                {row.stars}
+              </span>
               <div className={styles.distTrack}>
                 <div className={styles.distFill} style={{ width: `${row.percent}%` }} />
               </div>
@@ -198,40 +205,30 @@ export function ProductReviews({ averageRating, reviewCount }: ProductReviewsPro
             </div>
           ))}
         </div>
-
-        <div className={styles.writeBtnWrap}>
-          <Button type="button" onClick={() => setModalOpen(true)}>
-            Написать отзыв
-          </Button>
-        </div>
       </div>
 
       <div className={styles.toolbar}>
-        <div className={styles.toolbarMain}>
-          <label className={styles.sortLabel} htmlFor="review-sort">
-            Сортировка
-          </label>
-          <select
-            id="review-sort"
-            className={styles.sortSelect}
-            value={sort}
-            onChange={(e) => setSort(e.target.value as ReviewSort)}
-          >
-            {REVIEW_SORT_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <select
+          id="review-sort"
+          className={styles.sortSelect}
+          value={sort}
+          aria-label="Сортировка отзывов"
+          onChange={(e) => setSort(e.target.value as ReviewSort)}
+        >
+          {REVIEW_SORT_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
 
-        <label className={styles.filterCheck}>
+        <label className={styles.filterChip}>
           <input
             type="checkbox"
             checked={withPhotosOnly}
             onChange={(e) => setWithPhotosOnly(e.target.checked)}
           />
-          <span>С фотографиями</span>
+          <span>С фото</span>
           {photosCount > 0 && <span className={styles.filterBadge}>{photosCount}</span>}
         </label>
       </div>

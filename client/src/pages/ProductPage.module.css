@@ -515,11 +515,6 @@
   border-top: 8px solid var(--pdp-bg-subtle);
 }
 
-.reviewPreviewSection {
-  padding-top: var(--space-2);
-  border-top: 8px solid var(--pdp-bg-subtle);
-}
-
 .detailsTabs {
   display: none;
 }
@@ -757,29 +752,40 @@
   margin: 0;
 }
 
-.tabContent {
-  padding: var(--space-3) 0;
-  line-height: var(--line-height-relaxed);
+/* Отзывы и вопросы — единый блок с карточкой товара */
+.socialSection {
+  width: 100%;
+  background: var(--pdp-bg);
+  border-top: 8px solid var(--pdp-bg-subtle);
 }
 
-.tabContentQa {
-  padding-top: 0;
+.socialSectionInner {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--space-3) var(--container-padding) var(--space-4);
+}
+
+.qaPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .askQuestionBtn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 20px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 16px;
   border: 1.5px solid var(--pdp-accent);
-  border-radius: var(--radius-full);
-  background: transparent;
+  border-radius: var(--radius-md);
+  background: #ffffff;
   font-family: var(--font-family);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   line-height: 1.25;
   color: var(--pdp-accent);
-  white-space: nowrap;
   cursor: pointer;
   transition:
     background var(--transition-fast),
@@ -914,8 +920,10 @@
     display: none;
   }
 
-  .reviewPreviewSection {
-    display: block;
+  .socialSectionInner {
+    padding: var(--space-4) var(--container-padding) var(--space-5);
+    max-width: var(--container-max);
+    margin-inline: auto;
   }
 }
 
@@ -1048,14 +1056,17 @@
     border: none;
   }
 
-  .askQuestionBtn {
-    width: 100%;
-  }
-
-  .related,
-  .reviewsSection {
+  .related {
     padding-top: var(--space-2);
     border-top: 8px solid var(--pdp-bg-subtle);
+  }
+
+  .socialSection {
+    border-top: 8px solid var(--pdp-bg-subtle);
+  }
+
+  .socialSectionInner {
+    padding: var(--space-3) var(--container-padding) var(--space-4);
   }
 
   .mobileBar {
@@ -1153,7 +1164,4 @@
     padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
   }
 
-  .reviewPreviewSection {
-    display: none;
-  }
 }

@@ -12,8 +12,8 @@ import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import { mapApiError } from '../api/mapApiError';
 import { PageContainer } from '../components/layout/PageContainer';
-import { ProductReviewPreview } from '../components/ProductReviews/ProductReviewPreview';
 import { ProductReviews } from '../components/ProductReviews/ProductReviews';
+import { getInitialQuestions } from '../components/ProductQa/mockQuestions';
 import { ProductQa } from '../components/ProductQa/ProductQa';
 import { QuestionWriteModal } from '../components/ProductQa/QuestionWriteModal';
 import { ProductRelatedRail } from '../components/ProductRail/ProductRelatedRail';
@@ -21,7 +21,7 @@ import { track } from '../lib/analytics';
 import { showInfoToast } from '../stores/toastStore';
 import styles from './ProductPage.module.css';
 
-type DetailsTab = 'description' | 'specs' | 'store' | 'reviews';
+type DetailsTab = 'description' | 'specs' | 'store';
 
 function formatDeliveryPromise(deliveryDaysMin: number | null | undefined): string {
   const days = Math.max(1, deliveryDaysMin ?? 1);
@@ -367,6 +367,7 @@ export function ProductPage() {
   const outOfStock = !selectedVariant || selectedVariant.stock === 0;
   const description = product.description || 'Описание отсутствует.';
   const deliveryShort = deliveryPromise.replace(/^Доставим\s+/i, '');
+  const qaCount = getInitialQuestions().length;
 
   const scrollToReviews = () => {
     setTab('reviews');
@@ -586,9 +587,6 @@ export function ProductPage() {
                 [
                   { id: 'description' as const, label: 'Описание' },
                   { id: 'specs' as const, label: 'Характеристики' },
-                  ...(product.reviewCount > 0
-                    ? [{ id: 'reviews' as const, label: `Отзывы (${product.reviewCount})` }]
-                    : []),
                   { id: 'store' as const, label: 'О магазине' },
                 ]
               ).map((item) => (
@@ -618,17 +616,6 @@ export function ProductPage() {
               className={`${styles.detailsTabPanel} ${detailsTab === 'specs' ? styles.detailsTabPanelActive : ''}`}
             >
               {specRows}
-            </div>
-
-            <div
-              role="tabpanel"
-              className={`${styles.detailsTabPanel} ${detailsTab === 'reviews' ? styles.detailsTabPanelActive : ''}`}
-            >
-              <ProductReviewPreview
-                reviewCount={product.reviewCount}
-                onViewAll={scrollToReviews}
-                compact
-              />
             </div>
 
             <div
@@ -683,44 +670,34 @@ export function ProductPage() {
           </div>
         </div>
 
-        {product.reviewCount > 0 && (
-          <div className={`${styles.reviewPreviewSection} ${styles.contentPad}`}>
-            <ProductReviewPreview
-              reviewCount={product.reviewCount}
-              onViewAll={scrollToReviews}
-            />
-          </div>
-        )}
-
-        <div id="pdp-reviews-full" className={`${styles.reviewsSection} ${styles.contentPad}`}>
-        <Tabs
-          tabs={[
-            { id: 'reviews', label: `Отзывы (${product.reviewCount})` },
-            { id: 'qa', label: 'Вопросы' },
-          ]}
-          active={tab}
-          onChange={setTab}
-          actions={
-            <button
-              type="button"
-              className={styles.askQuestionBtn}
-              onClick={() => setQuestionModalOpen(true)}
+        <div id="pdp-reviews-full" className={styles.socialSection}>
+          <div className={styles.socialSectionInner}>
+            <Tabs
+              variant="pdp"
+              tabs={[
+                { id: 'reviews', label: `Отзывы (${product.reviewCount})` },
+                { id: 'qa', label: qaCount > 0 ? `Вопросы (${qaCount})` : 'Вопросы' },
+              ]}
+              active={tab}
+              onChange={setTab}
             >
-              Задать вопрос
-            </button>
-          }
-        >
-          {tab === 'reviews' && (
-            <div className={styles.tabContent}>
-              <ProductReviews averageRating={product.rating} reviewCount={product.reviewCount} />
-            </div>
-          )}
-          {tab === 'qa' && (
-            <div className={`${styles.tabContent} ${styles.tabContentQa}`}>
-              <ProductQa />
-            </div>
-          )}
-        </Tabs>
+              {tab === 'reviews' && (
+                <ProductReviews averageRating={product.rating} reviewCount={product.reviewCount} />
+              )}
+              {tab === 'qa' && (
+                <div className={styles.qaPanel}>
+                  <button
+                    type="button"
+                    className={styles.askQuestionBtn}
+                    onClick={() => setQuestionModalOpen(true)}
+                  >
+                    Задать вопрос
+                  </button>
+                  <ProductQa />
+                </div>
+              )}
+            </Tabs>
+          </div>
         </div>
 
         <QuestionWriteModal

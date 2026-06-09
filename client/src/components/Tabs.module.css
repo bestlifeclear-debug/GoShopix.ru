@@ -62,6 +62,63 @@
   padding: var(--space-3) 0 var(--space-5);
 }
 
+/* PDP — сегментированные табы в едином блоке с карточкой товара */
+.tabsPdp {
+  margin-top: 0;
+}
+
+.headerPdp {
+  align-items: stretch;
+  border-bottom: none;
+  margin-bottom: var(--space-3);
+}
+
+.listPdp {
+  flex: none;
+  width: 100%;
+  gap: 0;
+  padding: 3px;
+  border-radius: var(--radius-lg);
+  background: #f3f4f6;
+  box-sizing: border-box;
+}
+
+.tabPdp {
+  flex: 1;
+  min-height: 40px;
+  margin-bottom: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border-bottom: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: #6b7280;
+  text-align: center;
+}
+
+.tabPdp:hover {
+  background: transparent;
+  color: #374151;
+  border-radius: 10px;
+}
+
+.activePdp {
+  color: #111827;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgb(17 24 39 / 0.08);
+  border-bottom: none;
+}
+
+.panelPdp {
+  padding: 0;
+}
+
+.actionsPdp {
+  width: 100%;
+  padding-bottom: 0;
+  margin-top: var(--space-3);
+}
+
 @media (max-width: 768px) {
   .headerWithActions {
     flex-direction: column;
@@ -76,5 +133,9 @@
   .actions {
     width: 100%;
     padding-bottom: var(--space-3);
+  }
+
+  .headerPdp.headerWithActions {
+    flex-direction: column;
   }
 }
