@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronDown, CreditCard, Heart, Package, RotateCcw, ShieldCheck, Store, Truck } from 'lucide-react';
+import { ChevronDown, Heart, Package, RotateCcw, Store, Truck } from 'lucide-react';
 import { formatPrice } from '@goshopix/shared';
 import { favoritesApi, productsApi } from '../api/index';
 import type { ProductDetail, ProductListItem, ProductVariant } from '../api/types';
@@ -12,6 +12,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useCartStore } from '../stores/cartStore';
 import { mapApiError } from '../api/mapApiError';
 import { PageContainer } from '../components/layout/PageContainer';
+import { ProductReviewPreview } from '../components/ProductReviews/ProductReviewPreview';
 import { ProductReviews } from '../components/ProductReviews/ProductReviews';
 import { ProductQa } from '../components/ProductQa/ProductQa';
 import { QuestionWriteModal } from '../components/ProductQa/QuestionWriteModal';
@@ -20,13 +21,7 @@ import { track } from '../lib/analytics';
 import { showInfoToast } from '../stores/toastStore';
 import styles from './ProductPage.module.css';
 
-const TRUST_SIGNALS = [
-  { icon: ShieldCheck, label: 'Оригинальный товар' },
-  { icon: CreditCard, label: 'Безопасная оплата' },
-  { icon: RotateCcw, label: 'Возврат 14 дней' },
-] as const;
-
-const BRIEF_DESC_MAX = 180;
+type DetailsTab = 'description' | 'specs' | 'store' | 'reviews';
 
 function formatDeliveryPromise(deliveryDaysMin: number | null | undefined): string {
   const days = Math.max(1, deliveryDaysMin ?? 1);
@@ -40,21 +35,30 @@ function formatDeliveryPromise(deliveryDaysMin: number | null | undefined): stri
   return `Доставим ${dateLabel}`;
 }
 
-function truncateText(text: string, maxLen: number): string {
-  if (text.length <= maxLen) return text;
-  const cut = text.slice(0, maxLen);
-  const lastSpace = cut.lastIndexOf(' ');
-  return `${(lastSpace > 60 ? cut.slice(0, lastSpace) : cut).trim()}…`;
+function isOptionValueAvailable(
+  product: ProductDetail,
+  optionName: string,
+  optionValue: string,
+  selectedOptions: Record<string, string>,
+): boolean {
+  return product.variants.some((variant) => {
+    if (variant.stock <= 0) return false;
+    return variant.options.every((opt) => {
+      if (opt.name === optionName) return opt.value === optionValue;
+      const selected = selectedOptions[opt.name];
+      return !selected || opt.value === selected;
+    });
+  });
 }
 
-function StockStatus({ stock }: { stock: number }) {
+function StockBadge({ stock }: { stock: number }) {
   if (stock <= 0) {
-    return <p className={styles.stockOut}>Нет в наличии</p>;
+    return <span className={styles.stockBadgeOut}>Нет в наличии</span>;
   }
   if (stock <= 5) {
-    return <p className={styles.stockLow}>Осталось {stock} шт.</p>;
+    return <span className={styles.stockBadgeLow}>Осталось {stock} шт.</span>;
   }
-  return <p className={styles.stock}>В наличии</p>;
+  return null;
 }
 
 function CollapsibleSection({
@@ -136,9 +140,10 @@ export function ProductPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [showMobileBar, setShowMobileBar] = useState(false);
-  const [detailsTab, setDetailsTab] = useState<'description' | 'specs' | 'store'>('description');
+  const [detailsTab, setDetailsTab] = useState<DetailsTab>('description');
+  const [deliveryExpanded, setDeliveryExpanded] = useState(false);
   const [questionModalOpen, setQuestionModalOpen] = useState(false);
-  const buyBoxRef = useRef<HTMLDivElement>(null);
+  const buyBoxActionsRef = useRef<HTMLDivElement>(null);
 
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
@@ -217,7 +222,7 @@ export function ProductPage() {
   useEffect(() => {
     if (loading || !product) return;
 
-    const el = buyBoxRef.current;
+    const el = buyBoxActionsRef.current;
     if (!el) return;
 
     const mq = window.matchMedia('(max-width: 768px)');
@@ -359,96 +364,85 @@ export function ProductPage() {
       ? `${product.deliveryDaysMin}–${product.deliveryDaysMax} дней`
       : '2–5 дней';
 
-  const thumbUrl = images[0]?.url ?? '';
   const outOfStock = !selectedVariant || selectedVariant.stock === 0;
   const description = product.description || 'Описание отсутствует.';
-  const briefDescription = truncateText(description, BRIEF_DESC_MAX);
-  const showBriefExpand = description.length > BRIEF_DESC_MAX;
+  const deliveryShort = deliveryPromise.replace(/^Доставим\s+/i, '');
+
+  const scrollToReviews = () => {
+    setTab('reviews');
+    document.getElementById('pdp-reviews-full')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const scrollToStore = () => {
+    setDetailsTab('store');
+    const target = window.matchMedia('(max-width: 768px)').matches
+      ? document.getElementById('pdp-details')
+      : document.getElementById('pdp-store-desktop');
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const priceHeadline = (
+    <div className={styles.priceHeadline}>
+      <div className={styles.priceRow}>
+        <span className={`${styles.price} ${hasDiscount ? styles.priceOnSale : ''}`}>
+          {formatPrice(displayPrice)}
+        </span>
+        {hasDiscount && (
+          <>
+            <span className={styles.oldPrice}>{formatPrice(compareAt)}</span>
+            {product.discountPercent != null && (
+              <span className={styles.discountTag}>−{product.discountPercent}%</span>
+            )}
+          </>
+        )}
+        {selectedVariant && <StockBadge stock={selectedVariant.stock} />}
+      </div>
+      <span className={styles.priceHint}>Цена за 1 шт.</span>
+      {product.reviewCount > 0 && (
+        <button type="button" className={styles.ratingLink} onClick={scrollToReviews}>
+          <StarRating
+            value={product.rating}
+            reviewCount={product.reviewCount}
+            size="sm"
+            showValue
+          />
+        </button>
+      )}
+    </div>
+  );
 
   const buyBoxContent = (
     <>
-      <div className={styles.priceCard}>
-        <div className={styles.priceBlock}>
-          <div className={styles.priceRow}>
-            <span className={`${styles.price} ${hasDiscount ? styles.priceOnSale : ''}`}>
-              {formatPrice(displayPrice)}
-            </span>
-            {hasDiscount && (
-              <>
-                <span className={styles.oldPrice}>{formatPrice(compareAt)}</span>
-                {product.discountPercent != null && (
-                  <span className={styles.discountTag}>−{product.discountPercent}%</span>
-                )}
-              </>
-            )}
-          </div>
-          <span className={styles.priceHint}>Цена за 1 шт.</span>
-        </div>
-
-        <div className={styles.priceMeta}>
-          {selectedVariant && <StockStatus stock={selectedVariant.stock} />}
-          <button type="button" className={styles.ratingLink} onClick={() => setTab('reviews')}>
-            <StarRating
-              value={product.rating}
-              reviewCount={product.reviewCount}
-              size="sm"
-              showValue
-            />
-          </button>
-        </div>
-      </div>
-
       {[...optionGroups.entries()].map(([name, values]) => {
         const isSizeGroup = name === 'Размер' || values.some((v) => /\d+\s*мм/i.test(v));
+        const selectedValue = selectedOptions[name];
         return (
           <div key={name} className={styles.optionGroup}>
-            <span className={styles.optionLabel}>{name}</span>
+            <span className={styles.optionLabel}>
+              {name}
+              {selectedValue ? `: ${selectedValue}` : ''}
+            </span>
             <div className={styles.optionValues}>
-              {values.map((val) => (
-                <button
-                  key={val}
-                  type="button"
-                  className={`${styles.optionBtn} ${isSizeGroup ? styles.optionBtnCompact : ''} ${selectedOptions[name] === val ? styles.optionActive : ''}`}
-                  onClick={() => setSelectedOptions((o) => ({ ...o, [name]: val }))}
-                >
-                  {val}
-                </button>
-              ))}
+              {values.map((val) => {
+                const available = isOptionValueAvailable(product, name, val, selectedOptions);
+                return (
+                  <button
+                    key={val}
+                    type="button"
+                    disabled={!available}
+                    className={`${styles.optionBtn} ${isSizeGroup ? styles.optionBtnCompact : ''} ${selectedValue === val ? styles.optionActive : ''} ${!available ? styles.optionUnavailable : ''}`}
+                    onClick={() => setSelectedOptions((o) => ({ ...o, [name]: val }))}
+                  >
+                    {val}
+                  </button>
+                );
+              })}
             </div>
           </div>
         );
       })}
 
-      <div className={styles.deliveryCard}>
-        <h3 className={styles.deliveryTitle}>Доставка</h3>
-        <p className={styles.deliveryMain}>
-          По России: <strong>{deliveryPromise}</strong>
-        </p>
-        <ul className={styles.deliveryList}>
-          <li className={styles.deliveryItem}>
-            <Truck size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
-            <span>Курьер — бесплатно от 2 000 ₽</span>
-          </li>
-          <li className={styles.deliveryItem}>
-            <Package size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
-            <span>Пункт выдачи — бесплатно от 2 000 ₽</span>
-          </li>
-          <li className={`${styles.deliveryItem} ${styles.deliveryItemMuted}`}>
-            <RotateCcw size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
-            <span>Возврат в течение 14 дней</span>
-          </li>
-        </ul>
-      </div>
-
-      {product.store && (
-        <p className={styles.sellerRow}>
-          <Store size={16} strokeWidth={2} className={styles.sellerIcon} aria-hidden />
-          <span className={styles.sellerLabel}>Продавец:</span>
-          <span className={styles.sellerName}>{product.store.name}</span>
-        </p>
-      )}
-
-      <div className={styles.buyBoxActions}>
+      <div ref={buyBoxActionsRef} className={styles.buyBoxActions}>
         <Button
           size="lg"
           fullWidth
@@ -458,16 +452,14 @@ export function ProductPage() {
         >
           Добавить в корзину
         </Button>
-        <Button
-          variant="outline"
-          size="lg"
-          fullWidth
-          className={styles.btnOutline}
+        <button
+          type="button"
+          className={styles.buyNowLink}
           onClick={handleBuyNow}
           disabled={outOfStock}
         >
           Купить в 1 клик
-        </Button>
+        </button>
         <button
           type="button"
           className={`${styles.favBtn} ${isFavorite ? styles.favBtnActive : ''}`}
@@ -479,14 +471,53 @@ export function ProductPage() {
         </button>
       </div>
 
-      <ul className={styles.trustRow} aria-label="Гарантии покупки">
-        {TRUST_SIGNALS.map(({ icon: Icon, label }) => (
-          <li key={label} className={styles.trustItem}>
-            <Icon size={16} strokeWidth={2} className={styles.trustIcon} aria-hidden />
-            <span>{label}</span>
-          </li>
-        ))}
-      </ul>
+      <p className={styles.trustCompact}>
+        <RotateCcw size={15} strokeWidth={2} className={styles.trustCompactIcon} aria-hidden />
+        <span>Возврат в течение 14 дней</span>
+      </p>
+
+      <div className={styles.deliveryCompact}>
+        <button
+          type="button"
+          className={styles.deliverySummary}
+          aria-expanded={deliveryExpanded}
+          onClick={() => setDeliveryExpanded((v) => !v)}
+        >
+          <Truck size={16} strokeWidth={2} className={styles.deliverySummaryIcon} aria-hidden />
+          <span className={styles.deliverySummaryText}>
+            <strong>{deliveryShort}</strong>
+            <span className={styles.deliverySummaryMuted}> · бесплатно от 2 000 ₽</span>
+          </span>
+          <ChevronDown
+            size={18}
+            strokeWidth={2}
+            className={`${styles.deliveryChevron} ${deliveryExpanded ? styles.deliveryChevronOpen : ''}`}
+            aria-hidden
+          />
+        </button>
+        {deliveryExpanded && (
+          <ul className={styles.deliveryList}>
+            <li className={styles.deliveryItem}>
+              <Truck size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
+              <span>Курьер — бесплатно от 2 000 ₽</span>
+            </li>
+            <li className={styles.deliveryItem}>
+              <Package size={15} strokeWidth={2} className={styles.deliveryIcon} aria-hidden />
+              <span>Пункт выдачи — бесплатно от 2 000 ₽</span>
+            </li>
+          </ul>
+        )}
+      </div>
+
+      {product.store && (
+        <p className={styles.sellerRow}>
+          <Store size={16} strokeWidth={2} className={styles.sellerIcon} aria-hidden />
+          <span className={styles.sellerLabel}>Продавец:</span>
+          <button type="button" className={styles.sellerLink} onClick={scrollToStore}>
+            {product.store.name}
+          </button>
+        </p>
+      )}
 
       {msg && <p className={styles.msg}>{msg}</p>}
     </>
@@ -531,38 +562,35 @@ export function ProductPage() {
             <div className={styles.productMeta}>
               {product.brand && <p className={styles.brand}>{product.brand}</p>}
               <h1 className={styles.name}>{product.name}</h1>
+              {priceHeadline}
             </div>
 
-            <div ref={buyBoxRef} className={styles.buyBox}>
+            <div className={styles.buyBox}>
               {buyBoxContent}
             </div>
 
-            <div className={styles.mobileBrief}>
-              <h2 className={styles.mobileBriefTitle}>Краткое описание</h2>
-              <p className={styles.mobileBriefText}>{briefDescription}</p>
-              {showBriefExpand && (
-                <button
-                  type="button"
-                  className={styles.mobileBriefMore}
-                  onClick={() => {
-                    setDetailsTab('description');
-                    document.getElementById('pdp-description')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  Читать полностью
-                </button>
-              )}
-            </div>
+            {alsoBought.length > 0 && (
+              <div className={styles.earlyRelated}>
+                <ProductRelatedRail
+                  title="С этим покупают"
+                  products={alsoBought}
+                  onAddToCart={handleSimilarAdd}
+                />
+              </div>
+            )}
           </div>
 
-          <div className={`${styles.detailsSection} ${styles.contentPad}`}>
+          <div id="pdp-details" className={`${styles.detailsSection} ${styles.contentPad}`}>
             <div className={styles.detailsTabs} role="tablist" aria-label="Информация о товаре">
               {(
                 [
-                  { id: 'description', label: 'Описание' },
-                  { id: 'specs', label: 'Характеристики' },
-                  { id: 'store', label: 'О магазине' },
-                ] as const
+                  { id: 'description' as const, label: 'Описание' },
+                  { id: 'specs' as const, label: 'Характеристики' },
+                  ...(product.reviewCount > 0
+                    ? [{ id: 'reviews' as const, label: `Отзывы (${product.reviewCount})` }]
+                    : []),
+                  { id: 'store' as const, label: 'О магазине' },
+                ]
               ).map((item) => (
                 <button
                   key={item.id}
@@ -594,6 +622,17 @@ export function ProductPage() {
 
             <div
               role="tabpanel"
+              className={`${styles.detailsTabPanel} ${detailsTab === 'reviews' ? styles.detailsTabPanelActive : ''}`}
+            >
+              <ProductReviewPreview
+                reviewCount={product.reviewCount}
+                onViewAll={scrollToReviews}
+                compact
+              />
+            </div>
+
+            <div
+              role="tabpanel"
               className={`${styles.detailsTabPanel} ${detailsTab === 'store' ? styles.detailsTabPanelActive : ''}`}
             >
               <StoreCard product={product} deliveryRangeText={deliveryRangeText} flat />
@@ -610,7 +649,9 @@ export function ProductPage() {
                 <CollapsibleSection title="Характеристики">{specRows}</CollapsibleSection>
               </div>
 
-              <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
+              <div id="pdp-store-desktop">
+                <StoreCard product={product} deliveryRangeText={deliveryRangeText} />
+              </div>
             </div>
           </div>
         </div>
@@ -619,13 +660,6 @@ export function ProductPage() {
           className={`${styles.mobileBar} ${showMobileBar ? styles.mobileBarVisible : ''}`}
           aria-hidden={!showMobileBar}
         >
-          <div className={styles.mobileBarThumb} aria-hidden>
-            {thumbUrl ? (
-              <img src={thumbUrl} alt="" />
-            ) : (
-              <span className={styles.mobileBarThumbPlaceholder}>?</span>
-            )}
-          </div>
           <div className={styles.mobileBarPrice}>
             <span className={`${styles.mobileBarPriceValue} ${hasDiscount ? styles.mobileBarPriceOnSale : ''}`}>
               {formatPrice(displayPrice)}
@@ -643,13 +677,22 @@ export function ProductPage() {
             >
               <span className={styles.mobileBarBtnContent}>
                 <span>В корзину</span>
-                <span className={styles.mobileBarBtnHint}>{deliveryPromise}</span>
+                <span className={styles.mobileBarBtnHint}>{deliveryShort}</span>
               </span>
             </Button>
           </div>
         </div>
 
-        <div className={`${styles.reviewsSection} ${styles.contentPad}`}>
+        {product.reviewCount > 0 && (
+          <div className={`${styles.reviewPreviewSection} ${styles.contentPad}`}>
+            <ProductReviewPreview
+              reviewCount={product.reviewCount}
+              onViewAll={scrollToReviews}
+            />
+          </div>
+        )}
+
+        <div id="pdp-reviews-full" className={`${styles.reviewsSection} ${styles.contentPad}`}>
         <Tabs
           tabs={[
             { id: 'reviews', label: `Отзывы (${product.reviewCount})` },
@@ -705,15 +748,6 @@ export function ProductPage() {
           </div>
         )}
 
-        {alsoBought.length > 0 && (
-          <div className={`${styles.related} ${styles.contentPad}`}>
-            <ProductRelatedRail
-              title="С этим покупают"
-              products={alsoBought}
-              onAddToCart={handleSimilarAdd}
-            />
-          </div>
-        )}
       </div>
     </PageContainer>
   );
