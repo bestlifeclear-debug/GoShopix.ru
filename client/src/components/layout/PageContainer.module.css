@@ -4,3 +4,10 @@
   margin-top: var(--space-3);
   padding-bottom: var(--space-4);
 }
+
+@media (max-width: 767px) {
+  .root {
+    margin-top: 0;
+    padding-bottom: var(--space-3);
+  }
+}

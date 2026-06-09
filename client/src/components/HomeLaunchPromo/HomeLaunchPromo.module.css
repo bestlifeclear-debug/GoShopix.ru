@@ -8,7 +8,7 @@
   align-items: start;
   width: 100%;
   max-width: 100%;
-  margin-top: 16px;
+  margin-top: 0;
   padding: 18px;
   box-sizing: border-box;
   overflow: hidden;
@@ -150,8 +150,8 @@
 
 @media (max-width: 767px) {
   .banner {
-    margin-top: 14px;
-    padding: 16px;
+    margin-top: 0;
+    padding: var(--space-2);
     border-radius: var(--radius-2xl);
   }
 

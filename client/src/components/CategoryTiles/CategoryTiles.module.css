@@ -63,8 +63,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
 }
 
 .sectionTitle {
@@ -128,6 +128,9 @@
   background: #eef0f3;
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .scrollMobile .image {
@@ -159,7 +162,7 @@
 
 .scrollMobile .tile:active .imageBox {
   transform: scale(0.96);
-  background: #eceef1;
+  box-shadow: none;
 }
 
 .scrollMobile .tileAll .imageBox {
@@ -259,6 +262,20 @@
 @media (max-width: 767px) {
   .section {
     display: block;
+    padding: var(--space-2);
+    border-radius: var(--radius-2xl);
+    background: var(--color-surface-card);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .sectionHead {
+    margin-bottom: var(--space-2);
+    padding: 0;
+  }
+
+  .trackWrap {
+    margin-inline: calc(-1 * var(--space-2));
+    padding-inline: var(--space-2);
   }
 
   .scroll:not(.scrollMobile) {

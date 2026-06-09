@@ -54,10 +54,14 @@
 @media (max-width: 767px) {
   .section {
     display: block;
+    padding: var(--space-2);
+    border-radius: var(--radius-2xl);
+    background: var(--color-surface-card);
+    box-shadow: var(--shadow-sm);
   }
 
   .head {
-    margin-bottom: 12px;
+    margin-bottom: var(--space-2);
   }
 
   .trackWrap {

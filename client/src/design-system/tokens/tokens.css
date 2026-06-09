@@ -35,16 +35,21 @@
   --header-mobile-gradient: linear-gradient(
     180deg,
     #ff5a4d 0%,
-    #ff4a3d 38%,
-    #ff3d2e 72%,
-    #fff5f3 100%
+    #ff4a3d 28%,
+    #ff3d2e 52%,
+    #ff5c50 68%,
+    #ffc4bc 84%
   );
   --header-mobile-gradient-fade: linear-gradient(
     180deg,
-    transparent 0%,
-    rgb(255 255 255 / 0.4) 60%,
-    #ffffff 100%
+    #ffc4bc 0%,
+    rgb(255 196 188 / 0.45) 40%,
+    rgb(248 249 250 / 0.85) 75%,
+    var(--color-app-bg) 100%
   );
+  --header-mobile-fade-height: 32px;
+  --mobile-section-gap: 24px;
+  --mobile-content-pt: 8px;
   /* Пульт иконок в шапке (slate-50 / gray-100) */
   --color-actions-tray-bg: #f8fafc;
 

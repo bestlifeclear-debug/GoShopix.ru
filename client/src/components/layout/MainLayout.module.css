@@ -1,5 +1,5 @@
 .layout {
-  --mobile-bottom-nav-height: calc(56px + env(safe-area-inset-bottom, 0px));
+  --mobile-bottom-nav-height: calc(60px + env(safe-area-inset-bottom, 0px));
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -26,15 +26,14 @@
     display: none;
   }
 
-  /* Серый только у контента — не под шапкой (иначе «молочный» градиент) */
   .layout {
     background: transparent;
     padding-bottom: var(--mobile-bottom-nav-height);
   }
 
   .main {
-    background: #ffffff;
-    padding: 0;
+    background: var(--color-app-bg);
+    padding: var(--mobile-content-pt) 0 0;
   }
 
   .layoutCart .main {
