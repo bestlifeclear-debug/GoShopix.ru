@@ -749,18 +749,12 @@
 }
 
 /* Skeleton */
-.skeletonBreadcrumb {
-  height: 16px;
-  width: 280px;
-  border-radius: var(--radius-sm);
-  background: var(--color-bg-subtle);
-  animation: pdp-skeleton-pulse 1.4s ease-in-out infinite;
-}
-
 .skeletonGallery {
-  aspect-ratio: 1;
   width: 100%;
-  border-radius: var(--radius-lg);
+  height: 52dvh;
+  min-height: 280px;
+  max-height: 520px;
+  border-radius: 0;
   background: var(--color-bg-subtle);
   animation: pdp-skeleton-pulse 1.4s ease-in-out infinite;
 }
@@ -905,6 +899,10 @@
 
   .heroGrid {
     gap: 0;
+  }
+
+  .gallerySection {
+    width: 100%;
   }
 
   .galleryFrame {
@@ -1098,7 +1096,7 @@
 
   .mobileBarBtnWrap {
     flex-shrink: 0;
-    min-width: 132px;
+    min-width: 148px;
   }
 
   .mobileBarBtn {
@@ -1109,9 +1107,15 @@
     border-radius: var(--radius-md) !important;
     font-weight: var(--font-weight-bold) !important;
     background: linear-gradient(180deg, var(--pdp-accent-light) 0%, var(--pdp-accent) 100%) !important;
-    flex-direction: column !important;
-    gap: 2px !important;
     line-height: 1.15 !important;
+  }
+
+  .mobileBarBtnContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    line-height: 1.15;
   }
 
   .mobileBarBtnHint {
@@ -1119,6 +1123,7 @@
     font-size: 10px;
     font-weight: var(--font-weight-medium);
     opacity: 0.92;
+    white-space: nowrap;
   }
 
   .pageWithMobileBar {

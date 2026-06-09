@@ -4,7 +4,6 @@ import { ChevronDown, CreditCard, Heart, Package, RotateCcw, ShieldCheck, Store,
 import { formatPrice } from '@goshopix/shared';
 import { favoritesApi, productsApi } from '../api/index';
 import type { ProductDetail, ProductListItem, ProductVariant } from '../api/types';
-import { Breadcrumb } from '../components/Breadcrumb/Breadcrumb';
 import { ImageGallery } from '../components/ImageGallery';
 import { Tabs } from '../components/Tabs';
 import { Button, ProductCardSkeleton, StarRating } from '../design-system';
@@ -311,7 +310,6 @@ export function ProductPage() {
     return (
       <PageContainer className={styles.pageContainer}>
         <div className={styles.page} aria-busy="true" aria-label="Загрузка товара">
-          <div className={`${styles.contentPad} ${styles.skeletonBreadcrumb}`} />
           <div className={styles.heroGrid}>
             <div className={styles.gallerySection}>
               <div className={styles.skeletonGallery} />
@@ -366,14 +364,6 @@ export function ProductPage() {
   const description = product.description || 'Описание отсутствует.';
   const briefDescription = truncateText(description, BRIEF_DESC_MAX);
   const showBriefExpand = description.length > BRIEF_DESC_MAX;
-
-  const breadcrumbItems = [
-    { label: 'Главная', href: '/' },
-    ...(product.category
-      ? [{ label: product.category.name, href: `/catalog?categorySlug=${product.category.slug}` }]
-      : []),
-    { label: product.name },
-  ];
 
   const buyBoxContent = (
     <>
@@ -530,10 +520,6 @@ export function ProductPage() {
   return (
     <PageContainer className={styles.pageContainer}>
       <div className={`${styles.page} ${showMobileBar ? styles.pageWithMobileBar : ''}`}>
-        <div className={styles.contentPad}>
-          <Breadcrumb items={breadcrumbItems} />
-        </div>
-
         <div className={styles.heroGrid}>
           <div className={styles.gallerySection}>
             <div className={styles.galleryFrame}>
@@ -655,8 +641,10 @@ export function ProductPage() {
               onClick={handleAddToCart}
               disabled={outOfStock}
             >
-              <span>В корзину</span>
-              <span className={styles.mobileBarBtnHint}>{deliveryPromise}</span>
+              <span className={styles.mobileBarBtnContent}>
+                <span>В корзину</span>
+                <span className={styles.mobileBarBtnHint}>{deliveryPromise}</span>
+              </span>
             </Button>
           </div>
         </div>

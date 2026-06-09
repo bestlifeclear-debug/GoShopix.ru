@@ -108,24 +108,6 @@ export function ImageGallery({ images, name }: ImageGalleryProps) {
         )}
       </div>
 
-      {list.length > 1 && (
-        <div className={styles.thumbs} role="tablist" aria-label="Миниатюры товара">
-          {list.map((img, i) => (
-            <button
-              key={i}
-              type="button"
-              role="tab"
-              aria-selected={i === active}
-              aria-label={`Фото ${i + 1}`}
-              className={`${styles.thumb} ${i === active ? styles.thumbActive : ''}`}
-              onClick={() => setActive(i)}
-            >
-              {img.url ? <img src={img.url} alt="" draggable={false} /> : <span />}
-            </button>
-          ))}
-        </div>
-      )}
-
       <Modal open={zoomOpen} onClose={() => setZoomOpen(false)} title={name}>
         {main.url && <img src={main.url} alt={main.alt ?? name} className={styles.zoomImg} />}
       </Modal>

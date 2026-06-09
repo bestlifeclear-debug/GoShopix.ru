@@ -42,6 +42,14 @@
     padding-bottom: 0;
   }
 
+  .layoutProductPdp :global([data-site-header]) {
+    display: none;
+  }
+
+  .layoutProductPdp .main {
+    background: #ffffff;
+  }
+
   .main:has([data-account-lk]) {
     padding-top: 0;
   }

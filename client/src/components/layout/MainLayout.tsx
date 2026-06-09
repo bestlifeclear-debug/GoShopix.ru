@@ -16,6 +16,7 @@ export function MainLayout() {
   const routeKey = `${pathname}${search}`;
   const isCartRoute = pathname === '/cart';
   const isCategoriesHubRoute = pathname === '/categories';
+  const isProductRoute = pathname.startsWith('/product/');
   const token = useAuthStore((s) => s.token);
   const initGuestCart = useCartStore((s) => s.initGuestCart);
   const openDrawer = useCartStore((s) => s.openDrawer);
@@ -37,7 +38,7 @@ export function MainLayout() {
 
   return (
     <div
-      className={`${styles.layout} ${isCartRoute ? styles.layoutCart : ''} ${isCategoriesHubRoute ? styles.layoutCategoriesHub : ''}`}
+      className={`${styles.layout} ${isCartRoute ? styles.layoutCart : ''} ${isCategoriesHubRoute ? styles.layoutCategoriesHub : ''} ${isProductRoute ? styles.layoutProductPdp : ''}`}
     >
       <SiteHeader />
       <main className={styles.main}>
