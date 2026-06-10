@@ -13,7 +13,7 @@
   .track {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 6px;
+    gap: 5px;
     overflow: visible;
     padding-bottom: 2px;
   }
@@ -22,16 +22,17 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 3px;
     min-width: 0;
-    min-height: 32px;
-    padding: 0 6px 0 4px;
+    min-height: 30px;
+    padding: 0 4px;
     border-radius: var(--radius-full);
     background: #ffffff;
     box-shadow: var(--shadow-header-action);
     color: var(--color-text);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: var(--font-weight-semibold);
+    letter-spacing: -0.01em;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
     transition:
@@ -49,15 +50,15 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     border-radius: var(--radius-full);
     line-height: 0;
   }
 
   .iconWrap svg {
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
   }
 
   .tonesale {
@@ -82,9 +83,7 @@
 
   .label {
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
-    line-height: 1.2;
+    line-height: 1.1;
   }
 }

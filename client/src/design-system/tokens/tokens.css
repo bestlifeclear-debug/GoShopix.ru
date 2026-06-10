@@ -32,16 +32,16 @@
   /* Header: белый фон (десктоп), мобильный коралл — всегда в :root */
   --color-header-bg: #ffffff;
   --color-header-border: #eeeeee;
-  --header-mobile-bg: #ff7062;
+  /* Сплошной коралл кнопок (середина градиента #ff7062 → #ff3d2e) */
+  --header-mobile-bg: #ff5748;
   --header-mobile-gradient: var(--header-mobile-bg);
   --header-mobile-gradient-fade: linear-gradient(
     180deg,
     var(--header-mobile-bg) 0%,
-    rgb(255 112 98 / 0.55) 45%,
-    rgb(248 249 250 / 0.85) 78%,
+    rgb(255 87 72 / 0.72) 55%,
     var(--color-app-bg) 100%
   );
-  --header-mobile-fade-height: 32px;
+  --header-mobile-fade-height: 20px;
   --mobile-section-gap: 24px;
   --mobile-content-pt: 8px;
   /* Пульт иконок в шапке (slate-50 / gray-100) */
@@ -160,7 +160,7 @@
     --radius-search: var(--radius-full);
     --search-height: 52px;
     --mobile-bottom-nav-height: calc(60px + env(safe-area-inset-bottom, 0px));
-    --container-padding: 16px;
+    --container-padding: 12px;
     --radius-card: var(--radius-xl);
   }
 }

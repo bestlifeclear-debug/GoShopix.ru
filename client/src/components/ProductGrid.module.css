@@ -13,9 +13,10 @@
 @media (max-width: 767px) {
   .gridCompact {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
     margin-inline: calc(-1 * var(--container-padding));
-    padding: 4px;
-    background: #f5f5f7;
+    padding: 4px var(--container-padding);
+    background: var(--color-app-bg);
   }
 }
 
@@ -48,16 +49,15 @@
   flex-direction: column;
   gap: 6px;
   padding: 0 0 8px;
-  background: #ffffff;
+  background: transparent;
   border: none;
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.06);
 }
 
 .compactSkeletonMedia {
-  aspect-ratio: 4 / 5;
-  border-radius: 0;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
   background: linear-gradient(
     110deg,
     var(--color-bg-subtle) 8%,
@@ -79,12 +79,7 @@
 }
 
 .compactSkeletonBtn {
-  width: 44px;
-  height: 44px;
-  margin-top: auto;
-  margin-left: auto;
-  border-radius: var(--radius-full);
-  background: var(--color-bg-subtle);
+  display: none;
 }
 
 @keyframes catalog-shimmer {

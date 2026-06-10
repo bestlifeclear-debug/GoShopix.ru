@@ -3,24 +3,18 @@
   flex-direction: column;
   width: 100%;
   min-width: 0;
-  background: #ffffff;
+  background: transparent;
   border: none;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  box-shadow: var(--shadow-card);
-  transition:
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
-
-.card:active {
-  transform: scale(0.99);
+  border-radius: 0;
+  overflow: visible;
 }
 
 .media {
   position: relative;
-  aspect-ratio: 4 / 5;
-  background: #fafafa;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  background: #ffffff;
+  overflow: hidden;
 }
 
 .mediaLink {
@@ -60,36 +54,22 @@
   text-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
 }
 
-.badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  z-index: 2;
-  padding: 4px 8px;
-  border-radius: var(--radius-full);
-  background: var(--color-sale-bg);
-  color: var(--color-sale);
-  font-size: 11px;
-  font-weight: var(--font-weight-bold);
-  line-height: 1.2;
-}
-
 .favBtn {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 6px;
+  right: 6px;
   z-index: 3;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   border: none;
   border-radius: var(--radius-full);
-  background: rgb(255 255 255 / 0.94);
-  color: var(--color-text-muted);
-  box-shadow: var(--shadow-sm);
+  background: rgb(255 255 255 / 0.96);
+  color: #9ca3af;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.08);
   cursor: pointer;
   transition:
     color var(--transition-fast),
@@ -98,11 +78,16 @@
 
 .favBtn:active {
   color: var(--color-primary);
-  background: var(--color-primary-soft);
+  background: #ffffff;
 }
 
 .favBtnActive {
   color: var(--color-primary);
+}
+
+.favBtn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .body {
@@ -110,28 +95,48 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 4px;
+  gap: 3px;
   flex: 1;
   min-height: 0;
-  padding: 10px 12px 12px;
+  padding: 6px 2px 8px;
 }
 
-.brand {
-  font-size: 10px;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+.priceBlock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 6px;
+  width: 100%;
+}
+
+.price {
+  font-size: 17px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.15;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.oldPrice {
+  font-size: 11px;
+  font-weight: var(--font-weight-regular);
   line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #9ca3af;
+  text-decoration: line-through;
+  font-variant-numeric: tabular-nums;
+}
+
+.discount {
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  color: var(--color-primary);
 }
 
 .title {
   width: 100%;
-  font-size: 13px;
-  font-weight: var(--font-weight-semibold);
+  font-size: 12px;
+  font-weight: var(--font-weight-regular);
   line-height: 1.35;
   color: var(--color-text);
   text-decoration: none;
@@ -148,34 +153,29 @@
 .rating {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   min-height: 0;
-  margin: 0;
+  margin-top: 1px;
 }
 
-.reviews {
+.ratingValue {
   font-size: 11px;
-  color: var(--color-text-muted);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
   line-height: 1;
 }
 
-.priceRow {
-  width: 100%;
-  margin: 2px 0 0;
+.reviews {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  color: #9ca3af;
+  line-height: 1;
 }
 
-.favBtn svg {
-  width: 18px;
-  height: 18px;
-}
-
-@media (min-width: 360px) {
-  .body {
-    padding: 10px 12px 14px;
-    gap: 5px;
-  }
-
-  .title {
-    font-size: 14px;
-  }
+.reviewsIcon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
 }

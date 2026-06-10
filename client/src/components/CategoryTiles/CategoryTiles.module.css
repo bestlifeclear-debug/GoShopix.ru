@@ -98,7 +98,7 @@
 .scrollMobile {
   display: flex;
   flex-wrap: nowrap;
-  gap: 14px;
+  gap: 12px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-padding-left: var(--container-padding);
@@ -112,15 +112,15 @@
 }
 
 .scrollMobile .tile {
-  flex: 0 0 88px;
-  width: 88px;
-  gap: 10px;
+  flex: 0 0 84px;
+  width: 84px;
+  gap: 8px;
   scroll-snap-align: start;
 }
 
 .scrollMobile .imageBox {
-  width: 80px;
-  height: 80px;
+  width: 76px;
+  height: 76px;
   aspect-ratio: 1;
   padding: 0;
   border: none;
@@ -262,7 +262,7 @@
 @media (max-width: 767px) {
   .section {
     display: block;
-    padding: var(--space-2);
+    padding: 12px;
     border-radius: var(--radius-2xl);
     background: var(--color-surface-card);
     box-shadow: var(--shadow-sm);
@@ -274,8 +274,8 @@
   }
 
   .trackWrap {
-    margin-inline: calc(-1 * var(--space-2));
-    padding-inline: var(--space-2);
+    margin-inline: -12px;
+    padding-inline: 12px;
   }
 
   .scroll:not(.scrollMobile) {
