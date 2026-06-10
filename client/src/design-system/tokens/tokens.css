@@ -29,22 +29,16 @@
   --color-cta-hover: var(--color-primary-hover);
   --color-cta-active: var(--color-primary-active);
 
-  /* Header: белый фон (десктоп), мобильный градиент — всегда в :root */
+  /* Header: белый фон (десктоп), мобильный коралл — всегда в :root */
   --color-header-bg: #ffffff;
   --color-header-border: #eeeeee;
-  --header-mobile-gradient: linear-gradient(
-    180deg,
-    #ff5a4d 0%,
-    #ff4a3d 28%,
-    #ff3d2e 52%,
-    #ff5c50 68%,
-    #ffc4bc 84%
-  );
+  --header-mobile-bg: #ff7062;
+  --header-mobile-gradient: var(--header-mobile-bg);
   --header-mobile-gradient-fade: linear-gradient(
     180deg,
-    #ffc4bc 0%,
-    rgb(255 196 188 / 0.45) 40%,
-    rgb(248 249 250 / 0.85) 75%,
+    var(--header-mobile-bg) 0%,
+    rgb(255 112 98 / 0.55) 45%,
+    rgb(248 249 250 / 0.85) 78%,
     var(--color-app-bg) 100%
   );
   --header-mobile-fade-height: 32px;

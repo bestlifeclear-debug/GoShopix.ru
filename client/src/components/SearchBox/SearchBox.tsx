@@ -12,6 +12,19 @@ export interface SearchSuggestion {
 
 const DEFAULT_HINTS = ['Смартфон', 'Ноутбук', 'Куртка', 'Наушники', 'Кроссовки'];
 
+const MOBILE_TYPING_HINTS = [
+  'Поиск товаров и брендов',
+  'Кофта мужская',
+  'Кроссовки женские',
+  'Пуховик зимний',
+  'Наушники беспроводные',
+];
+
+const TYPING_CHAR_MS = 42;
+const DELETING_CHAR_MS = 24;
+const PAUSE_TYPED_MS = 1600;
+const PAUSE_DELETED_MS = 320;
+
 interface SearchBoxProps {
   value: string;
   onChange: (value: string) => void;
@@ -65,16 +78,59 @@ export function SearchBox({
   const [open, setOpen] = useState(false);
   const [recent, setRecent] = useState<string[]>(() => loadRecent());
   const [resolvedPlaceholder, setResolvedPlaceholder] = useState(placeholder);
+  const [isMobile, setIsMobile] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [typedText, setTypedText] = useState('');
+  const [hintIndex, setHintIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 767px)');
     const sync = () => {
-      setResolvedPlaceholder(mq.matches ? 'Поиск товаров и брендов' : placeholder);
+      const mobile = mq.matches;
+      setIsMobile(mobile);
+      setResolvedPlaceholder(mobile ? 'Поиск товаров и брендов' : placeholder);
     };
     sync();
     mq.addEventListener('change', sync);
     return () => mq.removeEventListener('change', sync);
   }, [placeholder]);
+
+  useEffect(() => {
+    if (!isMobile || value.length > 0 || focused) return;
+
+    const phrase = MOBILE_TYPING_HINTS[hintIndex];
+    let timer: ReturnType<typeof setTimeout>;
+
+    if (!isDeleting && typedText.length < phrase.length) {
+      timer = setTimeout(() => {
+        setTypedText(phrase.slice(0, typedText.length + 1));
+      }, TYPING_CHAR_MS);
+    } else if (!isDeleting && typedText.length === phrase.length) {
+      timer = setTimeout(() => setIsDeleting(true), PAUSE_TYPED_MS);
+    } else if (isDeleting && typedText.length > 0) {
+      timer = setTimeout(() => {
+        setTypedText(phrase.slice(0, typedText.length - 1));
+      }, DELETING_CHAR_MS);
+    } else {
+      timer = setTimeout(() => {
+        setIsDeleting(false);
+        setHintIndex((i) => (i + 1) % MOBILE_TYPING_HINTS.length);
+      }, PAUSE_DELETED_MS);
+    }
+
+    return () => clearTimeout(timer);
+  }, [focused, hintIndex, isDeleting, isMobile, typedText, value.length]);
+
+  useEffect(() => {
+    if (!isMobile || value.length > 0 || focused) {
+      setTypedText('');
+      setHintIndex(0);
+      setIsDeleting(false);
+    }
+  }, [focused, isMobile, value.length]);
+
+  const showTypingPlaceholder = isMobile && value.length === 0 && !focused;
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -123,25 +179,37 @@ export function SearchBox({
         <span className={styles.icon} aria-hidden>
           <IconSearch />
         </span>
-        <input
-          type="search"
-          className={styles.input}
-          placeholder={resolvedPlaceholder}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onFocus={() => setOpen(true)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSubmit();
-            }
-            if (e.key === 'Escape') setOpen(false);
-          }}
-          role="combobox"
-          aria-expanded={showPanel}
-          aria-controls={listId}
-          aria-autocomplete="list"
-          aria-label="Поиск"
-        />
+        <div className={styles.inputWrap}>
+          <input
+            type="search"
+            className={styles.input}
+            placeholder={showTypingPlaceholder ? '' : resolvedPlaceholder}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onFocus={() => {
+              setFocused(true);
+              setOpen(true);
+            }}
+            onBlur={() => setFocused(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSubmit();
+              }
+              if (e.key === 'Escape') setOpen(false);
+            }}
+            role="combobox"
+            aria-expanded={showPanel}
+            aria-controls={listId}
+            aria-autocomplete="list"
+            aria-label="Поиск"
+          />
+          {showTypingPlaceholder ? (
+            <span className={styles.animatedPlaceholder} aria-hidden>
+              {typedText}
+              <span className={styles.typingCursor} />
+            </span>
+          ) : null}
+        </div>
         {showMobileActions ? (
           <div className={styles.mobileActions} aria-hidden={false}>
             <button

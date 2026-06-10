@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { categoriesApi, notificationsApi, productsApi } from '../../api/index';
 import type { CategoryNode } from '../../api/types';
 import { Header, type HeaderNavLink } from '../../design-system';
-import { IconClose, IconUser } from '../../design-system/icons/Icons';
+import { IconClose, IconMessage } from '../../design-system/icons/Icons';
 import { CatalogMenu } from '../CatalogMenu/CatalogMenu';
 import { HeaderDeliveryCity } from '../HeaderDeliveryCity/HeaderDeliveryCity';
 import { HomeHeaderChips } from '../HomeHeaderChips/HomeHeaderChips';
@@ -169,18 +169,18 @@ export function SiteHeader() {
 
   const mobileTopTrailing = (
     <>
+      <Link
+        to={token ? '/account?section=support' : '/auth'}
+        className={actionStyles.btn}
+        aria-label={token ? 'Личные сообщения' : 'Войти'}
+      >
+        <IconMessage className={actionStyles.icon} strokeWidth={1.75} />
+      </Link>
       <HeaderNotificationBell
         unreadCount={token ? headerUnreadCount : 0}
         variant="mobileAction"
         to={token ? '/account?section=notifications' : '/auth'}
       />
-      <Link
-        to={token ? '/account?section=dashboard' : '/auth'}
-        className={actionStyles.btn}
-        aria-label={token ? 'Личный кабинет' : 'Войти'}
-      >
-        <IconUser className={actionStyles.icon} strokeWidth={1.75} />
-      </Link>
     </>
   );
 
