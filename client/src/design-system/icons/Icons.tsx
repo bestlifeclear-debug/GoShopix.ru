@@ -317,14 +317,18 @@ export function IconMessage(props: IconProps) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
       <path
-        d="M20 11.5a7.5 7.5 0 01-7.8 7.5 7.4 7.4 0 01-3.2-.7L5 20l1.8-3.8A7.5 7.5 0 1112.2 4 7.5 7.5 0 0120 11.5z"
+        d="M21 12a8 8 0 01-8 8H7l-4 3V8a8 8 0 018-8h8a8 8 0 018 8z"
         stroke="currentColor"
         strokeWidth="1.75"
+        strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle cx="9" cy="11.5" r="1" fill="currentColor" />
-      <circle cx="12" cy="11.5" r="1" fill="currentColor" />
-      <circle cx="15" cy="11.5" r="1" fill="currentColor" />
+      <path
+        d="M8 12h8M8 9h5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

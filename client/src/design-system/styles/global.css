@@ -114,15 +114,6 @@ html.modal-open {
     filter: none !important;
   }
 
-  /* Мягкий переход хедера в фон страницы — единое полотно на всех экранах */
-  [data-site-header]::after {
-    content: '';
-    display: block;
-    height: var(--header-mobile-fade-height);
-    background: var(--header-mobile-gradient-fade);
-    pointer-events: none;
-  }
-
   [data-site-header] [data-header-root],
   [data-site-header] [data-header-layer],
   [data-site-header] [data-header-root]::before,

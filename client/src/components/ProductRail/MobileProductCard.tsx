@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { ProductListItem } from '../../api/types';
 import { hasProductDiscount } from '../../lib/productDiscount';
+import { ProductGridCartButton } from '../ProductGridCartButton/ProductGridCartButton';
 import { StarRating } from '../../design-system';
 import { IconHeart, IconMessage } from '../../design-system/icons/Icons';
 import styles from './MobileProductCard.module.css';
@@ -24,6 +25,7 @@ function placeholderHue(id: string): number {
 
 export function MobileProductCard({
   product,
+  onAddToCart,
   showFavorite = true,
   onRemoveFavorite,
 }: MobileProductCardProps) {
@@ -81,6 +83,7 @@ export function MobileProductCard({
             <IconHeart />
           </button>
         ) : null}
+        <ProductGridCartButton onAdd={onAddToCart} />
       </div>
 
       <div className={styles.body}>

@@ -56,7 +56,7 @@
 }
 
 .compactSkeletonMedia {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 5;
   border-radius: 12px;
   background: linear-gradient(
     110deg,
