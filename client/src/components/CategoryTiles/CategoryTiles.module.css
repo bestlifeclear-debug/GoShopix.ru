@@ -262,7 +262,7 @@
 @media (max-width: 767px) {
   .section {
     display: block;
-    padding: 12px 8px;
+    padding: 12px 6px;
     border-radius: var(--radius-2xl);
     background: var(--color-surface-card);
     box-shadow: var(--shadow-sm);
@@ -270,17 +270,17 @@
 
   .sectionHead {
     margin-bottom: var(--space-2);
-    padding: 0 4px;
+    padding: 0 6px;
   }
 
   .trackWrap {
-    margin-inline: -8px;
-    padding-inline: 4px;
+    margin-inline: -6px;
+    padding-inline: 6px;
   }
 
   .scrollMobile {
     gap: 10px;
-    scroll-padding-left: 4px;
+    scroll-padding-left: 6px;
   }
 
   .scroll:not(.scrollMobile) {

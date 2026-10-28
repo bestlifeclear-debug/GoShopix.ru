@@ -42,7 +42,7 @@
     var(--color-app-bg) 100%
   );
   --header-mobile-fade-height: 20px;
-  --mobile-section-gap: 24px;
+  --mobile-section-gap: 16px;
   --mobile-content-pt: 8px;
   /* Пульт иконок в шапке (slate-50 / gray-100) */
   --color-actions-tray-bg: #f8fafc;
